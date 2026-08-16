@@ -149,11 +149,13 @@ Delta sweeps on the watchlist · new-declassification monitors · re-grading whe
 
 ---
 
-## 5. Open decisions
+## 5. Ratified decisions
 
-1. **Geographic scope** — US-first, or global from the start?
-2. **Stack confirmation** — Supabase + MapLibre as above?
-3. **First sweep target** — which region or theme does W1 run on first?
+1. **Geographic scope** — **US-first.** CONUS is where archive access is strongest (CREST, DTIC, NARA, FPDS, USGS quads) and where the rubric can be validated against checkable ground truth. Non-US expands later; the schema is built country-agnostic from day one so expansion is additive, not a migration.
+2. **Stack** — **Next.js on Vercel + Supabase (Postgres/PostGIS) + MapLibre GL.**
+3. **W1 target** — **Broad and ongoing, not themed.** The first sweep runs every discovery agent wide across all typologies. The register is an accumulating database, not a report: W1 is a recurring engine that keeps adding, and coverage deepens over successive cycles rather than being scoped up front. The COMPLETENESS CRITIC sets each next cycle's targets.
+
+**Consequence for design:** because ingest is continuous and unbounded, the schema must treat every candidate as *provisional and versioned* from the start. Grades move as evidence lands. The database records the movement, not just the current value.
 
 ---
 
