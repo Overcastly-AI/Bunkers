@@ -21,6 +21,40 @@ And a third category — folklore, forum lore, claimed insider testimony — is 
 
 ## 1. The Grading System
 
+> ### ⚠ SUPERSEDED — v0.1, retained for history only
+>
+> **Do not apply this rubric.** Three adversarial reviews (archival historian, intelligence analyst,
+> disinformation skeptic) examined it. Two returned verdicts of *restructure, not patch* before the
+> third had even reported. Ten failures were rated fatal.
+>
+> The authoritative model is **`docs/GRADING.md` (v0.2)**. This section stays in the repository
+> because a register that hides its own corrections has no standing to grade anyone else's sources.
+>
+> The defects, in brief:
+>
+> 1. **Evidence has no sign.** Nothing here can encode that a claim is *false*. Disconfirmation is
+>    expressible only by declining to award points — arithmetically identical to having looked and
+>    found nothing. REFUTER was given no numeric hook into the score.
+> 2. **Unit error.** This grades a *place*; evidence attaches to a *proposition*. A well-documented
+>    real installation therefore launders its documentation onto every claim attached to it — the
+>    citogenesis mechanism of §1.3, executed by the register itself.
+> 3. **No diagnosticity.** The axes reward the *presence* of signals, not their power to discriminate
+>    a bunker from a limestone mine, a highway tunnel, a sewer works, or a data centre. 54% of the
+>    weight (GEO .22 + INF .18 + OWN .14) sits on the least diagnostic axes.
+> 4. **The formula contradicts its own grade labels.** DOC weight .28 means a conclusive primary
+>    document naming facility, location and function — and nothing else — scores 28, landing in
+>    grade E, *"folklore with a trace."* The bands describe evidence **kinds**; the formula measures
+>    evidence **breadth**. Two different instruments bolted together.
+> 5. **Confidence-in-evidence published as existence,** with no expected-record prior. For a
+>    classified facility, absent records are the *expected* condition. The argument from silence is
+>    valid only where the silence is surprising.
+> 6. **CONTAM floors at ×0.5,** so grade F is unreachable for any fabrication anchored to a real place.
+> 7. **COR counts sources and calls it independence** — see the correction in §2 below.
+> 8. **GEO encodes a buried-rural-mountain prior.** Every GEO criterion is null for urban, in-building,
+>    and above-ground hardened facilities, which are silently penalised.
+>
+> Full critiques with worked examples: `research/raw/critique-*.json`.
+
 ### 1.1 Six evidence dimensions
 
 Each candidate is scored 0–100 on six independent axes. Axes are scored separately and never silently averaged into a single number that hides its own composition.
@@ -89,7 +123,29 @@ Not folded into the score — these are filters.
 
 ## 2. Agent Fleet
 
-Every agent is research-heavy, given a distinct search modality, and **blind to the others' findings during discovery** — that independence is what makes the COR axis mean anything.
+Every agent is research-heavy and given a distinct search modality.
+
+> ### ⚠ CORRECTED — the original independence claim was wrong
+>
+> This section previously read: *"blind to the others' findings during discovery — that independence
+> is what makes the COR axis mean anything."*
+>
+> That is a **category error**, and it was load-bearing. **Agent independence is not source
+> independence.** Seven agents searching the same indexed web will surface the same single source and
+> score it as sevenfold corroboration. The fleet as originally designed *manufactured false
+> corroboration* — the precise failure the register exists to expose.
+>
+> Source independence is a **graph property of the citation network**: whether two lineages could have
+> arisen without either knowing of the other. It cannot be created by parallelising searchers, and it
+> cannot be measured with `COUNT(*)`.
+>
+> Blind fan-out is still retained — it genuinely improves *recall*, which is its actual justification.
+> It contributes **nothing** to corroboration. Any independence claim must be established downstream by
+> LINEAGE against the citation graph, never inferred from how many agents happened to report the same
+> thing.
+>
+> **W1 does not run until the corrected fleet is specified.** The corrected design lands in
+> `docs/FOUNDATION-REPORT.md`; expect a mandatory lineage-resolution stage between discovery and scoring.
 
 ### Tier 1 — Discovery (parallel, blind to each other)
 
