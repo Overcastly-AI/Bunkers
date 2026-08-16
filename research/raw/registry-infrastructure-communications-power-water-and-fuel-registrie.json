@@ -1,0 +1,591 @@
+{
+  "beat": "Infrastructure, communications, power, water, and fuel registries \u2014 the utility signature of hardened, buried, and continuity-of-government facilities",
+  "sources": [
+    {
+      "name": "FCC Universal Licensing System (ULS) \u2014 Public Access bulk database files",
+      "url": "https://www.fcc.gov/wireless/data/public-access-files-database-downloads",
+      "holdings": "Complete licence and application records for every non-federal radio service, as pipe-delimited .dat tables inside per-service ZIPs. For this beat the load-bearing archives are l_micro.zip (Part 101 Common Carrier Fixed Point-to-Point Microwave + Private Operational Fixed + Microwave Public Safety Pool) and the paired a_micro.zip application archive. Inside each ZIP the tables that matter are HD.dat (licence header: call sign, radio service code, status, grant/expiration/cancellation dates), EN.dat (entity: licensee name, FRN, address \u2014 this is how you find 'AT&T Corp', 'American Telephone and Telegraph Company', 'General Services Administration' as an ASR/licence holder), LO.dat (location: location number, location type/class code, street address, city, county, state, ground elevation, lat/long in separate degree/minute/second/direction integer columns, support structure height, site status), AN.dat (antenna: azimuth, height AGL, polarisation, antenna model, EIRP), FR.dat (frequency/emission), and the PA path table (path number, path type code, transmit location number \u2192 receive location number, passive repeater locations). The PA table is the single highest-value artefact in this beat: it lets you reconstruct the actual hop-by-hop topology of a microwave network \u2014 including the surviving fragments of AT&T Long Lines \u2014 as a graph of location IDs with coordinates, rather than as a list of isolated towers. Historical/cancelled licences persist in the database, so a decommissioned 1960s relay whose licence was cancelled in 1999 is still recoverable.",
+      "provenance_tier": "P1",
+      "access_method": "Bulk download (ZIP of pipe-delimited .dat). Complete weekly snapshots generated early Sunday morning; daily transaction deltas generated Tuesday\u2013Saturday mornings. No registration, no API key, no login. Files historically served from https://data.fcc.gov/download/pub/uls/complete/ and .../uls/daily/.",
+      "format": "ZIP containing pipe-delimited fixed-schema .dat text files. First two chars of every record are the record-type code; the last field on a line is NOT followed by a trailing pipe (a common parser bug). Fields are not quoted, so embedded pipes in free-text address fields are a real hazard.",
+      "value": "critical",
+      "axes_served": [
+        "communications infrastructure",
+        "microwave network topology",
+        "site coordinates",
+        "ownership chain",
+        "temporal change (grant/cancel dates)"
+      ],
+      "rate_limits": "Bulk files only \u2014 no per-request throttling concern, but the complete archives are large (hundreds of MB to multiple GB across services). Pull the weekly complete once, then apply daily deltas.",
+      "robots_posture": "Could not verify robots.txt \u2014 fcc.gov is blocked by this session's egress proxy. The Public Access Files are explicitly published for 'research and private programming efforts without any registration requirement', so bulk retrieval of the download endpoints is clearly intended. The interactive wireless2.fcc.gov JSP search app is a different posture and should be crawled gently regardless.",
+      "search_technique": "Do not use the web search form for harvesting. Load l_micro.zip into Postgres, then: (a) SELECT from EN where entity_name ILIKE any of '%AT&T%','%American Telephone%','%Western Union%','%General Services Admin%','%Department of%','%Federal Aviation%'; (b) join HD\u2192LO\u2192PA to build the path graph; (c) flag LO rows where location_class_code indicates a fixed point and the ground elevation is a local maximum but the address is a rural route / unnamed road with no city; (d) flag path endpoints whose LO record has an unusually descriptive site name (Long Lines sites carry names like 'BARNETT', 'CEDAR BLUFF', or bracketed project names). HARDENING PATTERN: a fixed microwave location with (1) a licence grant date in 1958\u20131968, (2) multiple distinct licences/call signs stacked at the same coordinates, (3) heavy horn-reflector or large-aperture parabolic antenna models in AN.dat, (4) a ground elevation at a ridgeline local max, and (5) a street address that resolves to nothing \u2014 is the classic buried-relay signature. A second signature: a site with an active ASR tower but NO current ULS licence at those coordinates, meaning the antenna farm outlived the licensed service.",
+      "notes": "Record layout PDFs: https://www.fcc.gov/sites/default/files/public_access_database_definitions_20240215.pdf (91-page current version) and older v2/v4 variants at .../public_access_database_definitions_v2.pdf and _v4.pdf. Intro doc: https://www.fcc.gov/sites/default/files/pubacc_intro_11122014.pdf. Keep multiple layout versions: older archived ZIPs use earlier column counts and a naive parser will silently misalign."
+    },
+    {
+      "name": "FCC Antenna Structure Registration (ASR) \u2014 bulk r_tower.zip",
+      "url": "https://data.fcc.gov/download/pub/uls/complete/r_tower.zip",
+      "holdings": "Every antenna structure registered with the FCC \u2014 required for any structure over 200 ft AGL or any structure that may penetrate an airport's imaginary surfaces. Inside r_tower.zip: CO.dat (coordinates \u2014 latitude/longitude by degree/minute/second, plus the structure's registration number), RA.dat (registration/application detail \u2014 structure type code, overall height above ground, overall height above mean sea level, height of support structure, date constructed, date dismantled, FAA study number, FAA circular number, status), and EN.dat (registrant entity name, FRN, address). Join CO\u2194RA\u2194EN on Registration Number (ASRN) and/or Unique System Identifier. Structure type codes are a 23-value controlled vocabulary: B, BANT, BMAST, BPIPE, BPOLE, BRIDG, BTWR, GTOWER, LTOWER, MAST, MTOWER, NNGTANN, NNLTANN, NNMTANN, PIPE, POLE, RIG, SIGN, SILO, STACK, TANK, TREE, UPOLE.",
+      "provenance_tier": "P1",
+      "access_method": "Bulk ZIP download, same weekly-complete + daily-delta cadence as ULS. Also an interactive search at https://wireless2.fcc.gov/UlsApp/AsrSearch/asrRegistrationSearch.jsp and a per-registration printable form at https://wireless2.fcc.gov/UlsApp/AsrSearch/printAuth_FCCASRForm.jsp?regKey=NNNNNN",
+      "format": "ZIP of pipe-delimited .dat",
+      "value": "critical",
+      "axes_served": [
+        "structure coordinates",
+        "structure height",
+        "ownership chain",
+        "construction/dismantle dates",
+        "tower typology"
+      ],
+      "rate_limits": "Bulk file: none meaningful. The JSP search app is session-based (JSESSIONID_ASRSEARCH) and will rate-limit / session-expire aggressive scraping \u2014 use the bulk file and only deep-link the JSP for individual verification.",
+      "robots_posture": "Not verifiable from this session (fcc.gov egress-blocked). Bulk endpoint is published for programmatic reuse. FCC API Terms of Service exist at https://www.fcc.gov/general/api-terms-service and should be read before any automated harvest.",
+      "search_technique": "HARDENING PATTERN, and this is the highest-yield correlation in the whole beat: filter RA.dat for structure_type in ('LTOWER','GTOWER','TOWER') AND overall_height_above_ground > 200ft AND date_constructed BETWEEN 1955 AND 1975, then spatially join against (a) building footprints (Microsoft/Overture) and (b) recent aerial imagery. A registered 300-ft self-supporting lattice tower at a rural coordinate where the only visible structure is a small windowless blockhouse \u2014 because the equipment is underground \u2014 is the Long Lines / AUTOVON signature. Second pattern: chase the OWNERSHIP CHAIN. ASR ownership-change filings (Form 854, procedure 'OC') are two-party and dated, so the EN record documents a site passing AT&T \u2192 American Tower / Crown Castle / SBA at the turn of the millennium; the underground portion is frequently severed and retained or sold separately, and the discrepancy between who owns the tower and who owns the parcel is itself evidence. Third pattern: an ASR with date_dismantled populated but the parcel still showing a graded pad, access road, and fenced perimeter.",
+      "notes": "Codes/data-element doc: https://www.fcc.gov/sites/default/files/pubacc_asr_codes_data_elem.pdf. ASR intro: https://www.fcc.gov/sites/default/files/pubacc_asr_intro.pdf. Form 854 (the registration form itself, showing every field collected): https://www.fcc.gov/sites/default/files/form854.pdf. Coordinates in ASR are self-reported by the registrant and are frequently wrong by tens to hundreds of metres \u2014 always cross-check against the FAA Digital Obstacle File, which is independently verified. Existing tooling: 'asr2geojson' (tris.fyi) and a state-level reprojected product from the Arkansas GIS Office (https://gis.arkansas.gov/category/fcc/) demonstrate the join."
+    },
+    {
+      "name": "FCC ULS / ASR interactive licence app \u2014 deep-link URL grammar and the application attachment viewer",
+      "url": "https://wireless2.fcc.gov/UlsApp/UlsSearch/license.jsp",
+      "holdings": "Per-licence detail pages plus, critically, the engineering exhibits filed with microwave applications. The URL grammar is stable and directly addressable: license.jsp?licKey=NNNNNNN (licence summary); licenseLocSum.jsp?licKey=N (all locations on a licence); licensePathsSum.jsp?licKey=N[&pathType=B|C] (every microwave path, transmit\u2192receive site pairs); licenseAdminSum.jsp?licKey=N (administrative/ownership history); applPathSum.jsp?applID=N and applPathDetail.jsp?applID=N&keyPath=N (the application-side equivalents, which survive for applications that were never granted). The attachment viewer \u2014 attachmentView.jsp?applType=search&fileKey=NNNNNNNNN&attachmentKey=NNNNNNNN&attachmentInd=applAttach and its attachmentViewRD.jsp variant \u2014 serves the actual filed PDFs, including COMSEARCH 'Microwave Path Data Sheet' exhibits containing path profiles, terrain cross-sections, antenna centrelines, structure heights, and site names.",
+      "provenance_tier": "P1",
+      "access_method": "HTML scrape / PDF retrieval over stable query-string deep links. licKey is an internal surrogate key recoverable by joining the bulk ULS HD.dat unique_system_identifier \u2014 do not brute-force it.",
+      "format": "JSP-rendered HTML; attachments are PDF (often scanned, OCR required for pre-2000 filings)",
+      "value": "critical",
+      "axes_served": [
+        "path topology",
+        "engineering exhibits",
+        "terrain profiles",
+        "site names",
+        "application history"
+      ],
+      "rate_limits": "Undocumented. The app issues a JSESSIONID_ULSSEARCH cookie and sometimes injects it as a path parameter (';JSESSIONID_ULSSEARCH=...' before the query string) \u2014 your fetcher must tolerate that. Sessions expire; concurrent aggressive fetching triggers errors rather than bans in observed behaviour, but throttle to ~1 req/sec with a declared User-Agent.",
+      "robots_posture": "Unverified from this session. Treat as a live transactional government app: crawl-delay it, cache aggressively, never parallelise beyond a couple of connections.",
+      "search_technique": "Resolve licKey from the bulk files first, then fetch ONLY licensePathsSum.jsp for candidate licences. The path summary gives you the site-name pairs; the attachment viewer gives you the terrain profile that will show a tower centreline sitting on a hill with a note about an existing underground structure. HARDENING PATTERN: pull the attachment PDFs for every legacy AT&T/Western Union microwave application and grep the OCR for 'underground', 'hardened', 'blast', 'below grade', 'basement level', 'emergency power', 'diesel', 'fallout'. Engineering exhibits routinely describe the buried plant in passing because it is structurally relevant to the antenna support."
+    },
+    {
+      "name": "FAA Digital Obstacle File (DOF) and Daily DOF (DDOF)",
+      "url": "https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/dof/",
+      "holdings": "Every known obstacle of aviation interest in the US plus limited Pacific/Caribbean/Canada/Mexico coverage: unique obstacle number, latitude/longitude, structure type, height AGL, height AMSL, lighting, marking, horizontal and vertical accuracy codes, verification status, and an action code (A=Added, C=Changed, D=Dismantled). Critically, the DOF is INDEPENDENT of the FCC ASR \u2014 it includes structures that were never FCC-registered (government-owned towers, non-communications masts) and its coordinates are surveyed/verified rather than self-reported.",
+      "provenance_tier": "P1",
+      "access_method": "Direct bulk download, no login. Full DOF on the 56-day aeronautical chart cycle; DDOF published daily as a delta.",
+      "format": ".Dat fixed-width (legacy) and CSV with decimal-degree lat/long added",
+      "value": "high",
+      "axes_served": [
+        "structure coordinates (verified)",
+        "structure height",
+        "dismantle events",
+        "non-FCC structures"
+      ],
+      "rate_limits": "None stated for the file endpoints.",
+      "robots_posture": "Public aeronautical product intended for redistribution; faa.gov not fetchable from this session to confirm robots.txt.",
+      "search_technique": "HARDENING PATTERN: DOF-minus-ASR set difference. A tall verified obstacle in the DOF with no corresponding ASR registration is either federally owned (federal facilities are not required to register with the FCC) or deliberately unregistered. That set difference is a direct candidate generator for government-operated towers, which is precisely the CoG/AUTOVON population. Second pattern: verification_status='O' (verified by the Obstacle Data Team) plus a very precise accuracy code on a rural structure implies a field survey happened \u2014 someone cared. Third: action='D' (dismantled) records give you tower-removal dates for correlating with site disposal.",
+      "notes": "README with full field layout: https://www.faa.gov/air_traffic/flight_info/aeronav/digital_products/dof/media/DOF_README.pdf. DDOF README: .../DailyDOF/media/DDOF_README_09-03-2019.pdf. An existing .dat\u2192.csv converter script: https://gist.github.com/rhewitt22/9141903. Airspace-Encounter-Models/em-core on GitHub keeps a curated historical DOF mirror (data/FAA-DOF), which matters because the FAA does not archive superseded cycles \u2014 historical DOF snapshots are how you recover structures that existed in 1998 and are gone now."
+    },
+    {
+      "name": "long-lines.net \u2014 AT&T Long Lines Places and Routes",
+      "url": "https://www.long-lines.net/places-routes/",
+      "holdings": "The most complete open compilation of the AT&T Long Lines microwave and L-carrier coaxial network, organised by CLLI (Common Language Location Identifier) code. Per-site pages document tower type and height, building construction, whether the site is hardened/underground, generator and air-filtration provisions, route membership, and the AUTOVON/defence-network role where known. Site pages carry both true CLLI codes and AT&T's internal bracketed cover names. Includes explicitly documented hardened underground sites (e.g. Lyons, NE \u2014 an underground blast-hardened building with a 329-ft self-supporting steel lattice tower and a surface entry structure; the [MD-1] site, an AUTOVON switching centre).",
+      "provenance_tier": "P4",
+      "access_method": "Static HTML scrape. URL grammar is highly regular: https://long-lines.net/places-routes/{IDENTIFIER}/index.html where IDENTIFIER is either an 8-character CLLI (e.g. FLKNMDFK), a short route code (e.g. MD01), or a Place_ST slug (e.g. Lyons_NE).",
+      "format": "Static HTML with embedded photographs and scanned Bell System documents",
+      "value": "critical",
+      "axes_served": [
+        "site identity (CLLI)",
+        "hardened/underground determination",
+        "route membership",
+        "network role",
+        "Bell System provenance"
+      ],
+      "rate_limits": "Small independent site \u2014 crawl at \u22641 req/2s, cache everything, do not re-crawl frequently.",
+      "robots_posture": "Not verifiable from this session. Enthusiast-run; assume a courtesy crawl budget and identify your agent. Prefer a single full mirror over repeated partial crawls.",
+      "search_technique": "Enumerate the /places-routes/ index to get the full identifier list, then fetch each site page once. Parse for the literal strings 'underground', 'hardened', 'blast', 'bunker', 'below ground', 'AUTOVON', 'Project Office', 'L-carrier', 'coaxial', 'repeater', and for tower height in feet. THIS IS A BACKWARD-SOURCING TARGET, not a primary: long-lines.net is itself a compilation, and many of its claims trace to Bell Laboratories Record articles, Bell System Practices, and AT&T route maps that should be cited directly where the site names them. Use the CLLI code as the join key back to FCC ULS location records and ASR registrations \u2014 the CLLI is the stable identity that survives the AT&T\u2192American Tower ownership churn.",
+      "notes": "CLLI code background: the FCC maintains a CLLI code list at https://www.fcc.gov/clli-code-list; commercial lookup at clli.com. A parallel enthusiast corpus with per-site FCC licence citations and route maps for Missouri and elsewhere: https://personal.garrettfuller.org/blog/att-long-lines/ (Garrett Fuller). coldwar-c4i.net is the other standing reference for AUTOVON/AUTODIN/hardened C4I sites. All of these are P4 \u2014 admit them to the register, then source each specific claim backwards."
+    },
+    {
+      "name": "HIFLD Open \u2014 NASA NCCS live ArcGIS mirror",
+      "url": "https://maps.nccs.nasa.gov/mapping/rest/services/hifld_open/",
+      "holdings": "A working ArcGIS REST mirror of the DHS HIFLD Open service tree, organised into the original folders (energy, communications, commercial, geonames, and others). Confirmed live layers include communications/MapServer/8 and FeatureServer/8 = 'microwave_service_towers' \u2014 the HIFLD microwave tower layer, which is an ASR-derived but independently curated point set. The energy folder carries the electric substations and transmission line layers. This matters enormously because DHS shut down HIFLD Open in August 2025 and the canonical hifld-geoplatform.opendata.arcgis.com portal is gone.",
+      "provenance_tier": "P3",
+      "access_method": "ArcGIS REST API \u2014 standard /query endpoints with where=, geometry=, outFields=*, f=geojson|json, resultOffset/resultRecordCount paging. Append ?f=json to any service or layer URL for the schema.",
+      "format": "Esri FeatureServer/MapServer; GeoJSON, Esri JSON, or paged query output",
+      "value": "critical",
+      "axes_served": [
+        "substations",
+        "transmission lines",
+        "microwave towers",
+        "communications facilities",
+        "national coverage"
+      ],
+      "rate_limits": "ArcGIS default maxRecordCount is typically 1000\u20132000 features per query \u2014 you must page with resultOffset. No published quota; be conservative on a research-institution server.",
+      "robots_posture": "Unverified (domain not resolvable from this session's DNS). NASA NCCS is a research computing service, not a public data portal \u2014 treat the mirror as a courtesy and prefer the archived bulk copies (Source Cooperative, DataLumos) for full-corpus pulls, using NCCS only for targeted queries.",
+      "search_technique": "GET {layer}?f=json first to read the field list, then page /query?where=1%3D1&outFields=*&f=geojson. HARDENING PATTERN for the substations layer: find substations whose MAX_VOLT is high (\u2265115 kV) but whose LINES count is low and which sit at the terminus of a single radial feed serving no named load \u2014 a dedicated high-voltage radial to a location with no visible industrial customer is a strong signal. Second pattern: substation footprints inside or adjacent to federal land parcels where no generation, no town, and no industrial site exists. Third: cross-reference the microwave_service_towers layer against ASR \u2014 HIFLD's curation sometimes retains sites the FCC has since purged.",
+      "notes": "Other surviving ArcGIS mirrors of HIFLD layers, useful for redundancy and for detecting what was quietly changed: https://mapservices.pasda.psu.edu/server/rest/services/pasda/HIFLD_FEMA/MapServer (Penn State PASDA \u2014 layer 83 is Microwave_Service_Towers_HIFLD), https://oceandata.rad.rutgers.edu/arcgis/rest/services/RenewableEnergy/HIFLD_Electric_SubstationsTransmissionLines/MapServer (Rutgers), and https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/Power_Plants_in_the_US/FeatureServer (FEMA GeoPlatform)."
+    },
+    {
+      "name": "HIFLD Archive on Source Cooperative (SeerAI) \u2014 Parquet bulk snapshot",
+      "url": "https://source.coop/seerai/hifld",
+      "holdings": "A complete bulk archive of the HIFLD Open corpus taken before the August 2025 shutdown, converted to GeoParquet. Each original HIFLD dataset is archived as its own Parquet file; records are spatially sorted to geohash level 8, which makes bounding-box scans cheap. Covers the full HIFLD subject range including energy (substations, transmission, power plants), communications (towers, cellular, microwave), water, government facilities, and emergency services.",
+      "provenance_tier": "P3",
+      "access_method": "S3-compatible object storage via the Source Cooperative data proxy \u2014 no authentication required. List: aws s3 ls s3://seerai/hifld --endpoint-url https://data.source.coop --no-sign-request. Read directly with DuckDB (httpfs/spatial extensions), GeoPandas, or Sedona without downloading the whole corpus.",
+      "format": "GeoParquet, spatially sorted",
+      "value": "critical",
+      "axes_served": [
+        "substations",
+        "transmission",
+        "power plants",
+        "communications",
+        "government facilities",
+        "full HIFLD snapshot"
+      ],
+      "rate_limits": "Unmetered anonymous S3-style reads through the Source proxy. Practical constraint is your own egress.",
+      "robots_posture": "Explicitly published for open programmatic access; the Source Cooperative data proxy is designed for unauthenticated AWS CLI / S3 client use.",
+      "search_technique": "This is the right corpus for a one-time full ingest into PostGIS. Use DuckDB: INSTALL httpfs; INSTALL spatial; then SELECT * FROM read_parquet('s3://seerai/hifld/<dataset>/*.parquet') with a bbox predicate. Because it is a FROZEN 2025 snapshot and the NASA/PASDA mirrors are live, diffing the two is itself an evidence source: a facility that appears in the frozen archive but not in the live mirror has been removed since, and the register should record that movement.",
+      "notes": "Access docs: https://docs.source.coop/data-proxy and https://github.com/source-cooperative/data.source.coop. Parallel preservation efforts worth holding as independent copies: DataLumos 'HIFLD OPEN GIS Data Index and Crosswalk' (https://www.datalumos.org/datalumos/project/241367/version/V1/view \u2014 an ICPSR-hosted index/crosswalk, valuable for mapping old HIFLD layer names to new homes) and the Data Rescue Project's 400+ dataset snapshot (https://www.datarescueproject.org/hifld-data-saved/). Post-shutdown continuation: 'HIFLD Next' from Public Environmental Data Partners / Fulton Ring (https://screening-tools.com/blog/hifld-next-restoring-americas-infrastructure-datasets), 400+ layers. DHS's remaining public page: https://www.dhs.gov/gmo/hifld; the surviving public archive at Naval Postgraduate School CHDS: https://www.hsdl.org/hifld/. HIFLD Secure (commercially licensed + CUI layers) requires a GII account and an approved Data Use Agreement \u2014 that is a documented, deliberate access wall, not an oversight."
+    },
+    {
+      "name": "EIA U.S. Energy Atlas",
+      "url": "https://atlas.eia.gov/",
+      "holdings": "84 map layers, 60 of them derived directly from EIA survey instruments: power plants (point, with plant ID, nameplate capacity, prime mover, primary fuel), substations, transmission lines, natural gas pipelines and compressor stations, petroleum product pipelines, storage facilities, natural gas processing plants, refineries, coal mines, and terminals. Plant records key to EIA Plant Code, which is the join key to EIA-860 and EIA-923.",
+      "provenance_tier": "P1",
+      "access_method": "ArcGIS Hub with per-dataset download and API links. Every layer exposes CSV, KML, Shapefile, GeoJSON, GeoTIFF/PNG downloads plus GeoServices REST, WMS, and WFS endpoints.",
+      "format": "GeoJSON / CSV / Shapefile / Esri FeatureServer / WMS / WFS",
+      "value": "high",
+      "axes_served": [
+        "power plants",
+        "substations",
+        "transmission",
+        "fuel logistics",
+        "pipeline routes"
+      ],
+      "rate_limits": "ArcGIS Hub paging (maxRecordCount) applies to the REST endpoints; the flat file downloads have no throttle.",
+      "robots_posture": "Unverified from this session; EIA publishes these explicitly as open data with documented API links, so programmatic use is intended.",
+      "search_technique": "Power Plants layer item id bf5c5110b1b944d299bb683cdbd02d2a. HARDENING PATTERN: the fuel-logistics layers are underused for this beat. A petroleum product pipeline spur or a bulk fuel terminal that terminates at a location with no refinery, no airport, and no visible industrial customer is a fuel-supply signature for a facility with very large standby generation. Similarly, a natural gas lateral to nowhere. Pair with the UST/Tier II fuel-quantity sources below."
+    },
+    {
+      "name": "EIA Form EIA-860 / EIA-860M / EIA-923 and the EIA API v2",
+      "url": "https://www.eia.gov/electricity/data/eia860/",
+      "holdings": "EIA-860: generator-level detail for every plant \u22651 MW combined nameplate capacity \u2014 operator, plant location (lat/long, county, FIPS), unit type, prime mover, in-service date, retirement date, energy source, nameplate capacity, summer/winter capability, and associated environmental equipment. EIA-860M: preliminary monthly generator inventory, so new units appear before the annual form. EIA-923: monthly plant-level generation and fuel consumption. Historical EIA-860A/860B predecessor data is bundled.",
+      "provenance_tier": "P1",
+      "access_method": "Annual/monthly Excel and CSV ZIP downloads from eia.gov; plus the EIA API v2 (https://www.eia.gov/opendata/) with a free registered API key, exposing route-based facet queries over the electricity series.",
+      "format": "XLSX and CSV bulk; JSON over the API v2",
+      "value": "high",
+      "axes_served": [
+        "generation capacity",
+        "plant location",
+        "in-service/retirement dates",
+        "fuel type"
+      ],
+      "rate_limits": "API v2 requires a free API key; per-key request limits apply but are generous for research volumes. Bulk files unlimited.",
+      "robots_posture": "Explicitly open data with a published API; intended for programmatic reuse.",
+      "search_technique": "HARDENING PATTERN \u2014 and be honest about the limit here: EIA-860 covers GENERATION, not CONSUMPTION, and the 1 MW threshold means a facility's standby diesel fleet often falls outside it or is reported only as 'behind the meter'. What it does reveal: a registered generating unit with prime mover 'IC' (internal combustion) or 'GT', fuel 'DFO' (distillate fuel oil), sizeable nameplate capacity, and a plant name that is a bare place name or a numeric designator, sited at coordinates with no visible power plant. Also useful: units flagged as non-utility / behind-the-meter at a location with no identifiable industrial host. For the corporate-bunker typology, the 1-MW threshold catches large data-centre generator farms that self-report.",
+      "notes": "Strongly prefer the normalised version: PUDL (Public Utility Data Liberation, Catalyst Cooperative) at https://docs.catalyst.coop/pudl/ ingests EIA-860, 860M, 923, the EIA bulk API, FERC Form 1, and FERC EQR into a single cleaned relational database with stable entity IDs and cross-form crosswalks, published as SQLite/Parquet. It resolves the plant-ID churn and utility-name inconsistency that will otherwise eat weeks. PUDL is P3 (derived) but its provenance is documented per-field."
+    },
+    {
+      "name": "FERC eLibrary",
+      "url": "https://elibrary.ferc.gov/",
+      "holdings": "Every document submitted to or issued by FERC since 1981, searchable by docket number, accession number, filing date, filer, and full text. For this beat: transmission line certificate applications and their environmental exhibits (which name the loads a line is being built to serve), interconnection agreements, natural gas pipeline certificate filings with route maps and compressor station siting, and FERC Form 1 utility annual reports.",
+      "provenance_tier": "P1",
+      "access_method": "Web search form (General Search subsumes the old General/Advanced/Daily forms). No official public API; an unofficial wrapper exists at https://github.com/4very/ferc-elibrary-api. Bulk FERC databases (Form 1, Form 2, EQR) are separately downloadable at https://www.ferc.gov/download-database.",
+      "format": "HTML search results; documents are PDF (frequently scanned, OCR required for pre-2000)",
+      "value": "high",
+      "axes_served": [
+        "transmission siting rationale",
+        "named loads",
+        "pipeline routes",
+        "utility financials"
+      ],
+      "rate_limits": "Undocumented; the search app is heavy. Throttle hard. A backup instance exists at elibrary-backup.ferc.gov.",
+      "robots_posture": "Unverified. Government transactional search app \u2014 crawl conservatively, prefer the bulk database downloads for anything volume.",
+      "search_technique": "Full-text search eLibrary for 'critical defense facility', 'national security', 'Department of Defense load', 'government facility' within transmission certificate dockets. HARDENING PATTERN: transmission and interconnection filings must justify the line, and the justification names the customer. A 115 kV or 230 kV radial justified by a single unnamed 'federal customer' or by a load forecast with no corresponding population or industry is a direct hit. IMPORTANT ACCESS WALL: the most useful transmission detail \u2014 FERC Form 715 transmission planning studies and detailed one-line diagrams \u2014 is designated CEII (Critical Energy/Electric Infrastructure Information) and is NOT public. CEII requests require a justified application under 18 CFR 388.113 and are routinely denied to researchers. Record that boundary in the register rather than pretending around it."
+    },
+    {
+      "name": "FERC Electric Quarterly Reports (EQR) bulk database",
+      "url": "https://www.ferc.gov/power-sales-and-markets/electric-quarterly-reports-eqr",
+      "holdings": "All physical wholesale power contracts and transactions filed by jurisdictional sellers since 2013 (with earlier data in a legacy format): buyer, seller, contract terms, delivery point, price, quantity, product type, for cost-based and market-based sales and transmission service. Over 4 billion transaction rows.",
+      "provenance_tier": "P1",
+      "access_method": "Bulk download of quarterly ZIPs from https://www.ferc.gov/download-database. Each outer ZIP contains one inner ZIP per respondent per quarter; each inner ZIP contains one CSV per table (4 tables). XML variant also offered.",
+      "format": "Nested ZIP \u2192 CSV (and XML)",
+      "value": "moderate",
+      "axes_served": [
+        "power purchase counterparties",
+        "delivery points",
+        "contract terms"
+      ],
+      "rate_limits": "HARD LIMIT, documented: only three users may download simultaneously. Compressed database exceeds 15.5 GB. FERC explicitly advises scheduling pulls for off-peak hours (nights, Sundays).",
+      "robots_posture": "Bulk download intended for public analysis; respect the concurrency cap, which is a stated technical limit not a guess.",
+      "search_technique": "HARDENING PATTERN: query the contracts table for customer_name matching federal agencies \u2014 'United States', 'Department of Energy', 'Department of Defense', 'General Services Administration', 'Department of the Army', 'National Nuclear Security', 'Federal Aviation Administration' \u2014 and read the delivery-point field. A federal power purchase with a named delivery point at a substation serving nowhere obvious is a strong locate. Also query for delivery points that are named substations you have already flagged as anomalous radials.",
+      "notes": "PUDL has done the ingestion work and documents the EQR schema at https://docs.catalyst.coop/pudl/en/latest/data_sources/ferceqr.html and the parsing pain at https://catalyst.coop/2025/11/17/capturing-the-elusive-ferc-eqr/. Commercial repackaging exists (Yes Energy) \u2014 paywalled, avoid."
+    },
+    {
+      "name": "EPA ECHO \u2014 ICIS-Air bulk downloads and REST services",
+      "url": "https://echo.epa.gov/tools/data-downloads/icis-air-download-summary",
+      "holdings": "Every Clean Air Act stationary source in ICIS-Air: facility identity, location (lat/long), operating status (planned/under construction/operating/temporarily closed/seasonal/permanently closed), NAICS/SIC, and a repeating 'Air Program' block recording every regulatory programme the facility is subject to \u2014 SIP, NSPS, NESHAP, PSD, Title V \u2014 with pollutant-level detail. Includes NESHAP Subpart ZZZZ (RICE \u2014 Reciprocating Internal Combustion Engines), which is the regulatory hook for stationary emergency/standby generators.",
+      "provenance_tier": "P1",
+      "access_method": "Bulk CSV ZIP downloads at https://echo.epa.gov/tools/data-downloads plus a documented REST API (ECHO REST Services) supporting facility search by geography, programme, and NAICS. The R package 'echor' wraps it.",
+      "format": "CSV bulk; JSON/CSV/GeoJSON over REST",
+      "value": "critical",
+      "axes_served": [
+        "air permits",
+        "standby generator regulation",
+        "facility location",
+        "operating status",
+        "fuel combustion"
+      ],
+      "rate_limits": "REST services are rate-limited but undocumented in specifics; bulk files are unrestricted and are the correct route for full-corpus work.",
+      "robots_posture": "Explicitly an open-data programme with a published API; programmatic use intended.",
+      "search_technique": "HARDENING PATTERN \u2014 this is the sharpest single generator signal available. Filter ICIS-Air for facilities with a NESHAP Subpart ZZZZ programme block, then join to the facility location and to building footprints. A facility permitted for stationary RICE engines with substantial aggregate horsepower, at coordinates where imagery shows only a small surface structure, a fenced pad, and a large fuel tank farm, is a hardened-facility signature. Refinements: (a) the ratio of permitted generator capacity to visible building floor area \u2014 a facility permitted for many megawatts of standby power with a 3,000 sq ft above-ground footprint has its load somewhere else; (b) facilities that hold a Title V (major source) permit purely on the basis of emergency engines, which implies a very large engine fleet; (c) operating_status='operating' at a site with no NAICS that plausibly needs backup power. The facility identifier format ZZZZZNNNNNSSSSS (ZIP + 5 name consonants + 5 address chars) is useful for deduplicating across EPA systems.",
+      "notes": "NESHAP ZZZZ background: https://www.epa.gov/stationary-engines/national-emission-standards-hazardous-air-pollutants-reciprocating-internal-0. Electronic reporting for RICE was expanded in 2024 (89 FR, https://www.federalregister.gov/documents/2024/08/30/2024-18766/), which improves forward coverage but not the historical record."
+    },
+    {
+      "name": "EPA National Emissions Inventory (NEI) \u2014 point source file",
+      "url": "https://www.epa.gov/air-emissions-inventories/national-emissions-inventory-nei",
+      "holdings": "Triennial facility-, unit-, and process-level emissions inventory. The point source file gives, per emissions unit: facility ID and coordinates, unit design capacity, Source Classification Code (SCC), throughput, operating hours per year, and annual emissions by pollutant. SCCs for stationary internal combustion \u2014 the 2-02-001-xx family for industrial distillate-oil reciprocating engines and the emergency-generator variants \u2014 let you isolate standby generation from process combustion.",
+      "provenance_tier": "P1",
+      "access_method": "Bulk download of the NEI data files (CSV/zipped flat files) per inventory year. The SCC vocabulary is queryable via the SCC Search Tool / web service at https://sor.epa.gov/sor_internet/registry/scc/ and https://ofmpub.epa.gov/sccwebservices/sccsearch/.",
+      "format": "Zipped CSV flat files",
+      "value": "high",
+      "axes_served": [
+        "generator capacity",
+        "fuel throughput",
+        "operating hours",
+        "facility coordinates",
+        "triennial change"
+      ],
+      "rate_limits": "Bulk files; none. The SCC web service is a small lookup API.",
+      "robots_posture": "Open data programme; bulk files published for reuse.",
+      "search_technique": "HARDENING PATTERN: NEI carries DESIGN CAPACITY and ANNUAL OPERATING HOURS per unit, which ECHO does not. That combination is the discriminator. A genuine emergency generator runs 50\u2013100 hours/year for testing; a unit reporting 8,000 hours is prime power, meaning the site is off-grid or grid-independent by design \u2014 which is exactly what a hardened facility looks like. Conversely, an enormous aggregate design capacity with near-zero operating hours means a very large standby fleet held in readiness. Query: SCC LIKE '2020%' or '20200102' (distillate-oil reciprocating engines) AND design_capacity high AND facility has no NAICS consistent with the capacity. Then diff across NEI cycles (2011/2014/2017/2020/2023) \u2014 a site whose generator fleet grows without any corresponding above-ground construction is the anomaly you want.",
+      "notes": "SCC primer: https://sor.epa.gov/sor_internet/registry/scc/SCC-IntroToSCCs_2023.pdf. NEI point-source files are large and the SCC vocabulary has changed across cycles \u2014 carry the vintage-specific SCC table with each year's data."
+    },
+    {
+      "name": "EPA UST Finder \u2014 national underground storage tank composite",
+      "url": "https://www.epa.gov/land-research/underground-storage-tank-ust-finder",
+      "holdings": "State-sourced national composite of underground storage tanks and leaking USTs as of 2018\u20132021: approximately 800,000 UST facilities, 2.2 million active and historic tanks, ~500,000 historical LUST sites and ~64,000 active LUST sites. Per-tank attributes: tank status, installation date, decommission date, wall type, capacity, and substance stored.",
+      "provenance_tier": "P1",
+      "access_method": "ArcGIS Hub feature layer (item 5a3ae0ed53564b6fa519f08e30e79e93, 'UST Finder Feature Layer 2021'), downloadable as shapefile/GeoJSON/CSV and queryable via the ArcGIS REST /query endpoint. Also served via EPA GeoPlatform.",
+      "format": "Esri FeatureServer / shapefile / GeoJSON / CSV",
+      "value": "high",
+      "axes_served": [
+        "fuel storage capacity",
+        "tank installation dates",
+        "substance stored",
+        "facility location"
+      ],
+      "rate_limits": "ArcGIS Hub paging applies; bulk export unrestricted.",
+      "robots_posture": "Open EPA research product published on ArcGIS Hub for download.",
+      "search_technique": "HARDENING PATTERN: filter for substance='diesel' or 'fuel oil' AND aggregate facility tank capacity in the tens of thousands of gallons or more, at a facility whose land use is not fuel retail, transport, agriculture, or a hospital. A 60,000-gallon underground diesel farm at a rural coordinate with a single small building is generator fuel for something with a long autonomy requirement. Second pattern: installation_date clustered in 1959\u20131965 \u2014 Cold War vintage \u2014 with the tank still in 'active' status. Third: compare tank capacity against the RICE/NEI permitted generator capacity at the same coordinates; the ratio gives you a rough autonomy in days, and multi-week autonomy is a continuity-of-operations design requirement, not a commercial one.",
+      "notes": "Fact sheet with the data model: https://www.epa.gov/sites/default/files/2020-09/documents/about_ust_finder_-_fact_sheet_final_9-24-2020_508.pdf. Note the coverage boundary: this is UNDERGROUND tanks only. Very large diesel farms at data centres and hardened sites are increasingly ABOVEGROUND (ASTs), which UST Finder misses entirely \u2014 for those you need Tier II and SPCC."
+    },
+    {
+      "name": "EPCRA Tier II hazardous chemical inventories (state repositories + E-Plan)",
+      "url": "https://www.epa.gov/epcra",
+      "holdings": "Annual facility-level inventories of hazardous chemicals stored above threshold, filed under EPCRA \u00a7312. For this beat the payload is DIESEL FUEL and FUEL OIL quantities \u2014 maximum amount on site, average daily amount, number and type of containers, storage pressure/temperature, and a site plan with container locations. Diesel threshold is generally 10,000 lb (~1,500 gal), with a 100,000-gallon threshold carve-out only for compliant retail motor-fuel USTs \u2014 so any non-retail facility storing meaningful generator fuel is captured. E-Plan (UT Dallas, under EPA cooperative agreement) is the largest single repository: ~200,000 facilities and 24,000+ unique chemicals.",
+      "provenance_tier": "P2",
+      "access_method": "NOT openly machine-accessible. Filings go to the State Emergency Response Commission, the Local Emergency Planning Committee, and the local fire department. E-Plan (https://erplan.net/) is access-controlled to credentialed first responders. Public access is via state-by-state public-records request under EPCRA \u00a7324, which grants a public right of access to Tier II forms on written request. Some states publish partial data proactively (Texas, Minnesota, Washington have had public Tier II query tools at various times); most do not.",
+      "format": "Tier2 Submit XML/T2S files at source; delivered as PDF or spreadsheet in response to records requests",
+      "value": "high",
+      "axes_served": [
+        "fuel storage quantity (aboveground and underground)",
+        "container inventory",
+        "site plans",
+        "annual change"
+      ],
+      "rate_limits": "N/A \u2014 request-based, 50 state processes, varying fees and turnaround.",
+      "robots_posture": "N/A. Do not attempt to access E-Plan; it is credentialed for emergency responders and unauthorised access would be improper regardless of technical feasibility.",
+      "search_technique": "This is a FOIA/records-request pipeline, not a harvester. Workflow: identify a candidate coordinate from the machine-readable sources above, determine the county LEPC and the SERC, then file a \u00a7324 request naming the facility. HARDENING PATTERN when the record arrives: an aggregate diesel inventory that implies weeks of generator autonomy; a chemical list including large stocks of sodium hydroxide or lithium hydroxide (CO2 scrubbing for a sealed environment); large halon or FM-200/Novec inventories (total-flood suppression for an unoccupied equipment space); large sulphuric acid volumes (flooded-cell station battery banks sized for a UPS plant, not a building). The COMBINATION of scrubber chemistry plus multi-week fuel autonomy plus a station battery plant is close to dispositive for a sealed, occupiable, hardened space. IMPORTANT: federal facilities' Tier II filings are frequently withheld or redacted, and EPCRA reporting by federal agencies has historically been inconsistent \u2014 record the non-response as evidence of its own kind, not as a null."
+    },
+    {
+      "name": "Virginia DEQ \u2014 Issued Air Permits for Data Centers",
+      "url": "https://www.deq.virginia.gov/news-info/shortcuts/permits/air/issued-air-permits-for-data-centers",
+      "holdings": "A state agency page that publishes the actual issued minor-NSR air permits for data centres, with the permitted generator fleet enumerated: engine count, individual engine rating, Tier certification level, fuel type, permitted annual runtime hours, and emission limits. Loudoun County alone has roughly 4,700 permitted emergency generators (~4,021 Tier II diesel, ~130 Tier IV) across data centres. Virginia updated its BACT presumption for data-centre gensets effective for applications received on or after 1 July 2026 (SCR + DOC + DPF, i.e. Tier 4-equivalent controls).",
+      "provenance_tier": "P1",
+      "access_method": "HTML page linking to per-permit PDFs; also the general VA DEQ air permit search. Comparable state pages exist elsewhere \u2014 this is the model to replicate state by state.",
+      "format": "PDF permits (text-layer, generally not scanned)",
+      "value": "high",
+      "axes_served": [
+        "generator fleet size and rating",
+        "permitted runtime",
+        "fuel type",
+        "corporate-bunker typology"
+      ],
+      "rate_limits": "None published; small site, crawl politely.",
+      "robots_posture": "Unverified from this session. State agency permit publication page; single crawl with caching is appropriate.",
+      "search_technique": "HARDENING PATTERN for the corporate-bunker typology: parse permits for aggregate generator MW and permitted non-emergency runtime hours. A permit authorising NON-emergency operation (demand response / grid support) means the site is designed to island and run for extended periods \u2014 a hardening characteristic dressed as an economics play. Track the December 2025 Virginia proceeding on expanding permitted diesel runtime (https://townhall.virginia.gov/l/ViewNotice.cfm?gnid=2538) as it produces a documentary record of exactly how much autonomy operators want. Generalise the method: every state with data-centre concentration (VA, OH, GA, TX, AZ, IA, OR) has an equivalent minor-NSR permit series."
+    },
+    {
+      "name": "Colorado Division of Water Resources \u2014 CDSS HydroBase REST API",
+      "url": "https://dwr.state.co.us/rest/get/help",
+      "holdings": "Full well permit and well construction record set for Colorado, queryable by field: permit number, receipt, location (PLSS section/township/range and lat/long), permitted use, aquifer, total depth, static water level, yield, pump rate, and the well's water-right association. Also groundwater levels, structures, diversion records, and water rights.",
+      "provenance_tier": "P1",
+      "access_method": "REST API at https://dwr.state.co.us/rest/get/api/v2 with self-documenting help at /rest/get/help. Free API key available on request to raise query limits. Also a map viewer at https://maps.dnrgis.state.co.us/dwr/Index.html?viewer=dwrwellpermit and flat downloads via CDSS and the Colorado Information Marketplace.",
+      "format": "JSON / CSV over HTTP GET",
+      "value": "high",
+      "axes_served": [
+        "well depth",
+        "aquifer",
+        "permitted use",
+        "yield",
+        "location"
+      ],
+      "rate_limits": "Query limits enforced per-caller; a free API key raises them. Documented in the /rest/get/help pages.",
+      "robots_posture": "Purpose-built public REST API; programmatic use explicitly supported and keyed.",
+      "search_technique": "HARDENING PATTERN \u2014 the anomalous-well test, done properly: for each PLSS township, compute the distribution of total_depth for wells with permitted_use in ('irrigation','domestic','stock'). Then flag wells whose total_depth exceeds the local 95th percentile by a wide margin AND whose permitted use is 'commercial', 'industrial', 'other', or is coded to a government applicant. A 1,200-ft well in a township where agricultural wells bottom out at 250 ft, drilled for a non-agricultural use, on a parcel with no visible facility, means someone needed water independent of the municipal system and independent of the shallow aquifer that a siege or contamination event would compromise. Second signal: yield/pump rate far exceeding domestic norms at a site with one small building \u2014 that is cooling water or a fire-suppression reserve for a large equipment load. Third: multiple wells permitted to the same applicant at one location (primary + backup), which is a redundancy requirement, not a farm.",
+      "notes": "CDSS datastore reference documentation, which enumerates every queryable field: https://opencdss.state.co.us/statedmi/latest/doc-user/datastore-ref/ColoradoHydroBaseRest/ColoradoHydroBaseRest/ \u2014 this is the single best field-level reference for the API and is easier to work from than the raw help endpoint."
+    },
+    {
+      "name": "Texas Water Development Board \u2014 Submitted Driller's Reports (SDR) database",
+      "url": "https://www.twdb.texas.gov/groundwater/data/drillersdb.asp",
+      "holdings": "~680,000 statewide well records submitted by licensed drillers to TDLR from February 2001 to present: well location, well type, proposed use, county, owner name, completion date, borehole depth, casing and screen intervals, lithologic log, static water level, and yield. Complements the older TWDB Groundwater Database (GWDB) for pre-2001 wells.",
+      "provenance_tier": "P1",
+      "access_method": "Bulk download of the complete database as pipe-delimited text files of every SDR table, refreshed NIGHTLY. A GIS shapefile of SDR well locations is also refreshed nightly. Interactive submission/retrieval system (TWRSRS) at https://www.twdb.texas.gov/groundwater/data/twrsrsguide.asp. Also mirrored on the Texas Water Data Hub (CKAN) at https://txwaterdatahub.org/dataset/submitted-drillers-report-database and a TACC CKAN instance.",
+      "format": "Pipe-delimited text (bulk); shapefile (locations)",
+      "value": "high",
+      "axes_served": [
+        "well depth",
+        "lithology",
+        "yield",
+        "owner",
+        "proposed use"
+      ],
+      "rate_limits": "Bulk nightly files; no throttle. CKAN mirrors provide a stable API for metadata.",
+      "robots_posture": "Published for bulk download with a documented nightly refresh; reuse intended.",
+      "search_technique": "Same percentile-anomaly method as Colorado, but Texas gives you the LITHOLOGIC LOG as free text, which is a bonus: the driller's log describes the formation, and a log recording competent rock (limestone, granite, shale) at shallow depth on a site of interest is independent corroboration of a geology suitable for excavation. Query the owner field for federal agency strings. HARDENING PATTERN: proposed_use='industrial' or 'other', borehole_depth far above county norm, owner is a government entity or an anonymous LLC, and the location is not near any municipality.",
+      "notes": "NGWA overview of the SDR schema and quirks: https://www.ngwa.org/docs/default-source/default-document-library/membership/20171011_state-of-texas-submitted-drillers-reports-database-(sdr).pdf. As of April 2026 the TWDB groundwater reports pages have been intermittently down; use the txwaterdatahub.org / CKAN mirrors as fallback."
+    },
+    {
+      "name": "Nevada Division of Water Resources \u2014 Well Driller Reports (NDWR Open Data)",
+      "url": "https://data-ndwr.hub.arcgis.com/datasets/NDWR::well-driller-reports/about",
+      "holdings": "Location and site attributes of every drilled well in Nevada from the NDWR Well Log SQL Server database, including depth, completion, and two derived fields computed by NDWR: specific capacity and transmissivity. Refreshed EVERY BUSINESS DAY by a Python job against the source database.",
+      "provenance_tier": "P1",
+      "access_method": "ArcGIS Hub download plus a live REST endpoint at https://arcgis.water.nv.gov/arcgis/rest/services/NDWR/Well_Driller_Reports/FeatureServer (and MapServer). Interactive text search at https://tools.water.nv.gov/WellLogQuery.aspx",
+      "format": "Esri FeatureServer / shapefile / GeoJSON / CSV",
+      "value": "high",
+      "axes_served": [
+        "well depth",
+        "specific capacity",
+        "transmissivity",
+        "location"
+      ],
+      "rate_limits": "ArcGIS maxRecordCount paging; state server, so keep concurrency low.",
+      "robots_posture": "Published as an open-data hub dataset with a documented daily refresh; programmatic access intended.",
+      "search_technique": "Nevada matters disproportionately for this beat because of the federal land fraction and the facility density. Apply the depth-percentile anomaly per hydrographic basin (Nevada's water administration is basin-based, so basin is the right normalisation unit, not county). HARDENING PATTERN: deep well, high specific capacity, inside or adjacent to a federal withdrawal, with no agricultural context. Cross-reference against the Nevada state water-rights permit records for the point of diversion holder \u2014 a federal agency or a contractor as the permit holder is the tell."
+    },
+    {
+      "name": "Arizona Department of Water Resources \u2014 Wells55 registry and GWSI",
+      "url": "https://new.azwater.gov/permitting-wells/wells-data",
+      "holdings": "Wells55 is the complete registry of every well registered in Arizona (registry ID, owner, location by PLSS and coordinates, drill date, casing depth, well depth, water level, pump capacity, permitted use). GWSI (Groundwater Site Inventory) is the field-verified subset \u2014 ADWR staff have physically visited and measured these sites, so GWSI records carry higher confidence and continuing water-level time series.",
+      "provenance_tier": "P1",
+      "access_method": "ADWR publishes ZIP files of raw database extracts (GWSI tables last refreshed 2026-07-14 as of writing). Interactive Wells55 app at https://gisweb3.azwater.gov/WellReg and a record search at https://www.azwater.gov/permitting-wells/well-record-search. GIS layers at https://www.azwater.gov/gis-data-and-maps and mirrored on ArcGIS Hub (item a8fd16cca9494bd5bf0f10c7d92ad8dd).",
+      "format": "ZIP of raw database tables; ArcGIS feature layers",
+      "value": "moderate",
+      "axes_served": [
+        "well depth",
+        "owner",
+        "permitted use",
+        "field-verified water levels"
+      ],
+      "rate_limits": "Bulk ZIPs; none. gisweb3 app should be used interactively only.",
+      "robots_posture": "ADWR publishes raw-data ZIPs explicitly for download.",
+      "search_technique": "Same depth-anomaly method, normalised by ADWR groundwater basin / sub-basin (Arizona's AMAs and INAs are the meaningful units). The GWSI/Wells55 split is analytically useful: a well that appears in Wells55 but was never field-verified into GWSI, at a location ADWR staff would ordinarily visit, may indicate access was denied.",
+      "notes": "GWSI Database Handbook (2021) documents every table and field: https://www.azwater.gov/sites/default/files/2022-12/GWSI_DatabaseHandbook2021.pdf"
+    },
+    {
+      "name": "Utah Division of Water Rights \u2014 well logs and water right records",
+      "url": "https://waterrights.utah.gov/wellinfo/",
+      "holdings": "Well drilling records (WELLDRILL) with driller's logs, plus the complete water-right documentary file \u2014 applications, correspondence, proofs \u2014 scanned to PDF for every water right in the state, with a structured database of key fields per right. Well log search supports location search by PLSS section or by radius, and map search.",
+      "provenance_tier": "P1",
+      "access_method": "Web query forms: well log search at https://waterrights.utah.gov/wellinfo/wellsearch.asp, water right search at https://waterrights.utah.gov/search/, records query at https://waterrights.utah.gov/wrinfo/query.asp. No documented REST API; the forms are GET-parameterised and scriptable. Statistics pages at /wellinfo/stats2k/ give the baseline distributions you need for anomaly detection.",
+      "format": "HTML result tables; scanned PDF documentary files (OCR required)",
+      "value": "moderate",
+      "axes_served": [
+        "well depth",
+        "water right ownership",
+        "documentary correspondence"
+      ],
+      "rate_limits": "Undocumented; modest state server, throttle to \u22641 req/sec.",
+      "robots_posture": "Unverified. Public records search app \u2014 crawl conservatively.",
+      "search_technique": "Utah's distinguishing feature is the SCANNED DOCUMENTARY FILE per water right, which includes correspondence. For a candidate site, pull the water right's full file and OCR it \u2014 applications by federal agencies and their contractors, and the agency correspondence about them, are in there and frequently describe the intended use in prose. Use the radius search around a candidate coordinate rather than trying to enumerate."
+    },
+    {
+      "name": "USGS National Water Information System (NWIS) \u2014 Site Service",
+      "url": "https://waterservices.usgs.gov/docs/site-service/site-service-details/",
+      "holdings": "Millions of hydrologic sites nationally with construction metadata, including well_depth_va (total well depth), hole_depth_va (borehole depth), aqfr_cd (aquifer code), alt_va (altitude), and site type codes. National, single-schema, and therefore the right instrument for cross-state normalisation where a state database is closed or awkward.",
+      "provenance_tier": "P1",
+      "access_method": "REST over HTTP GET. Site service supports stateCd, countyCd, huc, bBox, and site filters with siteOutput=expanded to get the construction fields. Output formats: RDB (tab-delimited, the legacy but most complete format), JSON, WaterML 1.2, KML.",
+      "format": "RDB (tab-delimited with a header comment block and a format-spec line), JSON, WaterML, KML",
+      "value": "high",
+      "axes_served": [
+        "well depth",
+        "aquifer",
+        "altitude",
+        "national normalisation"
+      ],
+      "rate_limits": "Public service, generous but not unlimited; USGS asks for reasonable use and a descriptive User-Agent. Large state-wide pulls should be chunked by county.",
+      "robots_posture": "Documented public web service designed for programmatic access.",
+      "search_technique": "GET https://waterservices.usgs.gov/nwis/site/?format=rdb&stateCd=CO&siteType=GW&siteOutput=expanded&hasDataTypeCd=gw \u2014 then parse well_depth_va. PARSING GOTCHA: the RDB format has a leading block of '#' comment lines, then a header line, then a FORMAT SPEC line (e.g. '5s 15s 12n') that is not data \u2014 naive readers ingest it as the first row. NWIS coverage of private and industrial wells is far thinner than a state driller-report database, so use NWIS for the national baseline distribution and the state databases for the individual anomalies.",
+      "notes": "Complementary: dataRetrieval (R) and the NWIS mapper at https://apps.usgs.gov/nwismapper/. Note that NWIS is mid-migration to the Water Data for the Nation platform; legacy waterdata.usgs.gov endpoints are being progressively retired, so pin your endpoints and expect breakage."
+    },
+    {
+      "name": "OpenStreetMap power/telecom layer via Overpass API and Open Infrastructure Map",
+      "url": "https://openinframap.org/",
+      "holdings": "Community-mapped electricity, telecoms, water, petroleum, and microwave communications infrastructure: power=substation (with voltage, operator, name), power=line and power=minor_line (voltage, cables, circuits), power=tower/pole, power=generator, power=plant, telecom=* , man_made=communications_tower, man_made=mast, and \u2014 directly relevant \u2014 military=bunker, building=bunker, bunker_type=*, and man_made=water_well. OpenInfraMap renders these as themed overlays including a dedicated microwave communications layer.",
+      "provenance_tier": "P4",
+      "access_method": "Overpass API (https://overpass-api.de/api/interpreter, plus mirrors) for targeted queries; full-planet or regional .osm.pbf extracts (Geofabrik) for bulk. OpenInfraMap itself is a renderer, not a data source \u2014 go to the underlying OSM data.",
+      "format": "Overpass XML/JSON; .osm.pbf for bulk",
+      "value": "high",
+      "axes_served": [
+        "substations",
+        "transmission topology",
+        "towers",
+        "bunker tagging",
+        "water wells",
+        "operator names"
+      ],
+      "rate_limits": "Overpass public instances enforce strict per-IP timeout and slot limits and will 429 you. For anything at scale, use a Geofabrik regional extract with osm2pgsql instead of hammering Overpass \u2014 this is the correct engineering choice, not a workaround.",
+      "robots_posture": "OSM data is ODbL-licensed; attribution and share-alike obligations attach to any derived database you publish. This has real consequences for the register's licensing \u2014 record it. Overpass public instances publish usage policies that must be honoured.",
+      "search_technique": "Overpass QL for the bunker set: [out:json];(nwr[\"military\"=\"bunker\"](bbox);nwr[\"building\"=\"bunker\"](bbox);nwr[\"bunker_type\"](bbox););out center tags; \u2014 then for the power correlation: nwr[\"power\"=\"substation\"](bbox);out center tags;. HARDENING PATTERN: a power=substation with a voltage tag \u2265115000 whose only outgoing power=line terminates at a node with no power=plant and no settlement \u2014 a high-voltage radial to nothing. Second: a power=line ending at a point tagged nothing at all, which OSM mappers frequently do when they can trace pylons on imagery but cannot identify the destination. Those dead-end traced lines are, empirically, one of the better citizen-generated leads in this beat. IMPORTANT PROVENANCE CAVEAT: OSM bunker and military tagging is heavily contaminated by hearsay and by armchair mapping from imagery. Treat every OSM bunker tag as a CLAIM to be sourced backwards \u2014 check the changeset, the mapper, and the source=* tag. Many such nodes trace to a single blog post."
+    },
+    {
+      "name": "PeeringDB API",
+      "url": "https://www.peeringdb.com/apidocs/",
+      "holdings": "Voluntary but near-comprehensive registry of interconnection facilities and networks. Objects: org, fac (colocation facility \u2014 name, address, city, country, latitude, longitude, operator, CLLI where supplied), ix (exchange), net (network/ASN), poc (contacts); derived: ixlan, ixpfx, netixlan, netfac (which networks are present in which facility), ixfac. For the corporate-bunker typology this is the authoritative map of where networks physically terminate.",
+      "provenance_tier": "P2",
+      "access_method": "REST at https://www.peeringdb.com/api/{object}. Field-name URL parameters for filtering; numeric fields support __lt/__lte/__gt/__gte/__in; string fields support __contains/__startswith/__in (all case-insensitive); the `since=<unix timestamp>` parameter returns everything modified since, which makes incremental sync trivial. Anonymous access is heavily rate-limited; an API key raises limits substantially.",
+      "format": "JSON",
+      "value": "high",
+      "axes_served": [
+        "datacenter facility location",
+        "network presence",
+        "interconnection density",
+        "operator identity"
+      ],
+      "rate_limits": "Anonymous requests are throttled aggressively and some fields (contacts) are hidden without authentication. Register for an API key. Use `since=` for deltas rather than re-pulling.",
+      "robots_posture": "Documented public API with an explicit key-based tiering model; automated use is the intended mode.",
+      "search_technique": "GET /api/fac?country=US&depth=0 for the facility universe, then /api/netfac?fac_id=N for occupancy. HARDENING PATTERN for the corporate-bunker typology: facilities whose name or notes contain 'bunker', 'underground', 'cave', 'mine', 'vault', 'hardened', 'SCIF', 'Level 3 secure' \u2014 these are marketed features, so operators say so. Then cross-check the coordinate against USGS topo history for a former mine or quarry (the Iron Mountain / Kansas City SubTropolis / Springfield Underground pattern). Second pattern: a fac with unusually high netfac count relative to its metro \u2014 a facility punching above its market means it inherited legacy carrier plant, which frequently means it inherited a Cold War-era carrier hotel or hardened switching centre. Cross-reference fac addresses against the AT&T/Western Union long-lines building list."
+    },
+    {
+      "name": "FCC International Communications Filing System (ICFS) \u2014 submarine cable landing licences and \u00a7214 authorisations",
+      "url": "https://www.fcc.gov/icfs",
+      "holdings": "All applications, supporting documents, pleadings, public notices, Commission actions, and final authorisations for submarine cable landing licences (47 CFR Part 1 Subpart FF) and international \u00a7214 authorisations. Cable landing licence applications contain the landing-point coordinates, the cable landing station address, the beach manhole location, and the terrestrial backhaul description.",
+      "provenance_tier": "P1",
+      "access_method": "ICFS Quick Search and Advanced Search web forms. Filing is mandatory-electronic. No documented public bulk API; the search app returns HTML with per-filing document links. Public notice summaries also appear in the daily FCC releases at docs.fcc.gov/public/attachments/DA-*.",
+      "format": "HTML search; PDF filings",
+      "value": "moderate",
+      "axes_served": [
+        "cable landing points",
+        "terrestrial backhaul",
+        "carrier identity",
+        "national-security review record"
+      ],
+      "rate_limits": "Undocumented; interactive app, throttle hard.",
+      "robots_posture": "Unverified (fcc.gov egress-blocked from this session).",
+      "search_technique": "Search by file-number prefix 'SCL-' (submarine cable landing) and 'ITC-' (international \u00a7214). HARDENING PATTERN: cable landing STATIONS are themselves hardened by design \u2014 they are the terminus of an intercontinental asset and are built to survive. The filings give you the exact station address. More subtly, the Team Telecom / Committee for the Assessment of Foreign Participation national-security review record (see the 2025 rulemaking, FCC 24-119 and FCC 25-49) documents which landing stations and backhaul routes the US government considers sensitive \u2014 that judgement is itself evidence about which routes carry government traffic. Also: \u00a7214 discontinuance filings tell you when a carrier abandoned a route, which dates the decommissioning of the plant along it.",
+      "notes": "Rules: https://www.ecfr.gov/current/title-47/chapter-I/subchapter-A/part-1/subpart-FF. Submarine cable applications landing page: https://www.fcc.gov/submarine-cable-applications. For cable geography as a map product, TeleGeography's Submarine Cable Map is the standard reference and publishes an open dataset on GitHub (github.com/telegeography/www.submarinecablemap.com) \u2014 P3, derived, but with landing-point coordinates and a permissive posture."
+    },
+    {
+      "name": "FCC Broadband Data Collection (BDC) / National Broadband Map public data",
+      "url": "https://www.fcc.gov/BroadbandData",
+      "holdings": "Provider-reported fixed broadband availability at the individual location level, keyed to the Broadband Serviceable Location Fabric. Per-location: provider (FRN + brand), technology code (fibre = 50, cable = 40, etc.), maximum advertised down/up speeds, business/residential. Also bulk fixed crowdsource data and provider-supplied service-area polygons.",
+      "provenance_tier": "P1",
+      "access_method": "Public data API requires generating an API token inside the BDC system plus a username. Bulk CSV downloads by state, technology, and as-of date, delivered as ZIP archives. Full API spec published: https://www.fcc.gov/sites/default/files/bdc-public-data-api-spec.pdf; download output spec: https://www.fcc.gov/sites/default/files/bdc-data-downloads-output.pdf",
+      "format": "CSV in ZIP; JSON over the API",
+      "value": "moderate",
+      "axes_served": [
+        "fibre presence",
+        "provider identity",
+        "location-level service"
+      ],
+      "rate_limits": "Token-gated; limits documented in the API spec. State-level ZIPs are large.",
+      "robots_posture": "Token-based public API with published specification; programmatic use intended and gated.",
+      "search_technique": "HARDENING PATTERN, and it is a weak-but-real signal: the Fabric is a location inventory, and a candidate site either appears in it or does not. A rural coordinate that IS a Fabric location and IS reported as fibre-served by a carrier, with no other fibre-served location for miles, means someone pulled fibre out to a single building in the middle of nowhere. That is expensive and it is done for a reason. Note the limitation honestly: BDC does not publish ROUTES, only service availability at locations \u2014 you cannot derive a fibre path from it. The important caveat is that BDC covers MASS-MARKET service; dedicated dark-fibre and private government circuits are outside its reporting scope entirely, so a hardened facility served by a private IRU will show as unserved.",
+      "notes": "The Fabric itself (the underlying location database) is licensed from CostQuest and is NOT freely redistributable \u2014 access to Fabric location IDs beyond the public availability data requires a CostQuest licence. That is a hard commercial wall, not a technical one."
+    },
+    {
+      "name": "Municipal and state building energy benchmarking disclosure datasets",
+      "url": "https://catalog.data.gov/dataset/?tags=local-law-84",
+      "holdings": "Whole-building annual (and in some cases monthly) energy and water consumption for large buildings in jurisdictions with disclosure mandates: NYC (Local Law 84, buildings >50,000 sq ft, ~2,000\u201330,000 properties depending on year), Washington DC, Seattle (plus Building Tune-Up reports on a 5-year cycle), Boston, Chicago, San Francisco, Philadelphia, Minneapolis, Denver, and a growing set of statewide programmes. Fields typically include address, BBL/parcel ID, primary use type, year built, gross floor area, site and source EUI, total annual electricity (kWh), natural gas, steam, ENERGY STAR score.",
+      "provenance_tier": "P1",
+      "access_method": "Open data portals with Socrata/CKAN APIs. NYC LL84 current series dataset ID 5zyy-y8am on data.cityofnewyork.us, with a full SODA API. Others via each city's portal and data.gov.",
+      "format": "JSON/CSV over Socrata SODA API; CSV bulk",
+      "value": "moderate",
+      "axes_served": [
+        "whole-building electricity consumption",
+        "EUI",
+        "floor area",
+        "use type"
+      ],
+      "rate_limits": "Socrata: generous, higher with a free app token.",
+      "robots_posture": "Open data portals with documented APIs; reuse intended.",
+      "search_technique": "THIS IS THE ONLY ROUTE TO GENUINE FACILITY-LEVEL ELECTRICITY CONSUMPTION IN THE US, and it is geographically narrow. HARDENING PATTERN: compute site EUI and flag buildings whose EUI is an extreme outlier for their declared use type \u2014 an 'office' with a data-centre EUI is a data centre, and a modest-footprint building with an EUI implying megawatts of continuous load has most of its plant somewhere other than the reported floor area, which in an urban context usually means below it. Carrier hotels and hardened urban switching centres (33 Thomas St, 60 Hudson, 811 Tenth Ave in NYC; 1 Wilshire in LA) are directly visible in these datasets. Second pattern: a building reporting a large floor area with implausibly LOW EUI is often mis-reporting because the occupied sub-grade portion is excluded. Be explicit in the register that this method only works inside disclosure jurisdictions \u2014 it is a city method, not a national one."
+    },
+    {
+      "name": "Western Area Power Administration and the federal Power Marketing Administrations",
+      "url": "https://www.wapa.gov/about-wapa/customers/",
+      "holdings": "WAPA publishes a complete list of its 685+ firm and non-firm wholesale power customers, and \u2014 critically \u2014 explicitly identifies END-USE customers including federal and state agencies that consume WAPA power directly rather than reselling it. WAPA operates a 15-state high-voltage transmission network. OASIS (Open Access Same-Time Information System) publishes transmission service requests, available transfer capability, and reservations by path. Bonneville Power Administration, Southeastern Power Administration, and Southwestern Power Administration are the parallel institutions.",
+      "provenance_tier": "P1",
+      "access_method": "Customer list as an HTML/PDF page. OASIS at https://www.wapa.gov/transmission/oasis/ \u2014 OASIS nodes across all PMAs and RTOs share a standardised template and are machine-readable (the OASIS standard defines CSV/XML templates and query URLs).",
+      "format": "HTML/PDF (customer list); OASIS standardised CSV/XML templates",
+      "value": "moderate",
+      "axes_served": [
+        "federal power delivery",
+        "transmission paths",
+        "delivery points",
+        "end-use federal customers"
+      ],
+      "rate_limits": "OASIS nodes are transactional systems used by real traders; throttle and identify yourself.",
+      "robots_posture": "Unverified. OASIS is a regulatorily mandated open-access system \u2014 machine access is the entire point of it \u2014 but the query templates are the correct interface, not scraping the web UI.",
+      "search_technique": "HARDENING PATTERN: read the WAPA end-use customer list directly. A federal agency taking power AS AN END USE from a PMA rather than from the local utility is a deliberate arrangement \u2014 it means the facility is served on federal transmission with federal hydropower, which is a resilience decision. Cross-reference each named federal end-use customer against the delivery point in the OASIS reservations and against the substation layer. This is a small, high-signal list rather than a big dataset, and it is the closest thing to a public register of 'which federal facilities have deliberately independent power supply arrangements'."
+    },
+    {
+      "name": "NTIA Government Master File (GMF) of federal frequency assignments",
+      "url": "https://www.ntia.gov/",
+      "holdings": "The federal counterpart to the FCC ULS: every federal government frequency assignment, including the microwave and CoG networks that are entirely absent from FCC records because federal users are licensed through NTIA/IRAC, not the FCC. Fields would include agency, frequency, emission, station class, and location.",
+      "provenance_tier": "P2",
+      "access_method": "NOT publicly available in any usable form. NTIA classifies any list of two or more otherwise-unclassified GMF records specifically to prevent aggregation, on national-security grounds. A FOIA-released PDF of unclassified entries exists and circulates (extensively discussed on RadioReference forums, thread 428949) but represents LESS THAN 10% of the file.",
+      "format": "FOIA-released PDF (partial); the underlying file is not released in any machine format",
+      "value": "low",
+      "axes_served": [
+        "federal spectrum use (aspirationally)"
+      ],
+      "rate_limits": "N/A",
+      "robots_posture": "N/A \u2014 no public interface exists.",
+      "search_technique": "Treat this as a documented ACCESS WALL, not a source. The register should record explicitly that federal microwave and land-mobile assignments \u2014 the exact records that would locate CoG communications sites \u2014 are deliberately withheld by aggregation classification, and that the FCC ULS therefore has a systematic blind spot precisely where this project needs data. The partial FOIA PDF is worth ingesting as a P2 fragment with an explicit note that it is <10% of the whole and non-randomly selected. The NTIA Redbook (Manual of Regulations and Procedures for Federal Radio Frequency Management, https://www.ntia.gov/files/ntia/publications/ntia_manual_september_2017_revision_0.pdf and the 2021/2023 revision annexes) is fully public and documents the assignment record STRUCTURE, station-class codes, and agency codes \u2014 useful for interpreting whatever fragments you do obtain. GAO-11-352 (https://www.gao.gov/assets/a318271.html) audits NTIA's spectrum management and describes the GMF's contents and deficiencies from the outside."
+    },
+    {
+      "name": "BGP and IP registry infrastructure: RIPE RIS, RouteViews, ARIN RDAP/Whois",
+      "url": "https://www.peeringdb.com/",
+      "holdings": "Global BGP routing table snapshots and updates (RIPE Routing Information Service and University of Oregon RouteViews publish MRT dumps every 5\u201315 minutes from dozens of collectors), plus RIR registration data mapping IP prefixes and ASNs to organisations, addresses, and abuse contacts (ARIN RDAP at rdap.arin.net, bulk Whois available to ARIN under an AUP, and the daily-published delegated-extended statistics files from every RIR).",
+      "provenance_tier": "P1",
+      "access_method": "RouteViews MRT archives at archive.routeviews.org (plain HTTP directory listings, bulk). RIPE RIS at data.ris.ripe.net plus RIPEstat's REST API (stat.ripe.net/data/*/data.json). ARIN RDAP is a documented REST API returning JSON; ARIN Bulk Whois requires signing an Acceptable Use Policy and is granted for research.",
+      "format": "MRT binary (parse with bgpdump/bgpkit/pybgpstream); JSON for RDAP and RIPEstat",
+      "value": "moderate",
+      "axes_served": [
+        "network operator identity",
+        "address-space registration",
+        "organisational address",
+        "announcement history"
+      ],
+      "rate_limits": "RouteViews/RIS archives are bulk HTTP, unmetered but enormous. RIPEstat has a documented fair-use policy and asks for a sourceapp parameter identifying your tool. ARIN RDAP rate-limits per IP.",
+      "robots_posture": "All designed for programmatic consumption; ARIN Bulk Whois has an explicit signed AUP that restricts redistribution \u2014 honour it.",
+      "search_technique": "HARDENING PATTERN for the corporate-bunker typology: RDAP the address blocks announced from a suspect ASN and read the registered ORGANISATION ADDRESS, which is often the physical facility. Then check which prefixes an ASN announces and from which PeeringDB facilities it peers. A small ASN announcing from a single facility, registered to a corporate address that resolves to a former mine or a rural coordinate, is the profile. Second: continuity-of-business providers (Iron Mountain, Data Bank, Cavern Technologies, Springfield Underground, Bluebird/SubTropolis tenants) all have ASNs and registered address space \u2014 enumerate their prefixes and you enumerate their tenants. Be honest about the limit: BGP tells you about ANNOUNCEMENT, not about geography; the geolocation step always requires PeeringDB or RDAP address data, both of which are self-reported."
+    },
+    {
+      "name": "State air-permit registries beyond ECHO (the Title V / minor-NSR layer)",
+      "url": "https://echo.epa.gov/tools/data-downloads",
+      "holdings": "The permits themselves. ECHO/ICIS-Air tells you a facility is subject to a programme; the ISSUED PERMIT DOCUMENT, held by the state or local air district, enumerates the equipment: each engine by make/model/serial, rated horsepower or kW, Tier certification, fuel, permitted annual hours, stack parameters, and the fuel storage authorised to serve it. Also the permit APPLICATION, which contains the applicant's own description of the facility and its purpose.",
+      "provenance_tier": "P2",
+      "access_method": "Highly variable by state. Some publish searchable permit databases with PDF documents (Virginia DEQ, California air districts including BAAQMD and SCAQMD, Texas TCEQ, Ohio EPA, Pennsylvania DEP eFACTS, Washington ecology). Others require a public-records request. Local air districts in California are separate authorities with their own systems.",
+      "format": "PDF permits (mixed text-layer and scanned); some states offer structured search results",
+      "value": "high",
+      "axes_started": [],
+      "axes_served": [
+        "generator equipment inventory",
+        "permitted runtime",
+        "fuel storage",
+        "applicant self-description"
+      ],
+      "rate_limits": "Per-state; most are small servers. Throttle to \u22641 req/sec and cache.",
+      "robots_posture": "Determine per state. Several state permit search apps have restrictive robots.txt because they are transactional. Where robots disallows, use the records-request route instead.",
+      "search_technique": "Pipeline: ECHO/ICIS-Air gives you the candidate facility ID and state \u2192 state permit system gives you the document \u2192 OCR and parse for engine ratings. HARDENING PATTERN: sum the rated kW across all permitted engines and divide by the visible above-ground floor area from building footprints. Data centres run roughly 0.5\u20132 kW per square foot of white space; a facility whose permitted generation implies far more load than its visible footprint can contain has that load below grade. Second pattern: read the applicant's own facility description in the application \u2014 applicants describe the facility honestly to the air regulator because misdescribing it invalidates the permit, and phrases like 'below-grade data hall', 'sub-level 2', 'hardened structure', 'continuity facility' appear in these documents where they appear nowhere else public."
+    }
+  ],
+  "access_notes": "SESSION CONSTRAINT, STATED HONESTLY: this session's egress proxy blocked HTTPS to every domain I attempted to fetch directly \u2014 fcc.gov, eia.gov, ferc.gov, epa.gov, usgs.gov, arcgis.com, wikipedia.org, catalog.data.gov, peeringdb.com, archive.org, long-lines.net and others all returned EGRESS_BLOCKED or a 403 CONNECT tunnel failure. Only WebSearch functioned. Every URL, file name, field name, record layout, and query grammar below is therefore assembled from search-result content and from prior knowledge, and NONE of it was verified by loading the endpoint. Before writing a harvester, re-verify each endpoint from an unrestricted network. Specifically re-check: (a) the data.fcc.gov/download/pub/uls/ path structure, which has moved before; (b) whether maps.nccs.nasa.gov still serves the hifld_open tree, since it did not resolve in DNS here; (c) the current ULS record-layout PDF version, since column counts differ between the v2, v4, and 2024-02-15 layouts and a stale layout silently misaligns fields.\n\nENGINEERING NOTES THAT WILL SAVE TIME:\n\nFCC pipe-delimited parsing. The .dat files are pipe-separated, unquoted, and the final field on a line has NO trailing pipe. Free-text address and entity-name fields can contain embedded pipes and embedded newlines. Do not use a naive CSV reader with delimiter='|'; use a tolerant reader that splits on the expected field count and quarantines malformed lines rather than dropping them. Coordinates are stored as SEPARATE integer degree/minute/second columns plus a direction character, not decimal degrees \u2014 you must reconstruct them, and you must handle the sign from the direction char, not from the degree value.\n\nOrdering of ingest. Pull the bulk files FIRST and use interactive web apps only for per-record verification. Both wireless2.fcc.gov and the state permit apps are session-based transactional systems (JSESSIONID cookies, sometimes injected as a path parameter before the query string \u2014 your HTTP client must not choke on ';JSESSIONID_ULSSEARCH=...' appearing between the path and the '?'). Scraping them at volume is both rude and fragile.\n\nArcGIS REST paging. Every Esri endpoint in this registry (NASA NCCS HIFLD mirror, PASDA, Rutgers, EIA Atlas, EPA UST Finder, NDWR, ADWR) enforces maxRecordCount, typically 1000\u20132000. Always GET the layer with ?f=json first to read maxRecordCount and the field list, then page with resultOffset/resultRecordCount and ORDER BY the OBJECTID to guarantee stable paging. Requesting f=geojson is usually cheaper to parse than Esri JSON.\n\nBulk over API wherever both exist. Overpass will rate-limit you; use a Geofabrik .osm.pbf extract with osm2pgsql. FERC EQR caps simultaneous downloaders at THREE and the compressed database exceeds 15.5 GB, with FERC explicitly advising off-peak scheduling. PeeringDB anonymous access is throttled \u2014 get a key and use the `since=` parameter for incremental sync rather than full re-pulls.\n\nLicence obligations that attach to the register. OpenStreetMap data is ODbL: if you ingest OSM geometry into the Supabase/PostGIS database and publish it, share-alike and attribution obligations attach to the derived database. Decide this deliberately before ingesting, not after. ARIN Bulk Whois requires a signed AUP restricting redistribution. The FCC has published API Terms of Service at https://www.fcc.gov/general/api-terms-service. The CostQuest-licensed Broadband Serviceable Location Fabric underlying the FCC's BDC data is commercially licensed and not redistributable.\n\nDocumented access walls to record rather than route around. NTIA's Government Master File is classified by aggregation \u2014 any list of two or more otherwise-unclassified federal frequency assignments is classified \u2014 so the federal microwave network is structurally invisible in open spectrum data; the FOIA-released fragment is under 10% of the file. FERC Form 715 transmission planning studies and detailed one-line diagrams are CEII under 18 CFR 388.113 and require a justified application. HIFLD Secure requires a GII account and an approved Data Use Agreement. E-Plan's Tier II repository is credentialed to emergency responders only and should not be accessed by other means; the lawful route to Tier II data is a written public-records request under EPCRA \u00a7324 to the SERC or LEPC. Each of these walls is itself a data point about what the government considers sensitive, and the register should record the wall, its legal basis, and the date it was encountered.\n\nThe dead-portal problem. DHS shut down HIFLD Open in August 2025, taking hifld-geoplatform.opendata.arcgis.com with it. The consequence for this project is that the canonical citation for hundreds of infrastructure layers now 404s, and the register must cite a MIRROR while recording that the primary is gone. Hold at least two independent copies: the frozen 2025 Parquet snapshot at source.coop/seerai/hifld and a live ArcGIS mirror (NASA NCCS or PASDA). Diffing frozen against live is a first-class evidence operation \u2014 a layer or a feature present in the 2025 snapshot and absent from the live mirror is a removal, and removals are exactly the kind of movement this register is designed to record.\n\nCross-source join keys, in rough order of reliability. FCC Registration Number (FRN) links entities across ULS, ASR, ICFS and BDC. ASR Registration Number links a structure across FCC systems. CLLI code links a telecom building across Bell System records, long-lines.net, PeeringDB (where operators supply it) and carrier documentation \u2014 it is the best identity for the Long Lines population. EIA Plant Code links EIA-860/860M/923 and the Energy Atlas. EPA Facility Registry Service (FRS) ID links ECHO, NEI, UST Finder and TRI. County FIPS plus PLSS section/township/range links state well records. Everything else is a spatial join with a tolerance, and coordinate quality varies wildly \u2014 ASR coordinates are self-reported and often wrong by hundreds of metres, FAA DOF coordinates are surveyed, EIA plant coordinates are decent, state well coordinates are frequently PLSS-centroid-derived and can be off by a quarter mile. Record the coordinate provenance per point, not just the point.\n\nTHE ORDER OF OPERATIONS THAT ACTUALLY WORKS. This beat is not a set of independent lookups; it is a funnel. Generate candidates from the cheap national layers (ASR \u2216 DOF set difference; deep-well percentile outliers; high-voltage radials to nowhere; RICE-permitted facilities with no plausible host). Then confirm with the expensive per-site work (FCC application attachment PDFs, state air permit documents, Tier II records requests, water-right documentary files). One confirmed site is worth a thousand candidates, and the confirmation step is always a document, never a dataset.",
+  "gaps": "WHAT THIS BEAT STRUCTURALLY CANNOT SEE\n\nFederal spectrum. The single largest hole. Federal agencies are licensed by NTIA through the IRAC, not by the FCC, and their assignments live in the Government Master File, which NTIA classifies by aggregation. The FCC ULS \u2014 the richest source in this registry \u2014 therefore contains essentially nothing about the communications networks that actually serve continuity-of-government facilities. What survives in ULS is the COMMERCIAL carrier plant that those networks leased (AT&T Long Lines, Western Union), which is why the Long Lines material is disproportionately valuable: it is the visible commercial shadow of an invisible federal system. To close this you would need either a sustained FOIA campaign against NTIA (historically unproductive; the released fragment is under 10% and non-randomly selected) or agency-by-agency FOIA for site-specific frequency authorisations, or recourse to declassified historical records \u2014 which is a different beat's problem.\n\nFacility-level electricity consumption, nationally. There is no US public dataset of how much power an individual facility draws. EIA-861 aggregates to the utility; EIA-923 reports GENERATION not consumption; FERC Form 714 gives hourly load by planning area, not by customer. The only genuine facility-level electricity data is in municipal building-benchmarking disclosure datasets, which cover large buildings in roughly two dozen cities and a handful of states \u2014 overwhelmingly urban, and therefore blind to exactly the rural hardened sites this project cares most about. The 'anomalous power draw for a site with no visible building' test is, honestly, NOT directly executable at national scale. What IS executable is the proxy chain: permitted standby generation capacity (ECHO/NEI/state air permits) plus fuel storage capacity (UST Finder/Tier II) plus a high-voltage radial with no visible load (HIFLD/OSM substations). That chain infers the load rather than measuring it, and the register should label it as inference, not documentation.\n\nTransmission detail. The genuinely diagnostic transmission data \u2014 one-line diagrams, load-flow models, actual customer identities at delivery points, FERC Form 715 planning studies \u2014 is CEII-restricted. What is open is line geometry and voltage class. You can find the radial; you generally cannot find, from open transmission data alone, who is at the end of it. The FERC EQR counterparty route and the WAPA federal end-use customer list are the two partial workarounds and both have narrow coverage.\n\nFiber routes. There is no open, authoritative, national fibre route map. BDC gives service availability at locations, not routes. HIFLD's fibre layers were always partial and are now behind the shutdown. InfraPedia requires a login and its route geometry is crowd-sourced and often schematic rather than surveyed. TeleGeography's submarine map is good for landing points and useless for terrestrial routes. Real terrestrial route knowledge lives in state DOT utility-permit and railroad right-of-way records, in 811/one-call locate databases (which are emphatically not public and are protected as critical infrastructure information), and in carrier IRU contracts. This is a genuine, large, unaddressed gap. The most promising unexplored angle is state DOT longitudinal-encroachment permits and county right-of-way permits, which are public records in most states and which describe fibre conduit installation route by route \u2014 nobody has aggregated them, and doing so would be original work.\n\nTier II at national scale. Fuel and chemical inventory is one of the sharpest hardening signatures available \u2014 multi-week generator autonomy plus CO2 scrubbing chemistry plus a flooded-cell battery plant is close to dispositive \u2014 and it is available only through fifty separate state records-request processes with varying fees, formats, and turnaround, with federal facilities frequently withheld. There is no shortcut. This should be a standing, slow, per-candidate FOIA pipeline rather than a bulk ingest.\n\nAboveground fuel storage. UST Finder covers underground tanks only. Modern large diesel farms at data centres and newer hardened facilities are increasingly aboveground, and there is no national AST dataset. SPCC (Spill Prevention, Control and Countermeasure) plans are required above 1,320 gallons aggregate aboveground but are held at the facility and not filed with EPA \u2014 they are obtainable only on inspection or FOIA of an inspection file. Facility Response Plans (for the largest facilities) are filed with EPA but are treated as sensitive.\n\nWell data coverage and quality. The state well databases are excellent where they exist (Colorado, Texas, Nevada, Arizona, Utah all have real machine access) and poor to nonexistent elsewhere. Many eastern states have no comprehensive driller-report database at all. Coordinates are frequently PLSS-centroid-derived rather than GPS. Wells on federal land are often exempt from state permitting entirely, which is a devastating gap for precisely this project \u2014 a well drilled inside a federal withdrawal to serve a federal facility may appear in no state database. USGS NWIS partially covers federal-land wells but its coverage of non-monitoring wells is thin. Closing this would require agency-specific FOIA (Army Corps, Bureau of Reclamation, DOE site environmental reports) \u2014 and DOE and DoD site-wide environmental reports and groundwater monitoring reports ARE often public and DO describe on-site water supply wells in detail. That is an unexploited seam and probably the single highest-value thing not yet in this registry.\n\nHistorical depth. Almost every source here is a CURRENT-STATE database. ULS retains cancelled licences and ASR retains dismantled structures, which is genuinely valuable, but EIA, HIFLD, UST Finder, and most state systems publish only the present. Detecting a facility that was decommissioned in 1975 requires historical snapshots that mostly do not exist. Mitigations: keep every snapshot you take, forever, and diff them \u2014 the register's own accumulated snapshots become the historical record nobody else has. Second: the Internet Archive holds prior versions of many of these portals and their download files, and mining archived versions of hifld-geoplatform.opendata.arcgis.com and of state permit search results is worthwhile. Third: historical USGS topographic quadrangles (a different beat) are the real historical instrument for this material.\n\nProvenance contamination in the community sources. long-lines.net, coldwar-c4i.net, the enthusiast site compilations, and OpenStreetMap's bunker tagging are the richest sources of CANDIDATES and the weakest sources of EVIDENCE. They are compilations, and a large fraction of their claims trace back to a small number of originating documents \u2014 Bell Laboratories Record articles, Bell System Practices, a handful of 1990s Usenet posts, and one or two frequently-copied magazine features. The register's backward-sourcing discipline applies hardest here: for every claim taken from these sites, find what the site is citing, and if it cites nothing, record it as a claim with a single origin rather than as corroborated fact. An OSM bunker node with source=Bing and a changeset comment of 'looks like a bunker' is one person's guess, and 400 blog posts repeating a Long Lines site list is one list.\n\nWHAT WOULD MOST IMPROVE COVERAGE, RANKED\n1. A systematic pull of DOE and DoD site-wide environmental reports, groundwater monitoring reports, and NEPA documents for water-supply well and standby-power detail on federal land \u2014 public, voluminous, boring, and unindexed, which is exactly this project's thesis.\n2. An aggregation of state DOT and county right-of-way utility permits to build the first open terrestrial fibre route dataset.\n3. A standing per-candidate EPCRA \u00a7324 Tier II request pipeline, run patiently over years.\n4. Systematic OCR of the FCC ULS application attachment corpus for legacy microwave filings \u2014 the COMSEARCH path data sheets and engineering exhibits are already public, already online, and as far as I can tell nobody has ever bulk-harvested them.\n5. Continuous snapshotting and diffing of every live source in this registry, so the register accumulates the temporal dimension that none of the sources provide."
+}

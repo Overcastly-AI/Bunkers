@@ -1,0 +1,791 @@
+{
+  "beat": "Local record, oral history, and the fringe corpus",
+  "sources": [
+    {
+      "name": "Chronicling America \u2014 Library of Congress (post-2025 loc.gov API)",
+      "url": "https://www.loc.gov/collections/chronicling-america/",
+      "holdings": "~21M+ digitized US newspaper pages, 1690\u20131963 (rights-cleared window has crept forward), contributed by NDNP state partners in all 50 states + territories. Page-level OCR text, METS/ALTO, page JP2s, and the US Newspaper Directory (title-level bibliographic records with LCCN, place of publication, and holdings libraries \u2014 useful on its own for finding which paper covered a given county in a given year).",
+      "provenance_tier": "P1",
+      "access_method": "JSON API (no key, no account)",
+      "value": "critical",
+      "format": "JSON (fo=json), OCR text, JP2/PDF page images, METS/ALTO XML, bulk OCR tarballs",
+      "axes_served": [
+        "chronology",
+        "location",
+        "construction",
+        "local reaction",
+        "personnel",
+        "land acquisition"
+      ],
+      "search_technique": "The legacy chroniclingamerica.loc.gov API was retired in 2025; the collection now lives behind the generic loc.gov collections API. Base pattern: https://www.loc.gov/collections/chronicling-america/?q=<terms>&fo=json&c=100&sp=<page>. Constrain with fa=location_state:west+virginia, fa=partof:<title-slug>, and dates=1955/1965. Use at= to trim the payload (at=results,pagination) \u2014 the default response is enormous. The single highest-yield trick is that OCR error tolerance matters more than query cleverness: search the distinctive *rare* token, not the phrase. 'Greek Island' will fail; 'Greenbrier' + 'excavation' will not. Pair a construction-era window with contractor names rather than facility names, because the facility had no public name: 'Morrison-Knudsen', 'Peter Kiewit', 'Utah Construction', 'Reynolds Electrical', 'Guy F. Atkinson', 'Vinnell', 'Macco', 'Paul Hardeman Inc.' Also search the euphemisms the era actually printed: 'government installation', 'federal installation', 'communications site', 'relay station', 'radar site', 'defense project', 'classified project', 'no comment' + county name.",
+      "robots_posture": "Public, no key. LoC asks for reasonable crawl behavior and publishes limits at loc.gov/apis/json-and-yaml/working-within-limits/. Bulk OCR downloads are separately capped.",
+      "rate_limits": "Endpoint-specific; the documented bulk-OCR cap is 10 bulk requests per 10 minutes per IP. The /collections and /search endpoints are throttled more tightly than the legacy chronam API was \u2014 assume single-digit requests/second at most and back off on 429. Budget for this: a full state-decade sweep is a multi-day job, not an afternoon.",
+      "notes": "Migration is still settling \u2014 loc.gov warns that API/sitemap data is not fully synced with the catalog. Do NOT assume a null result means the paper isn't digitized; cross-check against the state partner site (see next entry), which frequently has more issues than LoC has ingested. Also note the copyright cutoff: coverage largely stops in the early 1960s, which is exactly when most hardened-facility construction peaked. The state programs, not LoC, are where post-1963 material lives."
+    },
+    {
+      "name": "Open ONI / chronam state instances \u2014 the universal state newspaper API",
+      "url": "https://github.com/open-oni/open-oni",
+      "holdings": "State-run digitized newspaper collections running LoC's original chronam software or its community fork Open ONI. Confirmed instances include Historic Oregon Newspapers (oregonnews.uoregon.edu), Pennsylvania Newspaper Archive (panewsarchive.psu.edu), Nebraska Newspapers (nebnewspapers.unl.edu), Georgia Historic Newspapers (gahistoricnewspapers.galileo.usg.edu), Montana Newspapers (montananewspapers.org), NYS Historic Newspapers (nyshistoricnewspapers.org), Texas A&M (newspaper.library.tamu.edu), and North Carolina via DigitalNC. Many carry issues well past 1963 under local rights agreements.",
+      "provenance_tier": "P1",
+      "access_method": "JSON/HTTP API, identical route table across every instance",
+      "value": "critical",
+      "format": "JSON, plain-text OCR (.txt), OCR XML (ALTO), RDF, OpenSearch XML, ATOM feeds",
+      "axes_served": [
+        "chronology",
+        "location",
+        "construction",
+        "local reaction",
+        "land acquisition"
+      ],
+      "search_technique": "This is the single most exploitable fact in the whole beat: every chronam/Open ONI deployment exposes the SAME URL routes, so one harvester works against all of them by swapping the hostname. Verified from open-oni/core/urls.py \u2014 search/pages/results/?...&format=json ; search/pages/opensearch.xml ; suggest/titles/ ; newspapers.json ; states.json ; counties/<state>.json ; batches.json ; awardees.json ; ocr.json ; ocr/feed/ ; and per-page text at lccn/<lccn>/<YYYY-MM-DD>/ed-<n>/seq-<n>/ocr.txt (also ocr.xml and /coordinates/ for word-bounding boxes, which lets you highlight the hit in the page image). Search params carried from chronam: andtext=, phrasetext=, ortext=, proxtext= with proxdistance=, date1=, date2=, dateFilterType=yearRange, state=, rows= (cap it at 20\u201350), page=. Workflow: hit newspapers.json to enumerate titles, batches.json to detect newly ingested batches for incremental re-harvest, then paginate search/pages/results/?format=json and pull ocr.txt only for hits.",
+      "robots_posture": "Mostly permissive academic hosts; robots.txt varies per instance and several disallow /search paths for crawlers while leaving the JSON API usable. Check each host individually and honor it.",
+      "rate_limits": "Undocumented and per-institution. These are university-funded Django/Solr stacks with no CDN in front of them \u2014 they fall over. 1 req/sec with a descriptive User-Agent and an email contact is the responsible ceiling; several admins will simply firewall an aggressive harvester.",
+      "notes": "batches.json is the incremental-ingest hook: it lists batch name, awardee, and ingest date, so you can diff against last run instead of re-crawling. The open-oni wiki page 'Sites-using-Open-ONI' is the authoritative (but stale) instance list \u2014 expect to discover more by probing /newspapers.json against candidate state hostnames."
+    },
+    {
+      "name": "Veridian-platform state newspaper collections (CDNC and siblings)",
+      "url": "https://cdnc.ucr.edu/",
+      "holdings": "California Digital Newspaper Collection: 23M+ pages, 1846\u2013present, with article-level segmentation (not just page-level) \u2014 meaning headlines, bylines, and article boundaries are structured, which is rare and valuable. Veridian also runs a large fraction of other state/consortium collections; the vendor lists 50M+ free pages across its hosted collections.",
+      "provenance_tier": "P1",
+      "access_method": "HTML scrape against a stable CGI query string; no documented public JSON API",
+      "value": "high",
+      "format": "HTML, page JP2/PDF, article-segmented text",
+      "axes_served": [
+        "chronology",
+        "location",
+        "construction",
+        "local reaction"
+      ],
+      "search_technique": "Veridian's URL grammar is a Greenstone descendant and is undocumented but stable and fully GET-addressable, which makes it scrapable without a headless browser. The canonical shape is ?a=q&hs=1&r=1&results=1&txq=<terms>&txf=txIN&ssnip=txt&dafdq=&dafmq=&dafyq=<startyear>&datdq=&datmq=&datyq=<endyear>&puq=<paper-code>&e=-------en--20--1--txt-txIN--------. Key params: a=q (query), a=d (document view), a=cl (collection list), txq (full-text query), puq (publication filter), dafyq/datyq (year bounds), ssnip=txt (return text snippets). Phrase search with double quotes and AND/OR/NOT are supported. a=cl&cl=CL1 enumerates the collection/title tree \u2014 start there to build your title inventory. Because CDNC runs past 1963, it is one of the few free full-text corpora covering the 1960s\u201370s hardened-construction and civil-defense-decommissioning era.",
+      "robots_posture": "Check cdnc.ucr.edu/robots.txt per-host; UC Riverside has historically been tolerant of slow, identified crawling. Veridian-hosted commercial instances are less so.",
+      "rate_limits": "Undocumented. Treat as ~1 req/sec with backoff.",
+      "notes": "Non-ONI state programs worth separate harvesters because each has its own stack: Utah Digital Newspapers (digitalnewspapers.org, Solr-backed, has a JSON endpoint), Hoosier State Chronicles (Indiana, chronam-derived), Colorado Historic Newspapers (coloradohistoricnewspapers.org, Veridian), Virginia Chronicle (virginiachronicle.com, Veridian), Washington Digital Newspapers, Arizona Memory Project, Illinois Digital Newspaper Collections (Veridian), Nevada, New Mexico, Wyoming Newspapers (wyomingnewspapers.org, Veridian). Wyoming, Nevada, New Mexico, Colorado and Utah matter disproportionately for this project \u2014 that is where the missile fields, the test sites, and the withdrawn land are."
+    },
+    {
+      "name": "The Portal to Texas History / Gateway to Oklahoma History (UNT stack)",
+      "url": "https://texashistory.unt.edu/api/",
+      "holdings": "Texas newspapers (including small-county weeklies that no commercial vendor bothered with), county histories, government documents, photographs, and yearbooks. Sister deployment: The Gateway to Oklahoma History (gateway.okhistory.org) runs identical software. Directly relevant coverage: Amarillo/Pantex, Abilene/Dyess, the Texas Atlas F fields, Fort Worth District USACE projects.",
+      "provenance_tier": "P1",
+      "access_method": "OAI-PMH + IIIF + documented public API, no key",
+      "value": "high",
+      "format": "OAI-DC and UNTL XML, IIIF Presentation JSON manifests, OCR text, page images",
+      "axes_served": [
+        "chronology",
+        "location",
+        "construction",
+        "land acquisition",
+        "personnel"
+      ],
+      "search_technique": "OAI base: https://texashistory.unt.edu/oai/ with ?verb=Identify, ?verb=ListSets (sets are partner- and collection-scoped \u2014 harvest ListSets first to find the newspaper sets), ?verb=ListRecords&metadataPrefix=untl (the native untl format carries far richer fields than oai_dc, including coverage-place and coverage-date). Append /manifest to any item URL for the IIIF JSON. Per-collection and per-partner API docs exist at /explore/collections/<CODE>/api/ and /explore/partners/<CODE>/api/. Search UI params (?q=&t=fulltext&fq=untl_decade%3A1960-1969) are stable enough to scrape.",
+      "robots_posture": "Explicitly invites programmatic use; 'You do not need to apply for a special key to use these APIs.'",
+      "rate_limits": "Not published. OAI resumption tokens throttle you naturally; be polite.",
+      "notes": "The UNT model (documented OAI + IIIF + no key) is the exception, not the rule. Where a state library has this, use it and skip the HTML scraping entirely."
+    },
+    {
+      "name": "NewsBank 'America's News' / Access World News",
+      "url": "https://www.newsbank.com/",
+      "holdings": "4,000+ US news sources, heavily weighted to 1980s\u2013present local dailies \u2014 precisely the window Chronicling America does not cover and precisely where county-level reporting on federal land use, lease renewals, and base closures lives.",
+      "provenance_tier": "P1",
+      "access_method": "Subscription; remote access via public library card in most US states",
+      "value": "moderate",
+      "format": "HTML full text (rarely page images)",
+      "axes_served": [
+        "chronology",
+        "local reaction",
+        "ownership/disposal",
+        "land acquisition"
+      ],
+      "search_technique": "Boolean with proximity (w/n). Pair a county name with 'special use permit', 'federal lease', 'General Services Administration', 'excess property', 'environmental assessment', 'Base Realignment'. Best used as a targeted lookup tool once a candidate site is already identified, not as a discovery sweep.",
+      "robots_posture": "HOSTILE. Terms explicitly prohibit downloading data for text-mining applications and the use of scripts or web-scraping software, and prohibit machine-assisted indexing of the content. Do not harvest.",
+      "rate_limits": "N/A \u2014 automated access is contractually forbidden.",
+      "notes": "Register this as a manual-verification source only. A human with a library card may read and cite an article; the pipeline must not ingest it. Same posture applies to ProQuest and Gale historical newspaper databases."
+    },
+    {
+      "name": "Newspapers.com (Ancestry) and GenealogyBank (NewsBank)",
+      "url": "https://www.newspapers.com/",
+      "holdings": "Newspapers.com: 11,000+ titles, mostly US/Canada. GenealogyBank: 13,000+ titles across all 50 states, 1690\u2013present, with obituary-only coverage for many recent decades. Both hold small-town papers that no public program digitized.",
+      "provenance_tier": "P1",
+      "access_method": "Paywalled subscription",
+      "value": "moderate",
+      "format": "Page images + OCR, clipping objects",
+      "axes_served": [
+        "chronology",
+        "personnel",
+        "local reaction"
+      ],
+      "search_technique": "Newspapers.com 'Clippings' are public-facing and indexed by search engines even when the underlying page is paywalled \u2014 site:newspapers.com/clip/ <query> in a general web search will surface user-clipped articles about a facility, including the paper name and date, which you can then verify elsewhere for free. That is the only lawful free extraction path. GenealogyBank's obituary coverage is the practical route to obituaries citing classified assignments.",
+      "robots_posture": "Paywalled, ToS prohibits scraping.",
+      "rate_limits": "N/A.",
+      "notes": "Value here is citation *leads*, not content. Use clipping metadata to identify the paper+date, then check whether a free state program has the same issue."
+    },
+    {
+      "name": "Air Force History Index (airforcehistoryindex.org) + AFHRA microfilm on Internet Archive",
+      "url": "https://airforcehistoryindex.org/",
+      "holdings": "Index of ~550,000 documents held by the Air Force Historical Research Agency at Maxwell AFB as of 2001: unit histories, special studies, end-of-tour reports, oral histories, staff summaries. Each record carries an IRIS reference number and a microfilm reel call number. The underlying microfilm is progressively being scanned to the Internet Archive by AFHRA.",
+      "provenance_tier": "P1",
+      "access_method": "Free web index (search-only); documents via microfilm reel scans on archive.org, or by FOIA/research request to AFHRA",
+      "value": "critical",
+      "format": "Index: HTML. Documents: scanned microfilm PDFs, OCR quality poor to fair",
+      "axes_served": [
+        "construction",
+        "function",
+        "chronology",
+        "personnel",
+        "unit lineage"
+      ],
+      "search_technique": "Unit histories are the most under-used documentary source for hardened facilities, because a wing or squadron history routinely describes its own facility in detail that no policy document would. Search the index by unit designation, not by facility name: '4600th Support Group' (Cheyenne Mountain area support), '1st Aerospace Control Squadron', '9th Aerospace Defense Division', 'Alternate Joint Communications Center', '2857th Test Squadron'. Also search construction-era terms: 'hardening', 'blast door', 'Deep Underground', 'survivability'. Once you have an IRIS number and reel call number (formats: K-, A-, B-, N- prefixes), search archive.org for that reel. Reel identifiers on IA are NOT normalized \u2014 observed patterns include afhra-reel-a-1298, reela-4030, reel-a-1372, and afhra-n-0288-r for the same class of object. Do not construct identifiers; enumerate them via the IA scrape API with creator or collection filters and match on the title string 'AFHRA Microfilm Reel <call>'.",
+      "robots_posture": "airforcehistoryindex.org is a volunteer-run index; be gentle. archive.org permits programmatic access via its documented APIs.",
+      "rate_limits": "IA scrape API: paginate with a cursor, keep concurrency low.",
+      "notes": "Two hard limits: the index stops at 2001 accessions, and it indexes *existence*, not content \u2014 you cannot full-text search the documents through it. The IA scanning program is incomplete and unpredictable in coverage. For anything not yet scanned, AFHRA takes research requests by mail/email with the IRIS number, which is a weeks-to-months turnaround. The Black Vault also mirrors an AFHRA document collection."
+    },
+    {
+      "name": "USACE Digital Library, district history offices, and cultural-resources inventories",
+      "url": "https://usace.contentdm.oclc.org/digital/",
+      "holdings": "Corps of Engineers district histories (e.g. 'Rivers, Rockets and Readiness: Army Engineers in the Sunbelt \u2014 Fort Worth District 1950\u20131975'), construction completion reports, real-estate acquisition narratives, and \u2014 critically \u2014 Cold War-era cultural resources inventories produced under Section 110/106 and the DoD Legacy Resource Management Program. Also USACE HQ Office of History: personal papers, oral histories, manuscripts. District cultural-resources pages (nwo, nan, nwp and others) post PDFs directly.",
+      "provenance_tier": "P1",
+      "access_method": "CONTENTdm web UI + CONTENTdm API; direct PDF links on district .mil sites",
+      "value": "high",
+      "format": "PDF (often OCR'd), CONTENTdm JSON",
+      "axes_served": [
+        "construction",
+        "land acquisition",
+        "chronology",
+        "function",
+        "condition"
+      ],
+      "search_technique": "CONTENTdm exposes a JSON API at /digital/api/search/collection/<alias>/searchterm/<term>/... and /digital/api/collections/<alias>/items/<id>/false. Query the district histories for the construction years of a candidate site and read the narrative \u2014 Corps district histories habitually name projects the Air Force never acknowledged, because the Corps was proud of the engineering. Separately, the DoD Legacy Program and the service-level Cold War inventories of the early 1990s (mandated by the 1991 Defense Appropriations Act) produced facility-by-facility surveys with photographs, drawings, and significance evaluations \u2014 search 'Cold War historic properties inventory', 'Cold War material culture', 'Legacy Resource Management Program' plus a base name. npshistory.com mirrors many of these PDFs and is far more scrapable than the .mil hosts.",
+      "robots_posture": ".mil hosts are inconsistent; several block non-browser user agents entirely and some return 403 to datacenter IPs. npshistory.com and tDAR mirrors are the practical path.",
+      "rate_limits": "Unpublished. .mil hosts will rate-limit or block silently.",
+      "notes": "tDAR (core.tdar.org) has a USACE collection with archaeological/cultural-resource grey literature; much of it is metadata-only with the report behind a request wall. Note also that Corps district records not published as histories are in NARA regional facilities as RG 77 \u2014 an entirely manual research path."
+    },
+    {
+      "name": "NIOSH OCAS Special Exposure Cohort petitions, Site Profiles, and the DOL EEOICPA covered facility list",
+      "url": "https://www.cdc.gov/niosh/ocas/",
+      "holdings": "For every DOE, Atomic Weapons Employer, and beryllium vendor site covered under EEOICPA: a Site Profile / Technical Basis Document describing what the facility physically was, what was in which building, what years each operation ran, and which contractor ran it \u2014 plus SEC Petition Evaluation Reports that reconstruct site operations in forensic detail specifically because the records were incomplete. Behind these sits the Site Research Database (SRDB), NIOSH's internal document store of site-specific primary records. DOL maintains the authoritative covered-facility list with operating periods and contractor names.",
+      "provenance_tier": "P1",
+      "access_method": "Free PDF download from cdc.gov; SRDB documents by request",
+      "value": "critical",
+      "format": "PDF (text-layer present, generally good OCR), HTML facility list",
+      "axes_served": [
+        "function",
+        "construction",
+        "chronology",
+        "personnel",
+        "contractor",
+        "condition"
+      ],
+      "search_technique": "This is the least-known high-yield corpus in the whole beat and almost nobody correlates it with facility research. Why it works: to reconstruct a worker's radiation dose, NIOSH had to reconstruct the *facility* \u2014 so PERs contain building-by-building descriptions, underground/vault descriptions, ventilation and containment details, and worker interview summaries for sites that are otherwise opaque. URL pattern is regular: https://www.cdc.gov/niosh/ocas/pdfs/sec/<sitecode>/<file>.pdf and .../pdfs/tbd/<sitecode>/... \u2014 enumerate the covered-facility list, then crawl each site code. Search within for 'tunnel', 'underground', 'vault', 'igloo', 'magazine', 'bunker', 'Building 8', 'classified operations'. The worker-interview sections are effectively an oral history corpus collected under oath-adjacent conditions.",
+      "robots_posture": "cdc.gov is a public federal site; crawl politely.",
+      "rate_limits": "Unpublished; federal sites tolerate modest crawling.",
+      "notes": "Complements: DOE Office of Legacy Management site pages (per-site histories and remediation records for closed facilities), DOE OpenNet (declassified document index), and the DOE Former Worker Medical Screening Program. The EEOICPA/AWE list is also, incidentally, a list of private industrial sites that did classified nuclear work \u2014 many of which are absent from any military facility register."
+    },
+    {
+      "name": "Association of Air Force Missileers newsletter archive + 'Taps for Missileers'",
+      "url": "https://www.afmissileers.org/Newsletters",
+      "holdings": "Complete run of the AAFM quarterly newsletter, free to download, with a published index. Contains: first-person operational accounts of Atlas, Titan I/II, Minuteman, Peacekeeper, Mace, Matador and GLCM sites; site-by-site squadron histories; reunion notices that reveal unit-to-site mappings; and 'Taps for Missileers', a running obituary column that states each deceased member's squadrons, wings, and duty locations. Mirrored as a digitized serial in the University of Florida Digital Collections under item AA00047738.",
+      "provenance_tier": "P3",
+      "access_method": "Free PDF download; UFDC mirror is OAI/IIIF-accessible",
+      "value": "critical",
+      "format": "PDF with text layer; UFDC exposes structured metadata",
+      "axes_served": [
+        "personnel",
+        "function",
+        "chronology",
+        "condition",
+        "unit lineage"
+      ],
+      "search_technique": "This directly answers the beat's 'obituaries that cite classified assignments' requirement, and it is free, bulk-downloadable, and full-text searchable \u2014 unlike Legacy.com or Find a Grave. Harvest via UFDC rather than the association site: https://ufdc.ufl.edu/AA00047738/<seq> enumerates issues, and PDFs sit at predictable ufdcimages.uflib.ufl.edu/AA/00/04/77/38/<seq>/<MM-YYYY>.pdf. Build a personnel\u2192unit\u2192site index by parsing 'Taps' entries for squadron designations (e.g. '532nd Strategic Missile Squadron') and cross-walking against known squadron site lists. Search the article text for 'launch control facility', 'LCC', 'LF', 'hardened intersite cable', 'REACT', 'deactivation', and for informal site nicknames that never appear in official documents.",
+      "robots_posture": "AAFM publishes the archive for free public download. UFDC is an open academic repository.",
+      "rate_limits": "None published; UFDC is robust.",
+      "notes": "Analogous association archives worth the same treatment: Nike veterans (nikemissile.org), SAC unit associations, Air Defense Command veterans, Navy Seabee associations. These veteran-association newsletters are the single richest vernacular source for what a site was actually like inside, and they are almost never cited by the fringe corpus \u2014 which is itself a useful signal when grading claims."
+    },
+    {
+      "name": "Library of Congress Veterans History Project (AFC/2001/001)",
+      "url": "https://www.loc.gov/collections/veterans-history-project-collection/",
+      "holdings": "~100,000+ veteran collections; over 70% have some material viewable online. Each record carries branch, unit of service, service locations, war/era, and rank. Interviews with missile crew, SAC command post, air defense, communications, and engineer personnel exist in quantity and are indexed by unit.",
+      "provenance_tier": "P1",
+      "access_method": "loc.gov collections JSON API (same stack as Chronicling America)",
+      "value": "high",
+      "format": "Audio, video, digitized manuscripts, typed transcripts (inconsistently present), JSON metadata",
+      "axes_served": [
+        "personnel",
+        "function",
+        "chronology",
+        "condition"
+      ],
+      "search_technique": "Same API grammar: https://www.loc.gov/collections/veterans-history-project-collection/?q=<term>&fo=json&c=100. Collection numbers take the form afc2001001.<5-6 digits> and item URLs are https://www.loc.gov/item/afc2001001.<id>/ \u2014 which means the ID space is enumerable if you need a complete sweep. Search by unit designation and by service location rather than by facility ('Cheyenne Mountain', 'Site R', 'Mount Weather', '341st Strategic Missile Wing', 'Ent AFB'). The searchable fields include unit of service and service locations, which is unusual and valuable.",
+      "robots_posture": "Public federal collection; same loc.gov rate-limit posture applies.",
+      "rate_limits": "Same as loc.gov collections API \u2014 throttled; back off on 429.",
+      "notes": "Serious limitation: most interviews are audio/video with NO transcript, so they are not full-text searchable. The metadata is searchable, the content is not. Any systematic mining requires running ASR over the audio, which is technically feasible but a large separate project. Privacy/consent: these are donated personal collections; treat quotation carefully."
+    },
+    {
+      "name": "Nevada Test Site Oral History Project (UNLV)",
+      "url": "https://special.library.unlv.edu/ntsohp/",
+      "holdings": "150\u2013200+ full interviews, ~335 hours, with complete typed transcripts, plus supporting documents and photographs. Interviewees include tunnel miners, REECo and EG&G workers, health physicists, security personnel, and test directors \u2014 i.e. the people who actually dug and instrumented underground facilities.",
+      "provenance_tier": "P1",
+      "access_method": "Free web access; also surfaced through CONTENTdm (nvlibrarycoop.contentdm.oclc.org)",
+      "value": "high",
+      "format": "PDF transcripts (text layer), audio/video, images",
+      "axes_served": [
+        "construction",
+        "function",
+        "personnel",
+        "chronology",
+        "condition"
+      ],
+      "search_technique": "Unlike VHP, this project transcribed everything \u2014 so it IS full-text searchable, which makes it the reference example of what a usable oral-history corpus looks like. Search the transcripts for tunneling and containment vocabulary: 'drift', 'muck', 'stemming', 'alcove', 'button-up', 'containment vessel', 'P-Tunnel', 'N-Tunnel', 'Area 12', 'gas seal door', 'Mighty Epic', 'Diablo Hawk'. Miners describe methods and dimensions that never appear in a published report. The CONTENTdm route gives you the JSON API (/digital/api/search/collection/<alias>/...) for bulk retrieval where the bespoke UNLV interface does not.",
+      "robots_posture": "Open academic project, National Council on Public History award-winning; explicitly built for researchers.",
+      "rate_limits": "Unpublished; low volume corpus, one-time harvest.",
+      "notes": "Model source. Where you find an equivalent (Hanford History Project at WSU Tri-Cities, Atomic Heritage/'Voices of the Manhattan Project' at ahf.nuclearmuseum.org, Rocky Flats Cold War Museum oral histories, Sandia and LANL institutional oral histories), treat it the same way. The DOE Human Radiation Experiments oral histories are a further parallel corpus."
+    },
+    {
+      "name": "Granicus Legistar Web API \u2014 municipal and county legislative records",
+      "url": "https://webapi.legistar.com/",
+      "holdings": "Full legislative record for the thousands of US cities and counties running Legistar: matters/ordinances, agenda items, minutes, votes, sponsors, and \u2014 the payload \u2014 MatterAttachments, which are the actual staff reports, site plans, lease agreements, and correspondence. For this project the relevant records are conditional-use permits for 'communications facilities', federal lease approvals, rezonings adjacent to federal parcels, road-vacation requests, and utility-easement grants.",
+      "provenance_tier": "P1",
+      "access_method": "Public REST/OData API, no key",
+      "value": "high",
+      "format": "JSON (OData), attached PDFs",
+      "axes_served": [
+        "land acquisition",
+        "ownership/disposal",
+        "construction",
+        "chronology",
+        "local reaction"
+      ],
+      "search_technique": "Base: https://webapi.legistar.com/v1/{Client}/... where {Client} is the jurisdiction slug (e.g. 'seattle', 'mcpl'). Core resources: /Matters, /MatterAttachments, /Events (meetings), /EventItems, /Bodies, /Persons. OData applies: $filter, $orderby, $top, $skip, $select. Responses are hard-capped at 1000 rows, so page with $top=1000&$skip=N. Text search via $filter=substringof('bunker',MatterTitle) or MatterName. Discovering the {Client} slug is the awkward part \u2014 it is not enumerable from the API; derive it from the jurisdiction's public Legistar portal hostname (<client>.legistar.com) or from the InSite URL. Build a client list by probing candidate slugs for counties adjacent to known federal installations.",
+      "robots_posture": "Granicus publishes the API as a public interface with documentation and examples at webapi.legistar.com/Home/Examples and /Help.",
+      "rate_limits": "Not formally published; the 1000-row cap is the main structural constraint. Keep concurrency low per client.",
+      "notes": "Coverage skew: Legistar is a big-city/large-county product. The rural counties that host missile fields and relocation sites mostly do not run it (see next entry). Also: minutes older than roughly the mid-2000s are almost never in these systems at all \u2014 the digital record has a hard floor."
+    },
+    {
+      "name": "CivicPlus AgendaCenter / CivicClerk / PrimeGov / BoardDocs \u2014 the rest of local government",
+      "url": "https://www.civicplus.com/agenda-meeting-management/",
+      "holdings": "Agendas, packets, and minutes for the small-jurisdiction majority: county commissions, township boards, planning and zoning commissions, county school boards, and utility districts. This is where a rural county's discussion of a federal land transfer, a mysterious water-line extension, or a 'no-comment' construction permit actually lives.",
+      "provenance_tier": "P1",
+      "access_method": "HTML scrape against per-vendor URL grammars; no public APIs",
+      "value": "high",
+      "format": "PDF packets (often scanned, OCR required), HTML listing pages",
+      "axes_served": [
+        "land acquisition",
+        "ownership/disposal",
+        "construction",
+        "local reaction",
+        "chronology"
+      ],
+      "search_technique": "Each vendor has a fixed, guessable route grammar \u2014 this is the practical substitute for an API. CivicPlus AgendaCenter: /AgendaCenter/ lists categories; /AgendaCenter/Search/?term=<q>&CIDs=all&startDate=&endDate=&dateRange=&dateSelector= runs a server-side search; files download at /AgendaCenter/ViewFile/Item/<itemID>?fileID=<fileID> and /AgendaCenter/ViewFile/Agenda/<id> \u2014 item and file IDs are sequential integers, so a jurisdiction's entire packet archive is enumerable by ID walk. BoardDocs runs on Lotus Domino at go.boarddocs.com/<state>/<client>/Board.nsf/ and serves its UI from a small set of POST endpoints against that .nsf (the LlamaIndex BoardDocs reader is a working reference implementation \u2014 it retrieves a committee's meeting list with meetingID, date, and unid, then fetches agenda items by unid). PrimeGov and CivicClerk expose JSON meeting lists under /api/ or /Portal/ paths that vary by tenant; inspect one tenant and the pattern generalizes. Query terms that pay: 'special use permit' + 'communication', 'federal government lease', 'General Services Administration', 'quitclaim', 'excess federal property', 'easement' + 'United States of America', 'Air Force' + 'variance'.",
+      "robots_posture": "Highly variable per jurisdiction; many CivicPlus sites disallow /AgendaCenter/ViewFile in robots.txt while permitting the listing pages. Check and honor per-host. These are small public bodies with small budgets \u2014 aggressive crawling is both rude and conspicuous.",
+      "rate_limits": "Unpublished; assume fragile shared hosting. 1 req/2sec per jurisdiction.",
+      "notes": "Two structural gaps that matter enormously: (1) pre-2000 minutes are essentially never online, so the entire construction era of these facilities is missing from digital local government records \u2014 those minute books are in county clerks' offices on paper or microfilm and require in-person or mail requests; (2) many packets are scanned images with no text layer, so OCR is mandatory. Municode, American Legal Publishing, and Code Publishing Co. hold the codified zoning ordinances (including overlay districts and airport/military influence zones) and are separately scrapable."
+    },
+    {
+      "name": "HathiTrust \u2014 county histories, installation histories, and trade serials",
+      "url": "https://www.hathitrust.org/",
+      "holdings": "18M+ volumes including the near-complete corpus of published US county and local histories, commemorative installation histories, engineering trade serials, and government documents. Full view for pre-1929 and for US government works of any date.",
+      "provenance_tier": "P2",
+      "access_method": "Full-text search web UI; bulk metadata via hathifiles; bulk derived text via HTRC Extracted Features",
+      "value": "high",
+      "format": "Page images, OCR text (view-restricted), TSV hathifiles, HTRC EF JSON",
+      "axes_served": [
+        "chronology",
+        "location",
+        "construction",
+        "personnel",
+        "local reaction"
+      ],
+      "search_technique": "The HathiTrust Data API was RETIRED on 17 July 2024 \u2014 do not build against it. Remaining machine paths: (1) the Bibliographic API for metadata lookup by OCLC/LCCN/ISBN; (2) hathifiles \u2014 full tab-delimited inventory dumps, updated monthly, which give you every volume's identifier, rights code, bib data and enumeration, and are the correct way to enumerate candidate volumes; (3) HTRC Extracted Features 2.0 \u2014 page-level token counts and part-of-speech data for the full corpus, distributed by rsync, which supports large-scale term-frequency analysis without ever touching the page images; (4) the human full-text search UI, which searches inside copyrighted volumes and returns page numbers even when it cannot show you the page \u2014 meaning it works as a *locator* for material you then obtain elsewhere. Use it that way: search 'Deep Underground Support Center', 'hardened command post', a contractor name plus a county, then take the citation to a library.",
+      "robots_posture": "Scraping the page-image endpoints is prohibited and actively defended. hathifiles and HTRC EF are the sanctioned bulk paths.",
+      "rate_limits": "Bibliographic API is documented as low-volume (batch of up to 20 identifiers per request). HTRC EF is rsync, no request-rate concern.",
+      "notes": "Also here: The Military Engineer (journal of the Society of American Military Engineers, 1920\u2013present) \u2014 the single best trade serial for hardened construction, with 1920\u20131930 volumes free on JSTOR and the full run in HathiTrust/JSTOR. Engineering News-Record is the other essential construction trade serial and is paywalled with no free archive; it reported on classified-adjacent projects contemporaneously and is worth manual library access. The Online Books Page (onlinebooks.library.upenn.edu/webbin/serial?id=militaryengr) indexes free volumes."
+    },
+    {
+      "name": "Internet Archive \u2014 texts, audio, and the harvest/dating infrastructure",
+      "url": "https://archive.org/",
+      "holdings": "For this beat specifically: AFHRA microfilm reel scans; the 'ufonewsletters' collection (Archives for the Unexplained's digitized UFO/paranormal newsletter runs); the Art Bell / Coast to Coast AM episode collections; full text of the entire fringe book corpus (Sauder, Cooper, Bishop, Nichols/Moon, Commander X); Subterranea Britannica's journal run; scanned government documents; and Usenet mirrors.",
+      "provenance_tier": "P1",
+      "access_method": "Public APIs: advancedsearch, scrape API, metadata API, CDX, full-text search",
+      "value": "critical",
+      "format": "Everything; critically, _djvu.txt full-text sidecars for scanned texts",
+      "axes_served": [
+        "claim-origin",
+        "chronology",
+        "construction",
+        "function",
+        "personnel"
+      ],
+      "search_technique": "Four endpoints do most of the work. (1) Scrape API for bulk enumeration: https://archive.org/services/search/v1/scrape?q=<query>&fields=identifier,title,date,creator&count=10000 with a cursor \u2014 this is the right way to enumerate a collection like collection:ufonewsletters or the AFHRA reels, because identifier naming is inconsistent and you must match on metadata, not construct IDs. (2) Metadata API: https://archive.org/metadata/<identifier> returns the full file manifest including the _djvu.txt sidecar path. (3) Full-text-in-book search: https://ia-fts.archive.org/api/v1/search/hits_inside?item_id=<id>&q=<term> returns page-level hits inside a scanned book \u2014 this is how you find whether Sauder actually cited a given document number without reading 300 pages. (4) The CDX API (see the claim-dating entry). Practical use: pull the _djvu.txt of every fringe book in the corpus, regex out document identifiers (AD numbers, AFWL-TR-, RAND R-/RM-, contract numbers, Federal Register cites), and you have converted a P4/P5 library into a P1 lead list.",
+      "robots_posture": "IA publishes these APIs for programmatic use. Respect the documented concurrency guidance; the scrape API is designed for exactly this.",
+      "rate_limits": "Scrape API is cursor-paginated and generous. hits_inside and metadata are lighter \u2014 keep concurrency in single digits.",
+      "notes": "Copyright caveat: much of the Art Bell/Coast to Coast material and several of the fringe books are uploaded without rights clearance and can vanish. Snapshot metadata and hashes when you index them, and record that the item may become unavailable. Do not treat IA availability as permanent."
+    },
+    {
+      "name": "Labor archives and building-trades periodicals",
+      "url": "https://reuther.wayne.edu/",
+      "holdings": "Walter P. Reuther Library (Wayne State) \u2014 UAW, AFL-CIO industrial union records; Kheel Center (Cornell ILR) \u2014 building trades, ILGWU, and union periodicals; George Meany AFL-CIO Archive (now at University of Maryland Special Collections) \u2014 federation-level records including wartime and defense construction. Union periodicals: The Operating Engineer (IUOE), The Ironworker, IBEW Journal, The Laborer, and district council newsletters, which routinely profiled members' work on large federal projects.",
+      "provenance_tier": "P2",
+      "access_method": "Finding aids online (ArchivesSpace/EAD); most content on paper, in-person or paid reproduction; some periodical runs digitized in HathiTrust/IA",
+      "value": "moderate",
+      "format": "EAD XML finding aids; paper collections; scattered digitized serials",
+      "axes_served": [
+        "construction",
+        "personnel",
+        "chronology",
+        "contractor",
+        "condition"
+      ],
+      "search_technique": "The insight: workers who built classified facilities were unionized, and their locals published about it \u2014 often before, and in more physical detail than, any press account. Search finding aids (most of these repositories expose ArchivesSpace with an OAI-PMH or /search endpoint) for local numbers near a candidate site plus date range, and for 'jurisdictional dispute' records, which name the contractor, the project, the trades involved, and often the site. Grievance and dispatch records give crew sizes and durations \u2014 a proxy for facility scale. In digitized periodical runs, search 'defense project', 'government job', 'the Nevada job', 'tunnel work', 'shaft sinking', plus local numbers. Also: NLRB case records name employer, worksite, and unit descriptions, and are searchable at nlrb.gov by employer name.",
+      "robots_posture": "Finding aids are open. Digitized content is limited and rights-encumbered.",
+      "rate_limits": "N/A for finding aids.",
+      "notes": "Honest assessment: this is low-yield-per-hour but occasionally uniquely decisive, because it is the only source class where people who were physically inside the hole describe it without a clearance obligation. Treat as targeted follow-up on a specific candidate, not a sweep. Most material requires a visit or a paid reproduction request."
+    },
+    {
+      "name": "State historical societies, county historical societies, and state library digitization programs",
+      "url": "https://www.statearchivists.org/",
+      "holdings": "County-level manuscript collections, local government records transferred to state archives, photograph collections, subject vertical files, and local oral history programs. Vertical files in particular \u2014 the clipping folders that a county library or historical society kept on 'Air Force Base', 'Civil Defense', 'Federal Government' \u2014 are frequently the only surviving index to local coverage of a facility.",
+      "provenance_tier": "P2",
+      "access_method": "Highly variable: some ArchivesSpace/CONTENTdm/PastPerfect Online; many catalog-only; many require phone or mail inquiry",
+      "value": "moderate",
+      "format": "EAD finding aids, CONTENTdm JSON where present, PastPerfect Online HTML, paper",
+      "axes_served": [
+        "local reaction",
+        "construction",
+        "personnel",
+        "chronology",
+        "land acquisition"
+      ],
+      "search_technique": "Three machine-accessible layers worth building against: (1) state archives running ArchivesSpace expose /oai and a JSON search API \u2014 harvest EAD and grep collection scope notes for 'civil defense', 'fallout shelter', 'relocation', 'Air Force', 'Corps of Engineers'; (2) DPLA (dp.la) aggregates a large fraction of state hub metadata behind a single documented JSON API with a free key \u2014 this is by far the most efficient way to search across hundreds of small institutions at once, though it only searches metadata, not content; (3) PastPerfect Online installations (thousands of small societies) share a URL grammar under /00001.htm-style object pages with a searchdb.asp query interface, crudely scrapable. Beyond that: phone calls. Many county societies have no web presence and hold the only copy of the local weekly for the years in question.",
+      "robots_posture": "Small institutions, small servers. Identify yourself. Several explicitly ask researchers to contact them rather than crawl.",
+      "rate_limits": "Assume fragile.",
+      "notes": "This is the honest weak point of the vernacular half. The material is real and often decisive, but it is not machine-accessible at scale and never will be. Budget it as human research on specific high-value candidates. DPLA is the one genuine leverage point."
+    },
+    {
+      "name": "Veterans Legacy Memorial, Nationwide Gravesite Locator, and commercial obituary archives",
+      "url": "https://www.vlm.cem.va.gov/",
+      "holdings": "VLM: a free VA-run memorial page for every veteran interred in a VA national cemetery and, increasingly, state and private cemeteries \u2014 with branch, rank, service dates, conflicts, and a family-contributed tribute area. Nationwide Gravesite Locator: interment records. Legacy.com: the syndication layer for most US newspaper obituaries since ~2000. Find a Grave: user-contributed, with transcribed obituaries.",
+      "provenance_tier": "P2",
+      "access_method": "VLM/NGL: free public web, no documented API. Legacy.com and Find a Grave: free to read, ToS-restricted",
+      "value": "moderate",
+      "format": "HTML",
+      "axes_served": [
+        "personnel",
+        "chronology",
+        "function"
+      ],
+      "search_technique": "The target pattern is an obituary sentence of the form '...served with the 44th Strategic Missile Wing at Ellsworth Air Force Base' or '...worked for thirty years at a job he could never discuss'. These are findable through general web search with site: restrictions plus unit designations and the phrases 'could not talk about', 'classified assignment', 'top secret clearance', 'missile combat crew', 'launch control'. VLM is the only one of these that is unambiguously free, public, and non-hostile. Prefer AAFM 'Taps' and veteran-association newsletters over commercial obituary sites wherever the person served in a missile or air-defense unit \u2014 same information, harvestable, no ToS problem.",
+      "robots_posture": "Legacy.com and Find a Grave (Ancestry) both prohibit scraping and actively block it. VLM/NGL are federal public sites but publish no API.",
+      "rate_limits": "N/A.",
+      "notes": "Serious ethical constraint independent of ToS: these are recently deceased private individuals and their surviving families. An obituary is legitimate evidence about a facility's existence and function; it is not licence to build a personnel database. Recommend the register cite obituaries as evidence and store the citation, not a person-level index. Living-person material should be out of scope entirely."
+    },
+    {
+      "name": "Richard Pollock, 'The Mysterious Mountain,' The Progressive, March 1976 \u2014 Mount Weather origin node",
+      "url": "https://en.wikipedia.org/wiki/Mount_Weather_Emergency_Operations_Center",
+      "holdings": "The single article from which essentially the entire Mount Weather folklore descends: the 'government-in-waiting' framing, the standing shadow cabinet, the claim that the facility receives raw intelligence from every federal department, and the specific personnel and capacity figures that every later retelling recycles. Based on Senate subcommittee hearings and off-the-record interviews with former Mount Weather-associated officials.",
+      "provenance_tier": "P3",
+      "access_method": "Print; scattered unauthorized full-text reproductions across the fringe web; The Progressive's own archive is not freely online for 1976",
+      "value": "critical",
+      "format": "Print / OCR'd reproductions of uncertain fidelity",
+      "axes_served": [
+        "claim-origin",
+        "chronology",
+        "function"
+      ],
+      "search_technique": "This is the archetype of what this project needs to demonstrate. Search the fringe web for the distinctive Pollock phrases and you will find them, verbatim and unattributed, on hundreds of pages: 'Western Virginia Office of Controlled Conflict Operations', 'the Mount Weather facility maintains its own', and the standing-cabinet passage. Any page carrying those strings without citing Pollock 1976 is a copy, not a source. Establish the canonical text once \u2014 ideally from a library copy of the March 1976 issue, not a web reproduction \u2014 then string-match against it to auto-classify the downstream ecosystem. Note the trigger context: Mount Weather became publicly discussable because TWA Flight 514 crashed into the mountain on 1 December 1974, generating an NTSB investigation and local reporting; the Senate hearings and Pollock's article followed. That crash is the reason a local vernacular record exists at all for this site \u2014 check the Loudoun/Clarke County papers for Dec 1974\u20131976.",
+      "robots_posture": "N/A (print original).",
+      "rate_limits": "N/A.",
+      "notes": "Grading guidance: Pollock is a real journalist working from real hearings and real sources, but with unnamed sourcing and no released documents. He is P3 \u2014 genuinely investigative, not independently verifiable. The 400 sites repeating him are not additional evidence. This is the cleanest available demonstration case for the register's core thesis."
+    },
+    {
+      "name": "Ted Gup, 'The Ultimate Congressional Hideaway,' Washington Post Magazine, 31 May 1992 \u2014 Greenbrier",
+      "url": "https://www.washingtonpost.com/archive/politics/1992/05/30/hill-leaders-regret-reports-on-bomb-shelter-site/38095513-21b6-4f9f-89d6-298dc114a0c5/",
+      "holdings": "The disclosure of Project Greek Island, the Congressional relocation bunker under the Greenbrier resort, White Sulphur Springs WV. Directly caused the facility's deactivation (1995). Gup also published on Mount Weather in TIME in 1992.",
+      "provenance_tier": "P2",
+      "access_method": "Washington Post archive (paywalled but indexed); the accompanying news coverage from 30 May 1992 is free in the WaPo archive",
+      "value": "critical",
+      "format": "HTML archive, print",
+      "axes_served": [
+        "claim-origin",
+        "function",
+        "chronology",
+        "local reaction"
+      ],
+      "search_technique": "The methodologically important fact for this project: the bunker's existence was an open secret in Greenbrier County for thirty years \u2014 resort staff and local residents 'all knew what it was' and treated it as a point of pride \u2014 and none of that local knowledge reached the national record until a reporter went and asked. That is a directly testable pattern. For any candidate site, the local knowledge probably already exists in the county's vernacular record; the question is whether anyone wrote it down. Search the Greenbrier-area papers (Register-Herald, Beckley; The West Virginia Daily News, Lewisburg) for 1958\u20131962 construction-era anomalies \u2014 unusual truck traffic, hiring notices, a 'convention facility' expansion \u2014 and treat what you find as the template for what to look for elsewhere. CONELRAD's blog (conelrad.blogspot.com) has done sustained reporting on the Greenbrier's history and is a reliable P3 secondary.",
+      "robots_posture": "WaPo archive is paywalled; do not scrape.",
+      "rate_limits": "N/A.",
+      "notes": "Contrast Gup with Pollock in the grading schema: Gup named the facility, produced documentary and testimonial corroboration, and the government effectively confirmed by shutting it down. That is P2. Pollock produced an unfalsifiable institutional description. Both are 'a journalist wrote it', and the register must distinguish them."
+    },
+    {
+      "name": "The Dulce Base origin cluster: Bennewitz \u2192 LeVesque/'Jason Bishop III'/'Thomas Castello' \u2192 'Branton'",
+      "url": "https://en.wikipedia.org/wiki/Dulce_Base",
+      "holdings": "The canonical fabrication chain for the largest single body of US underground-base folklore. Sequence: Paul Bennewitz (Albuquerque, 1979\u20131980) generates the raw material while being deliberately fed disinformation; Myrna Hansen's 1980 hypnotic regression adds the underground-facility imagery; Thomas Allen LeVesque, writing as 'Jason Bishop III', authors 'The Dulce Base' in 1989; the 'Thomas Castello' persona \u2014 an alleged RAND-employed Dulce security technician with stolen 'Dulce Papers', 30 photographs and a videotape \u2014 is circulated from roughly 1987\u20131991; Bruce Alan Walton, writing as 'BRANTON', aggregates and vastly expands the corpus through the 1990s. LeVesque admitted before his death in 2018 that Castello never existed and that he had fabricated the Dulce material as creative writing.",
+      "provenance_tier": "P5",
+      "access_method": "Free web; full texts widely mirrored; primary-era material via AFU newsletter scans",
+      "value": "critical",
+      "format": "HTML, plain text, scanned newsletters",
+      "axes_served": [
+        "claim-origin",
+        "chronology"
+      ],
+      "search_technique": "Reverse-trace targets: the exact strings 'Thomas Castello', 'Thomas Edwin Castello', 'Dulce Papers', 'Jason Bishop III', 'BRANTON', 'The Omega File', 'Level 7', 'Nightmare Hall'. Any US underground-base claim mentioning multi-level facilities with numbered sublevels, human-alien joint operations, or 'the 1979 Dulce firefight' descends from this cluster and can be dated to it. Corroborating tracers: Greg Bishop, 'Project Beta' (2005) is the rigorous reconstruction of the Bennewitz disinformation operation and should be treated as the authoritative P2 secondary; Adam Gorightly documented LeVesque's confession; Norio Hayakawa's blog (noriohayakawa.wordpress.com) carries first-hand accounts from participants in the original Albuquerque milieu and is a genuinely useful P3-to-P4 primary-adjacent source; Christa Tilton's 'The Bennewitz Papers' records her own conclusion that Castello was fabricated. For 1979\u20131985 first appearances, the APRO Bulletin and other newsletters of the period are the place to look \u2014 digitized in the AFU collection on Internet Archive.",
+      "robots_posture": "Varies; the mirror sites are unmaintained and generally have no robots.txt.",
+      "rate_limits": "N/A.",
+      "notes": "Why this matters structurally: Dulce contaminates the register's inputs far beyond New Mexico. The 'multi-level underground base' template, the sublevel numbering convention, and the tunnel-network-connecting-all-bases premise all originate here and were then retrofitted onto real facilities (Mount Weather, Cheyenne Mountain, Denver, Camp Hero). When a claim about a real site carries Dulce-template features, that is strong evidence of descent rather than independent observation."
+    },
+    {
+      "name": "Phil Schneider \u2014 1995 Preparedness Expo lecture (the DUMB numerology origin)",
+      "url": "https://archive.org/details/philexpo",
+      "holdings": "The origin of the specific, endlessly repeated numbers: ~129\u2013131 active secret underground bases in the United States, ~1,477 worldwide, average cost $17\u201319 billion each, 1\u20132 years construction each, and the associated 'black budget' figure. Also the origin of the 1979 Dulce firefight-participant narrative in its most-copied form. Delivered as a lecture at the Preparedness Expo in 1995 (sources disagree between September and November); Schneider died in January 1996, which converted the lecture into a martyrdom text and froze it as canon.",
+      "provenance_tier": "P5",
+      "access_method": "Free video/audio on Internet Archive; transcripts widely mirrored",
+      "value": "critical",
+      "format": "Video, audio, transcript text",
+      "axes_served": [
+        "claim-origin",
+        "chronology"
+      ],
+      "search_technique": "String-match the numerals: '1,477', '1477', '129 underground bases', '131 underground bases', '$17 billion', '$19 billion'. These figures have no antecedent and no source; every occurrence anywhere is a descendant of this lecture. That makes them an ideal fingerprint \u2014 a page carrying '1,477' is definitionally in the Schneider lineage regardless of what else it claims, and its other claims should be graded accordingly. Cross-check the lecture date against the Wayback CDX and Usenet records to confirm no pre-1995 occurrence exists (I was unable to run that check directly and it should be verified).",
+      "robots_posture": "archive.org APIs are open.",
+      "rate_limits": "IA standard.",
+      "notes": "Schneider is the cleanest possible teaching example of the '400 sources, one origin' thesis: an unsourced number from a single 1995 lecture that is now cited as though it were a statistic. Note also the biographical claims (geologist, structural engineer, involvement in base construction) are unverified and disputed. Grade the content P5 while noting that the *artifact* \u2014 a dated recording \u2014 is solid evidence of when the claim entered circulation."
+    },
+    {
+      "name": "Richard Sauder \u2014 the document-citing fringe author",
+      "url": "https://archive.org/details/richard-sauder-underground-bases-and-tunnels-what-is-the-government-trying-to-hide",
+      "holdings": "'Underground Bases and Tunnels: What Is the Government Trying to Hide?' (Adventures Unlimited, 1995), 'Underwater and Underground Bases' (2001), 'Hidden in Plain Sight' (2010). Unlike essentially every other author in this space, Sauder filed FOIA requests, worked from published federal technical literature, and reproduced actual document pages: Army Corps of Engineers and Air Force Weapons Laboratory deep-basing studies, RAND reports, Bureau of Mines and Colorado School of Mines tunneling research, Navy facility documents, and Federal Register notices.",
+      "provenance_tier": "P4",
+      "access_method": "Full text free on Internet Archive with _djvu.txt sidecars; in print",
+      "value": "critical",
+      "format": "Scanned book with OCR text layer",
+      "axes_served": [
+        "claim-origin",
+        "construction",
+        "function",
+        "chronology"
+      ],
+      "search_technique": "Treat Sauder as a bibliography, not as an authority \u2014 this is the highest-leverage single move in the fringe half of the beat. Pull the _djvu.txt of both books and regex out every document identifier: AD-numbers (DTIC accession), AFWL-TR-* (Air Force Weapons Laboratory technical reports), RAND R-/RM-/P- series, Bureau of Mines RI/IC numbers, contract numbers, and Federal Register volume/page cites. Each extracted identifier is a P1 lead retrievable from DTIC, NTRL, or the Federal Register \u2014 meaning a P4 source mechanically generates P1 evidence. Specific document families he surfaces that are worth pursuing on their own: the 1960s Deep Underground Command Center (DUCC) and Deep Underground Support Center (DUSC) studies, Air Force deep-basing and superhard-silo research, and Navy underwater-facility literature. Also worth extracting: his RAND/Corps citations frequently name the *contractors* and *research programs*, which then key into other beats.",
+      "robots_posture": "IA APIs open; the book is uploaded by third parties and rights status is unclear.",
+      "rate_limits": "IA standard.",
+      "notes": "Grading nuance the register should encode explicitly: Sauder's documents are real; his inferences from them are frequently not. He moves from 'the Air Force studied deep basing' to 'therefore deep bases were built' without the intervening evidence. The correct treatment is to promote his citations to P1 and grade his conclusions P4. He is the strongest case in this beat for the proposition that a P4 source can have a real documentary track record."
+    },
+    {
+      "name": "The 1980s\u201390s conspiracy-publishing origin cluster: Lear, Cooper, Valerian, Beckley",
+      "url": "https://archive.org/details/beholdapalehorse",
+      "holdings": "John Lear's 1987 'Lear Statement', posted to the ParaNet BBS network \u2014 the first widely circulated synthesis asserting joint government-alien underground facilities. Milton William Cooper, 'Behold a Pale Horse' (Light Technology, 1991) \u2014 the single most influential aggregation text in the entire American conspiracy corpus, which copies Lear, the 'Krill Papers' (1988), and 'Silent Weapons for Quiet Wars' largely without attribution. Valdamar Valerian (John Grace), 'Matrix' I\u2013V \u2014 enormous late-80s/early-90s compendia that hoovered up and reprinted the BBS-era corpus. 'Commander X', 'Underground Alien Bases' (1990), published by Timothy Green Beckley's Abelard/Inner Light imprints \u2014 a known fabrication mill.",
+      "provenance_tier": "P5",
+      "access_method": "Free full text on Internet Archive and mirror sites; original BBS-era files on textfiles.com",
+      "value": "high",
+      "format": "Scanned books with OCR, plain-text BBS files",
+      "axes_served": [
+        "claim-origin",
+        "chronology"
+      ],
+      "search_technique": "The essential structural insight: Cooper and Valerian are AGGREGATORS, not origins, and the ecosystem systematically miscites them as origins. Any claim traced to 'Behold a Pale Horse' has at least one further hop. Textfiles.com (textfiles.com/ufo/, /conspiracy/, /occult/) preserves the pre-web BBS file corpus with original file dates, which is the only way to date claims in the 1985\u20131993 window \u2014 this is the layer beneath the books. Combine: find the claim in Cooper (1991), find the same text in a textfiles.com file dated 1988, find the same text in a Usenet post dated 1987, and you have the actual origin. Beckley's imprints (Inner Light, Global Communications, Abelard) should be treated as a publisher-level red flag: material originating there is P5 by provenance regardless of content.",
+      "robots_posture": "textfiles.com is explicitly an open preservation archive. Mirror sites are unmaintained.",
+      "rate_limits": "textfiles.com is small and static; a full mirror is trivial and appropriate.",
+      "notes": "ParaNet (Jim Speiser, from 1986) and CUFON (Computer UFO Network, Seattle, Dale Goudie) were the two BBS distribution hubs. Their file archives, where preserved, carry upload dates that predate any web record and are the earliest datable layer of this corpus."
+    },
+    {
+      "name": "The FEMA-camps / COG-detention corpus and its tracers",
+      "url": "https://www.splcenter.org/resources/reports/fear-fema/",
+      "holdings": "A well-documented, unusually traceable claim lineage: a 1982 Posse Comitatus newsletter warning that 'hardcore Patriots' would be imprisoned in FEMA detention camps (predating the usual origin story); Alfonso Chardy's Miami Herald report of 5 July 1987 disclosing Readiness Exercise 1984 (Rex 84) and the associated North/NSC continuity planning, which supplied the real documentary kernel; Liberty Lobby's The Spotlight (1975\u20132001) and 1990s militia newsletters carrying the '800 camps' list; Alex Jones's 1990s videos ('America Destroyed by Design', 'Police State' series) providing the video-era amplification; the 2009 resurgence keyed to H.R. 645 (National Emergency Centers Establishment Act, a real introduced bill); and the 2024 hurricane-response wave.",
+      "provenance_tier": "P5",
+      "access_method": "Mixed: SPLC 'Fear of FEMA' report free; Miami Herald 1987 via library databases; The Spotlight via microfilm and scattered scans; militia-era newsletters via IA and university extremism collections",
+      "value": "high",
+      "format": "HTML, microfilm, scanned newsletters, video",
+      "axes_served": [
+        "claim-origin",
+        "chronology",
+        "function"
+      ],
+      "search_technique": "Tracers to use as the P2/P3 backbone: SPLC's 'Fear of FEMA' report; the 2017 'We Are the Mutants' piece 'Look It Up, Check It Out: REX 84 and the History of an American Conspiracy', which is the best single published reconstruction of the lineage; PolitiFact's 2024 retrospective. Fingerprint strings: 'REX 84', 'Rex-84 Bravo', 'Garden Plot', 'Cable Splicer', '800 detention camps', 'Executive Order 11490', 'H.R. 645'. Note carefully which parts are real: Rex 84 was a real exercise, Garden Plot and Cable Splicer were real contingency plans, Executive Order 11490 was a real EO, and H.R. 645 was a real bill. The fabrication is the camp *list* and the operational claims layered on top. This is a case where the register must be surgical rather than dismissive \u2014 the underlying documents exist and belong in the register at P1; the derived claims do not. MuckRock hosts FOIA requests specifically for Rex 84 materials.",
+      "robots_posture": "SPLC and PolitiFact permit reading; the militia-era primary material is largely in institutional collections.",
+      "rate_limits": "N/A.",
+      "notes": "Directly relevant to this project because the '800 camps' list is a *facility list* \u2014 it names real places (armories, disused bases, federal prisons, fairgrounds) and asserts a function they do not have. That is the exact failure mode the register exists to correct: correct location, fabricated function. Ingest the list, grade every entry, and show the work."
+    },
+    {
+      "name": "Pure aggregator nodes: bibliotecapleyades.net, whale.to, subterraneanbases.com, beforeitsnews",
+      "url": "https://www.bibliotecapleyades.net/",
+      "holdings": "Biblioteca Pleyades is the largest single mirror of the underground-base corpus, hosting near-complete reproductions of Branton, Sauder excerpts, the Castello material, Commander X, and hundreds of forum posts, in both English and Spanish, generally with degraded or absent attribution. whale.to hosts a comparable 'DUMB' compendium. subterraneanbases.com and the BeforeItsNews/AllConspiracy/USAHitman tier are second- and third-generation copies of the copies.",
+      "provenance_tier": "P5",
+      "access_method": "Free, static HTML, trivially crawlable",
+      "value": "high",
+      "format": "Static HTML, mostly hand-authored, stable URLs",
+      "axes_served": [
+        "claim-origin",
+        "citation-topology"
+      ],
+      "search_technique": "These have negative evidential value but very high *diagnostic* value: they are the reference corpus for detecting copies. Mirror them once, normalize the text (strip markup, collapse whitespace, lowercase), and build a shingle/MinHash index. Then any newly encountered page can be scored for overlap against the aggregator corpus, and near-duplicates auto-classified as copies rather than sources. Biblioteca Pleyades URL grammar is regular and enumerable (/sociopolitica/esp_sociopol_underground<NN>.htm, /offlimits/offlimits_dulce<NN>.htm), which makes complete section mirroring straightforward. This is the concrete mechanism for the project's '400 sources, one source' rule.",
+      "robots_posture": "Unmaintained personal sites; generally no robots.txt. Crawl slowly out of courtesy \u2014 these are hobbyist hosts.",
+      "rate_limits": "None enforced; self-limit to ~1 req/sec.",
+      "notes": "Do not spend analytic time reading these. Their only function in the pipeline is as a deduplication reference set and as a source of the *earliest URL* for a claim, which you then push back further with the Wayback CDX API."
+    },
+    {
+      "name": "GlobalSecurity.org \u2014 the P3 aggregator the ecosystem treats as P1",
+      "url": "https://www.globalsecurity.org/wmd/facility/",
+      "holdings": "Per-facility pages for a very large number of US and foreign military and WMD-related installations, including hardened and command facilities (e.g. /wmd/facility/mt_weather.htm). Founded December 2000 by John Pike, who had previously spent nearly two decades at the Federation of American Scientists directing its Military Analysis, Nuclear Resource, Space Policy and Intelligence Resource projects; a substantial portion of the facility content is carried over from Pike's 1990s FAS Military Analysis Network pages.",
+      "provenance_tier": "P3",
+      "access_method": "Free static HTML, no API",
+      "value": "critical",
+      "format": "HTML, stable URLs, frequently un-footnoted",
+      "axes_served": [
+        "location",
+        "function",
+        "chronology",
+        "citation-topology"
+      ],
+      "search_technique": "Register this explicitly as a *tier trap*. GlobalSecurity pages are typically unsourced or thinly sourced compilations of news reporting, congressional testimony, and Pike's own analysis \u2014 legitimate P3 secondary work \u2014 but they are cited across the fringe and mainstream web as though they were primary or official. When a claim's apparent 'source' is a GlobalSecurity page, that is a hop, not a terminus, and the register should say so. Practical: crawl /wmd/facility/ and /military/facility/ (stable, enumerable URL slugs), extract every facility page as a candidate record, and mark provenance as 'aggregator \u2014 requires backing'. Then diff against the archived FAS Military Analysis Network pages (fas.org/nuke/guide/usa/, retrievable from the Wayback Machine for 1996\u20132000) to determine which text predates GlobalSecurity and therefore originated at FAS.",
+      "robots_posture": "Check globalsecurity.org/robots.txt; the site is ad-supported and has historically discouraged bulk mirroring.",
+      "rate_limits": "Unpublished; keep it slow.",
+      "notes": "The FAS side is the more rigorous lineage and remains active: the FAS Nuclear Information Project (Hans Kristensen and successors) produces genuinely well-documented work on nuclear weapons storage locations, and the Nuclear Notebook in the Bulletin of the Atomic Scientists is peer-reviewed-adjacent P2. Distinguish FAS-today (P2) from GlobalSecurity (P3) from GlobalSecurity-as-cited-by-the-fringe (a hop)."
+    },
+    {
+      "name": "Glenn Campbell's Groom Lake corpus, Dreamland Resort, and Peter Merlin \u2014 the rigorous-fringe exemplar",
+      "url": "https://www.dreamlandresort.com/",
+      "holdings": "Glenn Campbell's 'Area 51 Viewer's Guide' (editions 1993\u20131998) and 'The Groom Lake Desert Rat' newsletter (1994\u20131996/97, ~40+ issues), plus the ufomind.com archive \u2014 field-verified perimeter documentation, BLM land-status research on the 1984 Groom Mountain Range withdrawal and the 1995 White Sides/Freedom Ridge withdrawal, security-contractor identification, and named viewpoints (Tikaboo Peak, established with Tom and Jeri Mahood). Dreamland Resort (Joerg Arnu) carries decades of photographic documentation, construction-progress tracking, and a long-running forum. Peter Merlin's aerospace-history work is archival and FOIA-based.",
+      "provenance_tier": "P3",
+      "access_method": "Free web; Desert Rat issues and the Viewer's Guide archived on Internet Archive; dreamlandresort.com free with an active forum",
+      "value": "high",
+      "format": "HTML, plain-text newsletters, PDF compilations, photographs",
+      "axes_served": [
+        "location",
+        "condition",
+        "chronology",
+        "claim-origin",
+        "land acquisition"
+      ],
+      "search_technique": "This is the proof-of-concept for a P3 enthusiast source with real methodology, and the register should study its technique rather than just its output. Campbell's actual method was land records, not rumor: Federal Register withdrawal notices, BLM land status plats, county recorder filings, EIS documents, and FAA charts \u2014 combined with repeat photography from legally accessible ground. That is precisely this project's method, executed in 1994 without the internet. Harvest the Desert Rat run (archive.org, including a compiled PDF) and mine it for the specific record citations. Note the divergence: the same corpus that produced Campbell's land-records work also produced Bob Lazar's 1989 S-4/Papoose Lake claims via George Knapp's KLAS-TV interviews, which are the origin of the 'S-4' element and are P5. Same geography, radically different evidentiary quality \u2014 a good calibration case.",
+      "robots_posture": "dreamlandresort.com is a private enthusiast site with a forum; respect it and do not bulk-crawl the forum. IA-archived Campbell material is fine.",
+      "rate_limits": "Self-limit.",
+      "notes": "Two cautions. Glenn Campbell has died (referenced in the dreamlandresort forum) and ufomind.com is long gone \u2014 the material survives only in the Wayback Machine and IA uploads, so snapshot it. Joerg Arnu was doxxed and had his home raided in 2023, which has made this community markedly more security-conscious; approach with care and do not republish anything that identifies individuals."
+    },
+    {
+      "name": "Ed Thelen's Nike Missile Site and the Nike/air-defense enthusiast register",
+      "url": "https://ed-thelen.org/",
+      "holdings": "The de facto authoritative public register of US Army Nike Ajax/Hercules sites: site designators, locations, activation and deactivation dates, current disposition, scanned Army technical manuals and field documents, photographs, and veteran recollections. Complemented by nikemissile.org (Nike Historical Society) and by the Army's own published site lists.",
+      "provenance_tier": "P3",
+      "access_method": "Free static HTML, trivially crawlable",
+      "value": "critical",
+      "format": "Static HTML tables, scanned PDFs/images of Army documents",
+      "axes_served": [
+        "location",
+        "function",
+        "chronology",
+        "condition",
+        "ownership/disposal"
+      ],
+      "search_technique": "Directly ingestible: the site-list pages are plain HTML tables keyed by defense-area code and site designator (e.g. SF-88, C-47, HM-69), which parse cleanly into records. The scanned Army documents hosted alongside are the P1 backing for the P3 tabulation \u2014 harvest both and link them, so each site record carries its own document evidence. This is the model for what the register should look like for a whole facility class. Cross-validate against the Army's official site lists and against HAER documentation (many Nike sites were HAER-recorded, with measured drawings and photographs deposited at the Library of Congress).",
+      "robots_posture": "Open personal site, no restrictions observed; built explicitly for preservation and education.",
+      "rate_limits": "None; static site, mirror it.",
+      "notes": "Succession risk is acute and should drive priority: Ed Thelen died in 2024 and stewardship passed to Greg Brown, a Nike veteran. Sites of this kind \u2014 one dedicated person, decades of unique compilation, no institutional backing \u2014 routinely vanish when the person does. Mirror it now and record the mirror date. The same risk applies to the whole class: siloworld-type Atlas/Titan enthusiast sites, coldwar-c4i pages, radar-station registers (radomes.org for air-defense radar sites is another of this class and equally valuable)."
+    },
+    {
+      "name": "missilebases.com / 20th Century Castles (Ed and Dianna Peden)",
+      "url": "https://www.missilebases.com/",
+      "holdings": "A missile-base and communications-bunker real estate brokerage active since the 1990s: has physically explored 90+ underground sites and sold 59. Listings historically carried as-built drawings, shaft and level dimensions, blast-door specifications, depth, water and power status, current condition, acreage, and the GSA disposal history of each parcel.",
+      "provenance_tier": "P4",
+      "access_method": "Free web listings; archived listings via Wayback",
+      "value": "high",
+      "format": "HTML listings, scanned drawings, photographs",
+      "axes_served": [
+        "condition",
+        "construction",
+        "ownership/disposal",
+        "location"
+      ],
+      "search_technique": "An unusual P4 source holding genuinely primary data, because a broker must document a property to sell it and had lawful physical access. Harvest current listings AND the Wayback Machine's full history of the listings pages \u2014 sold properties are removed from the live site, so the historical snapshots are where most of the corpus lives. Use the CDX API against missilebases.com/*, dedupe by digest, and extract each vintage listing. Cross-reference the disposal narratives against GSA and federal property disposal records for independent confirmation. Related: Larry Hall's Survival Condo (Atlas F silo in Kansas, purchased 2008, second facility since) is publicly documented in extensive press coverage that includes engineering detail.",
+      "robots_posture": "Commercial site; check robots.txt. Wayback snapshots are the safer harvest path.",
+      "rate_limits": "Self-limit.",
+      "notes": "Grading note: condition and dimensional data from a seller is subject to obvious commercial bias (silos are marketed as more intact and more impressive than they are). Treat physical descriptions as P4 claims requiring corroboration, but treat the *existence and disposal* data as strong \u2014 a broker had to establish clear title, so the ownership chain is usually real and checkable against county recorder records."
+    },
+    {
+      "name": "Urban exploration communities: UER.ca, 28dayslater, Opacity, and the video tier",
+      "url": "https://www.uer.ca/",
+      "holdings": "UER (Urban Exploration Resource, US/Canada focus): a location database opened 30 July 2003 with 10,000+ locations in dozens of countries and 3M+ forum posts, containing interior photographs, access notes, and condition reports for abandoned military and government sites. 28dayslater.co.uk is the UK-centred equivalent with substantial Cold War bunker coverage. Opacity (Tom Kirsch) is a high-quality single-author photographic archive. On video, The Proper People are the most methodical documentarians in the space; a large second tier (Exploring With Josh, Steve Ronin and similar) produces volume with little verification.",
+      "provenance_tier": "P4",
+      "access_method": "Free registration for forums; location database access is tiered and gated by contribution/reputation; some locations restricted or coordinates withheld",
+      "value": "moderate",
+      "format": "HTML, photographs, video",
+      "axes_served": [
+        "condition",
+        "location",
+        "function"
+      ],
+      "search_technique": "The community's governing norm is deliberate location secrecy \u2014 exact coordinates are frequently withheld or shared only privately, and posting them publicly is a serious breach. Plan accordingly: this is a source for *condition and interior evidence*, not for coordinates, and attempting to extract coordinates will get you banned and is contrary to the community's stated ethics. UER's public layer (uer.ca/locations/newlist.asp?country=United+States, /locations/search.asp, /locations/gmaps/) is browsable; the gated layer is not, and should not be circumvented. For video: photographs and footage of interiors are genuinely probative for function and condition (blast door hardware, filtration equipment, communications racks, government property tags and stencilled unit designations visible in frame are all identifiable evidence), so the right treatment is frame-level evidence extraction from publicly posted material, cited to the uploader and date. Archiveteam has a UER project page, indicating past preservation concern about the site's survival.",
+      "robots_posture": "UER is a private community with explicit content and access rules. Respect the gating; do not scrape the location database. Treat public forum threads as readable-but-cite-carefully.",
+      "rate_limits": "N/A \u2014 manual use.",
+      "notes": "Ethical and legal note the register should carry: much urbex documentation involves trespass, and republishing precise locations for intact or hazardous sites creates real-world risk. Recommend the register cite urbex material as evidence of condition while declining to import location precision from it, and prefer independently derived coordinates."
+    },
+    {
+      "name": "Subterranea Britannica \u2014 the methodological model",
+      "url": "https://www.subbrit.org.uk/",
+      "holdings": "Founded 1974; a per-site register of UK underground structures (nuclear bunkers, ROC posts, deep shelters, Cold War command sites) with survey notes, plans, photographs, and a documented history for each. The Sub Brit Collection (collection.subbrit.org.uk) is a purchased-and-preserved archive of nine filing cabinets of papers, plans and photographs formerly at RAF Holmpton, progressively indexed and scanned. The society's journal, Subterranea, has a digitized run on Internet Archive. Now also lists sites in Europe and the United States.",
+      "provenance_tier": "P3",
+      "access_method": "Free web; journal PDFs on Internet Archive",
+      "value": "high",
+      "format": "HTML site records, PDFs, scanned plans and photographs",
+      "axes_served": [
+        "condition",
+        "construction",
+        "function",
+        "chronology",
+        "location"
+      ],
+      "search_technique": "The reason to register a UK-focused body in a US-first project: Sub Brit is the closest existing thing to what this project is trying to be, and its site-record schema is worth studying directly \u2014 each record separates documented history, survey observation, and current condition, with named sources. Harvest subbrit.org.uk/sites/ (stable per-site URLs under category paths like /categories/nuclear-bunkers/) as a schema reference and for its growing US section. The journal run on IA (identifiers of the form subterranea-<N>) is full-text and contains methodology articles on records research, plus obituaries and site reports. Nick Catford's site reports are the reference standard for the genre.",
+      "robots_posture": "Membership society, publicly readable. Crawl politely.",
+      "rate_limits": "Self-limit.",
+      "notes": "Also demonstrates the succession/archive-purchase problem in a positive light: when the private archive that underpins a research community came up for disposal, the society bought it. Worth noting as a precedent for what happens to US enthusiast archives (Thelen, Campbell) when their keepers die."
+    },
+    {
+      "name": "The Black Vault (John Greenewald) and governmentattic.org \u2014 FOIA document hosts",
+      "url": "https://www.theblackvault.com/documentarchive/",
+      "holdings": "The Black Vault: a very large archive of FOIA-released documents obtained by Greenewald over three decades, organized by agency and topic, including an AFHRA document collection and extensive DoD/CIA/FBI material; also runs 'Case Files' pages that adjudicate specific fringe claims (including a determination that the Castello Dulce photograph is a hoax). governmentattic.org: an eclectic FOIA archive organized into ~11 agency categories, with two sections \u2014 FOIA Logs and Documents \u2014 including thousands of released documents plus agencies' own FOIA request logs.",
+      "provenance_tier": "P1",
+      "access_method": "Free public download",
+      "value": "high",
+      "format": "PDF (variable OCR quality)",
+      "axes_served": [
+        "function",
+        "construction",
+        "chronology",
+        "claim-origin"
+      ],
+      "search_technique": "Both are P1 *documents* wrapped in P3/P4 presentation \u2014 grade the document, not the host. governmentattic's URL grammar is regular and enumerable: governmentattic.org/<N>docs/<FILENAME>.pdf where N increments across directory generations; the index pages list them with a description block. Crawl the index pages rather than guessing filenames. The FOIA Logs section is the strategically interesting part and is badly under-exploited: a FOIA log tells you what OTHER people have already requested from an agency, with descriptions \u2014 so an agency's FOIA log is effectively a map of what documents exist and what has already been released, letting you request a known-releasable document by its prior request description rather than fishing. Search logs for 'underground', 'relocation facility', 'continuity of government', 'hardened', 'bunker', plus facility names. MuckRock (muckrock.com) is the third leg: it hosts filed requests, agency responses, and released documents with a public API, and lets you file new requests programmatically.",
+      "robots_posture": "Both are public archives intended for reading. The Black Vault is ad-supported; crawl slowly. governmentattic is static and small.",
+      "rate_limits": "Unpublished; self-limit.",
+      "notes": "Greenewald's editorial posture is 'release the documents and let people decide', which means the archive contains both solid material and documents that fringe readers over-interpret. His Case Files work is genuinely useful debunking and is one of the few instances of a P4-adjacent community member doing rigorous backward tracing \u2014 exactly the track-record signal this beat was asked to identify."
+    },
+    {
+      "name": "Claim-dating infrastructure: Wayback CDX, textfiles.com, UTZOO/Usenet, Arctic Shift",
+      "url": "https://web.archive.org/cdx/search/cdx",
+      "holdings": "The tooling stack for establishing WHEN a claim first appeared, which is the load-bearing question for the entire fringe half of this beat. Layers by era: 1981\u20131991 \u2014 the UTZOO/Henry Spencer Usenet archive, ~2.1M posts, February 1981 to June 1991; 1985\u20131995 \u2014 textfiles.com's BBS file corpus with original file dates; 1996\u2013present \u2014 the Wayback Machine; 2005\u2013present \u2014 Reddit via Arctic Shift.",
+      "provenance_tier": "P2",
+      "access_method": "CDX API (no key); textfiles.com static mirror; Usenet via IA/mirrors; Arctic Shift monthly dumps + query API",
+      "value": "critical",
+      "format": "JSON/CDX text, plain-text mail/news batches, static text files",
+      "axes_served": [
+        "claim-origin",
+        "chronology",
+        "citation-topology"
+      ],
+      "search_technique": "Wayback CDX is the workhorse: http://web.archive.org/cdx/search/cdx?url=<host>/*&output=json&fl=timestamp,original,digest,statuscode&collapse=digest&from=1996&to=2005 \u2014 collapse=digest deduplicates unchanged captures, so you get a change-history rather than a capture-list, which is how you find when a page's text changed and what it said before. Use matchType=prefix or domain to sweep a whole site. To date a *string* rather than a URL, you must first find candidate hosts (via general search over the aggregator corpus) then CDX each one and diff the captures. For pre-web: the UTZOO archive was REMOVED from the Internet Archive around 2020 following sustained legal demands for redaction \u2014 but working mirrors survive at annex.retroarchive.org/utzoo/, shiftleft.com/mirrors/utzoo-usenet/, ftp.xtal.net/pub/archives/usenet/utzoo/, and on SourceForge; these are flat-file and fully greppable. Google Groups discontinued Usenet entirely in 2024 and its advanced search had already been broken since 2015, so it is not an option; narkive.com and novabbs.com are partial web front-ends over later Usenet. For Reddit: Pushshift's public service was killed by Reddit's 2023 API changes; Project Arctic Shift (Arthur Heitmann) is the maintained successor, offering large monthly dumps, a limited query API, and web search. Reddit's own API is free at ~100 QPM for non-commercial use.",
+      "robots_posture": "IA CDX is a documented public API. textfiles.com is an open preservation archive. Usenet mirrors are static FTP/HTTP.",
+      "rate_limits": "CDX: undocumented but real \u2014 keep concurrency low and prefer one broad prefix query over many narrow ones. Reddit: 100 QPM free tier.",
+      "notes": "This entry is the methodological spine of the beat. Recommend building it first, because without it every fringe claim is undatable and the whole 'one source, 399 copies' analysis is unfalsifiable assertion. Note also the honest limits: the pre-1996 record is thin and lossy, alt.* hierarchy coverage in UTZOO ends in 1991, and BBS-era material survives only where someone happened to save it."
+    },
+    {
+      "name": "Coast to Coast AM / Art Bell episode archive \u2014 the broadcast amplification layer",
+      "url": "https://archive.org/details/the-ultimate-art-bell-collection_202201",
+      "holdings": "Large collections of Art Bell-era Coast to Coast AM episodes on Internet Archive, with dated identifiers. Directly relevant broadcasts in the collection include John Lear on Area 51/UFOs (1994-09-02), Preston Nichols on the Montauk Project (1994-05-27), Al Bielek on the Philadelphia Experiment (1993-06-20), and Richard Hoagland. Bell's show from roughly 1993\u20132003 is the single most important amplification node in the modern American conspiracy ecosystem, and it is where Bob Lazar, Phil Schneider, Richard Sauder and the Montauk authors reached a mass audience.",
+      "provenance_tier": "P5",
+      "access_method": "Free streaming/download on Internet Archive (rights status unclear); official archive is behind the Coast Insider paywall",
+      "value": "high",
+      "format": "MP3 audio; no official transcripts",
+      "axes_served": [
+        "claim-origin",
+        "chronology"
+      ],
+      "search_technique": "The IA identifier convention is the useful property: <YYYY>-<MM>-<DD>-coast-to-coast-am-with-art-bell-<guest>-<topic>. That means the collection is a DATED index of when each claim reached national radio, which is often the moment a claim goes from an obscure newsletter to universal circulation. Enumerate via the IA scrape API and parse identifiers into a guest\u00d7date table \u2014 that alone is a valuable artifact for this project, independent of listening to anything. To make the content searchable you must run ASR over the audio; there are no official transcripts and the fan transcripts that exist are partial and unreliable. artbellarchive.org curates the show's history, guests and topics and is a useful finding aid.",
+      "robots_posture": "IA APIs are open, but much of this material is uploaded without rights clearance and is subject to takedown.",
+      "rate_limits": "IA standard.",
+      "notes": "Sharp distinction to encode: a Coast to Coast broadcast is excellent evidence of WHEN and TO WHOM a claim was propagated, and no evidence at all of whether it is true. The register should be able to hold both facts about the same artifact."
+    },
+    {
+      "name": "Archives for the Unexplained (AFU) \u2014 digitized newsletter runs on Internet Archive",
+      "url": "https://archive.org/details/ufonewsletters",
+      "holdings": "AFU (Norrk\u00f6ping, Sweden) holds ~3.5km of shelving across 15 locations: 55,000+ books, 88,000 magazine issues representing 8,000 annual titles, 650,000 newspaper clippings, 30,000 photographs, plus films and tapes. A large body of the newsletter holdings has been digitized and deposited on Internet Archive as the 'ufonewsletters' collection.",
+      "provenance_tier": "P3",
+      "access_method": "Free download via Internet Archive; AFU's own site has a Collections/Downloads section",
+      "value": "high",
+      "format": "Scanned PDFs with variable OCR",
+      "axes_served": [
+        "claim-origin",
+        "chronology"
+      ],
+      "search_technique": "This is where the pre-internet layer of the underground-base corpus physically survives. The 1979\u20131985 Albuquerque/Dulce material circulated first in newsletters \u2014 APRO Bulletin, MUFON UFO Journal, regional group newsletters \u2014 and those runs are here and nowhere else in digitized form. To establish that a claim predates its usual attributed origin (or, more often, to establish that it does NOT), search this collection for the earliest occurrence. Enumerate via the IA scrape API on collection:ufonewsletters, pull _djvu.txt sidecars, and build a dated full-text index. OCR quality on mimeographed 1970s newsletters is poor \u2014 expect to need fuzzy matching, and expect names and dates to be the most reliably OCR'd tokens.",
+      "robots_posture": "AFU is a nonprofit archive that has deliberately made this material public. IA APIs open.",
+      "rate_limits": "IA standard.",
+      "notes": "A genuine and under-recognized asset: an institutional archive, run to archival standards, of a corpus that is otherwise entirely P5. The archive itself is P3 \u2014 the scans are faithful and dated \u2014 even though nearly everything in it is P4/P5 content. This distinction (archive quality vs content quality) should be a first-class concept in the register's schema."
+    },
+    {
+      "name": "Forum aggregation nodes: AboveTopSecret and Godlike Productions",
+      "url": "https://www.abovetopsecret.com/",
+      "holdings": "ATS: founded 1997 by Simon Gray, forum-based from 2001, with a very large corpus of underground-base threads (thread IDs in the 300k\u20131.3M range span roughly 2004\u20132015) accumulating claims, photographs, map coordinates and speculation. GLP is the higher-volume, lower-signal equivalent. Both are primarily downstream \u2014 topics were routinely lifted from Infowars, GLP, and each other.",
+      "provenance_tier": "P5",
+      "access_method": "Free public read; stable thread URLs",
+      "value": "moderate",
+      "format": "HTML threads with per-post timestamps",
+      "axes_served": [
+        "claim-origin",
+        "citation-topology",
+        "chronology"
+      ],
+      "search_technique": "Value is in the per-post timestamps, which make these forums usable as a dating layer for the 2001\u20132015 window where the Wayback Machine is patchy on forum content. ATS thread URLs are enumerable: abovetopsecret.com/forum/thread<ID>/pg<N>. Rather than reading, harvest thread metadata (title, first-post date, post count) and first-post text across the ID space, and index it for first-occurrence matching against the claim corpus. Genuine occasional value: local members sometimes post first-hand observation (a construction convoy, a fence line, a photograph) that is real primary observation buried in a P5 context \u2014 searchable via geographic terms plus 'I live near', 'I drove past', 'my father worked at'. Grade the observation, not the thread.",
+      "robots_posture": "Check robots.txt; ATS has had periods of aggressive anti-scraping. Site ownership and platform have changed over the years and older content has been lost in migrations.",
+      "rate_limits": "Unpublished. Be conservative.",
+      "notes": "Link rot is severe and worsening across this whole tier. Many threads cited by later material are already dead, surviving only in Wayback. Prioritize capture over analysis."
+    },
+    {
+      "name": "Enthusiast and crowd mapping layers: Wikimapia, OpenStreetMap, and legacy Google Earth Community KMZ",
+      "url": "http://wikimapia.org/api/",
+      "holdings": "Wikimapia: user-annotated polygons over satellite imagery with category tagging, historically the densest crowd-sourced layer for military installations worldwide, including many annotated by local residents who simply know what a place is. OpenStreetMap: military=bunker, military=* landuse, and man_made=* tagging, with full history and changeset attribution. Google Earth Community (defunct): the 2004\u20132010 forum whose 'Military' folders produced thousands of KMZ placemark files, many of which survive only as orphaned KMZ downloads and Wayback captures.",
+      "provenance_tier": "P4",
+      "access_method": "Wikimapia: keyed REST API. OSM: Overpass API, planet dumps, full history files. GEC: dead, Wayback only",
+      "value": "moderate",
+      "format": "JSON, KML, OSM XML/PBF, KMZ",
+      "axes_served": [
+        "location",
+        "function",
+        "condition"
+      ],
+      "search_technique": "Wikimapia: create a key at wikimapia.org/api/?action=create_key, then the Box function against api.wikimapia.org returns places within a bounding box, filterable by category, max 100 places per page with pagination; JSON default, KML available; free tier is ~100 requests per 5 minutes per domain. Sweep candidate regions by bounding box with the military category filter. OSM: use Overpass QL rather than planet dumps for targeted work \u2014 e.g. a bbox query for nwr[\"military\"=\"bunker\"] or nwr[\"military\"] \u2014 and critically, use the OSM full-history planet or the changeset API to see WHO added a feature and WHEN, plus their changeset comment, which occasionally cites a source. OSM's attribution trail is the best of any crowd layer. For GEC: search the Wayback Machine for bbs.keyhole.com and the Google Earth Community forum paths, and look for surviving KMZ mirrors \u2014 this is a decaying corpus worth capturing before it is entirely gone.",
+      "robots_posture": "Wikimapia requires a key and enforces rate limits. OSM data is ODbL-licensed and explicitly open for bulk use with attribution; the Overpass public instances ask for reasonable use.",
+      "rate_limits": "Wikimapia ~100 req/5min per domain, free tier. Overpass public instances: rate-limited by slot; run your own instance for heavy work.",
+      "notes": "Crowd layers are P4 by construction \u2014 an annotation is an assertion by an anonymous person \u2014 but they are unusually valuable for *discovery*: they surface candidate sites nobody has written about. Treat a Wikimapia or OSM military annotation as a lead requiring independent documentary confirmation, never as a source. OSM's licence (ODbL) has share-alike implications if you merge its geometry into a published database; check before ingesting geometry rather than just using it as a pointer."
+    },
+    {
+      "name": "Documented COG scholarship \u2014 the P2 anchor for grading the fringe",
+      "url": "https://nsarchive.gwu.edu/",
+      "holdings": "The rigorously documented literature against which fringe claims should be graded: Garrett Graff, 'Raven Rock' (2017), extensively sourced from declassified records and interviews; Edward Zuckerman, 'The Day After World War III' (1984), the earliest serious treatment of federal relocation planning; Tom Vanderbilt, 'Survival City' (2002); L. Douglas Keeney, 'The Doomsday Scenario' (2002); William Arkin and Richard Fieldhouse, 'Nuclear Battlefields' (1985), whose appendices constitute an early open-source register of hundreds of US nuclear-related facilities and are themselves an origin point for many later list-based claims; Arkin's 'Code Names' (2005); and the National Security Archive's Electronic Briefing Books on continuity of government and nuclear command and control (William Burr's Nuclear Vault).",
+      "provenance_tier": "P2",
+      "access_method": "NSArchive EBBs free online with document scans; books in print/library",
+      "value": "critical",
+      "format": "PDF document scans with NSArchive's own citations; print",
+      "axes_served": [
+        "function",
+        "chronology",
+        "construction",
+        "claim-origin"
+      ],
+      "search_technique": "NSArchive EBBs are the highest-value free primary-document collections for COG specifically \u2014 each briefing book reproduces the underlying declassified documents with archival citations (record group, box, folder), so they are simultaneously P2 analysis and P1 document delivery. Browse nsarchive.gwu.edu by the Nuclear Vault and Cyber Vault project pages. For grading work, the operationally useful move is to build a 'documented baseline' from Graff and the NSArchive \u2014 the set of COG facilities with real documentary support and their real documented functions \u2014 and then measure every fringe claim against it. Most fringe claims about COG are not fabrications of nonexistent places; they are exaggerations of real places whose real function is documented. Arkin & Fieldhouse's 1985 appendix deserves specific attention as a *list origin*: several later 'secret base list' compilations appear to be derived from it with the sourcing stripped, which is exactly the citation-topology finding this beat is meant to surface (I flag this as a hypothesis worth testing against the actual list, not a verified finding).",
+      "robots_posture": "NSArchive is a public research institute; documents are posted for use with attribution.",
+      "rate_limits": "Unpublished; polite crawling.",
+      "notes": "Also here: Trevor Paglen's 'Blank Spots on the Map' (2009) and his patch/insignia work, which are methodologically interesting (open-source tradecraft applied to classified geography) and P3; and the Washington Post/Arkin 'Top Secret America' (2010) database of contractor and intelligence facilities, which is a rare structured, published, machine-readable facility dataset from a P2 source."
+    }
+  ],
+  "access_notes": "HARVEST-ENGINEERING NOTES, ordered by leverage.\n\n1. The single biggest structural win in the vernacular half is that every chronam/Open ONI state newspaper site exposes an identical route table. One harvester, parameterized by hostname, covers Oregon, Pennsylvania, Nebraska, Georgia, Montana, New York, Texas A&M, North Carolina and more. Verified from open-oni/core/urls.py: search/pages/results/?format=json, newspapers.json, states.json, counties/<state>.json, batches.json, awardees.json, ocr.json, and per-page ocr.txt / ocr.xml / coordinates/. Search params inherited from chronam: andtext, phrasetext, ortext, proxtext + proxdistance, date1, date2, dateFilterType=yearRange, state, rows, page. batches.json gives ingest dates, so incremental re-harvest is a diff, not a re-crawl. Build this first; it is the cheapest large corpus in the beat.\n\n2. Chronicling America itself changed under everyone's feet. The legacy chroniclingamerica.loc.gov API was retired in 2025 and the collection now lives behind the generic loc.gov collections API (?fo=json, fa= facets, c=, sp=, at=). LoC explicitly warns the migrated data is not yet fully synced with the catalog, so a null result from loc.gov is not evidence of non-digitization \u2014 always cross-check the state partner. Bulk OCR downloads are capped at 10 bulk requests per 10 minutes per IP; the JSON endpoints are throttled more tightly than the old chronam API. Use at= to trim response payloads or you will burn bandwidth on facet blocks you do not need.\n\n3. OCR-tolerant querying beats clever querying. These corpora are 1940s\u201360s newsprint scanned from microfilm; word error rates are high and phrase search fails constantly. Search the rarest single token, not the phrase. Search contractor names rather than facility names, because the facility had no public name during construction but the contractor was in the legal notices, the hiring ads, and the accident reports.\n\n4. Rate limits, consolidated. loc.gov: bulk OCR 10 req/10 min per IP, general endpoints throttled, back off on 429. Open ONI instances: undocumented, university-hosted, no CDN \u2014 1 req/sec with an identifying User-Agent and contact email. Veridian/CDNC: undocumented, ~1 req/sec. Legistar: no published rate limit but a hard 1000-row response cap, page with $top/$skip. Wikimapia: ~100 requests per 5 minutes per domain on the free key. Reddit: 100 QPM free tier for non-commercial. Overpass public instances: slot-limited, self-host for volume. Internet Archive scrape API: cursor-paginated and generous; hits_inside and metadata should stay in single-digit concurrency. HathiTrust Bibliographic API: batches of up to 20 identifiers.\n\n5. Things that are gone or moved, so you do not build against them. HathiTrust Data API \u2014 RETIRED 17 July 2024; use hathifiles for bulk metadata and HTRC Extracted Features 2.0 (rsync) for bulk derived text. Google Groups \u2014 discontinued Usenet in 2024, advanced search broken since 2015; useless. The UTZOO Usenet archive was removed from the Internet Archive around 2020 after sustained legal redaction demands, but complete mirrors survive at annex.retroarchive.org/utzoo/, shiftleft.com/mirrors/utzoo-usenet/, ftp.xtal.net/pub/archives/usenet/utzoo/ and SourceForge. Pushshift's public Reddit service was killed by Reddit's 2023 API changes; Project Arctic Shift is the maintained successor. Elephind was taken offline in 2023 over hosting costs and its current status is uncertain \u2014 verify before depending on it. ufomind.com (Glenn Campbell's Area 51 archive) is gone and survives only in the Wayback Machine and IA uploads.\n\n6. Explicitly hostile terms \u2014 do not harvest. NewsBank / Access World News prohibits downloading for text-mining and prohibits scripts and web-scraping software outright, and prohibits machine-assisted indexing of its content. Newspapers.com (Ancestry), GenealogyBank, Find a Grave and Legacy.com all prohibit scraping and actively block it. HathiTrust page-image endpoints are defended. These are manual-lookup sources only; the pipeline should store the citation a human found, not the content. The one lawful free extraction path on Newspapers.com is the public Clippings layer, which exposes paper name and date for user-clipped articles.\n\n7. Identifier conventions that will bite you. AFHRA microfilm reel scans on Internet Archive are NOT consistently named \u2014 observed forms for the same class of object include afhra-reel-a-1298, reela-4030, reel-a-1372 and afhra-n-0288-r. Never construct these identifiers; enumerate via the IA scrape API and match on the title string. Conversely, some identifier conventions are gifts: the Art Bell collection uses <YYYY>-<MM>-<DD>-coast-to-coast-am-with-art-bell-<guest>-<topic>, which parses directly into a dated guest\u00d7claim table without listening to a second of audio. CivicPlus AgendaCenter item and file IDs are sequential integers, so a jurisdiction's entire packet archive is enumerable by ID walk \u2014 use that gently.\n\n8. Build the claim-dating layer before the claim-grading layer. Without it, every fringe finding is an assertion. The stack, by era: Usenet mirrors 1981\u20131991; textfiles.com BBS files with original dates 1985\u20131995; Wayback CDX 1996\u2013present; Arctic Shift for Reddit 2005\u2013present; forum per-post timestamps for the 2001\u20132015 window where Wayback forum coverage is patchy. The CDX invocation that does the most work is: web.archive.org/cdx/search/cdx?url=<host>/*&output=json&fl=timestamp,original,digest,statuscode&collapse=digest&from=&to= \u2014 collapse=digest converts a capture list into a change history, which is what you actually want.\n\n9. Mirror the fringe aggregators once, then stop reading them. Biblioteca Pleyades, whale.to, subterraneanbases.com and the BeforeItsNews tier have negative evidential value and high diagnostic value: normalized and shingled into a MinHash index, they become the reference corpus that lets you auto-classify any new page as copy-versus-source. Biblioteca Pleyades URL grammar is regular and enumerable. This is the concrete implementation of the project's '400 sources are one source' rule.\n\n10. Convert P4 bibliographies into P1 lead lists mechanically. Pull the _djvu.txt sidecars for Sauder, Cooper, Branton and the rest, and regex out document identifiers: AD-numbers, AFWL-TR-*, RAND R-/RM-/P-, Bureau of Mines RI/IC numbers, contract numbers, Federal Register cites. Each hit is a retrievable P1 document. A fringe library is a badly-formatted finding aid.\n\n11. Succession risk is a live threat to the P3 enthusiast tier and should drive crawl priority. Ed Thelen died in 2024 (ed-thelen.org now stewarded by Greg Brown); Glenn Campbell has died; ufomind.com is already gone; Archiveteam has a preservation project page for UER. These one-person, decades-deep compilations vanish with their keepers. Mirror ed-thelen.org, nikemissile.org, radomes.org, dreamlandresort.com and equivalents now, record the mirror date, and treat the mirror as the citable artifact.\n\n12. Community norms that are not negotiable. The urbex community deliberately withholds precise coordinates and treats public disclosure as a serious breach; UER's location database is contribution-gated for that reason. Do not circumvent the gate and do not import coordinate precision from urbex sources \u2014 take condition and interior evidence from them and derive coordinates independently. The Groom Lake community became markedly more security-conscious after Joerg Arnu's 2023 doxxing and home raid; approach with care and do not republish material identifying individuals.\n\n13. Personal-data restraint. Obituaries and oral histories are legitimate evidence about facilities and are also records about named private individuals and their surviving families. Recommend the register store the citation and the facility-relevant assertion, not a person-level index, and keep living individuals out of scope entirely. The AAFM 'Taps for Missileers' column and veteran-association newsletters are the preferred route for missile and air-defense personnel because they are free, bulk-downloadable, published by the veterans' own association for the purpose, and carry no ToS conflict \u2014 use them in preference to Legacy.com and Find a Grave in every case where they cover the same person.\n\n14. Verification caveat on this registry itself. The research environment I worked in had a narrow egress allowlist: github.com was reachable and I read open-oni's route table directly from source, but loc.gov, archive.org, guides.loc.gov, textfiles.com, airforcehistoryindex.org and most target hosts were blocked at the proxy. Everything not sourced from GitHub was assembled from search-result content rather than live inspection. The Open ONI route table, the Open ONI institution list, and the Legistar/OData constraints are directly verified. The loc.gov parameter grammar, the Veridian CGI grammar, the BoardDocs Domino endpoints, the Wikimapia Box parameters and the CDX invocation are from documentation and secondary sources and should be smoke-tested against the live services before an engineer commits to them. Where I have inferred a pattern rather than confirmed it, I have said so in the source note.",
+  "gaps": "WHAT THIS BEAT CANNOT TELL US.\n\n1. The construction era of local government is simply not online. Municipal and county agenda/minutes platforms \u2014 Legistar, CivicPlus, BoardDocs, PrimeGov, CivicClerk \u2014 have a hard digital floor somewhere around the mid-2000s, with a thin tail to the late 1990s. Every hardened facility of interest was sited, permitted, and connected to utilities between roughly 1950 and 1975. The zoning variances, road vacations, easement grants, water-line extensions and condemnation actions from that period exist as paper minute books and microfilm in county clerks' and recorders' offices and nowhere else. There is no API, no aggregator, and no realistic bulk path. Closing this requires either targeted mail/phone requests to specific county clerks for specific date ranges, or physical visits. Recommend treating it as a per-candidate escalation triggered by a promising lead, with a standard request template citing the state's public records act, rather than as a harvest.\n\n2. County historical societies are effectively invisible to machines. Thousands of them hold the only surviving vertical files, local photograph collections, and unpublished memoirs relevant to specific sites, and the great majority have no catalog, no finding aid, and often no website. DPLA aggregates some state-hub metadata and is the one real leverage point, but it searches metadata only, never content. There is no fix short of human outreach. What would help most: a prioritized contact list, built by taking the county set that intersects known and candidate facilities and resolving each to its historical society, library local-history room, and county archivist \u2014 a bounded, mechanical task that would materially improve reachability.\n\n3. Oral history is largely unsearchable because it was never transcribed. The Library of Congress Veterans History Project has 100,000+ collections with rich unit and service-location metadata and mostly audio/video content with no transcript. The metadata is searchable; the testimony is not. The Nevada Test Site Oral History Project shows what the transcribed case looks like and is the exception. Closing this is technically straightforward and organizationally large: run ASR over the relevant subset of VHP audio, filtered by unit and service location to the few thousand collections that plausibly touch hardened facilities, and index the output. That is a discrete, fundable sub-project and probably the highest-value single investment available in the vernacular half.\n\n4. AFHRA is an index, not a corpus. The Air Force History Index covers ~550,000 documents but stops at 2001 accessions and indexes existence, not content \u2014 you cannot full-text search the documents through it. The Internet Archive microfilm scanning programme is incomplete, unpredictable in coverage, and inconsistently identified. Anything not yet scanned requires a research request to Maxwell AFB with an IRIS number, at weeks-to-months latency. Unit histories are probably the richest untapped documentary source for what a facility actually was, and they are gated behind this bottleneck. Worth a standing programme of requests targeting the specific units associated with priority candidates, rather than opportunistic lookups.\n\n5. Post-1963 newspapers are largely paywalled. The free digitized corpus (Chronicling America and most NDNP partners) is bounded by copyright at roughly 1963 \u2014 which is exactly when hardened construction peaked and when deactivation, disposal, and local controversy began. A few state programmes run later (CDNC to the present, some partner sites under local rights agreements) and those are disproportionately valuable. Otherwise the 1963\u20132000 local record sits inside NewsBank, Newspapers.com and GenealogyBank, all of which contractually forbid harvesting. This is a permanent structural gap, not a solvable one. Mitigations: prioritize the state programmes that run past 1963; use Newspapers.com public Clippings as a free citation-discovery layer; and accept that the 1963\u20132000 window will be covered by human lookups rather than by the pipeline.\n\n6. The fringe video layer is unindexed and undatable. YouTube hosts the largest current volume of underground-base and urbex content, and it is the worst-behaved evidential substrate in the whole beat: no reliable transcript archive, no edit history, uploads that silently replace or re-cut earlier versions, mass deletion on channel termination, and terms that prohibit systematic downloading. A claim that 'first appeared in a 2019 video' generally cannot be verified as first-appearing there, because the pre-2019 video record is not preserved. Auto-captions provide partial searchability through third-party interfaces but are unreliable and not archival. Recommend the register treat video as citable evidence of condition and appearance (frame-level: blast door hardware, filtration plant, equipment racks, stencilled unit designations, property tags) while declining to use it for claim-dating at all.\n\n7. Forum link rot has already destroyed a large part of the citation trail. AboveTopSecret, Godlike Productions and the wider forum tier have gone through platform migrations, ownership changes and mass content loss; a substantial share of the threads cited by surviving fringe literature are dead, recoverable only from partial Wayback captures. The 2001\u20132015 window \u2014 precisely when most current underground-base claims consolidated \u2014 is the worst-preserved period. Any origin-tracing that terminates at a dead forum URL is unresolvable, and there will be many. Budget for a meaningful proportion of claims to be gradeable only as 'first observed at date X in a copy' with the true origin lost.\n\n8. The pre-web layer is thin and lossy. UTZOO covers February 1981 to June 1991 and its alt.* coverage is limited; the BBS-era file corpus survives only where a hobbyist happened to save it and textfiles.com is not comprehensive; ParaNet and CUFON file archives are fragmentary. For claims that entered circulation between roughly 1985 and 1993 \u2014 the Dulce cluster, the Lear statement, the Krill papers \u2014 dating will often be approximate and argued from newsletter print dates rather than proven from a datestamped record. AFU's digitized newsletter runs are the best available substitute and should be prioritized for that reason.\n\n9. Trade and engineering press is paywalled where it matters most. Engineering News-Record reported contemporaneously on large federal construction, including classified-adjacent projects, and has no free archive. The Military Engineer is partially free (1920\u20131930 on JSTOR) and otherwise institutional. Compressed Air Magazine, Western Construction News, Tunnels & Tunnelling and the mining trade press are scattered across HathiTrust in limited view. This material is unusually probative \u2014 trade press printed shaft depths, excavation volumes, ground conditions and contractor names that no other public source carries \u2014 and it is the most systematically inaccessible category in the beat. Institutional library access solves it for a human researcher and does nothing for the pipeline.\n\n10. Labor records are real but expensive per unit of yield. Union local records, grievance files, dispatch records and NLRB proceedings can name the contractor, the trades, the crew size and the site for construction that was otherwise unacknowledged. Almost none of it is digitized; finding aids describe boxes, not contents; access means a visit or a paid reproduction request at a repository like the Reuther Library, the Kheel Center, or UMD's George Meany archive. Treat as a targeted last resort for high-value candidates where the documentary record is otherwise blocked.\n\n11. Non-US coverage is essentially absent from this beat as scoped. The schema is meant to be country-agnostic from day one, and the fringe corpus is transnational \u2014 Biblioteca Pleyades operates in Spanish as much as English, and the underground-base template propagates into Spanish- and Portuguese-language ecosystems with its own origin nodes that I have not mapped. Subterranea Britannica is the one non-US body registered here, and only as a methodological model. If expansion is genuinely additive, the non-English fringe ecosystem needs its own beat; assuming it mirrors the English one will produce false origin attributions.\n\n12. Two hypotheses in this registry are flagged and untested. First, that several later 'secret facility list' compilations derive from the appendices of Arkin & Fieldhouse, 'Nuclear Battlefields' (1985) with the sourcing stripped \u2014 this is a plausible and checkable citation-topology claim that I could not verify and that would be worth testing early, because if true it identifies a P2 origin sitting underneath a large body of P5 lists. Second, that Phil Schneider's 1,477/129 figures have no pre-1995 antecedent anywhere \u2014 asserted here on the absence of any earlier attribution, but not confirmed against Usenet or BBS records, which is exactly the check the claim-dating stack exists to perform. Both should be run as the first real exercises of the tracing pipeline, since they are bounded, falsifiable, and diagnostic of whether the pipeline works.",
+  "high_yield_queries": [
+    "Open ONI universal harvest \u2014 swap hostname, same routes: https://<host>/search/pages/results/?andtext=<term>&date1=1950&date2=1975&dateFilterType=yearRange&rows=20&format=json ; then https://<host>/lccn/<lccn>/<YYYY-MM-DD>/ed-1/seq-<n>/ocr.txt",
+    "Open ONI inventory + incremental: https://<host>/newspapers.json , https://<host>/batches.json (ingest dates for diffing), https://<host>/counties/<state>.json",
+    "loc.gov Chronicling America: https://www.loc.gov/collections/chronicling-america/?q=<term>&fa=location_state:wyoming&dates=1955/1965&fo=json&c=100&at=results,pagination",
+    "Veridian/CDNC GET grammar: https://cdnc.ucr.edu/?a=q&hs=1&r=1&results=1&txq=<terms>&txf=txIN&ssnip=txt&dafyq=1958&datyq=1968&e=-------en--20--1--txt-txIN--------  (a=cl&cl=CL1 enumerates titles)",
+    "Legistar: https://webapi.legistar.com/v1/{client}/Matters?$filter=substringof('underground',MatterTitle)&$top=1000&$skip=0 ; also /MatterAttachments, /Events, /EventItems",
+    "CivicPlus packet enumeration: /AgendaCenter/Search/?term=<q>&CIDs=all ; /AgendaCenter/ViewFile/Item/<id>?fileID=<id>  (sequential integer IDs)",
+    "Internet Archive bulk enumeration: https://archive.org/services/search/v1/scrape?q=collection%3Aufonewsletters&fields=identifier,title,date&count=10000  (also creator:\"Air Force Historical Research Agency\" for the AFHRA reels)",
+    "Internet Archive in-book search: https://ia-fts.archive.org/api/v1/search/hits_inside?item_id=<id>&q=AFWL-TR  \u2014 use against Sauder to extract document numbers",
+    "Wayback change-history (the core dating call): http://web.archive.org/cdx/search/cdx?url=<host>/*&output=json&fl=timestamp,original,digest,statuscode&collapse=digest&from=1996&to=2010",
+    "Newspaper construction-era euphemisms (search these, not facility names): \"government installation\" / \"federal installation\" / \"defense project\" / \"classified project\" / \"communications site\" / \"relay station\" / \"no comment\" + county name",
+    "Contractor names as the real search key: \"Morrison-Knudsen\" | \"Peter Kiewit\" | \"Utah Construction\" | \"Guy F. Atkinson\" | \"Paul Hardeman\" | \"Vinnell\" | \"Macco\" | \"Reynolds Electrical\" | \"REECo\" | \"Silas Mason\" + county + 1955..1968",
+    "Facility codewords and program names for cross-corpus search: \"Project Greek Island\" | \"High Point Special Facility\" | \"Site R\" | \"Raven Rock\" | \"Federal Relocation Arc\" | \"Emergency Relocation Center\" | \"Presidential Emergency Facility\" | \"Deep Underground Command Center\" | \"DUCC\" | \"Deep Underground Support Center\" | \"DUSC\" | \"Hardened Intersite Cable System\" | \"HICS\" | \"AN/FSQ-7\" | \"SAGE Direction Center\"",
+    "Document-series identifiers to regex out of fringe full text (each becomes a P1 lead): AD[- ]?[0-9]{6,7} | AFWL-TR-[0-9]{2}-[0-9]+ | RAND (R|RM|P)-[0-9]+ | \"Bureau of Mines\" (RI|IC) [0-9]{4}",
+    "NIOSH/DOL facility corpus: https://www.cdc.gov/niosh/ocas/pdfs/sec/<sitecode>/ and /pdfs/tbd/<sitecode>/ \u2014 search within for \"tunnel\" \"vault\" \"underground\" \"igloo\" \"magazine\" \"classified operations\"",
+    "Fringe fingerprint strings \u2014 any page carrying these is in a known lineage: \"1,477\" | \"129 underground bases\" | \"131 underground bases\" | \"Thomas Castello\" | \"Dulce Papers\" | \"Jason Bishop III\" | \"BRANTON\" | \"The Omega File\" | \"Nightmare Hall\" | \"Level 7\"",
+    "COG-folklore fingerprints with real documentary kernels underneath: \"REX 84\" | \"Rex-84 Bravo\" | \"Garden Plot\" | \"Cable Splicer\" | \"Executive Order 11490\" | \"H.R. 645\" | \"800 detention camps\" | \"Western Virginia Office of Controlled Conflict Operations\"",
+    "Obituary/personnel patterns: \"could not talk about\" | \"never discussed his work\" | \"top secret clearance\" | \"missile combat crew\" | \"launch control\" + unit designation (e.g. \"44th Strategic Missile Wing\", \"341st\", \"532nd Strategic Missile Squadron\")",
+    "AFHRA unit-history search terms (search units, not facilities): \"4600th Support Group\" | \"1st Aerospace Control Squadron\" | \"9th Aerospace Defense Division\" | \"Alternate Joint Communications Center\" + \"hardening\" | \"blast door\" | \"survivability\"",
+    "Cold War cultural-resources grey literature: \"Cold War historic properties inventory\" | \"Legacy Resource Management Program\" | \"Cold War material culture\" + installation name (try npshistory.com and core.tdar.org before the .mil hosts)",
+    "Wikimapia bounding-box sweep: http://api.wikimapia.org/?key=<key>&function=box&bbox=<w>,<s>,<e>,<n>&category=<military>&count=100&page=<n>&format=json ; OSM equivalent via Overpass QL: nwr[\"military\"](bbox); out meta;  (use out meta for changeset attribution)",
+    "Local-government records that reveal federal siting: \"special use permit\" + \"communication\" | \"General Services Administration\" | \"excess federal property\" | \"quitclaim\" | \"easement\" + \"United States of America\" | \"Base Realignment\"",
+    "Usenet mirror grep for pre-1992 first appearances: annex.retroarchive.org/utzoo/ , shiftleft.com/mirrors/utzoo-usenet/ , ftp.xtal.net/pub/archives/usenet/utzoo/ \u2014 flat files, grep directly for the fingerprint strings above",
+    "Art Bell dated-claim index: enumerate IA identifiers matching ^[0-9]{4}-[0-9]{2}-[0-9]{2}-coast-to-coast-am-with-art-bell- and parse guest/topic from the slug"
+  ]
+}

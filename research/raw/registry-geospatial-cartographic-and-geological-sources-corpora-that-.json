@@ -1,0 +1,490 @@
+{
+  "beat": "Geospatial, cartographic, and geological sources \u2014 corpora that reveal or corroborate subsurface and hardened construction in the United States",
+  "sources": [
+    {
+      "name": "USGS Historical Topographic Map Collection (HTMC) \u2014 bulk staging on prd-tnm S3",
+      "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/",
+      "holdings": "VERIFIED LIVE 2026-08-16. 186,061 georeferenced scans of USGS and cooperator topographic sheets, 1870s\u20132000s, 2.03 TB total. Two parallel renditions of every sheet: GeoPDF under /PDF/{ST}/{scale}/ and GeoTIFF under /GeoTIFF/{ST}/. Verified decade distribution: 1880s 517, 1890s 5,070, 1900s 5,143, 1910s 3,527, 1920s 3,185, 1930s 5,688, 1940s 16,059, 1950s 47,398, 1960s 44,889, 1970s 20,486, 1980s 19,311, 1990s 12,439, 2000s 2,344. Scale distribution: 1:24,000 = 131,189 sheets; 1:62,500 = 27,814; 1:63,360 (AK) = 7,040; 1:125,000 = 4,648; 1:250,000 = 4,497; 1:31,680 = 4,223; 1:100,000 = 2,980; plus 1:10,000 (218), 1:20,000 (317), 1:25,000 (1,553), 1:30,000, 1:48,000, 1:50,000, 1:96,000. Crucially, 45,888 distinct quad cells carry MORE THAN ONE edition (max observed: 27 editions of a single cell), which makes the collection a time series, not a snapshot. 9,579 sheets carry a military-lineage publisher tag: USACE,WarDept (2,097), USGS,USACE,AMS (1,996), USACE,AMS (1,423), USGS,USACE,WarDept (1,232), USGS,AMS (941), USGS,MIL (429), AMS (418, Army Map Service), MIL (164), WarDept (50), and combinations.",
+      "provenance_tier": "P1",
+      "access_method": "Bulk download / anonymous HTTPS. No login, no API key, no rate limit observed. S3 REST list-objects-v2 works directly: GET https://prd-tnm.s3.amazonaws.com/?list-type=2&delimiter=/&prefix=StagedProducts/Maps/HistoricalTopo/GeoTIFF/CO/ . Individual objects support HTTP Range requests (verified), so GDAL /vsicurl/ subwindow reads work without downloading whole files.",
+      "format": "GeoTIFF: VERIFIED header of CO_Cheyenne Mountain_450177_1961_24000_geo.tif \u2014 6671 x 8075 px, 3-band YCbCr, Compression=7 (JPEG-in-TIFF), TILED 512x512, with a second IFD present (internal overviews) \u2014 i.e. effectively a COG. ModelPixelScale = 2.032 m, which at 1:24,000 is exactly 300 dpi. GeoKeys: GeographicTypeGeoKey 4267 = NAD27, ProjCoordTrans 22 = Polyconic, linear units metres. File size 8.5 MB for that sheet. GeoPDF is TerraGo-flavoured PDF with a geospatial extension; typical 14 MB. Both come with an FGDC CSDGM XML sidecar.",
+      "value": "critical",
+      "axes_served": [
+        "temporal differencing of surface construction",
+        "direct depiction of adits, shafts, tunnels, and portals",
+        "pre-classification depiction of sites later scrubbed",
+        "spoil/dump and quarry footprints",
+        "military reservation boundaries",
+        "cross-check on claimed coordinates"
+      ],
+      "search_technique": "Do not scrape the topoView UI. Pull the nightly-refreshed inventory instead: https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/Metadata/historicaltopo.zip (17.5 MB; VERIFIED Last-Modified 2026-08-15, refreshed nightly). It expands to historicaltopo.csv (185 MB, 186,061 rows) plus a 401-line data dictionary. Full verified column list: scan_id, product_inventory_uuid, series, edition, map_name, primary_state, westbc, eastbc, northbc, southbc, geom_wkt, date_on_map, imprint_year, survey_year, field_check_year, edit_year, aerial_photo_year, photo_inspection_year, photo_revision_year, metadata_date, print_releases, variations, hdatum_printed, projection_printed, publishers, languages, map_scale, gnis_cell_id, gnis_cell_name, gnis_primary_state, grid_size, cell_type, state_list, county_list, page_width_inches, page_height_inches, product_filename, product_filesize, product_url, thumbnail_url, geotiff_url, metadata_url, sciencebase_url. All 186,061 rows carry non-null product_url, geotiff_url, metadata_url and sciencebase_url \u2014 every sheet is downloadable in both formats. geom_wkt is a WGS84 POLYGON, so COPY the CSV straight into PostGIS and index it: a point-in-polygon query returns the full temporal stack for any coordinate. VERIFIED example: point 38.7440,-104.8480 (Cheyenne Mountain NORAD portal) is covered by 34 sheets spanning 1893\u20131989 \u2014 1893 and 1909 Colorado Springs 1:125,000, 1942 Colorado Springs, 1948/1949 Cheyenne Mountain 1:24,000 (pre-excavation), 1948/1951 Mount Big Chief 1:62,500, nine separate 1961 Cheyenne Mountain 1:24,000 sheets whose aerial_photo_year / photo_revision_year values are 1960, 1969, 1969, 1969, 1975, 1975, 1975, 1988, 1988, plus 1:250,000 Pueblo sheets 1954\u20131989. That single query yields a 1948-vs-1969-vs-1988 differencing series over the most famous hardened facility in the country, free, in about four seconds of SQL. The `publishers` field is the single highest-yield filter in the whole corpus: WHERE publishers LIKE '%MIL%' OR publishers LIKE '%WarDept%' OR publishers LIKE '%AMS%'. The `variations` field flags 'Planimetric' (2,925 sheets \u2014 no contours, often produced for engineering/military purposes) and 'OrthophotoQuad'/'OrthophotoMap' (3,116 sheets \u2014 photo base under the linework, which sometimes shows construction the cartographer did not draw). The `photo_revision_year` field is the key temporal handle: a photorevised sheet is a base map with post-dated aerial-derived additions overprinted in purple, so a 1961 base with a 1975 photorevision literally colour-codes what appeared in the intervening fourteen years.",
+      "robots_posture": "S3 bucket root serves an index.html; no robots.txt restriction encountered on the object paths. This is the USGS's own designated bulk-delivery channel and the FAQ explicitly endorses writing download scripts against the inventory. Public domain, no copyright. Be polite: parallelism of 4\u20138 and a per-object cache, since sheets are 8\u201320 MB each.",
+      "rate_limits": "None documented or observed. S3-backed. Practical limit is your bandwidth: the whole GeoTIFF corpus is ~2 TB.",
+      "notes": "WHAT A HARDENED FACILITY LOOKS LIKE ON A QUAD SHEET. (a) Adit / tunnel / cave entrance: a small open chevron or Y-shaped black symbol opening away from the hillside, placed at a contour, frequently labelled 'Tunnel', 'Mine Tunnel', 'Portal', or a proper name. USGS convention places the adit symbol perpendicular to the slope, NOT along the true bearing of the tunnel \u2014 so the symbol tells you where the mouth is and nothing about which way the workings run. (b) Mine shaft: a small black crossed-picks or X symbol; a vertical shaft in flat ground with no associated headframe or road is anomalous. (c) Quarry / open pit: crossed-picks variant inside a hachured outline. (d) Excavation and collapse: hachured (tick-marked) closed contours indicate a depression; a rectilinear hachured depression in otherwise smooth terrain is an excavation, not karst. (e) Spoil / muck dumps: stippled or fine-hachured lobate mounds immediately downslope of a portal \u2014 the volume of the dump is a first-order estimator of excavated volume, which is the single most useful inference the map supports. (f) The negative signature: a road, power line, or fence that runs to a point and simply stops, with no structure drawn. On sheets from roughly 1950\u20131980 over sensitive sites, USGS suppressed structures while retaining terrain; the tell is a well-graded road terminating at a contour, or a conspicuously blank rectangle inside an otherwise densely drawn area. Compare the drawn content against the sheet's own aerial_photo_year \u2014 if the photography is contemporaneous with a known construction period and the sheet shows nothing, the omission is itself evidence and should be graded as such rather than treated as absence. (g) Military reservation boundaries drawn as a dot-dash line with 'U.S. MILITARY RESERVATION' or 'RESTRICTED AREA' lettering, sometimes with an interior blanking. (h) Isolated 'Tower' or 'Radio Tower' symbols in clusters, plus 'Underground pipeline' dashed lines running to nothing. CRS GOTCHA: HTMC GeoTIFFs are NAD27 Polyconic, not WGS84 \u2014 you must reproject (gdalwarp -s_srs from the embedded GeoKeys -t_srs EPSG:4326) before overlaying anything modern, and NAD27\u2192WGS84 shifts are 50\u2013100 m in the western US, which is larger than most of the features you care about."
+    },
+    {
+      "name": "USGS HTMC / US Topo product inventory files (nightly CSV manifests)",
+      "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/Metadata/",
+      "holdings": "VERIFIED LIVE. Six zipped CSV manifests, all Last-Modified 2026-08-15: historicaltopo.zip (17.5 MB, 186,061 HTMC rows), topomaps_all.zip (96 MB, HTMC + US Topo combined), topomaps_all_legacy.zip, ustopo_current.zip, ustopo_historical.zip (35.6 MB), ustopo_replacements.zip. Each archive contains the CSV, a short summary .txt (row count, total bytes, last-updated date), and a long readme with a per-column data dictionary.",
+      "provenance_tier": "P1",
+      "access_method": "Anonymous HTTPS GET. No auth.",
+      "format": "ZIP containing UTF-8 CSV with quoted WKT geometry, plus plain-text data dictionary.",
+      "value": "critical",
+      "axes_served": [
+        "harvest planning",
+        "incremental sync",
+        "spatial index"
+      ],
+      "search_technique": "This is the file that turns a 2 TB image archive into a queryable register. Diff the previous night's CSV against today's on scan_id to detect newly published or re-scanned sheets. ustopo_replacements.zip specifically records which modern US Topo sheet superseded which HTMC sheet \u2014 useful for detecting features that were on the old sheet and are not on the new one.",
+      "robots_posture": "USGS-designated bulk channel; explicitly intended for scripted download.",
+      "rate_limits": "None.",
+      "notes": "The summary .txt inside each zip is a cheap freshness probe \u2014 6 lines, tells you row count and last-update date without unzipping 185 MB. Better still, HEAD the zip and read Last-Modified."
+    },
+    {
+      "name": "topoView (NGMDB) \u2014 human-facing HTMC browser",
+      "url": "https://ngmdb.usgs.gov/topoview/",
+      "holdings": "Web viewer over the same HTMC corpus, plus KMZ and JPEG renditions not staged on S3. Backed by ArcGIS REST services under https://ngmdb.usgs.gov/arcgis/rest/services/topoview/ (ustOverlay, ustOverlayAuto MapServer endpoints, supportedQueryFormats JSON/geoJSON/PBF).",
+      "provenance_tier": "P1",
+      "access_method": "HTML app plus ArcGIS REST MapServer. Also NGMDB product-description pages at /prodesc/proddesc_{id}.htm.",
+      "format": "HTML, ArcGIS REST JSON, KMZ, JPEG, GeoTIFF, GeoPDF.",
+      "value": "moderate",
+      "axes_served": [
+        "quick visual verification",
+        "citation URL for a specific sheet"
+      ],
+      "search_technique": "Use topoView only for eyeball verification and for producing a stable human-readable citation. For anything programmatic the S3 inventory is strictly superior \u2014 it has every field topoView exposes plus geometry, and it doesn't require reverse-engineering an ArcGIS app.",
+      "robots_posture": "Not determinable from this sandbox \u2014 ngmdb.usgs.gov is blocked by the egress proxy here. Check /robots.txt before scraping; prefer the ArcGIS REST endpoints, which are designed for machine access, over the app.",
+      "rate_limits": "Unknown. ArcGIS MapServer /query endpoints typically cap at 1,000\u20132,000 features per request and require resultOffset paging.",
+      "notes": "HONEST LIMITATION: I could not reach this host \u2014 the sandbox's egress proxy returns 403 CONNECT for ngmdb.usgs.gov, www.usgs.gov, mrdata.usgs.gov, sciencebase.gov, and all *.arcgis.com. Everything stated here about topoView comes from search results and prior knowledge, not direct inspection, and should be verified before a harvester is written against it. The S3 path, by contrast, I verified end to end."
+    },
+    {
+      "name": "TNM Access API (The National Map product search)",
+      "url": "https://tnmaccess.nationalmap.gov/api/v1/products",
+      "holdings": "Unified product search across every National Geospatial Program downloadable dataset: Historical Topographic Maps, US Topo, National Elevation Dataset (1, 1/3, 1/9 arc-second), Lidar Point Cloud, Original Product Resolution DEM, NAIP, Structures, Map Indices, Hydrography, Transportation. Returns download URLs, footprints, publication dates and file sizes.",
+      "provenance_tier": "P1",
+      "access_method": "REST, HTTP GET or POST, JSON response. No API key. Documentation at https://tnmaccess.nationalmap.gov/api/v1/docs with a query-builder UI at https://apps.nationalmap.gov/tnmaccess/products.html",
+      "format": "JSON (default), also CSV/pretty-JSON via outputFormat.",
+      "value": "high",
+      "axes_served": [
+        "cross-dataset discovery by AOI",
+        "elevation product availability",
+        "current-state products"
+      ],
+      "search_technique": "Core parameter set: datasets= (exact dataset label string, e.g. 'Historical Topographic Maps', 'Lidar Point Cloud (LPC)', 'Digital Elevation Model (DEM) 1 meter'), bbox=xmin,ymin,xmax,ymax in WGS84 decimal degrees, polygon= as a space-separated lon lat list, prodFormats= (GeoTIFF, LAS,LAZ, GeoPDF, Shapefile, FileGDB, GeoPackage), start= / end= as YYYY-MM-DD on publication date, max= (page size, practical ceiling 1000), offset= for paging, q= for free-text. Response objects carry title, sourceId, sourceName, downloadURL, downloadLazURL, metaUrl, boundingBox, publicationDate, dateCreated, sizeInBytes, format, extent. Page with offset until total is exhausted; total is returned in the envelope.",
+      "robots_posture": "Public API with published docs; explicitly intended for programmatic access.",
+      "rate_limits": "Not formally published. Community practice is to keep concurrency low (2\u20134) and to cache; USGS has throttled abusive callers in the past. Prefer the S3 manifests for full-corpus enumeration and use TNM Access for targeted AOI queries.",
+      "notes": "HONEST LIMITATION: host is blocked from this sandbox (403 CONNECT), so the parameter list above is from documentation and search results, not direct call verification. Verify dataset label strings against /api/v1/datasets before hard-coding them \u2014 they are exact strings and USGS renames them between releases."
+    },
+    {
+      "name": "USGS 3DEP Lidar Point Cloud (LPC) \u2014 bulk LAZ staging",
+      "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/LPC/Projects/",
+      "holdings": "VERIFIED LIVE. Per-project directories of tiled LAZ, named USGS_LPC_{ST}_{ProjectName}_{Year}_{TileID}_LAS_{PubYear}.zip, organised under Projects/{PROJECT}/las/tiled/ with a metadata/ sibling. Project naming carries state, area and a collection code, e.g. CO_CentralWestern_2019_D19, AZ_Coconino_2019_B19, AK_Prince_of_Wales_Island_QL1_Lidar_2017_B17. A flat manifest of every published zip lives at StagedProducts/Elevation/LPC/prd_lpc_zips.txt (VERIFIED \u2014 a newline-delimited list of ./Projects/... relative paths). Tile IDs are UTM-derived MGRS-style strings (e.g. 15SWA574002).",
+      "provenance_tier": "P1",
+      "access_method": "Anonymous HTTPS. Range requests supported. No auth, no key.",
+      "format": "LAZ (LASzip) inside per-tile ZIP; ASPRS LAS 1.4 classification. Metadata as FGDC XML plus project-level report PDFs.",
+      "value": "critical",
+      "axes_served": [
+        "bare-earth microtopography",
+        "excavation and spoil volumetrics",
+        "portal and vent detection under canopy",
+        "construction-era earthwork surviving under vegetation"
+      ],
+      "search_technique": "Do not walk the bucket. Fetch prd_lpc_zips.txt once, parse it into a table of project + tile, and join against WESM (below) for the project footprint and collection date. For an arbitrary AOI, the cheaper route is the AWS Entwine endpoint (separate entry) which supports bbox extraction without downloading tiles.",
+      "robots_posture": "USGS bulk-delivery bucket, intended for scripted access. Public domain.",
+      "rate_limits": "None observed.",
+      "notes": "WHAT A HARDENED FACILITY LOOKS LIKE IN A POINT CLOUD. Work from the ground-classified (class 2) returns rasterised to a 0.5\u20131 m bare-earth DTM, then run the archaeological visualisation stack rather than plain hillshade: Sky-View Factor, Simple Local Relief Model, Positive and Negative Openness, Local Dominance, and multi-azimuth hillshade blends (the Relief Visualization Toolbox implements all of these). Specific signatures: (1) PORTAL NOTCH \u2014 a sharp rectangular or arched re-entrant cut into a slope, 4\u201312 m wide, with a flat apron in front; negative openness lights these up far better than hillshade. (2) MUCK / SPOIL PILE \u2014 a lobate or fan-shaped mound of unnatural convexity immediately downslope or downvalley of the notch, with a distinctly steeper repose angle than the surrounding hillside; its volume, differenced against a reconstructed pre-construction surface, gives a defensible lower bound on excavated volume, which is the single strongest quantitative inference this beat can produce. (3) CUT-AND-FILL BENCHES \u2014 perfectly horizontal terraces on a graded slope, with straight edges and constant-gradient access ramps; nature does not produce straight lines at constant grade. (4) IGLOO FIELDS \u2014 rows of parallel earth-covered arch magazines, each roughly 5\u201310 m wide and 1\u20134 m tall, at rigidly uniform spacing along access roads; unmistakable in SLRM. (5) BLAST BERMS AND REVETMENTS \u2014 U-, L- or horseshoe-shaped earth walls of uniform height enclosing a flat pad. (6) VENT AND ESCAPE SHAFTS \u2014 small isolated rectangular or circular pads or collars, often 3\u20138 m across, on ridgelines with no road connection, sometimes with a faint foot trail. (7) SUBSIDENCE \u2014 circular or elongate closed depressions over a known working, indicating collapse. (8) SENSOR ARTIFACT AS SIGNAL \u2014 if a portal door was open at flight time, the scanner will have shot returns down the tunnel, producing a cluster of points several metres BELOW the local ground surface. Vendors usually reclassify these as class 7 (low noise) or class 18 (high noise) and processors usually discard them; DO NOT discard them. Query the raw LAZ for class 7/18 and for ground-class holes with anomalous minimum Z, and treat a coherent below-surface point train with a consistent bearing as a positive indication of an open subsurface void. Similarly, a hole in the ground class where the DSM shows a solid face is often a portal shadow. (9) Compare DSM minus DTM to find structures under canopy that no aerial image will ever show."
+    },
+    {
+      "name": "USGS 3DEP WESM \u2014 Work unit Extent Spatial Metadata (lidar availability index)",
+      "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/metadata/WESM.csv",
+      "holdings": "VERIFIED LIVE, downloaded and parsed. 3,269 lidar work units with quality level, collection start and end dates, projection, GSD, geoid, publication dates and direct links to LPC and source-DEM staging. Verified quality-level distribution: QL 0 = 9, QL 1 = 770, QL 2 = 1,161, QL 3 = 240, QL 5 = 432, Other = 657. Verified collection-year distribution runs from legacy (2000) through 2025, peaking 2016\u20132019 (215/277/395/313 work units). Companion WESM.gpkg at the same prefix carries the polygon footprints.",
+      "provenance_tier": "P1",
+      "access_method": "Anonymous HTTPS GET, ~2.2 MB CSV / GeoPackage. Rewritten almost daily.",
+      "format": "CSV and OGC GeoPackage (SQLite). VERIFIED column list: workunit, workunit_id, project, project_id, collect_start, collect_end, ql, spec, p_method, dem_gsd_meters, horiz_crs, vert_crs, geoid, lpc_pub_date, lpc_update, lpc_category, lpc_reason, sourcedem_pub_date, sourcedem_update, sourcedem_category, sourcedem_reason, onemeter_category, onemeter_reason, seamless_category, seamless_reason, lpc_link, sourcedem_link, metadata_link.",
+      "value": "critical",
+      "axes_served": [
+        "does high-resolution lidar exist over this candidate, at what density, and in what year"
+      ],
+      "search_technique": "Load WESM.gpkg into PostGIS and make it the first join in every candidate workflow: given a candidate point, ST_Intersects against WESM gives you QL, collection dates and the exact staging URL in one query. Filter to ql IN ('QL 0','QL 1','QL 2') for anything where you need sub-metre earthwork detection \u2014 QL2 is 2 pts/m\u00b2, QL1 is 8, QL0 is 8+ with tighter vertical accuracy. collect_start/collect_end matter enormously for change detection: where two work units overlap in space and differ in year, you have a lidar-to-lidar difference surface, which detects new excavation and spoil placement directly.",
+      "robots_posture": "Public bulk file, no restriction.",
+      "rate_limits": "None. It's a 2 MB file; cache it daily.",
+      "notes": "Note that lpc_link and sourcedem_link point at rockyweb.usgs.gov/vdelivery/Datasets/Staged/... which is the same tree mirrored on prd-tnm \u2014 rewrite the host to prd-tnm.s3.amazonaws.com/StagedProducts/... if rockyweb is slow or blocked (it is blocked from this sandbox; prd-tnm is not). Companion indices, all VERIFIED to exist: StagedProducts/Elevation/LPC/FullExtentSpatialMetadata/LPC_TESM.gpkg (tile-level extents), StagedProducts/Elevation/1m/FullExtentSpatialMetadata/FESM_1m.gpkg and 10_km_cell_grid.gpkg, StagedProducts/Elevation/FullExtentSpatialMetadata/FESM_DSM_Proj.gpkg and FESM_DSM_Tile.gpkg (I opened FESM_DSM_Proj.gpkg: 286 features in table FEProj3189, EPSG:4269, columns project_id, s_date, e_date, refsys, horizres, horizres_m, pmethod, zunit, entry_date, format, pts_id \u2014 mostly Alaska IFSAR 5 m)."
+    },
+    {
+      "name": "USGS 3DEP lidar on AWS as Entwine Point Tiles (usgs-lidar-public)",
+      "url": "https://usgs-lidar-public.s3.amazonaws.com/",
+      "holdings": "VERIFIED LIVE. Over 1,000 3DEP projects republished as EPT (Entwine Point Tile) octrees, one prefix per project, e.g. CO_DRCOG_1_2020/, CO_CentralEasternPlains_1_2020/, AK_EMRI_1_D24/. VERIFIED contents of a project: ept.json, ept-build.json, ept-data/, ept-hierarchy/, ept-sources/, info/. VERIFIED ept.json for CO_DRCOG_1_2020: 19,912,349,351 points, dataType laszip, bounds in EPSG:3857, full LAS attribute schema (X/Y/Z with 0.001 scale, Intensity, ReturnNumber, NumberOfReturns, ScanDirectionFlag, EdgeOfFlightLine, Classification, ScanAngleRank, UserData, PointSourceId, GpsTime).",
+      "provenance_tier": "P1",
+      "access_method": "Anonymous HTTPS, AWS Open Data Registry. Read directly with PDAL readers.ept, which performs HTTP range reads over the octree and returns only the points inside your requested bounds.",
+      "format": "EPT octree of laszip chunks; JSON hierarchy.",
+      "value": "critical",
+      "axes_served": [
+        "arbitrary-AOI point extraction without bulk download",
+        "fast candidate triage at continental scale"
+      ],
+      "search_technique": "This is the correct way to pull lidar for a single candidate site. A PDAL pipeline of {type: readers.ept, filename: https://usgs-lidar-public.s3.amazonaws.com/{PROJECT}/ept.json, bounds: ([xmin,xmax],[ymin,ymax]) in EPSG:3857} followed by filters.range (Classification[2:2]) and writers.gdal (output_type=idw, resolution=0.5) produces a bare-earth DTM tile for one site in seconds. Then run a second pass WITHOUT the class filter, and a third selecting Classification 7 and 18 only, to look for the below-surface portal returns described above. Bounds are Web Mercator \u2014 reproject your WGS84 candidate coordinates first. Project names largely mirror, but do not exactly equal, the WESM workunit names (WESM has CO_DRCOG_1_2020 style too, but numbering suffixes differ), so fuzzy-match rather than assuming a key.",
+      "robots_posture": "AWS Open Data Registry, explicitly free and unrestricted for any use.",
+      "rate_limits": "None. Requester does not pay.",
+      "notes": "Enumerate projects with GET /?list-type=2&delimiter=/ and page the continuation token; the bucket has more than 1,000 project prefixes so the first page truncates. There is no boundaries/resources.geojson at the bucket root (VERIFIED 404) despite what older tutorials claim \u2014 use WESM.gpkg for footprints and match by name."
+    },
+    {
+      "name": "USGS 3DEP DEM rasters (1 m, 1/3 arc-second, 1 arc-second, DSM, OPR)",
+      "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/",
+      "holdings": "VERIFIED LIVE prefixes: /1m/Projects/ (per-project 1 m bare-earth GeoTIFF, e.g. AL_25Co_B1_2017, CO_CentralWestern_2019_D19), /13/TIFF/current/{nXXwYYY}/ and /13/TIFF/historical/ (1/3 arc-second ~10 m seamless, one directory per 1-degree cell, with a historical/ tree that preserves superseded editions), /1/ (1 arc-second ~30 m), /19/ (1/9 arc-second ~3 m), /2/ (2 m, Alaska), /OPR/ (Original Product Resolution source DEMs), /DSM/ (first-return digital surface models), /ORI/ (Alaska IFSAR orthorectified radar intensity), /S1M/, /AK_ifsar_breaklines/, /Non_Standard_Contributed/, /tiling_scheme/, /Contours/.",
+      "provenance_tier": "P1",
+      "access_method": "Anonymous HTTPS; GeoTIFFs are Cloud-Optimized, so /vsicurl/ subwindow reads work.",
+      "format": "Cloud-Optimized GeoTIFF, float32 elevation, plus FGDC XML.",
+      "value": "critical",
+      "axes_served": [
+        "terrain analysis without point-cloud processing",
+        "change detection between DEM editions",
+        "first-pass triage where lidar is absent"
+      ],
+      "search_technique": "The /13/TIFF/historical/ tree is the underexploited one: it preserves superseded editions of the seamless 10 m DEM, which means you can difference the same 1-degree cell across production epochs and see where the underlying source data changed \u2014 often because a new lidar acquisition replaced legacy contour-derived elevations, which is itself a signal that fine-resolution data now exists there. The /DSM/ tree matters because DSM minus DTM isolates above-ground structure, and a hardened site's above-ground signature is frequently just a few small blockhouses and vent stacks that get lost in a plain hillshade.",
+      "robots_posture": "Public domain bulk channel.",
+      "rate_limits": "None observed.",
+      "notes": "1/3 arc-second is roughly 10 m and will NOT resolve a portal. Use it only to build a slope/aspect context layer and to identify candidate ridgelines. Anything below about 2 m of feature size requires the 1 m tree or the point cloud."
+    },
+    {
+      "name": "OpenTopography REST API (3DEP and global DEM cropping service)",
+      "url": "https://opentopography.org/developers",
+      "holdings": "Server-side cropping and reprojection of USGS 3DEP 1 m, 1/3 arc-second and 1 arc-second rasters (/API/usgsdem) plus SRTM GL1/GL3, ALOS World 3D, NASADEM and Copernicus DSM (/API/globaldem). Also hosts NSF-funded high-resolution point clouds that are NOT in 3DEP, including academic and state acquisitions.",
+      "provenance_tier": "P2",
+      "access_method": "REST with a free API key (obtained via My Account on the portal).",
+      "format": "GeoTIFF, AAIGrid, HFA; point clouds as LAZ.",
+      "value": "high",
+      "axes_served": [
+        "convenient AOI clipping",
+        "non-3DEP lidar coverage",
+        "international expansion"
+      ],
+      "search_technique": "GET /API/usgsdem?datasetName=USGS1m&south=&north=&west=&east=&outputFormat=GTiff&API_Key=... . Use it as a convenience layer over 3DEP, and as the PRIMARY route to the NSF/academic point clouds that never entered 3DEP \u2014 those fill real coverage gaps in the mountain west.",
+      "robots_posture": "Published developer API with an explicit key regime; terms require attribution and prohibit bulk mirroring.",
+      "rate_limits": "HARD AND LOW: free key is 200 calls per rolling 24 hours for academic users, 50 per 24 hours for non-academic. Area caps per request: 225,000 km\u00b2 for 30 m, 25,000 km\u00b2 for 10 m, 250 km\u00b2 for 1 m. The USGS 3DEP 1 m endpoint is restricted to academic users with a separate access request. OpenTopography Plus subscription raises the limits (paid).",
+      "notes": "Because the free non-academic quota is 50 calls a day, this cannot be the backbone of a continuous harvester. Use prd-tnm S3 and the EPT bucket for volume; keep OpenTopography for the datasets that exist nowhere else, and note in the register when a candidate's only elevation evidence came from a rate-limited source."
+    },
+    {
+      "name": "USGS EarthExplorer + M2M machine-to-machine API \u2014 declassified satellite imagery (Declass I / II / III)",
+      "url": "https://m2m.cr.usgs.gov/",
+      "holdings": "Declass 1: CORONA KH-1 through KH-4B, ARGON and LANYARD, 1960\u20131972, declassified under EO 12951 (1995); KH-4B panoramic resolution around 1.8 m. Declass 2: KH-7 GAMBIT (1963\u20131967, roughly 0.6\u20131.2 m) and KH-9 HEXAGON mapping camera (1973\u20131980, roughly 6\u20139 m), declassified 2002. Declass 3: the USGS subset of KH-9 HEXAGON, 1971\u20131984 \u2014 approximately 14,000 rolls and over 670,000 scenes transferred to EROS in 2019; panoramic cameras at roughly 0.3\u20132 m, mapping camera at 5\u20138 m. Also in the same archive: Aerial Photo Single Frames (over 6.5 million frames, 1937\u2013present, federal acquisitions), NHAP (National High Altitude Photography, 1980\u20131989), NAPP (National Aerial Photography Program, 1987\u20132007), NAIP, and high-resolution orthoimagery.",
+      "provenance_tier": "P1",
+      "access_method": "Interactive: EarthExplorer web UI (free ERS account). Programmatic: M2M RESTful JSON API at https://m2m.cr.usgs.gov/api/api/json/stable/{endpoint}. Requires an ERS account PLUS a separately approved M2M access request submitted from the ERS profile \u2014 reviewed in 24 to 48 business hours. Not instant, and worth requesting on day one of the project.",
+      "format": "Scanned film as TIFF; declassified frames delivered as large single-band greyscale TIFFs, generally NOT georeferenced \u2014 you get frame centre coordinates and corner estimates, and you must warp them yourself against ground control.",
+      "value": "critical",
+      "axes_served": [
+        "construction-phase imagery of sites that had no aerial coverage otherwise",
+        "1960s\u20131980s change detection",
+        "corroboration or refutation of claimed construction dates"
+      ],
+      "search_technique": "M2M call sequence: POST /login-token (or /login with app token) to get an X-Auth-Token header, then POST /dataset-search to resolve the datasetAlias, then POST /scene-search with a spatialFilter of type mbr and lowerLeft/upperRight lat-lng, an acquisitionFilter with start/end dates, and maxResults with paging via startingNumber; then /download-options, /download-request, and /download-retrieve to get signed URLs usable with curl or wget. Always resolve datasetAlias dynamically via /dataset-search rather than hard-coding it \u2014 USGS changes alias strings between releases. Use /dataset-filters to discover the per-dataset metadata fields (mission, camera, roll, frame) that you can then constrain with metadataFilter. For declassified imagery the fields that matter are mission number, camera type (panoramic vs mapping vs stellar/terrain), and frame number \u2014 CORONA frames come in forward/aft stereo pairs, and the pair is what lets you do photogrammetric height extraction of spoil piles and construction with the Ames Stereo Pipeline (the uw-cryo/declass_stereo repository on GitHub documents a working pipeline for exactly this).",
+      "robots_posture": "Formal API with a registration and approval gate; scraping the EarthExplorer web UI instead of using M2M is against the spirit and probably the letter of the terms. Use M2M.",
+      "rate_limits": "M2M imposes per-account concurrency limits and download-queue throttling; not publicly numeric. Downloads of full-resolution declassified frames are hundreds of megabytes each.",
+      "notes": "WHAT A HARDENED FACILITY LOOKS LIKE IN DECLASSIFIED OVERHEAD. Construction phases are far more legible than the finished site: cleared and graded staging areas, a spoil dump growing frame-to-frame between missions, batch plants, a spur rail line or heavy-haul road built to a hillside and later removed, and crane and derrick shadows. Finished hardened sites show: double-fenced perimeters with a graded patrol road between the fences, a single controlled entry point with a vehicle inspection apron, isolated ventilation and exhaust structures displaced hundreds of metres from the main portal (the vent house is often the only above-ground giveaway), cooling towers or heat-rejection equipment disproportionate to the visible building footprint, large isolated antenna fields, and helipads. The single most reliable indicator across all these sources is DISPROPORTION \u2014 utility, cooling, security and access infrastructure sized far beyond anything the visible buildings could require. CORONA's forward and aft panoramic cameras give convergent stereo, so a spoil pile's volume can be measured photogrammetrically from 1960s imagery."
+    },
+    {
+      "name": "USGS EROS Aerial Photo Single Frames",
+      "url": "https://www.usgs.gov/centers/eros/science/usgs-eros-archive-aerial-photography-aerial-photo-single-frames",
+      "holdings": "Over 6.5 million frames of federally acquired aerial photography, 1937 to present, black-and-white, natural colour and colour infrared, covering the United States. Includes USGS, USDA, USFS, BLM, TVA and Corps of Engineers acquisitions.",
+      "provenance_tier": "P1",
+      "access_method": "EarthExplorer / M2M (same auth path as declassified). Some frames are already scanned and instantly downloadable; others exist only as film and must be scan-on-demand ordered (fee).",
+      "format": "TIFF. Medium resolution = 63 micron / 400 dpi scans; high resolution = 25 micron / 1,000 dpi scans from digital scanning backs. Not georeferenced \u2014 frame centre coordinates only.",
+      "value": "critical",
+      "axes_served": [
+        "pre-construction baseline",
+        "construction-period documentation",
+        "US coverage in decades with no satellite imagery"
+      ],
+      "search_technique": "Search by point with a small mbr and no date constraint first, to inventory every frame that covers a candidate; then sort by acquisition date to build the temporal stack. Cross-reference against the HTMC sheet's aerial_photo_year field \u2014 USGS drew the quad from specific photography, and if you can find that photography in this archive you can see what the cartographer chose not to draw. That comparison is one of the strongest evidence constructions available on this beat: map omission plus photographic presence is documentable suppression, not speculation.",
+      "robots_posture": "Use M2M rather than scraping.",
+      "rate_limits": "Same as M2M. Scan-on-demand orders are paid and take weeks.",
+      "notes": "The 1:20,000 and 1:24,000 USDA/USGS frames from the 1930s\u20131950s are the pre-Cold-War baseline. Anything that appears between a 1940s frame and a 1960s frame on an otherwise empty hillside is worth a candidate record."
+    },
+    {
+      "name": "NARA Record Group 373 \u2014 Records of the Defense Intelligence Agency, aerial photography",
+      "url": "https://www.archives.gov/research/cartographic/aerial-photography/rg-373-dia-domestic-aerial-photography-sl25",
+      "holdings": "Over 30 million aerial photographs, 1935\u20131970, transferred from DIA. Split into domestic-flown (indexed in Special List 25), GX foreign-flown (captured German Luftwaffe), and JX (captured Japanese). Domestic holdings include Army Air Forces and Air Force reconnaissance training sorties flown over the continental United States, which incidentally photographed defence installations at high resolution in periods with no other coverage.",
+      "provenance_tier": "P1",
+      "access_method": "MANUAL. Physical research at the Cartographic Research Room, NARA II, College Park MD, or written request to carto@nara.gov. Special List 25 is downloadable as a finding aid. Access path is: geographic area \u2192 SL25 entry \u2192 'spot number' \u2192 RG 373 can locator \u2192 film can \u2192 frame. The can locator is available digitally on request from carto@nara.gov.",
+      "format": "Film and prints. Reproduction is a paid, per-item service. A small and growing subset appears in the National Archives Catalog with digital images.",
+      "value": "high",
+      "axes_served": [
+        "1935\u20131970 domestic coverage predating or supplementing EROS",
+        "imagery of sites that were never in a civil acquisition program"
+      ],
+      "search_technique": "Work backwards from SL25's geographic organisation (state, then degree square) rather than trying to search by installation name \u2014 the finding aid is organised by geography and mission, not by subject. Spot numbers are the pivot: an SL25 entry gives a spot number, the can locator maps spot number to a physical film can. Budget for a research trip or a paid researcher; this is not machine-accessible and no amount of engineering will make it so.",
+      "robots_posture": "archives.gov finding aids are public documents; the images are not online in bulk.",
+      "rate_limits": "N/A \u2014 human-mediated. Expect weeks to months.",
+      "notes": "HONEST ASSESSMENT: this is the highest-value non-machine-accessible source on the beat. It should be recorded in the register as a known-but-unharvested corpus, with per-candidate notes about which SL25 geographic entries would cover the site, so the research debt is explicit rather than invisible. Treat any facility whose only imagery gap is 1935\u20131955 as a standing RG 373 request."
+    },
+    {
+      "name": "USDA Aerial Photography Field Office (APFO)",
+      "url": "https://www.fsa.usda.gov/programs-and-services/aerial-photography/",
+      "holdings": "More than 70,000 rolls of film, 1955 to present, at multiple scales, much of it stereo. Nearly every county in the lower 48 has at least three years of coverage. Also the authoritative archive for NAIP.",
+      "provenance_tier": "P1",
+      "access_method": "MANUAL ORDER by phone, fax, mail or email for historical film; you must supply an accurate area description (legal description, lat/lon, or annotated local map). NAIP is separately available digitally via TNM Access and EarthExplorer.",
+      "format": "Film, prints, and scan-on-demand digital. Paid.",
+      "value": "moderate",
+      "axes_served": [
+        "county-level historical coverage where EROS is thin",
+        "stereo pairs for height extraction"
+      ],
+      "search_technique": "Order by Public Land Survey System legal description where available \u2014 APFO's indexing is agricultural and PLSS-oriented, so a township-range-section request will be handled far faster than a lat/lon.",
+      "robots_posture": "Not a web-accessible corpus for historical film.",
+      "rate_limits": "Human-mediated, fee-based.",
+      "notes": "Note honestly in the register that pre-2003 APFO holdings are effectively paywalled per-item. Where a candidate's evidence hinges on APFO film, grade accordingly and record the order as a research action."
+    },
+    {
+      "name": "UCSB Library FrameFinder and comparable academic air-photo archives",
+      "url": "https://www.library.ucsb.edu/geospatial/finding-airphotos",
+      "holdings": "UCSB holds the largest known academic aerial photography collection: over 2.5 million frames from the 1920s onward, overwhelmingly California, with more than 400,000 scanned and free to download. FrameFinder is a spatial browser where each dot is a frame centre point. Comparable institutional archives: Penn Pilot (Penn State, Pennsylvania 1937\u20131942 and later), Cornell (New York), Michigan State RSGIS, State Historical Society of Missouri digitized aerials, and numerous state-university geography departments.",
+      "provenance_tier": "P3",
+      "access_method": "Web browser with map interface; scanned frames download free as TIFF/JPEG. No documented public API \u2014 the map is backed by a spatial service that can be observed in browser network traffic, but there is no supported programmatic contract.",
+      "format": "Scanned TIFF/JPEG, generally not georeferenced.",
+      "value": "moderate",
+      "axes_served": [
+        "state-level dense historical coverage",
+        "frames not in any federal archive"
+      ],
+      "search_technique": "These archives are where state and county acquisitions live that never went to EROS. For a California candidate, FrameFinder often has denser temporal coverage than EarthExplorer. Only about 15% of the UCSB collection is scanned, so absence from the online index is not absence from the collection \u2014 the register should distinguish 'not held' from 'held but unscanned'.",
+      "robots_posture": "Determine per institution. Most university libraries permit reasonable automated access to public collections but publish rate expectations; several use ContentDM or similar platforms with documented OAI-PMH endpoints worth checking before scraping HTML.",
+      "rate_limits": "Institution-specific. Assume conservative (1 request/second, identify yourself in User-Agent).",
+      "notes": "Where an institution exposes OAI-PMH or IIIF (many library digital collections do), use it \u2014 IIIF in particular gives you tiled region access to very large scans without downloading them whole."
+    },
+    {
+      "name": "NETR HistoricAerials (historicaerials.com)",
+      "url": "https://www.historicaerials.com/",
+      "holdings": "Commercial aggregator of historical aerial photography and historical topographic maps, decade-by-decade from the 1930s, with a side-by-side viewer. Its topo layer is the same USGS HTMC corpus; its aerial layer aggregates federal and commercial sources.",
+      "provenance_tier": "P4",
+      "access_method": "Web viewer. Free to browse at reduced resolution; full-resolution georeferenced imagery is a paid product. No public API.",
+      "format": "Web tiles; paid downloads as georeferenced imagery.",
+      "value": "low",
+      "axes_served": [
+        "fast visual triage"
+      ],
+      "search_technique": "Useful as a five-second human sanity check on whether a candidate site has visible change across decades, before committing to a proper EROS or lidar pull. Nothing here should ever be a citation of record.",
+      "robots_posture": "Commercial site with terms prohibiting automated access and redistribution. DO NOT SCRAPE. Do not mirror tiles.",
+      "rate_limits": "N/A \u2014 do not automate.",
+      "notes": "Explicitly deprioritised. Its topo layer is HTMC, which we have in full and for free; its aerial layer is derivative. Include it in the registry only so that future contributors know it was considered and rejected on provenance and terms grounds, and so that folklore sourced to a HistoricAerials screenshot can be traced back to the underlying federal frame."
+    },
+    {
+      "name": "USGS USMIN \u2014 Prospect- and Mine-Related Features from USGS 7.5- and 15-Minute Topographic Quadrangle Maps (ver. 10.0, May 2023)",
+      "url": "https://mrdata.usgs.gov/usmin/",
+      "holdings": "The USGS systematically DIGITISED the mine and prospect symbols off the historical topographic quadrangle archive. Version 10.0 contains over 637,000 point and polygon features from roughly 88,000 map sheets across 35 states. Feature classes include adits, mine shafts, air shafts, prospect pits, quarries, open pits, tailings piles and ponds, gravel and borrow pits, and undifferentiated disturbed ground. DOI 10.5066/F78W3CHG. ScienceBase item 5a1492c3e4b09fc93dcfd574.",
+      "provenance_tier": "P2",
+      "access_method": "Bulk download of shapefiles and file geodatabases from mrdata.usgs.gov/usmin/ and ScienceBase; also served as OGC WMS/WFS from mrdata, and mirrored as an ArcGIS MapServer at gisweb.unr.edu/nbmg/rest/services/MineralsAndEnergy/USMIN/MapServer and energy.usgs.gov ArcGIS FeatureServer.",
+      "format": "Shapefile, File Geodatabase, CSV; WMS 1.3.0 and WFS 1.1.0.",
+      "value": "critical",
+      "axes_served": [
+        "machine-readable index of every mapped adit and shaft in 35 states",
+        "instant spatial join against any candidate",
+        "proof that a topographic symbol exists at a claimed coordinate"
+      ],
+      "search_technique": "THIS IS THE SINGLE HIGHEST-LEVERAGE DERIVED DATASET ON THIS BEAT. It converts 'somebody would have to read 88,000 map sheets' into a PostGIS table. Key attributes: Ftr_Type (the feature class, e.g. 'Adit', 'Air Shaft', 'Mine Shaft', 'Gravel/Borrow Pit - Undifferentiated'), Ftr_Name (the label as printed on the map \u2014 proper names like 'Carlin Mine' or 'Johnson Shaft', or generic labels like 'Tunnel', 'Mine', 'Coal Mine', 'Cave'), plus the source quad name, scale and map year. Query patterns that matter for this project: (1) SELECT WHERE Ftr_Type IN ('Adit','Air Shaft','Mine Shaft') AND Ftr_Name ILIKE ANY('%Tunnel%','%Portal%','%Cave%') \u2014 'Tunnel' and 'Cave' labels on non-mining terrain are the classic misfiled hardened-facility symbol. (2) Spatially join adits against MSHA and MRDS: an adit symbol with NO corresponding mining record in either commercial database is an anomaly worth a candidate record \u2014 it means USGS drew a portal that no mine regulator ever knew about. (3) Cluster adits by proximity to military reservations, DOE sites, and FAA restricted airspace. (4) Air Shaft is defined by USGS (after the American Geological Institute glossary) as 'a shaft used wholly or mainly for ventilating mines' \u2014 a mapped air shaft with no mapped adit within a kilometre implies an unmapped underground extent.",
+      "robots_posture": "mrdata.usgs.gov publishes bulk downloads and OGC services precisely so people do not scrape the map viewer. Use the bulk files or WFS.",
+      "rate_limits": "None on bulk files. WFS is best used with a bbox filter and a maxFeatures cap.",
+      "notes": "CAVEAT USGS STATES EXPLICITLY: the adit direction shown on a topographic map is generally drawn perpendicular to the slope, NOT along the true bearing of the tunnel. Do not infer heading from the symbol. Coverage is 35 states and skews western \u2014 eastern coal states are thinner, and for those the state mine-map repositories (below) are the substitute. HONEST LIMITATION: mrdata.usgs.gov and sciencebase.gov are both blocked from this sandbox, so field names above come from the published FAQ metadata (mrdata.usgs.gov/usmin/metadata/usmin-topo.faq.html) via search results, not from a downloaded file. Verify the exact attribute schema against the FGDC metadata before writing the loader."
+    },
+    {
+      "name": "USGS Mineral Resources Data System (MRDS) and Mineral Resources Online Spatial Data",
+      "url": "https://mrdata.usgs.gov/mrds/",
+      "holdings": "Reports on metallic and nonmetallic mineral resource sites worldwide: deposit name, location, commodity, deposit description, geologic characteristics, production, reserves, resources, workings type, and bibliographic references. The parent mrdata.usgs.gov site also hosts state geologic maps, geophysical surveys (aeromagnetic, radiometric), and the USMIN products.",
+      "provenance_tier": "P2",
+      "access_method": "Bulk download plus OGC services. Verified-by-search file names: mrds-trim.zip (shapefile, ~10 MB), mrds-csv.zip (~23 MB), rdbms-tab-all.zip (tab-delimited full relational dump, ~118 MB). WFS 1.1.0 and WMS 1.3.0 at https://mrdata.usgs.gov/services/mrds?request=GetCapabilities&service=WFS&version=1.1.0",
+      "format": "Shapefile, CSV, tab-delimited relational tables, KML, WMS/WFS.",
+      "value": "high",
+      "axes_served": [
+        "named mine sites with coordinates",
+        "workings type (underground vs surface)",
+        "commodity and operator history",
+        "bibliographic trail back to primary reports"
+      ],
+      "search_technique": "Take the full relational dump (rdbms-tab-all.zip), not the trimmed shapefile \u2014 the trimmed version drops the workings, production and reference tables, which are the interesting ones. Filter on workings type = underground, then look for records where production is null or trivially small but the workings are extensive, and for records whose 'development status' changed to inactive during 1950\u20131975. Cross-join to USMIN adits and to MSHA. The reference table is the bibliographic bridge to primary literature \u2014 it is how you source a claim backwards.",
+      "robots_posture": "Bulk downloads and OGC services published for machine use.",
+      "rate_limits": "None on bulk files.",
+      "notes": "MRDS coordinate quality is highly variable \u2014 many legacy records are township-range centroids, accurate only to a section or worse. Never treat an MRDS coordinate as a located facility without corroboration from USMIN, a topo sheet, or imagery. This is exactly the kind of precision-versus-provenance distinction the register's grading exists for."
+    },
+    {
+      "name": "MSHA Mine Data Retrieval System \u2014 open flat files",
+      "url": "https://www.msha.gov/data-and-reports/mine-data-retrieval-system",
+      "holdings": "Every coal and metal/nonmetal mine under MSHA jurisdiction since 1970-01-01, in the United States, Puerto Rico and the Virgin Islands. The Mines dataset carries mine ID, current status (Active, Abandoned, Abandoned and Sealed, NonProducing, Temporarily Idled, New Mine), current controller and operator, commodity codes, physical attributes, and latitude/longitude. Around twenty flat files in total, covering mines, controllers/operators, employment and production quarterly, inspections, violations, accidents, and address-of-record.",
+      "provenance_tier": "P1",
+      "access_method": "Bulk delimited text files under the MSHA Open Government Initiative, refreshed weekly (uploaded Fridays). Mirrored on catalog.data.gov as the 'MSHA Mines Dataset'. Each data file has a paired *_Definition_File.txt describing the columns. Also a Socrata-style endpoint at data.msha.gov for some series.",
+      "format": "Pipe- or tab-delimited text plus definition files; CSV via data.gov.",
+      "value": "high",
+      "axes_served": [
+        "authoritative regulated-mine inventory with coordinates",
+        "status transitions including sealing and abandonment",
+        "operator/controller lineage"
+      ],
+      "search_technique": "Load Mines.txt keyed on MINE_ID. High-value filters for this beat: (1) COAL_METAL_IND and MINE_TYPE = 'Underground' AND CURRENT_MINE_STATUS IN ('Abandoned','Abandoned and Sealed','NonProducing') \u2014 a sealed underground working with a known portal location is the raw material for a repurposing claim. (2) Records with a controller name that is a government entity, a defence contractor, or a records-storage or data-centre company \u2014 this is the direct route to the small number of genuinely repurposed mines (limestone-mine records storage and data-centre conversions show up here under their real operator). (3) Records whose status changed to abandoned within a few years of a federal land acquisition at the same coordinates. (4) Join MINE_ID back to e-AMLIS and to USMIN adits. The definition files are essential \u2014 MSHA column names are terse and several status codes are undocumented outside them.",
+      "robots_posture": "msha.gov publishes these files explicitly as open government data. Use the flat files, not the interactive MDRS query form.",
+      "rate_limits": "None on the flat files. Weekly refresh means a weekly sync is sufficient.",
+      "notes": "MSHA only covers mines under its jurisdiction from 1970 onward. Workings abandoned before 1970 \u2014 which is most of what matters for Cold War-era conversion \u2014 appear only in USMIN, MRDS, state repositories and topographic sheets. Treat MSHA as the modern layer of a four-layer stack, not as the inventory. HONEST LIMITATION: msha.gov and data.msha.gov are blocked from this sandbox; file names and refresh cadence come from search results and the data.gov catalog, not direct inspection."
+    },
+    {
+      "name": "OSMRE e-AMLIS \u2014 Abandoned Mine Land Inventory System",
+      "url": "https://www.osmre.gov/programs/e-amlis",
+      "holdings": "National compilation of state, tribal, Federal Reclamation Program and Rural Abandoned Mine Program inventories of abandoned mine land problems: location, problem type, extent, reclamation cost, and reclaimed/unreclaimed status. Structured as Problem Areas, Planning Units, Keyword Features and Project Sites (the geospatial data model is standardised by ASTM D7699).",
+      "provenance_tier": "P1",
+      "access_method": "Web query interface at osmre.gov; a copy is submitted to NETL EDX. State implementations expose ArcGIS REST services \u2014 e.g. Ohio DNR at https://gis.ohiodnr.gov/arcgis/rest/services/MRM_Services/MRMMapViewer_AMLISINFO/MapServer with AMLIS Problem Area as layer 1 and AMLIS Planning Unit as layer 2. There is no clean single national bulk geospatial download; enquiries go to the e-AMLIS team by email.",
+      "format": "Web reports, CSV exports, and state-hosted ArcGIS FeatureServer/MapServer layers.",
+      "value": "moderate",
+      "axes_served": [
+        "portals sealed with federal money",
+        "documented dangerous openings",
+        "reclamation-era site descriptions"
+      ],
+      "search_technique": "The high-yield problem types are 'Dangerous Highwall', 'Vertical Opening', 'Portal', 'Subsidence' and 'Underground Mine Fire'. A federally funded portal closure means there was a physical, located, open portal, documented with coordinates and a cost estimate \u2014 that is strong P1 evidence that a subsurface void exists, independent of any claim about what is in it. Harvest via the state ArcGIS REST services where they exist (standard /query?where=1%3D1&outFields=*&f=geojson&resultOffset=N paging) rather than the national web form.",
+      "robots_posture": "State ArcGIS REST endpoints are public services designed for machine query. The national e-AMLIS web form is not.",
+      "rate_limits": "ArcGIS services typically cap at 1,000\u20132,000 features per request; page with resultOffset/resultRecordCount.",
+      "notes": "Coverage and data quality vary enormously by state because states enter their own data. Grade accordingly. The national roll-up is weaker than the best individual state programs."
+    },
+    {
+      "name": "State geological survey and state mining agency mine-map repositories",
+      "url": "https://www.pa.gov/agencies/dep/programs-and-services/mining/",
+      "holdings": "The deepest single-state example is Pennsylvania: the Mine Map Atlas (DEP with Penn State PASDA) holds over 100,000 high-resolution scans of original underground mine maps georeferenced onto a modern base, each linked to its record in PHUMMIS (Pennsylvania Historic Underground Mine Map Inventory System). EPCAMR has separately scanned 10,000 maps, georeferenced 2,500 and digitised 1,000 from the Wilkes-Barre BAMR office, the Pottsville District Mining Office and the Earth Conservancy / Blue Coal collection. Comparable programs exist in West Virginia (WVGES mine mapping), Kentucky (KGS), Ohio (ODNR, ArcGIS REST as above), Colorado (DRMS), Utah (UGS abandoned mine openings), and Nevada (NBMG, which runs an ArcGIS Open Data site at data-nbmg.opendata.arcgis.com plus REST services at web2.nbmg.unr.edu/arcgis/rest/services/ and gisweb.unr.edu/nbmg/rest/services/).",
+      "provenance_tier": "P1",
+      "access_method": "Highly heterogeneous. Best case: an ArcGIS Hub Open Data site with FeatureServer endpoints and bulk GeoJSON/shapefile downloads (Nevada, Ohio). Middle case: a georeferenced scan viewer with per-map download (Pennsylvania). Worst case: a paper index at a district office requiring a written request or an in-person visit.",
+      "format": "Georeferenced TIFF/JPEG scans, ArcGIS FeatureServer JSON/GeoJSON, shapefile, and PDF indices.",
+      "value": "high",
+      "axes_served": [
+        "actual underground plan-view geometry \u2014 the only sources that show what is BELOW the surface",
+        "depth, extent, seam elevation, pillar layout",
+        "pre-1970 workings absent from MSHA"
+      ],
+      "search_technique": "This is the only category of source on the whole beat that gives you the shape of the void rather than the location of its mouth. Prioritise the states with (a) large limestone or sandstone room-and-pillar workings suitable for conversion \u2014 Pennsylvania, Missouri, Kansas, Ohio, Indiana, Kentucky, West Virginia \u2014 and (b) hard-rock states with deep workings near military infrastructure \u2014 Colorado, Utah, Nevada, Arizona, New Mexico. For each state, first probe for an ArcGIS Hub site (try {agency}.opendata.arcgis.com and hub.arcgis.com search by organisation) and for a bare ArcGIS Server at /arcgis/rest/services?f=pjson, which enumerates every published service on that server and is by far the fastest way to discover what a state actually publishes. Then fall back to the scan viewer. Record for each state which tier of access it offers \u2014 that itself is a useful register artefact.",
+      "robots_posture": "Per-agency. ArcGIS REST services are machine-facing by design. Scan viewers are usually not; check each site's terms and robots.txt.",
+      "rate_limits": "ArcGIS servers: page at 1,000 features, keep concurrency at 2\u20134.",
+      "notes": "HONEST LIMITATION: all of these hosts are blocked from this sandbox, so the specifics above are from search results. Building a per-state matrix of (repository name, access tier, endpoint, coverage years, licence) is a discrete, high-value piece of work that should be its own harvesting sub-project. Mine maps are also the source most likely to be paywalled or restricted, since several states treat detailed mine geometry as a subsidence-liability and security matter."
+    },
+    {
+      "name": "FAA Special Use Airspace and aeronautical geospatial data (AIS Open Data)",
+      "url": "https://adds-faa.opendata.arcgis.com/datasets/special-use-airspace",
+      "holdings": "Prohibited (P-), Restricted (R-), Warning (W-), Alert (A-), Military Operations Areas, Controlled Firing Areas, and Air Traffic Control Assigned Airspace, as polygons with designator, name, lower and upper altitude limits, time of use, controlling and using agency. Published on an eight-week cycle synchronised to the aeronautical chart cycle by FAA Aeronautical Information Services. Parallel legacy portal at ais-faa.opendata.arcgis.com (dataset id dd0d1b726e504137ab3c41b21835d05b_0). The authoritative source-of-record is the 28-day NASR subscription file from the FAA's data delivery service; the graphical browser is at https://sua.faa.gov/",
+      "provenance_tier": "P1",
+      "access_method": "ArcGIS Hub Open Data: FeatureServer REST query, plus one-click download as CSV, KML, shapefile, GeoJSON. Also OGC WMS and WFS. No key required. NASR 28-day subscription is a separate bulk ZIP download from FAA.",
+      "format": "GeoJSON, shapefile, KML, CSV; NASR as fixed-width text plus shapefiles.",
+      "value": "high",
+      "axes_served": [
+        "independent corroboration of an active sensitive site",
+        "tight low-altitude restrictions over otherwise unremarkable terrain",
+        "using-agency attribution"
+      ],
+      "search_technique": "Standard ArcGIS query: {service}/FeatureServer/0/query?where=1%3D1&outFields=*&f=geojson&resultOffset=0&resultRecordCount=1000, paged. The discriminating filter for this project is NOT the big ranges \u2014 R-2508, R-4806, the Nevada Test and Training Range are all well known and are training airspace, not facility indicators. What matters is the SMALL, TIGHT, LOW restriction: a prohibited or restricted area of one to three nautical miles radius, surface to a few thousand feet AGL, continuous (not scheduled), in terrain with no visible installation. Query for polygons with ST_Area below a threshold AND lower limit = 'SFC' AND a 24-hour time of use. Then check the 'using agency' field: an unusual using agency (a non-flying command, DOE, a federal agency that does not operate aircraft) on a surface-to-low restriction is a strong signal that the airspace exists to keep aircraft away from something on the ground rather than to contain flight activity. Cross-reference against lidar and against HTMC blanking.",
+      "robots_posture": "ArcGIS Hub Open Data with published API links (GeoServices, WMS, WFS); explicitly machine-accessible. Public domain US government data.",
+      "rate_limits": "Standard ArcGIS Hub throttling; the SUA layer is small enough (a few thousand polygons) to pull in a handful of paged requests. Refresh every 56 days to match the publication cycle.",
+      "notes": "Also worth harvesting from the same portal: Class Airspace, Designated Points, NAVAIDs, and the obstacle data. HONEST LIMITATION: all FAA and ArcGIS hosts are blocked from this sandbox; endpoint structure is from search results and general ArcGIS REST knowledge. Verify the exact FeatureServer ID and field names (NAME, TYPE_CODE, and the altitude/agency fields) against the service's own ?f=pjson before writing the loader. Note also that airspace absence proves nothing \u2014 several well-documented hardened facilities have no special-use airspace at all."
+    },
+    {
+      "name": "National Register of Historic Places spatial data (NPS Cultural Resources GIS)",
+      "url": "https://www.nps.gov/orgs/1094/nrhp_spatialdata.htm",
+      "holdings": "Point and polygon geometry for roughly 100,000 listed properties, built to the NPS Cultural Resources Spatial Data Transfer Standards. Served as an ArcGIS MapServer at https://mapservices.nps.gov/arcgis/rest/services/cultural_resources/nrhp_locations/MapServer and downloadable as file geodatabase via the NPS IRMA portal. The associated nomination documents \u2014 which are the actually valuable part \u2014 are scanned PDFs at https://npgallery.nps.gov/nrhp/",
+      "provenance_tier": "P1",
+      "access_method": "ArcGIS REST query for geometry; npgallery for the nomination PDFs, which are individually addressable by reference number.",
+      "format": "File geodatabase, shapefile, ArcGIS REST JSON/GeoJSON; nominations as scanned PDF, frequently requiring OCR.",
+      "value": "moderate",
+      "axes_served": [
+        "Cold War infrastructure with detailed construction documentation",
+        "named, dated, described hardened structures"
+      ],
+      "search_technique": "The geometry is a finding aid; the nominations are the evidence. NRHP nomination forms for Cold War-era properties routinely contain construction dates, contractor names, structural descriptions (blast door thicknesses, shock isolation, EMP shielding), floor plans and historical photographs \u2014 material that is otherwise only obtainable through FOIA. High-yield nomination searches: Nike missile batteries and their launch/control site pairs, Atlas/Titan/Minuteman silos and launch control facilities, SAGE direction centres, AT&T Long Lines hardened relay stations, civil defence emergency operating centres, Distant Early Warning and Air Defense Command sites, and Federal Reserve and government records-storage bunkers. Search npgallery full-text for phrases like 'blast door', 'hardened', 'underground operations', 'emergency operating center', 'fallout shelter', 'shock isolation'. OCR is often required \u2014 the older nominations are typewritten scans.",
+      "robots_posture": "NPS mapservices are public REST endpoints. npgallery is a public document repository; rate-limit politely.",
+      "rate_limits": "ArcGIS paging as usual. npgallery PDFs are large; cache aggressively.",
+      "notes": "IMPORTANT EXCLUSION, stated by NPS: the public spatial dataset EXCLUDES all features deemed restricted or sensitive, notably archaeological sites. So NRHP absence is meaningless and should never be recorded as negative evidence. Also note the inverse selection bias \u2014 a facility gets an NRHP nomination precisely because it was decommissioned and declassified enough to be documented, so this source over-represents obsolete infrastructure and under-represents anything current."
+    },
+    {
+      "name": "USGS TopoMapVector \u2014 per-quadrangle vector geopackages of US Topo content",
+      "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/TopoMapVector/",
+      "holdings": "VERIFIED LIVE. One directory per state/territory (AK, AL, AR, AS, AZ, CA, CO, CT, DC, DE, FL, FM, GA, GU, HI, IA, ID, IL, IN, ... verified present), each containing GPKG/ and Shape/ subtrees with one bundle per 7.5-minute quadrangle. VERIFIED naming: VECTOR_{QuadName}_{ST}_7_5_Min_GPKG.zip with a .jpg browse image and .xml FGDC metadata alongside, e.g. VECTOR_Abarr_CO_7_5_Min_GPKG.zip.",
+      "provenance_tier": "P1",
+      "access_method": "Anonymous HTTPS; enumerate with S3 list-objects-v2 against the state prefix.",
+      "format": "OGC GeoPackage (and shapefile) containing the layered content of the modern US Topo: structures, transportation, hydrography, boundaries, elevation contours, GNIS names, woodland.",
+      "value": "moderate",
+      "axes_served": [
+        "machine-readable modern map content per quad",
+        "joining named features to quad geometry"
+      ],
+      "search_technique": "Use this as the MODERN half of a map-differencing pipeline: extract structure and transportation features from the current vector quad, then compare against features digitised or visually read from the HTMC raster for the same cell. A road present on the 1961 sheet and absent from the current vector layer is a removed access route \u2014 which is a real and repeatable signal.",
+      "robots_posture": "Public bulk channel.",
+      "rate_limits": "None observed; there are tens of thousands of quad bundles, so enumerate from the S3 listing rather than guessing names.",
+      "notes": "Companion national roll-ups verified present: StagedProducts/Struct/National/GPKG/Structures_National_GPKG.zip (national structures point layer) and StagedProducts/MapIndices/National/GPKG/MapIndices_National_GPKG.zip (the authoritative 7.5-minute, 15-minute, 30x60-minute and 1x2-degree quadrangle grids, which are the join key between every USGS product on this beat \u2014 load them first)."
+    },
+    {
+      "name": "USGS Topographic Map Symbols reference and the Kentucky Geological Survey symbol index",
+      "url": "https://pubs.usgs.gov/gip/TopographicMapSymbols/topomapsymbols.pdf",
+      "holdings": "The official USGS General Information Product describing every symbol on a USGS quadrangle. The KGS 'Index to USGS Topographic Map Symbols' (https://www.uky.edu/KGS/gis/USGSTopoSymbols.pdf) is a fuller historical index covering symbol sets that changed across eras. Esri publishes a rendered 'USGS Topographic Mine-related Symbols' reference on ArcGIS Hub.",
+      "provenance_tier": "P1",
+      "access_method": "Direct PDF download.",
+      "format": "PDF.",
+      "value": "moderate",
+      "axes_served": [
+        "correct interpretation of raster map content",
+        "avoiding false positives"
+      ],
+      "search_technique": "Not a data source \u2014 an interpretation key, and an indispensable one. Symbol conventions CHANGED across eras: the 1919-era mine symbols differ from the 1950s set, which differ from the 1970s set. A register that grades evidence must be able to say which symbol standard was in force for a given sheet's imprint year, otherwise a confident reading of a 1930s sheet using a 1980s legend is simply wrong. Pin the symbol standard version to each sheet via its date_on_map / imprint_year from the HTMC inventory.",
+      "robots_posture": "Public domain USGS publication.",
+      "rate_limits": "N/A.",
+      "notes": "Pair with the USMIN FAQ metadata, which contains USGS's own operational definitions of each mine feature type (drawn from the American Geological Institute glossary) \u2014 those are the definitions USGS actually applied when digitising, and they are what your feature taxonomy should mirror."
+    },
+    {
+      "name": "GNIS Domestic Names (Geographic Names Information System)",
+      "url": "https://prd-tnm.s3.amazonaws.com/StagedProducts/GeographicNames/",
+      "holdings": "VERIFIED LIVE prefix on prd-tnm. The federal gazetteer of place names with feature class, coordinates, elevation, county, and the source quadrangle name. Feature classes include Mine, Tunnel, Cave, Military, Reservoir, Range, and roughly fifty others.",
+      "provenance_tier": "P1",
+      "access_method": "Anonymous HTTPS bulk download of pipe-delimited national and per-state files.",
+      "format": "Pipe-delimited text; also served via TNM.",
+      "value": "moderate",
+      "axes_served": [
+        "named subsurface features",
+        "the quad-name join key",
+        "folklore-name resolution"
+      ],
+      "search_technique": "Filter FEATURE_CLASS IN ('Mine','Tunnel','Cave') for the obvious cases, and 'Military' for reservations and installations. The subtler use is REVERSE SOURCING of folklore: when a claim names a place ('the such-and-such tunnel'), GNIS tells you whether that name is a real registered toponym, what feature class the government assigned it, which quadrangle it appears on, and therefore which HTMC sheets to pull. A name that appears on 400 websites and in zero federal gazetteers is a strong indication that the claim originated in a single unsourced text, which is precisely the finding this register exists to record. The MAP_NAME field in GNIS is the 7.5-minute quad name, which joins directly to the HTMC inventory's gnis_cell_name/gnis_cell_id."
+    },
+    {
+      "name": "HTMC per-sheet FGDC metadata web-accessible folder (thor-f5)",
+      "url": "https://thor-f5.er.usgs.gov/ngtoc/metadata/waf/maps/historicaltopo/pdf/",
+      "holdings": "One FGDC CSDGM XML record per HTMC sheet, in a web-accessible folder mirroring the PDF tree: /{ST}/{scale}/{ST}_{Quad_Name}_{scan_id}_{year}_{scale}_geo.xml . The metadata_url column of the HTMC inventory CSV points here for all 186,061 sheets (VERIFIED non-null for every row).",
+      "provenance_tier": "P1",
+      "access_method": "Anonymous HTTPS, one XML per sheet.",
+      "format": "FGDC CSDGM XML.",
+      "value": "moderate",
+      "axes_served": [
+        "formal provenance for citation",
+        "source lineage of each scan"
+      ],
+      "search_technique": "Note the filename transformation: the metadata_url substitutes underscores for spaces in the quad name (AL_Abbeville_East_...xml) while the product_url percent-encodes the space (AL_Abbeville%20East_...pdf). A naive URL constructor will 404 on every multi-word quad name. Derive both from the CSV columns rather than constructing them.",
+      "robots_posture": "Public metadata WAF.",
+      "rate_limits": "Unknown; 186,061 small files \u2014 fetch lazily, only for sheets that actually enter the register, and cache permanently.",
+      "notes": "HONEST LIMITATION: thor-f5.er.usgs.gov is blocked from this sandbox and was not directly tested. The URL pattern above is read verbatim from the metadata_url column of the inventory CSV I did download, so the pattern is verified even though the host is not reachable from here. The ScienceBase item URL in the sciencebase_url column is an equivalent and probably more stable citation target."
+    }
+  ],
+  "access_notes": "SANDBOX CAVEAT, STATED HONESTLY UP FRONT. This session's egress proxy returned 403 CONNECT for almost every relevant host: ngmdb.usgs.gov, www.usgs.gov, mrdata.usgs.gov, sciencebase.gov, tnmaccess.nationalmap.gov, apps.nationalmap.gov, earthexplorer.usgs.gov, m2m.cr.usgs.gov, rockyweb.usgs.gov, msha.gov, data.msha.gov, faa.gov, nfdc.faa.gov, nps.gov, npgallery.nps.gov, catalog.data.gov, and all *.arcgis.com. Two hosts WERE reachable and I used them hard: prd-tnm.s3.amazonaws.com and usgs-lidar-public.s3.amazonaws.com. Every fact I labelled VERIFIED was obtained by actually downloading and parsing the file in this session on 2026-08-16. Everything else is from web search plus prior knowledge and carries the normal risk of drift. Treat the S3-derived material as ground truth and re-verify the rest on first harvester run.\n\nTHE STRATEGIC POINT ABOUT prd-tnm. Most tutorials and most existing tooling point at nationalmap.gov, ngmdb.usgs.gov, or rockyweb.usgs.gov. All of those are front doors. The actual bytes live in a plain, unauthenticated, unthrottled S3 bucket at prd-tnm.s3.amazonaws.com, which serves standard list-objects-v2 XML and supports HTTP Range requests. This is the single most useful operational fact on the beat. It means the entire 186,061-sheet historical topographic archive, the entire 3DEP staging tree, the lidar coverage index, and the per-quad vector geopackages are harvestable with curl and no credentials. WESM's lpc_link and sourcedem_link columns point at rockyweb.usgs.gov/vdelivery/Datasets/Staged/... \u2014 rewrite that prefix to prd-tnm.s3.amazonaws.com/StagedProducts/ and the same objects come back, faster.\n\nTHE BOOTSTRAP SEQUENCE, in order, for a harvester written tomorrow.\n1. Pull StagedProducts/MapIndices/National/GPKG/MapIndices_National_GPKG.zip. This is the quadrangle grid and the join key for everything else.\n2. Pull StagedProducts/Maps/Metadata/historicaltopo.zip nightly, COPY the CSV into PostGIS with geom_wkt as geometry(Polygon,4326), GIST-index it. You now have the full temporal map stack for any point in the country as a single ST_Contains query. 186,061 rows, 185 MB, four minutes of work.\n3. Pull StagedProducts/Elevation/metadata/WESM.gpkg. Now every candidate can be immediately answered for \"does high-resolution lidar exist here, at what quality level, from what year\".\n4. Pull USMIN from mrdata (state shapefiles or the ArcGIS FeatureServer mirror). Now every mapped adit and shaft in 35 states is a queryable point.\n5. Pull MSHA Mines.txt weekly and MRDS rdbms-tab-all.zip monthly.\n6. Register for an ERS account and submit the M2M access request immediately \u2014 approval takes 24 to 48 business hours and it gates all declassified satellite and historical aerial imagery. Do this on day one so it is not a blocker on day thirty.\nSteps 1 through 3 require no credentials at all and take under an hour.\n\nTHE CORE ANALYTICAL PATTERN, which is what actually makes this beat productive. For any candidate coordinate, run five queries and record all five results including the nulls, because the nulls are evidence too:\n(a) HTMC temporal stack \u2014 every sheet covering the point, ordered by date, with photo_revision_year. VERIFIED example: Cheyenne Mountain NORAD returns 34 sheets from 1893 to 1989, including 1948 and 1949 sheets that predate excavation and nine 1961-base sheets photorevised in 1969, 1975 and 1988. You get the before, the during and the after, free, in seconds.\n(b) WESM lidar availability and quality level, then either the 1 m DEM or a PDAL readers.ept pull from usgs-lidar-public for a 0.5 m bare-earth surface.\n(c) USMIN, MRDS, MSHA and e-AMLIS spatial joins for any recorded subsurface working.\n(d) FAA special-use airspace intersection, filtered to small, surface-based, continuous restrictions.\n(e) NRHP intersection, and if a listing exists, the nomination PDF, which is often the richest single document about a decommissioned hardened site that exists outside FOIA.\n\nTHE STRONGEST EVIDENCE CONSTRUCTIONS THIS BEAT SUPPORTS.\n1. Cartographic omission against contemporaneous photography. Every HTMC row carries aerial_photo_year and photo_revision_year \u2014 the year of the imagery the cartographer worked from. If the photography exists in the EROS Aerial Photo Single Frames archive, and the photograph shows construction the quad does not draw, that is documented suppression rather than mere absence. This is a defensible, citable, reproducible finding, and it is the kind of thing that should raise a candidate's grade.\n2. Spoil volume. A muck pile is the excavated volume turned inside out. Difference a lidar bare-earth surface against a reconstructed pre-construction surface (or against terrain digitised from the pre-construction quad's contours) and you get a lower bound on excavated volume that no press release can argue with. This is arguably the single most valuable quantitative product available on the whole beat.\n3. Adit without a mine record. A USMIN adit or air-shaft symbol with no corresponding MRDS deposit, no MSHA mine ID and no e-AMLIS problem area means USGS cartographers drew a portal that no mining regulator ever recorded. That is a genuine anomaly and a legitimate candidate origin.\n4. Reverse-sourcing folklore through GNIS. A claim that names a place can be tested: does the toponym exist in the federal gazetteer, on which quadrangle, in what feature class? A name that appears on 400 websites and in zero gazetteers almost always traces to one text.\n\nDISCIPLINE ON RATE LIMITS AND TERMS. prd-tnm and usgs-lidar-public are AWS Open Data and impose no limits \u2014 keep parallelism to 4 to 8 anyway and cache by ETag. TNM Access, ArcGIS FeatureServers and OGC WFS should be paged at 1,000 features with concurrency of 2 to 4. OpenTopography is the one genuinely hard cap: 50 calls per 24 hours for non-academic users, so it can never be a backbone. HistoricAerials is commercial with terms prohibiting automated access \u2014 do not scrape it; its topo layer is the HTMC corpus we already have in full. Academic archives (UCSB, Penn State, Cornell) should be approached at one request per second with an identifying User-Agent, and via OAI-PMH or IIIF where offered rather than HTML scraping.\n\nCRS AND FORMAT GOTCHAS THAT WILL BITE.\nHTMC GeoTIFFs are NAD27 Polyconic (VERIFIED from GeoKeys: GeographicTypeGeoKey 4267, ProjCoordTransGeoKey 22). NAD27-to-WGS84 shifts run 50 to 100 metres in the western US, which is larger than most features of interest. Reproject before overlaying anything modern, and never compare an HTMC coordinate to a modern one without doing so.\nHTMC GeoTIFFs are JPEG-compressed inside a tiled TIFF (Compression=7, YCbCr, 512x512 tiles, with internal overviews) \u2014 effectively COGs, so GDAL /vsicurl/ subwindow reads work and you do not need to pull 8.5 MB to look at one hillside. But JPEG is lossy, so do not do fine radiometric analysis on them; use the GeoPDF for anything where line fidelity matters.\nScan resolution is exactly 300 dpi (VERIFIED: 2.032 m ModelPixelScale at 1:24,000). At 300 dpi a 1:24,000 sheet resolves roughly 2 m per pixel on the ground, which is fine for symbols and useless for fine texture.\nEPT bounds in usgs-lidar-public are EPSG:3857, not WGS84 \u2014 reproject candidate coordinates before setting PDAL bounds.\nThe metadata_url pattern substitutes underscores for spaces while product_url percent-encodes them; construct neither, read both from the CSV.\nS3 list-objects-v2 truncates at 1,000 keys \u2014 usgs-lidar-public has more than 1,000 project prefixes, so you must follow NextContinuationToken or you will silently enumerate only part of the archive.",
+  "gaps": "WHAT THIS BEAT CANNOT DO.\n\n1. It cannot see underground, with one exception. Every source here except state mine-map repositories observes the surface. Topographic sheets show where a portal is, not where the tunnel goes \u2014 and USGS states explicitly that the adit symbol is drawn perpendicular to the slope rather than along the tunnel's true bearing, so even the apparent directional information is not directional information. Lidar sees the ground surface and, at best, a few metres down an open portal. The ONLY sources in this registry that depict subsurface geometry are the state underground mine-map repositories (Pennsylvania's 100,000+ scans being the deepest), and those cover coal and industrial minerals, not purpose-built hardened construction. For anything excavated by the government for the government, there is no public plan-view. That gap cannot be closed by more geospatial harvesting; it needs engineering drawings from NEPA documents, GAO and DoD IG audits, construction appropriations, and Corps of Engineers records \u2014 other beats' territory.\n\n2. Cartographic suppression is real, systematic, and mostly unmeasured. USGS omitted or generalised sensitive installations on quadrangle sheets, particularly from the 1950s through the 1980s. We can DETECT specific instances by comparing a sheet against the aerial photography it was drawn from (the inventory's aerial_photo_year makes this tractable). What does not exist publicly is the policy record: which sites were suppressed, under whose authority, by what criteria, in which years. That record \u2014 if it survives \u2014 would be an internal NGP or predecessor administrative file, reachable only by FOIA or by NARA research in USGS record groups. Until then, every suppression finding is a one-off inference and should be graded as such, never as a general pattern.\n\n3. Lidar coverage is not uniform and its gaps are not random. WESM verifiably holds 3,269 work units, but coverage skews to populated, flood-prone and economically active areas because acquisitions are cost-shared with states and local partners. Remote federal land \u2014 exactly where hardened construction is most likely \u2014 is systematically under-flown. Worse and unquantified: some acquisitions over sensitive federal installations are believed to be withheld or degraded before public release, but I could not confirm any specific instance and will not assert one. A verifiable, tractable piece of follow-up work: intersect the WESM footprint union against DoD and DOE installation boundaries and report the coverage gaps quantitatively. If particular installations are conspicuous holes in otherwise complete state-wide acquisitions, that is a finding, and it is one nobody appears to have published.\n\n4. Pre-1937 has essentially no aerial imagery, and pre-1960 has no satellite imagery. For facilities built during the Second World War or the earliest Cold War, the ONLY contemporaneous remote observation is NARA RG 373 domestic-flown photography and scattered USDA and state acquisitions \u2014 and RG 373 is 30 million frames indexed by spot number in a paper finding aid at College Park. It is not machine-accessible, will not become machine-accessible on any timescale relevant to this project, and no amount of engineering substitutes for a research trip or a paid researcher.\n\n5. Several genuinely important corpora are paywalled or fee-based per item: APFO historical film (scan-on-demand, weeks, per-frame fees), NARA reproduction services, EarthExplorer scan-on-demand for unscanned frames, and OpenTopography Plus for anyone hitting the 50-call non-academic ceiling. The register should carry an explicit \"research debt\" field so an unpurchased frame is visible as a known gap rather than invisible as an absence.\n\n6. Coordinate quality varies by orders of magnitude across these sources and there is no shared accuracy metadata. MRDS legacy records are frequently township-range centroids accurate to a section or worse. GNIS coordinates for tunnels and caves are often quad-derived approximations. MSHA coordinates are operator-reported and self-attested. USMIN points are digitised from raster sheets whose own NAD27 georeferencing carries 50 to 100 m of datum shift. Lidar and modern imagery are sub-metre. A naive spatial join at a 100 m tolerance will produce both false matches and false negatives. The schema needs a per-source positional-uncertainty field from day one, and the join logic needs to be uncertainty-aware, or the register will quietly manufacture correlations that are artefacts of coordinate error.\n\n7. NRHP has a stated, structural exclusion: restricted and sensitive features are removed from the public spatial dataset. NRHP absence is therefore never evidence of anything. The same caution applies more weakly to several state datasets.\n\n8. Nothing in this beat establishes FUNCTION. Geospatial evidence can establish that an excavation exists, roughly how large it is, when it appeared, and what it is connected to. It cannot establish what is inside or what it is for. Every finding here is an upper bound on physical fact and a zero on purpose. The register's grading must keep those separate, or a well-measured spoil pile will get read as a well-evidenced claim about continuity of government, which it is not.\n\n9. UNTESTED SPECIFICS, flagged for the first harvester run. TNM Access exact dataset label strings; USMIN's precise attribute schema and current version; MSHA's exact flat-file names and column definitions; FAA's current FeatureServer IDs and field names; NPS mapservices layer indices. All are from search results rather than direct inspection because those hosts were unreachable from this sandbox. Each is a five-minute verification against the service's own ?f=pjson or definition file, and each will silently break a loader if assumed.",
+  "high_yield_queries": [
+    "curl -s 'https://prd-tnm.s3.amazonaws.com/?list-type=2&delimiter=/&prefix=StagedProducts/' \u2014 enumerate the whole USGS bulk tree with no credentials",
+    "curl -O https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/Metadata/historicaltopo.zip \u2014 17.5 MB, nightly, 186,061 rows, every HTMC sheet with WKT geometry and direct GeoTIFF/GeoPDF URLs",
+    "SELECT * FROM htmc WHERE ST_Contains(geom, ST_SetSRID(ST_MakePoint(:lon,:lat),4326)) ORDER BY date_on_map \u2014 returns the full temporal map stack for any US coordinate; verified 34 sheets, 1893-1989, over the Cheyenne Mountain portal",
+    "SELECT * FROM htmc WHERE publishers LIKE '%MIL%' OR publishers LIKE '%WarDept%' OR publishers LIKE '%AMS%' \u2014 9,579 military-lineage sheets out of 186,061",
+    "SELECT * FROM htmc WHERE photo_revision_year IS NOT NULL AND photo_revision_year::int - date_on_map::int > 5 \u2014 sheets whose purple photorevision overprint colour-codes exactly what appeared between two dates",
+    "SELECT * FROM htmc WHERE variations LIKE '%Planimetric%' \u2014 2,925 contourless sheets, disproportionately engineering and military products",
+    "curl -O https://prd-tnm.s3.amazonaws.com/StagedProducts/Elevation/metadata/WESM.csv \u2014 3,269 lidar work units with quality level, collection dates and staging links; WESM.gpkg for footprints",
+    "SELECT workunit, ql, collect_start, lpc_link FROM wesm WHERE ST_Intersects(geom, :aoi) AND ql IN ('QL 0','QL 1','QL 2') \u2014 is there sub-metre lidar over this candidate, and from what year",
+    "PDAL pipeline: readers.ept on https://usgs-lidar-public.s3.amazonaws.com/{PROJECT}/ept.json with bounds in EPSG:3857, then filters.range Classification[2:2], then writers.gdal output_type=idw resolution=0.5 \u2014 bare-earth DTM for one site without downloading a tile",
+    "PDAL: same reader, filters.range Classification[7:7] and Classification[18:18] \u2014 the discarded 'noise' class, where lidar returns fired down an open portal door survive",
+    "gdalinfo /vsicurl/https://prd-tnm.s3.amazonaws.com/StagedProducts/Maps/HistoricalTopo/GeoTIFF/CO/CO_Cheyenne%20Mountain_450177_1961_24000_geo.tif \u2014 tiled JPEG-in-TIFF with overviews, NAD27 Polyconic, 2.032 m/px; range-readable",
+    "gdal_translate -projwin with /vsicurl/ on an HTMC GeoTIFF \u2014 crop one hillside out of an 8.5 MB sheet over HTTP",
+    "USMIN: SELECT * WHERE Ftr_Type IN ('Adit','Air Shaft','Mine Shaft') AND Ftr_Name ~* '(Tunnel|Portal|Cave)' \u2014 mapped subsurface openings whose printed label is not a mine name",
+    "USMIN LEFT JOIN MSHA LEFT JOIN MRDS ON ST_DWithin(...) WHERE mine_id IS NULL AND mrds_id IS NULL \u2014 portals USGS drew that no mining regulator ever recorded",
+    "MSHA Mines.txt: WHERE MINE_TYPE='Underground' AND CURRENT_MINE_STATUS IN ('Abandoned','Abandoned and Sealed','NonProducing') \u2014 sealed underground workings with coordinates",
+    "MSHA Mines.txt: WHERE CONTROLLER_NAME ~* '(records|storage|data cent|vault|archive|defense|federal)' \u2014 the small set of genuinely repurposed mines, under their real operator names",
+    "e-AMLIS / state ArcGIS: WHERE PROBLEM_TYPE IN ('Portal','Vertical Opening','Dangerous Highwall','Subsidence','Underground Mine Fire') \u2014 federally funded closures prove a physical opening existed",
+    "https://{state-arcgis-host}/arcgis/rest/services?f=pjson \u2014 enumerate every service a state geological survey publishes; fastest way to discover a state's real geospatial holdings",
+    "FAA SUA FeatureServer: WHERE lower altitude limit = 'SFC' AND ST_Area(geom) < :small AND time_of_use = 'continuous' \u2014 tight, low, always-on restrictions over unremarkable terrain, filtered clear of the large well-known training ranges",
+    "M2M POST /login-token then /dataset-search then /scene-search with spatialFilter type=mbr \u2014 the only supported programmatic path to Declass I/II/III (CORONA, GAMBIT, HEXAGON) and the 6.5M-frame Aerial Photo Single Frames archive",
+    "npgallery.nps.gov/nrhp full-text: \"blast door\" | \"emergency operating center\" | \"shock isolation\" | \"hardened\" | \"underground operations\" \u2014 NRHP nominations carry construction detail otherwise only reachable by FOIA",
+    "GNIS Domestic Names: WHERE FEATURE_CLASS IN ('Mine','Tunnel','Cave') \u2014 and the inverse test, checking whether a folklore toponym exists in the federal gazetteer at all",
+    "NARA Special List 25, by state then degree square, resolving to spot number then RG 373 can locator via carto@nara.gov \u2014 the only route into 30M frames of 1935-1970 domestic-flown DIA photography",
+    "Relief Visualization Toolbox: Sky-View Factor, Simple Local Relief Model, Negative Openness, Local Dominance over a 0.5 m bare-earth DTM \u2014 portal notches, muck piles, cut-and-fill benches and igloo fields that plain hillshade misses"
+  ]
+}

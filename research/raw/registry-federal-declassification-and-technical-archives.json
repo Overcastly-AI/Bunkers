@@ -1,0 +1,479 @@
+{
+  "beat": "Federal declassification and technical archives",
+  "sources": [
+    {
+      "name": "CIA CREST / FOIA Electronic Reading Room",
+      "url": "https://www.cia.gov/readingroom/",
+      "holdings": "~930,000 declassified documents / ~12M pages released under the 25-Year Program, plus discrete FOIA release collections. Relevant content clusters: Office of Communications and Office of Logistics facility files (relocation sites, hardened comms), ground photo caption cards (RG-style imagery indexes under CIA-RDP78-05867A), National Intelligence Estimates on Soviet hardened/deep-underground facilities (useful as a methodology mirror for how the US assessed hardening), agency continuity-of-operations and relocation-site administration, and the STAR GATE/SUN STREAK files (CIA-RDP96-00787/00788/00789) which are the documented origin of a large amount of bunker folklore and are therefore the single most valuable corpus for BACKSOURCING fringe claims.",
+      "provenance_tier": "P1",
+      "access_method": "HTML scrape of a Drupal 7 + Apache Solr site; direct PDF fetch by document number. No API, no bulk endpoint.",
+      "format": "Scanned PDF requiring OCR for most pre-1990 material; CIA supplies a partial OCR text layer of poor quality on many items. Metadata is clean HTML.",
+      "value": "critical",
+      "axes_served": [
+        "documented evidence",
+        "facility identification",
+        "construction chronology",
+        "folklore backsourcing",
+        "program codewords"
+      ],
+      "rate_limits": "None published. Site is slow and returns 403/503 under concurrency; observed community practice is 1 request/sec single-threaded. Treat as fragile.",
+      "robots_posture": "Could not verify robots.txt from this environment (cia.gov is blocked by the egress proxy here). MUST be fetched and honored before any harvesting run. Assume /readingroom/search/ and faceted URLs are disallowed until proven otherwise, and prefer the Internet Archive mirror for bulk work.",
+      "search_technique": "The document identifier is the ESDN (Electronic Search Document Number), rendered as CIA-RDP{2-digit originating-office series}{5-digit record series}{letter}{block}{item}-{check}, e.g. CIA-RDP79B00752A000300010001-1. It is NOT a date. Three stable URL patterns, all confirmed live: landing page https://www.cia.gov/readingroom/document/{esdn-lowercased-hyphenated}; direct PDF https://www.cia.gov/readingroom/docs/{ESDN-UPPERCASE}.pdf; printer view https://www.cia.gov/readingroom/print/{drupal_node_id} and https://www.cia.gov/readingroom/node/{drupal_node_id}. Node IDs are dense integers roughly 1..1,900,000 and can be walked directly, which is the cheapest full-corpus enumeration path and bypasses search entirely. Paginated browse: https://www.cia.gov/readingroom/document-type/crest?page=N \u2014 N observed to at least 89121 at 10 docs/page. The advanced search at /readingroom/advanced-search-view exposes raw Solr dynamic fields as URL params, confirmed from a live query string: f[0]=im_field_collection:{numeric_term_id}, f[1]=dm_field_release_date:[2010-01-01T00:00:00Z TO 2011-01-01T00:00:00Z] (literal Solr range syntax, URL-encoded), ds_field_pub_date[min], ds_field_pub_date[max], ds_field_pub_date_op, order=label, sort=desc. The im_/dm_/ds_ prefixes are Drupal SearchAPI-Solr conventions (integer-multivalue / date-multivalue / date-single), so additional facet fields almost certainly follow the same naming and can be discovered by reading the facet block hrefs on any result page. Full-text search supports AND/OR/NOT. Beyond the three content types in CIA's own guide there are ~90 further content-type values in the metadata, reachable as facets.",
+      "notes": "Do not treat CREST as a corpus about US bunkers \u2014 it is overwhelmingly a foreign-intelligence corpus. Its value to this register is (a) logistics/communications administrivia that incidentally names US relocation facilities, and (b) it is the provenance root for a very large share of internet bunker folklore. Grade accordingly."
+    },
+    {
+      "name": "CIA Reading Room mirror, Internet Archive",
+      "url": "https://archive.org/details/cia-readingroom-document-cia-rdp67-00896r000100090004-0",
+      "holdings": "Item-level mirror of the CIA Reading Room. Confirmed identifier convention: cia-readingroom-document-{esdn-lowercased}. An older, separately-uploaded tranche uses the bare uppercase ESDN as identifier, e.g. CIA-RDP61-00549R000100220001-0. Both conventions coexist; a harvester must try both.",
+      "provenance_tier": "P2",
+      "access_method": "Internet Archive Scrape API + item metadata API + direct file download",
+      "format": "PDF, plus IA-generated DjVu/ABBYY full-text OCR sidecars \u2014 meaningfully better OCR than CIA's own layer in many cases",
+      "value": "critical",
+      "axes_served": [
+        "documented evidence",
+        "bulk acquisition",
+        "OCR full text",
+        "folklore backsourcing"
+      ],
+      "rate_limits": "Scrape API requires count>=100 per call, cursor-paginated; IA tolerates polite parallelism far better than cia.gov",
+      "robots_posture": "archive.org permits automated metadata access via its documented public APIs; the scrape and metadata endpoints are the sanctioned path",
+      "search_technique": "Enumerate with the cursor-based scrape endpoint: https://archive.org/services/search/v1/scrape?q=identifier:cia-readingroom-document-*&fields=identifier,title,date&count=10000, paging on the returned cursor. Per-item metadata at https://archive.org/metadata/{identifier} returns the file manifest including the _djvu.txt OCR sidecar; fetch that instead of OCRing the PDF yourself. Advanced search (https://archive.org/advancedsearch.php) is capped at 10,000 paged results, so use scrape for enumeration and advancedsearch only for narrow queries. Full-text search across OCR is a separate service and is the way to find hardened-facility mentions inside documents whose titles are '(UNTITLED)' \u2014 a very common CREST title.",
+      "notes": "This is the correct bulk path for CREST. It removes the cia.gov rate/robots problem entirely, gives better OCR, and is resumable. Provenance note for the register: an IA item is a MIRROR of a P1 record, not an independent source \u2014 cite the CIA ESDN as the authority and IA as the retrieval channel."
+    },
+    {
+      "name": "DTIC public technical reports (apps.dtic.mil)",
+      "url": "https://apps.dtic.mil/sti/",
+      "holdings": "Unclassified/unlimited-distribution DoD technical reports. This is the richest single corpus for the ENGINEERING of hardened and buried facilities: blast-resistant and protective construction design, rock mechanics and tunnelling for military use, shock isolation, EMP hardening, silo and command-post survivability, deep-basing studies, and nuclear weapons effects. Public site covers all unclassified/unlimited citations since 1975 plus a large body of digitized older material back to the 1940s.",
+      "provenance_tier": "P1",
+      "access_method": "Sitemap-driven crawl (explicitly offered to crawlers), plus deterministic per-document URL construction. No public JSON API.",
+      "format": "PDF. Pre-~1990 scans need OCR; DTIC also exposes an HTML rendition for some items which is already text.",
+      "value": "critical",
+      "axes_served": [
+        "documented evidence",
+        "engineering parameters",
+        "program codewords",
+        "contractor identification",
+        "construction chronology"
+      ],
+      "rate_limits": "Not published. Cloud-hosted and more robust than CREST, but throttle conservatively (~1-2 req/s).",
+      "robots_posture": "DTIC publishes https://apps.dtic.mil/sitemap.xml and its guidance explicitly directs crawlers wishing to index the unclassified/unlimited technical report collection to that sitemap. That is an affirmative invitation to crawl the TR collection \u2014 the cleanest robots posture of any source on this beat. Fetch apps.dtic.mil/robots.txt and honor it alongside.",
+      "search_technique": "Identifier is the AD (ASTIA Document) accession number, issued continuously since 1943. Prefixes carry distribution meaning and are the most efficient filter on the whole beat: AD0/ADA = approved for public release (fetchable); ADB = distribution limited (citation only, FOIA required for the body); ADC = classified; ADP = individual paper within a compilation. Deterministic URLs, all confirmed: citation https://apps.dtic.mil/sti/citations/{AD}; PDF https://apps.dtic.mil/sti/pdfs/{AD}.pdf and the older https://apps.dtic.mil/sti/tr/pdf/{AD}.pdf (both live \u2014 try both); HTML full text https://apps.dtic.mil/sti/html/tr/{AD}/index.html; legacy resolver https://discover.dtic.mil/tr_redirect/{AD}. The high-yield move is searching by ORIGINATING LAB REPORT SERIES rather than by topic, because these labs did essentially nothing else: AFWL-TR-{yy}-{nnn} (Air Force Weapons Laboratory, Kirtland AFB \u2014 the hardened-structures and silo-survivability shop; its 'Air Force Design Manual: Principles and Practices for Design of Hardened Structures' is the canonical text); AFSWC-TR (Air Force Special Weapons Center, predecessor); DASA-{nnnn} (Defense Atomic Support Agency, 1959-71); DNA-{nnnn}{letter} and DNA-TR-{yy}-{nnn} (Defense Nuclear Agency, 1971-96); DSWA-TR (Defense Special Weapons Agency, 1996-98); DTRA-TR (1998-); WES TR / Technical Report {series}-{yy}-{n} where series SL=Soils, GL=Geotechnical, N=Nuclear weapons effects (Army Engineer Waterways Experiment Station, Vicksburg \u2014 did the physical cratering and buried-structure testing); CERL-TR (Construction Engineering Research Lab); NCEL-TR (Naval Civil Engineering Laboratory, Port Hueneme \u2014 Navy hardened/underground construction). Free-text phrases that actually retrieve: 'protective construction', 'hardened structures', 'deep basing', 'deep underground', 'superhard', 'shock isolation', 'blast door', 'blast valve', 'ground shock', 'cratering', 'rock mechanics tunnel', 'hard and deeply buried targets' (HDBT \u2014 the modern targeting-side literature, which describes US facility characteristics in the course of describing how to attack analogous ones).",
+      "notes": "ADB-prefixed citations are a systematic, machine-detectable FOIA worklist: the metadata is public, the document is not. Harvest ADB citations into the register as 'known to exist, not released' \u2014 that is itself an evidence grade and is exactly the kind of honest negative the project wants."
+    },
+    {
+      "name": "DTIC technical reports mirrored on Internet Archive",
+      "url": "https://archive.org/details/DTIC_ADA369152",
+      "holdings": "A large but INCOMPLETE community mirror of DTIC technical reports. Identifier convention DTIC_{AD}. Valuable chiefly for items DTIC has since withdrawn from public access, and for IA's OCR text layer.",
+      "provenance_tier": "P2",
+      "access_method": "Internet Archive scrape/metadata API",
+      "format": "PDF plus _djvu.txt OCR sidecar",
+      "value": "high",
+      "axes_served": [
+        "documented evidence",
+        "OCR full text",
+        "recovery of withdrawn documents"
+      ],
+      "rate_limits": "Standard IA API behavior",
+      "robots_posture": "Sanctioned public API",
+      "search_technique": "Scrape with q=identifier:DTIC_AD* to enumerate; cross-join the resulting AD list against your apps.dtic.mil crawl to find items present on IA but absent (withdrawn) from DTIC. Those deltas are disproportionately interesting.",
+      "notes": "DoD has periodically pulled previously-public reports offline. IA copies of pulled reports are a documented, citable P1 record retrieved via a P2 channel \u2014 record both the AD number and the mirror."
+    },
+    {
+      "name": "National Technical Reports Library (NTRL / NTIS)",
+      "url": "https://ntrl.ntis.gov/NTRL/",
+      "holdings": "~3M bibliographic records and 800,000+ digitized full-text federal technical reports, 1900-present, including ~195,000 brief records for pre-1964 material. Overlaps DTIC but is NOT a subset: NTRL holds many pre-1975 AD-numbered reports that never made it onto DTIC's public site, plus AEC/ERDA and civil-defense engineering reports.",
+      "provenance_tier": "P1",
+      "access_method": "HTML search interface; free and open-access since 1 Oct 2016 (previously subscription)",
+      "format": "PDF, mostly scanned, OCR required",
+      "value": "high",
+      "axes_served": [
+        "documented evidence",
+        "pre-1975 coverage gap",
+        "engineering parameters"
+      ],
+      "rate_limits": "Not published; JS-heavy interface, likely needs a headless browser",
+      "robots_posture": "Verify ntrl.ntis.gov/robots.txt before harvesting; no crawler invitation equivalent to DTIC's sitemap is published",
+      "search_technique": "Search by the same AD numbers as DTIC, plus PB numbers (the NTIS civilian-agency accession series) and AEC/TID- and UCRL- series for Atomic Energy Commission protective-construction and shelter work. This is the correct place to resolve an AD number that DTIC returns as a dead link or that appears only as a citation in a bibliography.",
+      "notes": "The main practical reason to use NTRL is the pre-1975 window, which is exactly the Cold War hardened-construction boom. Treat it as the fallback resolver in an AD-number pipeline: DTIC first, IA second, NTRL third."
+    },
+    {
+      "name": "NARA National Archives Catalog API v2",
+      "url": "https://catalog.archives.gov/api/v2/",
+      "holdings": "Archival descriptions, authority records, digital object metadata, public contributions (tags/transcriptions), and extracted OCR text across all NARA holdings. Only ~3.9% of NARA's estimated textual pages are digitized (475M scans as of mid-2026), so the catalog is primarily a FINDING AID that tells you which box to request, not a document delivery system.",
+      "provenance_tier": "P1",
+      "access_method": "JSON REST API with API key",
+      "format": "JSON metadata; digital objects as JPEG/PDF/TIFF where digitized",
+      "value": "critical",
+      "axes_served": [
+        "facility identification",
+        "construction chronology",
+        "finding-aid discovery",
+        "FOIA/visit targeting"
+      ],
+      "rate_limits": "10,000 queries per month per key by default, auto-reset monthly; key is temporarily blocked on overage. Higher limits granted on justified request.",
+      "robots_posture": "API governed by published Terms of Use; acceptance is implied by use. The API is the sanctioned machine path \u2014 do not scrape catalog.archives.gov HTML instead.",
+      "search_technique": "Key: obtain free by emailing Catalog_API@nara.gov (read-only or read-write). Auth via header x-api-key. Search endpoint https://catalog.archives.gov/api/v2/records/search?q={query}; OpenAPI spec at https://catalog.archives.gov/api/v2/api-docs. q supports AND/OR/NOT, * wildcards, and \"exact phrases\". Confirmed useful field params: ancestorNaId (restrict to everything beneath a given description \u2014 the way to walk a record group or series), levelOfDescription (recordGroup / collection / series / fileUnit / item), geographicReference (matches record.subjects.heading where authorityType=geographicPlaceName \u2014 the geospatial hook for a place-based register). Field selection and sorting are supported, so request only the fields you store. The record groups that actually matter for this beat: RG 77 Office of the Chief of Engineers (the builder of record \u2014 Site R, Mount Weather tunnels, missile silos); RG 374 Defense Nuclear Agency (successor to AFSWP/DASA; weapons-effects and hardness testing); RG 304 Office of Civil and Defense Mobilization; RG 396 Office of Emergency Preparedness; RG 397 Defense Civil Preparedness Agency (1947-79, bulk 1961-79); RG 311 FEMA; RG 269 GSA (holds Federal Preparedness Agency records \u2014 a non-obvious placement that defeats naive searching); RG 330 Office of the Secretary of Defense; RG 218 Joint Chiefs of Staff (JCS emergency relocation, AJCC); RG 341 HQ USAF Air Staff; RG 342 USAF commands and activities; RG 373 Defense Intelligence Agency (aerial photography). Bulk-download helper scripts live at https://github.com/usnationalarchives/Catalog-API/tree/master/bulk-download-scripts \u2014 notably combinedDigitalObjectScript.py (menu-driven; single NAID, parent NAID, arbitrary search, or CSV input) and GenerateObjectURLs_NoDownload_AllChildRecords.py, which emits object URLs to CSV without downloading and is the right primitive for building a register index.",
+      "notes": "The single highest-leverage NARA technique for this project is walking ancestorNaId down from a record group to series level and harvesting SERIES-LEVEL scope-and-content notes. Those notes describe undigitized boxes in plain English and routinely name facilities, projects and dates that appear nowhere online. That converts directly into both register entries graded 'documented \u2014 described in finding aid, not yet examined' and a prioritized research-visit list."
+    },
+    {
+      "name": "NARA Record Group Explorer and Guide to Federal Records",
+      "url": "https://www.archives.gov/findingaid/record-group-explorer",
+      "holdings": "Narrative agency histories, record-group scope notes, and per-RG statistics on what is digitized. The Guide to Federal Records (archives.gov/research/guide-fed-records/groups/{NNN}.html) gives agency lineage \u2014 which is the only reliable way to know which RG a given Cold War office's records actually landed in after successive reorganizations.",
+      "provenance_tier": "P1",
+      "access_method": "HTML scrape; stable, predictable URL structure",
+      "format": "HTML",
+      "value": "high",
+      "axes_served": [
+        "finding-aid discovery",
+        "agency lineage",
+        "construction chronology"
+      ],
+      "rate_limits": "None published",
+      "robots_posture": "Check www.archives.gov/robots.txt; the guide pages are static reference content and low-risk at polite rates",
+      "search_technique": "Deterministic URLs: https://www.archives.gov/research/guide-fed-records/groups/{RG}.html and https://www.archives.gov/findingaid/stat/discovery/{RG}. Harvest all RG pages once (there are ~500) and index the narrative text \u2014 this is a small, cheap, high-value corpus. Use it to resolve the reorganization chain that defeats keyword search: FCDA + ODM -> OCDM (1958, RG 304) -> Office of Emergency Planning (1961) -> Office of Emergency Preparedness (1968, RG 396) -> Federal Preparedness Agency (records in RG 269, GSA) and Defense Civil Preparedness Agency (RG 397) -> FEMA (RG 311, EO 12148, 1979). A researcher who searches only 'FEMA' or only 'civil defense' misses four of those.",
+      "notes": "Cheap to harvest, permanently useful, and it is the map that makes the Catalog API productive rather than a keyword lottery."
+    },
+    {
+      "name": "NARA cartographic branch \u2014 RG 373 aerial photography and original CORONA film",
+      "url": "https://www.archives.gov/research/cartographic/aerial-photography/satellite-photography",
+      "holdings": "Original CORONA/ARGON/LANYARD film and mission-related technical documentation; RG 373 Aerial Photographs 1935-1970 including domestic-flown coverage indexed in Special List 25, plus captured German (GX) and Japanese (JX) foreign coverage. Domestic USAF/DIA aerial coverage is the highest-resolution pre-1970 imagery of US facility construction that exists and is materially better than the satellite product for construction-phase detection.",
+      "provenance_tier": "P1",
+      "access_method": "Manual \u2014 in-person research at College Park; Special List 25 and can indexes consulted on site. Not machine-accessible.",
+      "format": "Film (original negatives and duplicate positives); paper indexes; some finding aids as PDF",
+      "value": "high",
+      "axes_served": [
+        "construction chronology",
+        "geolocation",
+        "imagery corroboration"
+      ],
+      "rate_limits": "N/A \u2014 physical",
+      "robots_posture": "N/A",
+      "search_technique": "Domestic coverage is indexed by Special List 25 (SL25) \u2014 search the Catalog for SL25 and for the series 'Aerial Photographs, 1935-1970' under RG 373. Cans carrying an 'ON' identifier are original negatives held offsite at the Lenexa Federal Records Center and must be ordered through the Cartographic Research Room with about three business days' lead. Workflow that works: identify a construction window from a documentary source (appropriation, EIS, Corps history), then pull SL25 for that county and year rather than browsing imagery first.",
+      "notes": "Honest limitation: this is a physical-visit source with no remote access path. Its correct role in an automated register is as a TARGETED follow-up generated by the pipeline \u2014 the database should be able to emit 'RG 373 SL25, county X, 1958-1962' as a research task, not attempt to ingest it."
+    },
+    {
+      "name": "USGS EarthExplorer Machine-to-Machine (M2M) API \u2014 declassified imagery",
+      "url": "https://m2m.cr.usgs.gov/",
+      "holdings": "Declass 1 (released 1996): CORONA, ARGON, LANYARD, 1960-1972, >860,000 frames. Declass 2 (2002): KH-7 GAMBIT 1963-67 and KH-9 HEXAGON mapping camera 1973-80. Declass 3 (2013, with a further ~14,000 rolls / 670,000+ scenes transferred to EROS in 2019): KH-9 HEXAGON panoramic, 1971-1984. KH-9 panoramic resolution ~0.6-1.2 m; KH-9 mapping camera ~6-9 m; this is enough to see spoil piles, portal construction, access roads and antenna farms.",
+      "provenance_tier": "P1",
+      "access_method": "JSON-RPC-style REST API over HTTPS; free registration required",
+      "format": "Scanned film delivered as GeoTIFF/JPEG; browse images separately downloadable; georeferencing is approximate for the declassified sets and often needs manual control points",
+      "value": "critical",
+      "axes_served": [
+        "geolocation",
+        "construction chronology",
+        "imagery corroboration",
+        "open-signal inference"
+      ],
+      "rate_limits": "Enforced server-side; the API returns a RATE_LIMIT error code that clients are expected to back off and retry on. Download requests are queued/ordered rather than instantaneous for large scene sets.",
+      "robots_posture": "Sanctioned programmatic API \u2014 this is the intended access path, no scraping needed",
+      "search_technique": "Register at https://ers.cr.usgs.gov/register then request M2M access at https://ers.cr.usgs.gov/profile/access. Auth is username + M2M TOKEN (not your password). Base path https://m2m.cr.usgs.gov/api/api/json/stable/ ; POST to login-token, then pass the returned key as an X-Auth-Token header on every subsequent call. Endpoints confirmed in working client code: dataset-search, dataset-filters, scene-search, scene-metadata, scene-metadata-list, scene-list-add/get/remove, download-options, download-request, download-search, download-remove, download-order-remove, logout. Request bodies are JSON with datasetName, sceneFilter (spatial + temporal + metadata filters), entityId/entityIds, maxResults, startingNumber, metadataType. Critically: call dataset-filters for each declass dataset FIRST and read the real filter field IDs \u2014 the declassified datasets expose mission/camera/frame fields that differ from Landsat's and are not documented narratively anywhere. Entity IDs are structured and parseable, e.g. D3C1217-401747A005 encodes the Declass phase, mission, and frame. Reference client with working request construction: https://github.com/adehecq/usgs_explorer (see usgsxplore/api.py).",
+      "notes": "The declassified sets are the backbone of the 'inferred from open signals' evidence bucket: a 1960s frame showing excavation at a site that appears in no document is real evidence of activity, and a frame showing nothing at a site that folklore says was built in 1962 is real evidence against. Both belong in the register. Note that the coverage is US-domestic-sparse for CORONA (it was aimed at the USSR/PRC); domestic coverage is better served by RG 373 and USGS aerial photography."
+    },
+    {
+      "name": "GovInfo API and Bulk Data Repository (GPO)",
+      "url": "https://api.govinfo.gov/docs/",
+      "holdings": "Congressional Hearings (CHRG), Congressional Reports (CRPT), Congressional Record (CREC/CRECB), Serial Set, US Code, CFR, Federal Register, and GAO Reports (GAOREPORTS, all publicly released reports FY95 - Sept 2008). For this beat the load-bearing collection is CHRG: military construction authorization and appropriations hearings are where line items for hardened facilities are named, justified, questioned, and sometimes killed on the record \u2014 the DUCC funding fight in the FY1965 MilCon bill is the model case.",
+      "provenance_tier": "P1",
+      "access_method": "JSON REST API with api.data.gov key; plus XML bulk data repository; plus deterministic content URLs",
+      "format": "PDF, HTML (already text \u2014 no OCR needed for post-1994 material), XML, MODS metadata",
+      "value": "critical",
+      "axes_served": [
+        "documented evidence",
+        "cost/appropriations",
+        "construction chronology",
+        "political provenance",
+        "folklore backsourcing"
+      ],
+      "rate_limits": "api.data.gov standard tiering; DEMO_KEY works for trial but is aggressively limited. Register a real key.",
+      "robots_posture": "Public API is the sanctioned path; govinfo also publishes sitemaps at https://govinfo.gov/sitemaps",
+      "search_technique": "Package IDs are deterministic and parseable: CHRG-{congress}{chamber}hrg{number}, e.g. CHRG-107shrg70864 (Senate), CHRG-119hhrg62456 (House). Content URLs, all confirmed: https://www.govinfo.gov/content/pkg/{PKGID}/html/{PKGID}.htm and .../pdf/{PKGID}.pdf and details page https://www.govinfo.gov/app/details/{PKGID}. API services: /collections/{collectionCode}/{lastModifiedDate} for incremental sync (cursor via offsetMark \u2014 this is how you keep an unbounded ingest current), /packages/{PKGID}/summary and /granules for hearing-level subdivision, /published/{dateRange} and /search. The field-query language is the real power tool and is shared between the web UI and the search service: collection:chrg, publishdate:range(1994-01-01,), governmentauthor:, sudocclass:, congress:, branch:, citation:, plus MODS traversal via mods:{path}:{value}. Two specific high-yield queries: collection:chrg AND isappropriation:true restricted to military construction subcommittees; and full-text phrase searches for 'hardened', 'relocation facility', 'alternate command post', 'classified location', 'special facility'. Bulk XML at https://www.govinfo.gov/bulkdata/{COLLECTION} with schema, XSLT and user guide under each collection's Resources directory.",
+      "notes": "Post-1994 govinfo text is born-digital HTML, so it is the cheapest full-text corpus on this entire beat \u2014 no OCR, no scraping, clean IDs. Start ingest here before touching anything scanned. The pre-1994 congressional record is the gap (see the Serial Set / HathiTrust note in gaps)."
+    },
+    {
+      "name": "Federal Register API v1",
+      "url": "https://www.federalregister.gov/developers/documentation/api/v1",
+      "holdings": "Every Federal Register document 1994-present (and scanned back to 1936 via the FR/CFR archive on govinfo). For this beat: NEPA notices of intent and records of decision for federal construction, land withdrawals, real-property disposal notices, airspace and restricted-area designations that ring hardened sites, and agency relocation/COOP rulemakings.",
+      "provenance_tier": "P1",
+      "access_method": "Public REST API, keyless",
+      "format": "JSON, CSV, XML full text, PDF",
+      "value": "high",
+      "axes_served": [
+        "open-signal inference",
+        "facility identification",
+        "property disposal",
+        "construction chronology"
+      ],
+      "rate_limits": "No API key and no published rate limit for reasonable use; usage is logged and abuse is mitigated infrastructurally. Pagination is hard-capped at the first 2,000 results per query \u2014 you MUST slice queries by date or agency to enumerate exhaustively.",
+      "robots_posture": "Explicitly keyless and public by design; the agency's stated position is that API keys would be an unnecessary barrier",
+      "search_technique": "GET https://www.federalregister.gov/api/v1/documents.json with conditions[term], conditions[agencies][], conditions[type][] (RULE/PRORULE/NOTICE/PRESDOCU), conditions[publication_date][gte]/[lte]. Use fields[] to trim the payload \u2014 available values include agencies, agency_names, docket_ids, full_text_xml_url, raw_text_url, pdf_url, html_url, mods_url, start_page, end_page, topics, citation, document_number, significant. The raw_text_url and full_text_xml_url fields let you pull clean text without a second scrape. Work around the 2,000-result cap by iterating month-by-month. Productive terms: 'environmental impact statement' combined with agency=Department of the Army/Air Force; 'notice of realty action'; 'withdrawal of public lands'; 'restricted area' + 'special use airspace'; 'record of decision' + 'construction'.",
+      "notes": "The Federal Register is where a buried facility surfaces administratively even when nobody discusses it substantively \u2014 land withdrawals and airspace rules have to be published. Strong source for the 'inferred from open signals' bucket."
+    },
+    {
+      "name": "GAO reports and testimonies",
+      "url": "https://www.gao.gov/advanced-search",
+      "holdings": "Audits and evaluations of federal programs. High-value threads for this beat: COOP/continuity readiness audits, DoD facility recapitalization and MilCon oversight, NNSA and DOE site infrastructure, and the recurring critique that agencies cannot account for their own real property. GAO reports routinely name facilities, costs and dates that agencies do not otherwise publish.",
+      "provenance_tier": "P1",
+      "access_method": "HTML search on gao.gov with per-product PDF; plus GovInfo GAOREPORTS collection for FY95-Sept 2008",
+      "format": "PDF and HTML; born-digital text for modern reports",
+      "value": "high",
+      "axes_served": [
+        "documented evidence",
+        "cost/appropriations",
+        "facility identification",
+        "program status"
+      ],
+      "rate_limits": "Not published",
+      "robots_posture": "Verify gao.gov/robots.txt; for bulk work prefer the GovInfo GAOREPORTS collection, which is API-served and sanctioned",
+      "search_technique": "Two identifier eras and you need both. Modern: GAO-{2-digit FY}-{6-digit number}, URL https://www.gao.gov/products/gao-25-106000. Legacy (pre-2004): GAO/{DIVISION}-{yy}-{nnn}, where the division code is the filter that matters \u2014 NSIAD (National Security and International Affairs Division) is the Cold War defense-facility series, plus RCED, AIMD, and the Comptroller General B-{number} decisions. Search 'GAO/NSIAD' plus 'continuity', 'relocation', 'hardened', 'command center'. Via GovInfo: collection:gaoreports with the field-query language above, which is the machine-friendly route for FY95-2008.",
+      "notes": "Note the coverage seam: GovInfo's GAOREPORTS stops at September 2008 and gao.gov carries the modern set. A complete harvester needs both, joined on report number."
+    },
+    {
+      "name": "DoD Office of Inspector General FOIA Reading Room",
+      "url": "https://www.dodig.mil/FOIA/FOIA-Reading-Room/",
+      "holdings": "DoD IG audits, evaluations and reports of investigation, including previously-released FOIA responses. Relevant threads: physical security and facility construction audits, classified-program oversight, MilCon execution.",
+      "provenance_tier": "P1",
+      "access_method": "HTML scrape with query-string search and pagination",
+      "format": "PDF, often born-digital text with redaction boxes",
+      "value": "moderate",
+      "axes_served": [
+        "documented evidence",
+        "program status",
+        "cost/appropriations"
+      ],
+      "rate_limits": "Not published",
+      "robots_posture": "Verify dodig.mil/robots.txt",
+      "search_technique": "The reading room takes GET params directly: https://www.dodig.mil/FOIA/FOIA-Reading-Room/?Search={terms} and ?Page={n}, so it is trivially enumerable \u2014 walk Page= to exhaustion with an empty search to get the full inventory, then filter locally rather than issuing many searches.",
+      "notes": "Small corpus relative to DTIC but cheap to mirror completely. Do the full walk once and re-sync monthly."
+    },
+    {
+      "name": "DoD / Washington Headquarters Services Executive Services Directorate FOIA Reading Room",
+      "url": "https://www.esd.whs.mil/Records-Declass/FOIA/Reading-Room/Reading-Room-List_2/",
+      "holdings": "OSD and Joint Staff FOIA releases and declassified records, organized by component (including a DARPA subsection). ESD is the OSD-level declassification and records office, so this is where OSD-originated continuity, relocation and command-post material surfaces when released.",
+      "provenance_tier": "P1",
+      "access_method": "HTML scrape of a component-partitioned directory listing",
+      "format": "PDF, scanned, OCR usually required",
+      "value": "high",
+      "axes_served": [
+        "documented evidence",
+        "program codewords",
+        "construction chronology"
+      ],
+      "rate_limits": "Not published",
+      "robots_posture": "Verify esd.whs.mil/robots.txt",
+      "search_technique": "Two live path prefixes exist and are not identical \u2014 crawl both: /FOIA/Reading-Room/Reading-Room-List_2/ and /Records-Declass/FOIA/Reading-Room/Reading-Room-List_2/, plus the older /FOID/Reading-Room/. Enumerate the component subdirectories rather than relying on site search, which is poor. Case files are named by FOIA request number in the form {YY}-F-{NNNN} (e.g. 20-F-0163) \u2014 that token is also how the same release is cited on The Black Vault and elsewhere, making it a reliable join key for deduplication across mirrors.",
+      "notes": "The {YY}-F-{NNNN} request number is the most useful cross-archive identifier on the FOIA side of this beat. Store it as a first-class field."
+    },
+    {
+      "name": "NSA, DIA and DTRA FOIA electronic reading rooms",
+      "url": "https://www.nsa.gov/Helpful-Links/NSA-FOIA/Reading-Room/",
+      "holdings": "Agency-specific FOIA releases. DTRA's is the most on-point for this register \u2014 DTRA is the successor to AFSWP/DASA/DNA/DSWA and therefore the custodian of the hardened-target and weapons-effects institutional record (https://www.dtra.mil/About/Mission/Freedom-of-Information-Act-and-Privacy-Act/FOIA-Reading-Room/). DIA's reading room (https://www.dia.mil/FOIA/FOIA-Electronic-Reading-Room/) matters mainly for imagery-derived assessments.",
+      "provenance_tier": "P1",
+      "access_method": "HTML scrape; each site is a separately-templated DoD CMS instance with its own pagination scheme",
+      "format": "PDF, scanned, OCR required",
+      "value": "moderate",
+      "axes_served": [
+        "documented evidence",
+        "program codewords"
+      ],
+      "rate_limits": "Not published",
+      "robots_posture": "Each host needs its own robots.txt check \u2014 they are administered separately",
+      "search_technique": "These are small, hand-curated listings, not searchable corpora. Mirror each completely (hundreds to low thousands of items) and index locally; do not attempt query-driven access. DTRA first, by a wide margin, given the DASA/DNA lineage that connects to the DTIC report series above.",
+      "notes": "Low yield per unit effort individually, but DTRA closes the loop on the DASA/DNA/DSWA report series and is worth the crawl."
+    },
+    {
+      "name": "National Security Archive, George Washington University",
+      "url": "https://nsarchive.gwu.edu/",
+      "holdings": "Curated Electronic Briefing Books (5 to 100+ documents each) with introductory essays and per-document descriptions. The Nuclear Vault collection and Bill Burr's 233 EBBs are the core for this beat: nuclear command and control, presidential succession, and continuity of government. Documented exercise names that serve as search keys: IVY LEAGUE 82, NINE LIVES (continuity of the presidency), REX 82 ALPHA (continuity of government).",
+      "provenance_tier": "P2",
+      "access_method": "HTML scrape; two site generations coexist (nsarchive.gwu.edu current, nsarchive2.gwu.edu legacy at /NSAEBB/)",
+      "format": "HTML essays plus linked PDFs of the underlying documents",
+      "value": "critical",
+      "axes_served": [
+        "documented evidence",
+        "program codewords",
+        "expert curation",
+        "folklore backsourcing"
+      ],
+      "rate_limits": "Not published; a university-hosted site \u2014 be conservative",
+      "robots_posture": "Check nsarchive.gwu.edu/robots.txt. Note the Archive sells subscription document sets through a commercial publisher; the free web EBBs are the open portion and the paywalled sets are not fair game.",
+      "search_technique": "Crawl both generations: current briefing books under /briefing-book/{collection}/{date}/{slug} (e.g. /briefing-book/nuclear-vault/2024-04-17/...), the index at /postings/briefing-books?page=N, /index-previous-postings, and the legacy tree at nsarchive2.gwu.edu/NSAEBB/. The high-value extraction is not the essay but the per-document DESCRIPTIONS, which name the originating agency, date, classification and declassification route for each attached PDF \u2014 that is pre-assembled provenance metadata, exactly the schema this register needs, produced by professional historians.",
+      "notes": "This is the best single quality benchmark available for the register's own citation practice. Where NSArchive has already traced a document, adopt their provenance chain and cite them as the intermediary rather than re-deriving it. It is P2 because it is curation over primary records, not the record office itself \u2014 but it is the most reliable P2 on the beat."
+    },
+    {
+      "name": "Foreign Relations of the United States (FRUS), TEI XML on GitHub",
+      "url": "https://github.com/HistoryAtState/frus",
+      "holdings": "The official documentary record of US foreign policy, as complete TEI P5 XML volumes \u2014 one file per volume. Directly relevant volumes exist: FRUS 1964-68 vol X (National Security Policy) contains the JCS/McNamara exchanges on the Deep Underground Command Center, including the 19 Dec 1963 SecDef Decision/Guidance and the 7 Nov 1963 JCS draft memorandum on a National Deep Underground Command Post.",
+      "provenance_tier": "P1",
+      "access_method": "git clone \u2014 the entire corpus, no API, no rate limit, no scraping",
+      "format": "TEI P5 XML with schema (frus.odd), Schematron and RelaxNG in /schema",
+      "value": "high",
+      "axes_served": [
+        "documented evidence",
+        "program codewords",
+        "construction chronology",
+        "decision provenance"
+      ],
+      "rate_limits": "None \u2014 clone once, pull for updates",
+      "robots_posture": "Deliberately published as open government data under the Digital Government Strategy; explicitly intended for reuse",
+      "search_technique": "git clone the repo and grep/XPath the volumes locally \u2014 this is by far the cheapest high-quality corpus on the beat. Volume files are at /volumes/frus{years}{vol}.xml, e.g. frus1964-68v10.xml. Web equivalents resolve as https://history.state.gov/historicaldocuments/{VOLUME_ID}/{ELEMENT_ID} (e.g. .../frus1964-68v10/d77), so you can construct citable public URLs from the XML IDs without ever fetching history.state.gov. TEI gives you structured persons, dates, classification markings and editorial footnotes for free. Developer resources at https://history.state.gov/developer; the org has further repositories at https://github.com/HistoryAtState.",
+      "notes": "Best effort-to-value ratio of any source here: one git clone, no OCR, no rate limits, structured markup, and it contains the authoritative decision record for at least one major deep-underground program. Do this first."
+    },
+    {
+      "name": "DOE OpenNet and OSTI.GOV API",
+      "url": "https://www.osti.gov/opennet/",
+      "holdings": "OpenNet: 485,000+ bibliographic references and 140,000 declassified DOE documents (declassified after Oct 1994, including FOIA releases). OSTI.GOV: 70+ years of DOE/AEC scientific and technical reports. Relevant threads: AEC-era protective construction and shelter research, weapons-complex site infrastructure, underground test containment engineering (directly transferable to buried-facility survivability), and NNSA site records.",
+      "provenance_tier": "P1",
+      "access_method": "REST API (OSTI) plus HTML search (OpenNet)",
+      "format": "PDF, mixed scanned and born-digital; bibliographic metadata as JSON/XML; MARC records available in bulk",
+      "value": "high",
+      "axes_served": [
+        "documented evidence",
+        "engineering parameters",
+        "site infrastructure"
+      ],
+      "rate_limits": "Not published for the v1 API; paginated at 20 records/page by default",
+      "robots_posture": "Documented public API is the sanctioned path",
+      "search_technique": "OSTI API: https://www.osti.gov/api/v1/records with ?rows={n}&page={n}, parameters url-escaped; docs at https://www.osti.gov/api/v1/docs. Sibling APIs exist at /pages/api/v1/docs (DOE PAGES), /doepatents/api/v1/docs, /dataexplorer/api/v1/docs, /etdeweb/api/v1/docs \u2014 each with its own corpus. OpenNet item URLs are deterministic: https://www.osti.gov/opennet/detail?osti-id={id}, so the id space can be walked directly. OpenNet records carry an Accession Number field which is the token needed to request a physical copy when no digital object exists. Report series worth targeting: TID-, UCRL- (Livermore), SC- (Sandia), LA- (Los Alamos), and the Nevada test-containment literature. Related: the Nevada National Security Site Nuclear Testing Archive (https://nnss.gov/nuclear-testing-archive/) holds the physical test records.",
+      "notes": "OpenNet's coverage starts at Oct 1994 declassifications \u2014 earlier AEC declassifications are in NTRL and NARA RG 326/RG 434 instead. Do not mistake OpenNet for a complete DOE declassification record."
+    },
+    {
+      "name": "ERDC Knowledge Core (Army Corps of Engineers research repository)",
+      "url": "https://erdc-library.erdc.dren.mil/",
+      "holdings": "The full published research output of the Corps' laboratories, including the Waterways Experiment Station (WES) community covering 1 Mar 1937 - 30 Sep 1999. WES did the physical experimental work on buried structures, cratering, ground shock and rock mechanics for the hardened-facility program. Also holds Corps historical publications and district histories.",
+      "provenance_tier": "P1",
+      "access_method": "DSpace repository \u2014 REST API, OAI-PMH, and direct bitstream URLs",
+      "format": "PDF, scanned for older reports (OCR often needed); Dublin Core metadata via OAI",
+      "value": "critical",
+      "axes_served": [
+        "engineering parameters",
+        "documented evidence",
+        "construction chronology",
+        "contractor identification"
+      ],
+      "rate_limits": "Not published; DSpace instances generally tolerate polite harvesting and OAI-PMH is designed for it",
+      "robots_posture": "DSpace repositories are built for OAI-PMH harvesting; that is the intended machine path and should be preferred over HTML scraping",
+      "search_technique": "This is a DSpace instance using Handle prefix 11681. Community/collection browse at https://erdc-library.erdc.dren.mil/jspui/handle/11681/{id} \u2014 the WES community is 11681/22942. Files are served from the DSpace 7 REST layer as https://erdc-library.erdc.dren.mil/server/api/core/bitstreams/{uuid}/content, which means item metadata must be fetched first to resolve bitstream UUIDs (they are not derivable). Try the standard OAI endpoint (typically /server/oai/request?verb=ListRecords&metadataPrefix=oai_dc&set=hdl_11681_22942) for bulk metadata \u2014 this is the correct enumeration primitive and avoids scraping entirely. Report series to filter on: Technical Report S- and SL- (soils), GL- (geotechnical), N- (nuclear weapons effects), Miscellaneous Paper, and Research Report, each numbered {series}-{yy}-{n}. Note that many WES reports carry BOTH a WES number and an AD number, so this repository and DTIC deduplicate against each other \u2014 store both identifiers.",
+      "notes": "Underused and high-value. The .dren.mil hostname makes people assume it is access-controlled; the public repository is not. Cross-referencing WES report numbers against DTIC AD numbers recovers items where one system's copy is missing or unreadable."
+    },
+    {
+      "name": "USACE Publications portal (Engineer Manuals, Regulations, Technical Manuals)",
+      "url": "https://www.publications.usace.army.mil/",
+      "holdings": "Current and superseded Engineer Manuals (EM), Engineer Regulations (ER), Engineer Technical Letters (ETL), and Technical Manuals. The EM 1110 series is the Corps' design canon; the protective-construction and blast-design guidance for hardened facilities lives here and in the joint-service TM 5-855 / UFC 3-340 lineage.",
+      "provenance_tier": "P1",
+      "access_method": "Static PDF hosting with predictable paths",
+      "format": "PDF, mostly born-digital for current editions; superseded editions often scanned",
+      "value": "high",
+      "axes_served": [
+        "engineering parameters",
+        "design standards",
+        "construction chronology"
+      ],
+      "rate_limits": "Not published",
+      "robots_posture": "Verify publications.usace.army.mil/robots.txt",
+      "search_technique": "Direct construction: https://www.publications.usace.army.mil/Portals/76/Publications/EngineerManuals/EM_{number}.pdf (path capitalization is inconsistent \u2014 both /Portals/76/Publications/EngineerManuals/ and /portals/76/publications/engineermanuals/ resolve). A parallel mirror with older editions sits at https://planning.erdc.dren.mil/toolbox/library/EMs/em{dotted.number}.pdf and .../ERs/. The documents that matter for this beat are the protective-design lineage rather than the civil-works EMs: TM 5-855-1 'Fundamentals of Protective Design for Conventional Weapons', TM 5-858 'Designing Facilities to Resist Nuclear Weapon Effects' (a multi-volume series specifically on hardened and buried facilities), and their modern replacement UFC 3-340-01/-02. Search DTIC and the Whole Building Design Guide for these rather than the USACE portal, which carries mainly current civil-works EMs.",
+      "notes": "Important correction to the obvious approach: searching the USACE publications portal for 'protective' mostly returns coatings and corrosion manuals. The hardened-design canon is TM 5-858 and TM 5-855, and those are found through DTIC AD numbers, not through this portal. Registered here so the harvester does not waste a crawl."
+    },
+    {
+      "name": "Congressional Research Service reports",
+      "url": "https://crsreports.congress.gov/",
+      "holdings": "Non-confidential CRS reports, including recurring products on continuity of government, presidential succession, COOP/COG policy, and defense facility programs. CRS reports are unusually valuable for backsourcing because they footnote precisely and summarize the documentary state of play at a point in time.",
+      "provenance_tier": "P2",
+      "access_method": "HTML/PDF from the official site; EveryCRSReport provides a mirror with better bulk access; UNT Digital Library and FAS hold deep historical archives",
+      "format": "HTML and PDF, born-digital text",
+      "value": "high",
+      "axes_served": [
+        "documented evidence",
+        "expert synthesis",
+        "folklore backsourcing",
+        "legislative history"
+      ],
+      "rate_limits": "Not published",
+      "robots_posture": "Official site publishes reports as required by P.L. 115-141; EveryCRSReport publishes explicitly for reuse",
+      "search_technique": "Identifier is the CRS product code: R{5-digit}, RL{5-digit}, RS{5-digit}, IF{5-digit}, IN{5-digit}. crsreports.congress.gov serves current versions only \u2014 for superseded versions and pre-2018 reports use EveryCRSReport (https://www.everycrsreport.com/, 22,000+ reports, offers bulk access and preserves version history), the UNT Digital Library CRSR collection (https://digital.library.unt.edu/explore/collections/CRSR/), and the FAS archive (https://sgp.fas.org/crs/). Version history is the point: comparing successive editions of the same RL number shows when a fact entered or left the official summary.",
+      "notes": "The official site's current-version-only policy is a real limitation \u2014 a claim can be silently dropped from a report between editions. EveryCRSReport and UNT preserve the earlier text, which is exactly the kind of movement this register is designed to record."
+    },
+    {
+      "name": "The Black Vault",
+      "url": "https://www.theblackvault.com/documentarchive/",
+      "holdings": "~4 million pages of FOIA-obtained documents, privately maintained since 1996. Includes CIA CREST program documentation (the CREST manuals and procedures set is genuinely useful for understanding the ESDN scheme), OSD and CIA FOIA case files. Hosts documents at documents.theblackvault.com and documents2.theblackvault.com.",
+      "provenance_tier": "P3",
+      "access_method": "HTML category browse with direct PDF links",
+      "format": "PDF, scanned, OCR required",
+      "value": "moderate",
+      "axes_served": [
+        "documented evidence",
+        "FOIA case recovery",
+        "folklore backsourcing"
+      ],
+      "rate_limits": "Not published; privately funded \u2014 be conservative and do not mirror wholesale",
+      "robots_posture": "Check theblackvault.com/robots.txt. This is one person's privately funded archive; heavy automated traffic imposes real cost. Fetch selectively.",
+      "search_technique": "Documents are addressable at https://documents.theblackvault.com/documents/{agency}/{case}.pdf and https://documents2.theblackvault.com/documents/{agency}/{file}.pdf. The FOIA case number embedded in the filename ({YY}-F-{NNNN} for DoD/OSD) is the join key back to the originating agency's own reading room \u2014 always attempt to resolve a Black Vault item to its official ESD/agency copy and cite that as the authority. Browse by category rather than searching.",
+      "notes": "Provenance discipline matters here. The site is heavily oriented toward UFO/fringe topics, which means it is simultaneously (a) a legitimate source of real FOIA releases and (b) a major amplification node for claims that get attached to bunker folklore. Both roles are useful to this register, but they must be graded differently: a hosted PDF of an official release is P1 content retrieved via P3; the site's own commentary is P3."
+    },
+    {
+      "name": "governmentattic.org",
+      "url": "https://www.governmentattic.org/",
+      "holdings": "FOIA releases of internal agency administrative material \u2014 organizational histories, facility inventories, internal manuals, telephone directories, property lists. Precisely the boring documentation that names facilities without discussing them. Example on-beat holding: CIA releasable RDP wrap-up summaries 1996-2016.",
+      "provenance_tier": "P3",
+      "access_method": "HTML index with direct PDF links",
+      "format": "PDF, scanned, OCR required",
+      "value": "high",
+      "axes_served": [
+        "documented evidence",
+        "facility identification",
+        "property inventory"
+      ],
+      "rate_limits": "Not published; small volunteer site",
+      "robots_posture": "Check robots.txt; fetch politely and selectively",
+      "search_technique": "Files sit at https://www.governmentattic.org/{N}docs/{descriptive-name}.pdf where {N} is a directory generation counter (observed up to 40+). The site has no real search \u2014 the productive approach is to harvest the topical index pages once and full-text index locally. Target: agency facility lists, real-property inventories, internal histories of engineering and logistics offices, and organizational directories, all of which enumerate installations by name.",
+      "notes": "Punches well above its size for this specific register because it specializes in exactly the unglamorous administrative records that enumerate facilities. Worth a careful full mirror given its modest size."
+    },
+    {
+      "name": "Cold War C4I / FAS Nuclear Information Project / GlobalSecurity.org / Cryptome",
+      "url": "https://coldwar-c4i.net/",
+      "holdings": "Long-running enthusiast and analyst compilations on hardened command-and-control sites: coldwar-c4i.net has a dedicated DUCC section; FAS (nuke.fas.org/guide/usa/c3i/) carries the Mount Weather / High Point Special Facility profile; GlobalSecurity.org maintains facility pages; Cryptome hosts imagery 'eyeball' series and the DUNMCC document set.",
+      "provenance_tier": "P4",
+      "access_method": "HTML scrape of static legacy sites",
+      "format": "HTML with linked scanned PDFs and images",
+      "value": "moderate",
+      "axes_served": [
+        "candidate generation",
+        "folklore backsourcing",
+        "citation chains"
+      ],
+      "rate_limits": "Not published; several are unmaintained static sites",
+      "robots_posture": "Check each individually; some are long-abandoned and fragile",
+      "search_technique": "Harvest these NOT as evidence but as CANDIDATE GENERATORS and as the citation graph. Their real value is that they frequently cite the underlying document, letting you jump straight to a DTIC AD number, a CIA ESDN, or a FRUS document ID. Extract outbound links and document identifiers, resolve each to its P1 original, and record the enthusiast page only as the discovery path. Where a claim has no resolvable citation, that absence is itself the finding.",
+      "notes": "This is the tier where the '400 websites, one source' problem lives. These four sites are among the actual ORIGINS of much repeated bunker material, so mapping which claims trace back to them \u2014 and whether they in turn cite anything \u2014 is core to the backsourcing mission. Grade the sites themselves P4; grade any document they host by its true origin."
+    }
+  ],
+  "high_yield_queries": [
+    "site:apps.dtic.mil \"protective construction\" \u2014 then harvest AD numbers and refetch from apps.dtic.mil/sti/pdfs/{AD}.pdf",
+    "AFWL-TR \u2014 Air Force Weapons Laboratory technical report series, the hardened-structures shop at Kirtland AFB",
+    "TM 5-858 \"Designing Facilities to Resist Nuclear Weapon Effects\" \u2014 the multi-volume joint-service design canon for buried facilities",
+    "TM 5-855-1 \"Fundamentals of Protective Design for Conventional Weapons\"; superseded by UFC 3-340-01 / UFC 3-340-02",
+    "DASA-{nnnn} / DNA-{nnnn} / DNA-TR-{yy}-{nnn} / DSWA-TR / DTRA-TR \u2014 the AFSWP\u2192DASA\u2192DNA\u2192DSWA\u2192DTRA report lineage",
+    "WES Technical Report N-{yy}-{n} and GL-{yy}-{n} \u2014 Waterways Experiment Station nuclear-effects and geotechnical series",
+    "NCEL-TR \u2014 Naval Civil Engineering Laboratory, Navy hardened and undersea/underground construction",
+    "\"deep basing\" / \"superhard\" / \"deep underground\" / \"shock isolation\" / \"blast valve\" / \"blast door\" / \"ground shock\" \u2014 DTIC free-text phrases that actually retrieve",
+    "\"hard and deeply buried targets\" (HDBT) \u2014 modern targeting literature that describes hardened-facility characteristics",
+    "Deep Underground Command Center (DUCC); \"National Deep Underground Command Post\" \u2014 FRUS 1964-68 vol X documents d3, d77, d110",
+    "Project Greek Island (Greenbrier); Operation High Point / High Point Special Facility / CRYSTAL (Mount Weather); Site R / Raven Rock / Alternate Joint Communications Center (AJCC)",
+    "IVY LEAGUE 82; NINE LIVES; REX 82 ALPHA \u2014 documented COG/COP exercise names, strong National Security Archive keys",
+    "govinfo field query: collection:chrg AND isappropriation:true \u2014 military construction authorization and appropriations hearings",
+    "govinfo package IDs CHRG-{congress}{s|h}hrg{number}; content at /content/pkg/{PKGID}/html/{PKGID}.htm",
+    "GAO/NSIAD-{yy}-{nnn} \u2014 legacy GAO national-security division series; modern GAO-{FY}-{6 digits}",
+    "NARA record groups: RG 77 (Chief of Engineers), RG 374 (Defense Nuclear Agency), RG 304 / RG 396 / RG 397 / RG 311 (civil defense lineage), RG 269 (GSA \u2014 holds Federal Preparedness Agency), RG 330 (OSD), RG 218 (JCS), RG 341 / RG 342 (USAF), RG 373 (DIA aerial photography)",
+    "NARA Catalog API: ancestorNaId walk to levelOfDescription=series, then mine scope-and-content notes for facility names",
+    "CIA CREST ESDN pattern CIA-RDP{nn}{nnnnn}{L}{block}{item}-{check}; direct PDF at /readingroom/docs/{ESDN}.pdf; node walk at /readingroom/node/{id}",
+    "CIA CREST Solr facets: f[0]=im_field_collection:{term_id}, f[1]=dm_field_release_date:[{ISO} TO {ISO}], ds_field_pub_date[min]/[max]",
+    "archive.org scrape: q=identifier:cia-readingroom-document-* and q=identifier:DTIC_AD* with fields=identifier,title,date, count=10000, cursor-paginated",
+    "USGS M2M: POST login-token then scene-search against the Declass 1/2/3 datasets; call dataset-filters first to learn the real mission/camera field IDs",
+    "Federal Register API: conditions[term]=\"notice of realty action\" / \"withdrawal of public lands\" / \"record of decision\" with conditions[agencies][]=army|air-force",
+    "DoD FOIA case numbers {YY}-F-{NNNN} \u2014 the join key linking ESD/WHS, DoD IG, and Black Vault copies of the same release",
+    "ERDC DSpace: handle 11681, WES community 11681/22942, OAI ListRecords for bulk metadata"
+  ],
+  "access_notes": "SEVERE ENVIRONMENT CAVEAT, STATED UP FRONT: this session's egress proxy blocked every .gov and .mil host, plus archive.org, wikipedia, cran, muckrock and glama. Only github.com/raw.githubusercontent.com were directly fetchable, alongside WebSearch. So the URL patterns, parameter names and identifier schemes below were reconstructed from (a) live GitHub source code of working clients, (b) live result URLs returned by search, and (c) search-engine extraction of the target pages. Everything marked \"confirmed\" was seen in a real URL or in real code. Nothing here was verified by me issuing a request to the target host. Before building a harvester, re-verify each endpoint and FETCH EVERY robots.txt \u2014 I could not.\n\nPROVENANCE TIERS as used above: P1 = the originating federal record office or its official machine interface. P2 = faithful mirror of a P1 record, or professional curation over primary records (Internet Archive mirrors, National Security Archive, FRUS). P3 = independent FOIA-requester archives (Black Vault, governmentattic). P4 = enthusiast/analyst synthesis (coldwar-c4i, FAS, GlobalSecurity, Cryptome). P5 reserved for unsourced folklore. Critically, a document's tier is set by its ORIGIN, not its retrieval channel: an official DoD release hosted on Black Vault is P1 content acquired via P3, and the register should record both.\n\nSUGGESTED INGEST ORDER, cheapest-and-best-first. (1) git clone HistoryAtState/frus \u2014 one command, structured TEI, zero rate limits, contains the DUCC decision record. (2) GovInfo API \u2014 born-digital HTML post-1994, clean package IDs, offsetMark cursor gives you a permanent incremental-sync primitive for an unbounded register. (3) Federal Register API \u2014 keyless, no rate limit. (4) NARA Catalog API \u2014 but budget the 10,000 queries/month hard cap deliberately; spend it on ancestorNaId series walks, not keyword fishing. (5) DTIC via its published sitemap.xml, which is an explicit crawler invitation and the friendliest robots posture on the beat. (6) ERDC Knowledge Core via OAI-PMH. (7) CREST and DTIC bulk via the Internet Archive scrape API rather than the origin sites. (8) The small hand-curated FOIA reading rooms (DoD IG, ESD/WHS, DTRA) mirrored completely once, then re-synced monthly. (9) P3/P4 sites last, and only as candidate generators.\n\nOCR IS THE DOMINANT COST. Roughly: govinfo post-1994, FRUS, modern GAO/CRS and many DTIC post-1990 reports are already text. Essentially all of CREST, most pre-1975 DTIC/NTRL, all of ESD/WHS and the agency reading rooms, and most WES scans require OCR. Where an Internet Archive mirror exists, take IA's _djvu.txt sidecar instead of running your own OCR \u2014 it is free, already computed, and generally better than CIA's own text layer. Budget OCR only for material with no IA mirror.\n\nTWO IDENTIFIER JOINS DO MOST OF THE DEDUPLICATION WORK, and should be first-class schema fields from day one: the AD accession number (joins DTIC \u2194 Internet Archive \u2194 NTRL \u2194 WES/ERDC, since Corps reports carry both a WES number and an AD number), and the DoD FOIA case number {YY}-F-{NNNN} (joins ESD/WHS \u2194 DoD IG \u2194 Black Vault \u2194 any downstream blog copy). The CIA ESDN plays the same role for CREST. Build these before ingesting, or you will store the same document four times at four different grades.\n\nTHE FREE NEGATIVE-EVIDENCE SIGNAL: DTIC's ADB prefix means \"citation public, document distribution-limited.\" These are machine-detectable at scale and constitute a ready-made, prioritized FOIA worklist plus a legitimate register state \u2014 \"known to exist, not released.\" Same for OpenNet records that carry an accession number but no digital object. Capture these rather than discarding them; they are exactly the honest uncertainty the project is built to render.\n\nRATE-LIMIT AND COURTESY POSTURE: cia.gov is fragile and should be hit at \u22641 req/s single-threaded if at all (prefer the IA mirror). Federal Register is explicitly keyless and unlimited but caps pagination at 2,000 results, forcing date-sliced enumeration. NARA is 10,000 queries/month. governmentattic and Black Vault are individually funded volunteer archives \u2014 fetch selectively, never mirror wholesale, and always try to resolve to the official copy. DTIC and GovInfo are the only two sources that affirmatively invite bulk machine access.",
+  "gaps": "WHAT THIS BEAT STRUCTURALLY CANNOT TELL US:\n\n1. Current facility status. Everything on this beat is retrospective by construction \u2014 the 25-year declassification rule, the FOIA lag, the fact that DTIC only publishes distribution-unlimited material. Active hardened facilities are represented only by their absence, by ADB-tier citations, and by budget line items with redacted descriptions. No amount of archive work closes this; the register should say \"no post-{year} documentary evidence\" explicitly rather than implying continuity.\n\n2. Precise geolocation. Almost nothing on this beat carries coordinates. Documents name facilities, describe engineering, and cite costs, but the geospatial join must come from other beats \u2014 USGS historical topographic quadrangles, FCC antenna registration, county parcel and deed records, NEPA EIS map figures, federal real-property disposal listings, and the declassified imagery in EarthExplorer. Declass imagery is the one geospatial asset ON this beat, and its georeferencing is approximate and frequently needs manual control points.\n\n3. Anything never written down, and anything written down in records that were destroyed or remain classified. Records-retention schedules mean much routine facility documentation was legally destroyed. Silence in the archive is not evidence of absence and the register must not let a \"no documents found\" state harden into a negative claim.\n\nSPECIFIC COVERAGE HOLES I COULD NOT CLOSE:\n\n4. Pre-1994 congressional material. GovInfo's born-digital text starts around the 103rd Congress. The Cold War hardened-construction debates \u2014 the exact hearings where these facilities were funded \u2014 sit in the pre-1994 Serial Set, bound Congressional Record, and committee prints, which are scanned-only and unevenly digitized. HathiTrust, the Law Library of Congress, and ProQuest Congressional (PAYWALLED, institutional subscription only) hold the fuller record. This is the single biggest gap on the beat and it is a paywall/OCR problem, not a secrecy problem. Needs: a HathiTrust full-text search strategy and an assessment of what the free GovInfo Serial Set digitization actually covers.\n\n5. NARA's 96% undigitized bulk. Only ~3.9% of NARA's textual holdings are scanned. RG 77, RG 374 and RG 397 are where the construction record actually lives and they are overwhelmingly paper at College Park. The Catalog API can identify the boxes; it cannot deliver them. Needs: a physical research trip, or a targeted digitization-on-demand request program, and the register should be able to emit \"series-level description exists, contents unexamined\" as a grade.\n\n6. RG 373 domestic aerial photography. Entirely manual \u2014 Special List 25, paper indexes, three-day retrieval from Lenexa for original negatives. No remote access path exists. This is the best pre-1970 construction-phase imagery available and it is unreachable by any harvester.\n\n7. CIA CREST robots.txt and true search-parameter surface. I could not fetch cia.gov at all. The facet parameters I recovered (im_field_collection, dm_field_release_date, ds_field_pub_date) came from a single live advanced-search URL surfaced in search results; the full facet vocabulary, the numeric collection term IDs, and the ~90 content-type values remain unmapped. Needs: fetch robots.txt, then read the facet block hrefs on any result page to enumerate the real field list before writing a scraper.\n\n8. DTIC's actual search API. DTIC runs on MarkLogic and the public interface is JS-driven; I found no documented public JSON API, only the sitemap invitation and deterministic per-document URLs. Whether a queryable endpoint exists behind the UI is unresolved. Needs: inspect network traffic on discover.dtic.mil to determine whether search can be driven directly, otherwise fall back to sitemap-crawl-plus-local-index.\n\n9. NARA Catalog API v2 full field vocabulary. I confirmed ancestorNaId, levelOfDescription and geographicReference but the complete searchable field list lives only in the OpenAPI spec at /api/v2/api-docs, which I could not reach. Whether record group can be filtered directly (vs. only via ancestorNaId) is unresolved and materially affects harvester design. Needs: pull the OpenAPI spec on a machine with .gov egress.\n\n10. Whether the Internet Archive CREST mirror is COMPLETE. I confirmed the identifier conventions and that two distinct upload generations exist, but not the item count against CIA's ~930,000. If the mirror is partial, the origin site is still required for the delta. Needs: a total_only scrape call against each identifier pattern, compared to the CREST document-type page count.\n\n11. Rate limits and robots posture for nearly every source. Unverifiable from this environment. Treat every \"not published\" above as \"unknown, must check,\" not as \"unlimited.\"\n\n12. Not covered on this beat by design, and needed for a complete register: FCC antenna structure registration, USGS historical topographic quadrangles, EPA/agency NEPA EIS databases, GSA and federal real-property disposal records, state and county deed/parcel records, and USASpending/FPDS contract data. Several of these are the ONLY route to the geolocation gap in (2) above, so the beats must be joined on facility identity, not treated as independent.\""
+}

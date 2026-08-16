@@ -1,0 +1,714 @@
+{
+  "beat": "Money, property, procurement, and environmental filings \u2014 federal spending, real property inventory and disposal, appropriations/MILCON, NEPA and environmental compliance records, land title, and corporate-entity tracing, as applied to detecting hardened, buried, and continuity-of-government construction.",
+  "sources": [
+    {
+      "name": "USAspending.gov REST API v2",
+      "url": "https://api.usaspending.gov/api/v2/",
+      "holdings": "Every prime federal contract, grant, loan and direct-payment transaction FY2001\u2013present, plus sub-award data, federal account (TAS) obligation/outlay by program activity and object class, and DoD File B/C account-level submissions. Award records carry award description text, PSC, NAICS, place-of-performance down to county/ZIP+4 and latitude bucket, awarding/funding agency and office, contract pricing type, extent-competed, IDV parent, and period of performance. This is the single richest correlator between money and a physical location.",
+      "provenance_tier": "P1",
+      "access_method": "Public REST API, POST for search endpoints, no API key, no registration.",
+      "value": "critical",
+      "format": "JSON request/response; CSV/TSV/pipe-text for async downloads.",
+      "axes_served": [
+        "construction_timeline",
+        "geolocation",
+        "cost_scale",
+        "contractor_linkage",
+        "facility_existence"
+      ],
+      "rate_limits": "No published hard quota. Practically: search endpoints are heavy and slow; keep concurrency \u22642 and back off on 429/504. Async /download/ jobs are queued server-side and can take tens of minutes.",
+      "robots_posture": "Public API explicitly published for reuse; no key or ToS acceptance. robots.txt not verifiable from this session (egress blocked) \u2014 check https://api.usaspending.gov/robots.txt and https://www.usaspending.gov/robots.txt before crawling the web UI. Prefer the API and bulk files over scraping the SPA.",
+      "search_technique": "POST /api/v2/search/spending_by_award/ with a filter object. Exact filter keys (verified against the api_contracts repo): keywords, time_period[{start_date,end_date,date_type: action_date|date_signed|last_modified_date|new_awards_only}], place_of_performance_scope, place_of_performance_locations[{country,state,county}], agencies[{type:funding|awarding, tier:toptier|subtier, name}], recipient_search_text, recipient_locations, award_type_codes ([\"A\",\"B\",\"C\",\"D\"] = definitive contracts; IDV_A..IDV_E), award_ids, award_amounts[{lower_bound,upper_bound}], naics_codes{require:[],exclude:[]}, psc_codes{require:[[..]],exclude:[[..]]} (hierarchical arrays) or legacy flat array, tas_codes{require:[[..]]}, treasury_account_components[{aid,main,sub,bpoa,epoa}], object_classes, def_codes, set_aside_type_codes, extent_competed_type_codes, contract_pricing_type_codes. KNOWN QUIRK: spending_by_award returns null for naics_code even when requested in fields[] \u2014 use /api/v2/search/spending_by_transaction/ or GET /api/v2/awards/{generated_unique_award_id}/ to recover NAICS. Filter by TAS to isolate MILCON money: aid 021 main 2050 (MILCON Army), 017/1205 (MILCON Navy & Marine Corps), 057/3300 (MILCON Air Force), 097/0500 (MILCON Defense-Wide) \u2014 Defense-Wide is where the interesting agencies hide. Combine a TAS filter with psc_codes Y1*/Z1* and place_of_performance_locations to get a per-county MILCON construction ledger.",
+      "notes": "The award description field is free text typed by a contracting officer and is where hardening language leaks: run keyword filters for 'hardened', 'blast', 'EMP', 'HEMP', 'MIL-STD-188-125', 'shielded enclosure', 'SCIF', 'ICD 705', 'earth covered magazine', 'rock bolt', 'shotcrete', 'tunnel', 'shaft', 'dewatering', 'cut and cover', 'ECM', 'vault door', 'blast door', 'COOP', 'continuity of operations', 'alternate command'. Also mine parent IDV structures \u2014 a small hardened job is usually a task order under a MATOC, and the MATOC ceiling and awardee list are more informative than the task order."
+    },
+    {
+      "name": "USAspending bulk data \u2014 full PostgreSQL snapshot, Award Data Archive, and AWS RDS snapshot",
+      "url": "https://files.usaspending.gov/database_download/",
+      "holdings": "Monthly full PostgreSQL dump of the entire USAspending database (~1.5 TB restored), a smaller sampled dev database, and the Award Data Archive (per-agency, per-fiscal-year prime award CSV zips regenerated monthly) at https://files.usaspending.gov/award_data_archive/. Also published as an Amazon RDS snapshot for direct restore into an RDS instance.",
+      "provenance_tier": "P1",
+      "access_method": "Anonymous HTTPS bulk download of .zip/.dump files; AWS RDS public snapshot restore.",
+      "value": "critical",
+      "format": "PostgreSQL custom-format dumps, CSV inside zip archives, RDS snapshot.",
+      "axes_served": [
+        "cost_scale",
+        "contractor_linkage",
+        "construction_timeline",
+        "geolocation"
+      ],
+      "rate_limits": "None on the file host beyond bandwidth. Restore of the full dump takes many hours and needs ~2 TB of disk.",
+      "robots_posture": "Static file host intended for bulk retrieval; setup guide published at https://files.usaspending.gov/database_download/usaspending-db-setup.pdf.",
+      "search_technique": "For an unbounded ingest register this is the correct substrate: restore locally and run SQL against transaction_search / award_search rather than hammering the API. Full-text index the award description columns once and you can re-run the whole hardening keyword battery in seconds instead of thousands of API calls. Award Data Archive filenames follow FY{YYYY}_{toptier agency code}_Contracts_Full_{YYYYMMDD}.zip \u2014 enumerate agency codes 021 (Army), 017 (Navy), 057 (Air Force), 097 (DoD Defense-Wide), 089 (DOE), 047 (GSA), 070 (DHS).",
+      "notes": "Snapshots are the only way to detect *retroactive edits*: agencies silently modify or delete transactions. Keeping successive monthly dumps and diffing them gives you a provenance trail of when a record changed \u2014 directly useful to the register's versioning premise."
+    },
+    {
+      "name": "FPDS-NG ATOM feed (legacy, sunsetting)",
+      "url": "https://www.fpds.gov/ezsearch/FEEDS/ATOM?FEEDNAME=PUBLIC&templateName=1.5.3&q=",
+      "holdings": "Raw contract action reports (CARs) as filed \u2014 the authoritative source behind USAspending contract data, with roughly 200 fields per action, including several USAspending drops or flattens: contracting office code, funding office code, solicitation procedures, IDV type and multiple-award indicator, national interest action code, DoD claimant program code, DoD acquisition program (MDAP) code, cost-or-pricing-data flags, and construction-specific flags (Davis-Bacon, Service Contract Act, walsh-healey).",
+      "provenance_tier": "P1",
+      "access_method": "Unauthenticated HTTP GET returning Atom 1.0 XML.",
+      "value": "high",
+      "format": "Atom/XML.",
+      "axes_served": [
+        "contractor_linkage",
+        "construction_timeline",
+        "cost_scale",
+        "geolocation"
+      ],
+      "rate_limits": "Ten records per page, hard. Paginate with &start=N (0,10,20\u2026). Undocumented server-side throttling; sequential requests with ~1s spacing are tolerated. Deep pagination past ~10,000 records degrades \u2014 window your query by SIGNED_DATE or LAST_MOD_DATE ranges instead.",
+      "robots_posture": "Feed is published for machine consumption. FPDS.gov itself was decommissioned as a search site on 24 February 2026 and the ATOM feed is scheduled for retirement later in FY2026 \u2014 treat this as a preservation-urgency source.",
+      "search_technique": "The q= parameter is a space-separated field:value expression, NOT a set of URL parameters. Useful keys: PIID, IDV_PIID, MOD_NUMBER, AGENCY_CODE, CONTRACTING_AGENCY_ID, CONTRACTING_OFFICE_ID, FUNDING_AGENCY_ID, PRINCIPAL_NAICS_CODE, PRODUCT_OR_SERVICE_CODE, VENDOR_UEI, VENDOR_NAME, VENDOR_DUNS_NUMBER (legacy), SIGNED_DATE, LAST_MOD_DATE, DATE_SIGNED, PLACE_OF_PERFORMANCE_STATE, PLACE_OF_PERFORMANCE_ZIP_CODE, DESCRIPTION_OF_REQUIREMENT. Date ranges use bracket syntax: LAST_MOD_DATE:[2026/06/25,2026/06/26]. Example: q=PRODUCT_OR_SERVICE_CODE:Y1EA SIGNED_DATE:[2020/01/01,2026/01/01]. The python package `fpds` (github.com/dherincx92/fpds) is a working reference implementation and converts colons to equals signs on the CLI.",
+      "notes": "MIRROR THIS NOW. When the feed retires, the only route to as-filed CARs will be SAM.gov's replacement API, and historical fidelity across the migration is not guaranteed. Also grab the bulk historical extracts and the PSC/NAICS reference downloads under fpds.gov/downloads/ while they exist."
+    },
+    {
+      "name": "SAM.gov Contract Data API (FPDS successor)",
+      "url": "https://open.gsa.gov/api/contract-awards/",
+      "holdings": "The RESTful replacement for the FPDS ATOM feed \u2014 same contract action report corpus, served from SAM.gov. GSA publishes a field-by-field crosswalk from FPDS ATOM tags to the new JSON schema.",
+      "provenance_tier": "P1",
+      "access_method": "REST/JSON with an api.data.gov key passed as api_key.",
+      "value": "critical",
+      "format": "JSON.",
+      "axes_served": [
+        "contractor_linkage",
+        "construction_timeline",
+        "cost_scale",
+        "geolocation"
+      ],
+      "rate_limits": "Governed by api.data.gov tiering (see SAM.gov Opportunities entry). Public/unassociated keys are heavily throttled; a key tied to a registered SAM entity gets substantially more.",
+      "robots_posture": "Documented public API; GSA actively directs FPDS consumers here.",
+      "search_technique": "Start from the migration crosswalk PDF at https://open.gsa.gov/api/contract-awards/v1/FPDSvsSAM-ContractDataAPI.pdf \u2014 it maps every legacy ATOM element to its new field name, which is exactly what you need to keep a harvester that already speaks FPDS working. Build the harvester against the crosswalk, not against your memory of FPDS field names.",
+      "notes": "As of this research pass I could not reach open.gsa.gov to read the live parameter list (egress-blocked). Treat the parameter set as unverified and pull the OpenAPI spec from open.gsa.gov before writing the client."
+    },
+    {
+      "name": "SAM.gov Get Opportunities Public API",
+      "url": "https://api.sam.gov/opportunities/v2/search",
+      "holdings": "All contract opportunity notices: presolicitations, solicitations, sources-sought, special notices, award notices, and \u2014 most valuable here \u2014 Justification & Approval (J&A) documents for sole-source awards, which must publicly explain *why* only one vendor can do the work. Attachments (SOWs, drawings sets, wage determinations, site-visit instructions) are downloadable per notice.",
+      "provenance_tier": "P1",
+      "access_method": "REST/JSON, api.data.gov key as api_key query parameter.",
+      "value": "critical",
+      "format": "JSON metadata; attachments as PDF/DOCX/ZIP, frequently scanned and needing OCR.",
+      "axes_served": [
+        "facility_existence",
+        "construction_timeline",
+        "hardening_signature",
+        "contractor_linkage",
+        "geolocation"
+      ],
+      "rate_limits": "Documented tiers: ~10 requests/day for a bare public key, ~1,000/day for a key associated with a registered SAM entity, ~10,000/day for federal system accounts. Field reports of 429s after ~20 requests/minute regardless of daily quota \u2014 pace at \u22641 rps. Key issuance can take up to ten business days.",
+      "robots_posture": "Official public API. Scraping the sam.gov SPA instead is discouraged and rate-limited more aggressively; use the API.",
+      "search_technique": "Date filters MUST be MM/dd/yyyy, not ISO-8601 \u2014 this is the single most common integration failure. Core params: postedFrom, postedTo, ncode (NAICS), ccode (PSC/classification code), ptype (notice type), state, zip, deptname, subtier, limit (max 1000), offset. Sweep ccode across the Y1*/Z1*/C1* families and ptype across sources-sought and special-notice types: a sources-sought for a hardened facility is often posted months before any obligation appears in USAspending, so this corpus *leads* the money. J&A notices are the highest-yield single document type \u2014 they name the incumbent, the facility, and the reason for exclusivity.",
+      "notes": "Attachments are the payload. A single site-visit notice can carry a floorplan, a utility tie-in drawing, or a survey with coordinates. Archive attachments, not just metadata \u2014 notices are removed from the active index after the archive date."
+    },
+    {
+      "name": "SAM.gov Entity Management API",
+      "url": "https://api.sam.gov/entity-information/v3/entities",
+      "holdings": "Registration records for every entity that can receive a federal award: legal business name, DBA, UEI, CAGE code, physical and mailing address, registration/expiration dates, NAICS and PSC self-certifications, business types, immediate and ultimate parent entity (UEI + name), and points of contact.",
+      "provenance_tier": "P1",
+      "access_method": "REST/JSON, api.data.gov key.",
+      "value": "high",
+      "format": "JSON.",
+      "axes_served": [
+        "contractor_linkage",
+        "corporate_shell",
+        "geolocation"
+      ],
+      "rate_limits": "Same api.data.gov tiering as Opportunities. Sensitive/FOUO fields (some POC data, banking) require a role-restricted key and are not in the public response.",
+      "robots_posture": "Public API with a restricted-field tier; the restricted tier requires a signed data access request.",
+      "search_technique": "Query by ueiSAM, cageCode, legalBusinessName, or physicalAddressZipPostalCode. The physical-address search is the underused one: pull every registered entity whose physical address sits in the ZIP codes around a candidate site and you surface the small local subs and the SPE/LLC shells that don't show up as prime awardees. Then walk the immediate/ultimate parent UEI chain to collapse a cluster of shells into one owner.",
+      "notes": "CAGE code is the join key into DoD systems (DLA, WAWF, facility clearance records) that UEI alone will not open."
+    },
+    {
+      "name": "DoD Comptroller budget justification archive (MILCON 'J-books' and DD Form 1391s)",
+      "url": "https://comptroller.war.gov/Budget-Materials/",
+      "holdings": "The single most information-dense open corpus on this beat. Every fiscal year's Military Construction justification book contains a DD Form 1391 per project: installation, project title, five-digit CATCODE, scope in square meters/feet, unit cost, total cost, a narrative REQUIREMENT/CURRENT SITUATION/IMPACT IF NOT PROVIDED, and an itemized cost breakdown that lists individual construction elements. Archive runs back to roughly FY2000. Also includes the C-1 Construction Annex exhibit summarizing all MILCON across appropriations.",
+      "provenance_tier": "P1",
+      "access_method": "Static PDF download from a predictable directory tree. No API. Text-layer quality varies; older years need OCR.",
+      "value": "critical",
+      "format": "PDF (mostly with text layer post-2010; pre-2008 often image-only).",
+      "axes_served": [
+        "facility_existence",
+        "construction_timeline",
+        "cost_scale",
+        "geolocation",
+        "hardening_signature"
+      ],
+      "rate_limits": "None published. Static file host; be polite (\u22641 rps).",
+      "robots_posture": "Not verifiable from this session (egress-blocked). Check https://comptroller.war.gov/robots.txt. Note the domain migrated from comptroller.defense.gov to comptroller.war.gov \u2014 old URLs may redirect or 404, and your archived link set will need rewriting.",
+      "search_technique": "URL pattern (confirmed across multiple fiscal years): https://comptroller.war.gov/Portals/45/Documents/defbudget/{fy}/budget_justification/pdfs/07_Military_Construction/{NN}-{Component_Name}.pdf where {fy} appears as both 'fy2013' and 'FY2025' (case varies by year \u2014 try both), and {NN} is a two-digit ordinal prefix on the component (e.g. 07-Defense_Finance_and_Accounting_Service, 12-US_Special_Operations_Command, 19-Host_Country_In-Kind_Contribution). Enumerate NN from 01 to ~25 for each FY. The '07_Military_Construction' directory is the MILCON one; sibling directories hold RDT&E, Procurement, and O&M justifications. Once downloaded, regex the extracted text for: 'CATEGORY CODE', 'PROJECT NUMBER', 'CLASSIFIED LOCATION', 'CLASSIFIED PROJECT', 'hardened', 'HEMP', 'EMP', 'blast', 'below grade', 'underground', 'SCIF', 'ICD 705', 'C4I', 'command center', 'COOP', 'alternate'.",
+      "notes": "THE HIGHEST-VALUE PATTERN IN THIS BEAT: line items literally titled 'Classified Project' at 'Classified Location' or with a redacted installation. They carry a real dollar amount, a real appropriation, and a real fiscal year even when scope and place are withheld \u2014 which means the *existence* of an unnamed hardened program is documented at P1 even when its location is not. Diffing the classified-line total across fiscal years, and against the C-1 annex totals, is a legitimate inference channel. Second-order tell: a project whose unit cost per square foot is a large multiple of the UFC 3-701-01 pricing-guide factor for its CATCODE is buying something the CATCODE doesn't describe \u2014 hardening, shielding, or depth."
+    },
+    {
+      "name": "DoD Comptroller execution and reprogramming archive (DD 1414, DD 1415-1/-3)",
+      "url": "https://comptroller.war.gov/Portals/45/Documents/execution/",
+      "holdings": "DD Form 1414 'Base for Reprogramming Actions' per fiscal year (the congressionally-blessed baseline by appropriation and sub-activity group), and every DD 1415 reprogramming action \u2014 prior-approval (1415-1) and internal (1415-3) \u2014 each with a source/recipient line item and a written justification. Archive spans FY2000\u2013FY2026.",
+      "provenance_tier": "P1",
+      "access_method": "Static PDF download from an enumerable directory tree.",
+      "value": "high",
+      "format": "PDF, generally with text layer.",
+      "axes_served": [
+        "cost_scale",
+        "construction_timeline",
+        "facility_existence"
+      ],
+      "rate_limits": "None published; static host.",
+      "robots_posture": "Not verified this session; check robots.txt.",
+      "search_technique": "Confirmed URL patterns: /Portals/45/Documents/execution/FY_{YYYY}_DD_1414_Base_for_Reprogramming_Actions.pdf and /Portals/45/Documents/execution/reprogramming/fy{YYYY}/ir1415s/{YY}-{NN}_IR_{Month}_{YYYY}_Request.pdf and /reprogramming/fy{YYYY}/prior1415s/{YY}-{NN}_PA_{Month}_{YYYY}_Request.pdf. Enumerate NN from 01 upward until 404. Grep for 'Military Construction', 'MILCON', 'unspecified minor', 'emergency construction', '2803', '2804', '2805'.",
+      "notes": "Reprogrammings are where money moves *after* the public budget debate ends, and they are where urgent or newly-classified construction gets funded without a line item. A 10 U.S.C. \u00a72803 (emergency) or \u00a72804 (contingency) construction action, or a \u00a72805 unspecified-minor-construction notification, is a documented admission that a facility was built outside the normal MILCON cycle. \u00a72805 currently covers projects up to $9M, requires Secretary-level approval above $750K, and requires notification to the congressional defense committees within 90 days of obligation above $6M \u2014 so the notification letters exist even when the project never appeared in a budget book."
+    },
+    {
+      "name": "OMB public apportionment files",
+      "url": "https://apportionment-public.max.gov/",
+      "holdings": "Every approved apportionment \u2014 OMB's legally binding release of appropriated funds to agencies \u2014 by Treasury Account Fund Symbol (TAS), with line-level amounts and footnotes. Footnotes type 'A' carry legal effect under the Antideficiency Act; type 'B' are informational. Posted two days after OMB approval.",
+      "provenance_tier": "P1",
+      "access_method": "Website with downloadable data files and a basic JSON API.",
+      "value": "high",
+      "format": "JSON, XLSX/CSV files, PDF.",
+      "axes_served": [
+        "cost_scale",
+        "construction_timeline"
+      ],
+      "rate_limits": "Not published.",
+      "robots_posture": "Published under a statutory transparency requirement. Note the site was taken down 24 March 2025 and restored 15 August 2025 under court order \u2014 availability is politically contingent, so mirror aggressively.",
+      "search_technique": "Filter to MILCON TAS (021-2050, 017-1205, 057-3300, 097-0500) and to DOE 089-* defense environmental and weapons-activities accounts. Read the footnotes, not just the amounts: apportionment footnotes routinely name specific projects, restrict funds pending a report to Congress, or hold back an amount 'pending further apportionment' \u2014 which flags a project OMB is not yet willing to release money for.",
+      "notes": "Pair with OpenOMB for search; use the raw MAX files as the citable primary."
+    },
+    {
+      "name": "OpenOMB",
+      "url": "https://openomb.org/",
+      "holdings": "Cleaned, restructured, full-text-searchable mirror of the apportionment corpus, with per-file permalinks (e.g. openomb.org/file/11404959 for Military Construction, Army Reserve) and search across contents, TAFS, bureau, fiscal year, and footnote text.",
+      "provenance_tier": "P3",
+      "access_method": "Web UI plus a basic JSON API; codebase and schema published on GitHub.",
+      "value": "high",
+      "format": "JSON, HTML.",
+      "axes_served": [
+        "cost_scale",
+        "construction_timeline"
+      ],
+      "rate_limits": "Small civic-tech project \u2014 be conservative, \u22641 rps.",
+      "robots_posture": "Check openomb.org/robots.txt. Prefer the API over scraping; source data is available upstream at MAX if you need volume.",
+      "search_technique": "Use OpenOMB's full-text footnote search to find the needle (project names appear in footnotes far more often than in line titles), then cite the corresponding apportionment-public.max.gov file as the P1 source. This is the correct provenance discipline for the register: search the derivative, cite the original.",
+      "notes": "Genuinely a derived source \u2014 record it as P3 and always resolve to the MAX original before grading a candidate."
+    },
+    {
+      "name": "GovInfo API and Bulk Data Repository",
+      "url": "https://api.govinfo.gov/docs/",
+      "holdings": "GPO's authenticated-provenance corpus: CRPT (congressional committee reports \u2014 the MILCON-VA and Defense appropriations reports contain project-by-project tables with installation names and dollar amounts), CPRT (committee prints, including the annual 'explanatory statement' compilations), BILLS and BILLSTATUS, CHRG (hearing transcripts, where members question officials about specific installations), CREC (Congressional Record, including the explanatory statements for omnibus bills that carry the real project tables), FR (Federal Register), CFR, and GAOREPORTS.",
+      "provenance_tier": "P1",
+      "access_method": "REST API with an api.data.gov key, plus an unauthenticated bulk-data repository.",
+      "value": "critical",
+      "format": "XML (bulk), plus PDF/HTML/TXT per package; MODS metadata per package.",
+      "axes_served": [
+        "facility_existence",
+        "cost_scale",
+        "construction_timeline",
+        "geolocation"
+      ],
+      "rate_limits": "api.data.gov tiering (default ~1,000 requests/hour for a standard key). Bulk repository is unthrottled static hosting.",
+      "robots_posture": "Bulk data repository exists precisely to keep crawlers off the search UI \u2014 use it. Any bulkdata page accepts /xml or /json appended after 'bulkdata' in the path to get a machine-readable directory listing.",
+      "search_technique": "Package IDs are deterministic: CRPT-{congress}{chamber}rpt{number} (e.g. CRPT-117hrpt389), CHRG-{congress}hhrg{number}, BILLS-{congress}{type}{number}{version}. Content URL pattern: https://www.govinfo.gov/content/pkg/{packageId}/html/{packageId}.htm and /pdf/{packageId}.pdf. Harvest every MILCON-VA and Defense appropriations committee report for the last 30 years, then full-text search the tables for installation names and for the phrases 'classified project', 'classified location', 'the Committee directs', 'hardened', 'continuity of operations'. Committee report language is where Congress adds, deletes, or quietly renames projects \u2014 the report table and the bill text frequently disagree, and the disagreement is the signal.",
+      "notes": "GPO packages carry digital signatures and an 'authenticated' flag \u2014 the strongest provenance available for a congressional document, which matters when the register grades evidence quality rather than asserting fact."
+    },
+    {
+      "name": "Congress.gov API v3",
+      "url": "https://api.congress.gov/",
+      "holdings": "Structured bill, amendment, committee, member, and CRS-product metadata; links to text versions; committee report associations. CRS products (R-, IF-, IN- series) on military construction authorities, infrastructure funding, and real property policy are the best available orientation documents.",
+      "provenance_tier": "P1",
+      "access_method": "REST, api.data.gov key required.",
+      "value": "high",
+      "format": "JSON or XML.",
+      "axes_served": [
+        "construction_timeline",
+        "cost_scale"
+      ],
+      "rate_limits": "5,000 requests/hour. Default page size 20, max 250.",
+      "robots_posture": "Official API; congress.gov publishes offsite-developer guidance directing bulk users to GPO bulk data rather than crawling congress.gov.",
+      "search_technique": "Use it to walk the NDAA each year to its military construction title (the \u00a721xx sections authorize projects by installation and amount) and to resolve each authorization to the appropriation that funded it. Cross-reference authorized-but-never-appropriated projects: a project authorized three years running and never funded, then vanishing, is a different story from one that quietly moved to a classified line.",
+      "notes": "Bulk bill text and status belong on GovInfo; use this API for the relationship graph, not for text retrieval."
+    },
+    {
+      "name": "GSA Federal Real Property Profile (FRPP) Public Data Set",
+      "url": "https://www.gsa.gov/policy-regulations/policy/real-property-policy-division-overview/asset-management/federal-real-property-profile/federal-real-property-public-data-set",
+      "holdings": "The government-wide inventory of executive-branch real property: buildings, structures, and land. Per-asset records with Real Property Unique Identifier (RPUID), reporting agency and sub-agency, installation name, real property type (Building/Structure/Land), real property use code, legal interest indicator (owned/leased/otherwise managed), status (active/excess/disposed), latitude and longitude, city/county/state, size and unit of measure, utilization, condition index, mission dependency, annual operating cost, replacement value, historical status, year built, year acquired, and disposition method/date. Current public edition FY2024; archived editions FY2016\u2013FY2023.",
+      "provenance_tier": "P1",
+      "access_method": "CSV download from GSA and from data.gov CKAN; interactive ArcGIS map application; data dictionary published as PDF.",
+      "value": "critical",
+      "format": "CSV; ArcGIS feature service behind the map app.",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "ownership_custody",
+        "disposal_status"
+      ],
+      "rate_limits": "The map application's attribute-table export is capped at 2,000 rows per download \u2014 do not harvest through the map. Take the full annual CSV from GSA or data.gov instead.",
+      "robots_posture": "Data explicitly published for public reuse; contact publicfrppdata@gsa.gov. data.gov CKAN packages carry open licences.",
+      "search_technique": "Read the data dictionary first (https://www.gsa.gov/system/files/FY%202024%20FRPP%20DATA%20DICTIONARY%20Final.pdf) \u2014 the use-code taxonomy is what lets you isolate 'Structure' records (which is where non-building hardened assets like magazines, vaults, tunnels and antenna structures land) from 'Building'. Then: (a) filter status = Excess or Disposed and join disposition method/date to GSA disposal and county deed records; (b) filter for structures with a replacement value wildly out of proportion to size; (c) diff successive fiscal-year editions \u2014 an RPUID that disappears without a disposal record, or whose lat/long moves, is a data event worth a candidate row.",
+      "notes": "CRITICAL GAP, and itself an evidence channel: the public data set excludes assets withheld for national security, procurement-sensitivity, or FOIA exemption. The gap between an installation's published acreage/asset totals and its FRPP record count is a measurable, citable absence. DoD's contribution is also aggregated relative to what it holds internally in RPAD."
+    },
+    {
+      "name": "DoD Real Property inventory reporting \u2014 Base Structure Report, RPAD, RPUID/RPSUID",
+      "url": "https://www.acq.osd.mil/eie/imr/rpid/rp/index.html",
+      "holdings": "The Base Structure Report (a public annual summary of DoD's real property inventory by installation: acreage, building/structure/facility counts, plant replacement value) was published for decades \u2014 FY2001 through roughly the FY2018 baseline are readily obtainable \u2014 and is the best public per-installation physical-footprint time series. Underneath it, the Real Property Assets Database (RPAD) consolidates the Services' authoritative inventories and is the source for FRPP submissions, congressional reporting and the Facilities Sustainment Model. DAIS issues Real Property Unique Identifiers (RPUID) and Real Property Site Unique Identifiers (RPSUID).",
+      "provenance_tier": "P1",
+      "access_method": "Historical BSR PDFs via agency sites, Internet Archive, DTIC, and third-party mirrors (globalsecurity.org, usbaseproject.com, visualbases.org). RPAD itself is not public \u2014 FOIA or contractor-report inference only.",
+      "value": "high",
+      "format": "PDF, mostly with text layer; older editions need OCR.",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "ownership_custody",
+        "construction_timeline"
+      ],
+      "rate_limits": "n/a for mirrors; Internet Archive asks for polite crawling.",
+      "robots_posture": "Mirrors vary. Internet Archive permits programmatic access via its own APIs \u2014 use archive.org's item API rather than scraping detail pages.",
+      "search_technique": "Build a per-installation acreage and structure-count time series from every BSR edition you can find, then look for step changes that no MILCON line item explains. An installation that gains several hundred thousand square feet of 'structures' in one year with no corresponding public project is a first-class candidate. RPUID and RPSUID are the join keys between BSR/RPAD, FRPP, and DD Form 1354 real property transfer records \u2014 collect them wherever they surface in contract attachments and NEPA appendices.",
+      "notes": "DoD stopped publishing the BSR in its familiar public form after the FY2018 baseline; GAO-25-106132 ('DOD Real Property: Actions Needed to Improve Oversight of Underutilized and Excess Facilities') is a useful contemporary substitute that quotes current inventory figures."
+    },
+    {
+      "name": "Product and Service Code (PSC) Manual \u2014 the hardened-construction codebook",
+      "url": "https://www.acquisition.gov/psc-manual",
+      "holdings": "The authoritative four-character taxonomy applied to every federal contract action. Y-series = construction of structures and facilities; Z-series = maintenance, repair and alteration of real property (mirrors the Y suffixes); C-series = architect and engineering services (also mirrors). Confirmed relevant codes include Y1EA Construction of Ammunition Facilities, Y1GA Construction of Ammunition Storage Buildings, Y1GC Construction of Fuel Storage Buildings, Y1ED Ship Construction and Repair Facilities, Y1EE Tank Automotive Facilities, Y1AZ Other Administrative Facilities and Service Buildings. Archived editions back to 2011 let you translate codes that were retired or re-scoped.",
+      "provenance_tier": "P1",
+      "access_method": "PDF and DOCX download from acquisition.gov; also mirrored on fpds.gov/downloads and fedmall.",
+      "value": "critical",
+      "format": "PDF and DOCX (the DOCX editions are far easier to parse into a table than the PDFs).",
+      "axes_served": [
+        "hardening_signature",
+        "contractor_linkage"
+      ],
+      "rate_limits": "Static documents.",
+      "robots_posture": "Published reference material intended for reuse.",
+      "search_technique": "Parse the DOCX edition into a code table and keep every historical edition \u2014 a contract coded Y1EA in 2009 may map to a different description than Y1EA today, and the register needs to say which manual edition it graded against. Then build three parallel sweeps over USAspending/FPDS: Y1* (new construction), Z1*/Z2* (alteration of existing real property \u2014 this is where a building gets quietly hardened without a new MILCON line), and C1* (A&E design, which precedes construction by 18\u201336 months and therefore *leads* the money). The A&E sweep is the underused one: a C-series award for design of an ammunition or communications facility at a site with no subsequent public construction award is a strong anomaly.",
+      "notes": "PSC alone is weak evidence \u2014 contracting officers miscode constantly. Its value is as a recall filter feeding keyword and geography analysis, never as a classifier on its own."
+    },
+    {
+      "name": "NAICS codes and the DoD FAC/CATCODE Real Property Categorization System",
+      "url": "https://www.esd.whs.mil/Portals/54/Documents/DD/issuances/dodi/416503p.pdf",
+      "holdings": "Two orthogonal codebooks. NAICS (Census) classifies the *contractor's* industry: 236220 Commercial and Institutional Building Construction, 237990 Other Heavy and Civil Engineering Construction (the tunnel/shaft/underground code), 238910 Site Preparation, 238990 All Other Specialty Trade (RF/EMI shielding installers), 238290 Other Building Equipment, 213115 Support Activities for Nonmetallic Minerals (drilling and blasting), 541330 Engineering Services, 541620 Environmental Consulting, 332312/332439 Fabricated Structural Metal and Metal Tanks (blast doors, pressure vessels). DoD's Real Property Categorization System (RPCS, governed by DoDI 4165.03) classifies the *facility*: four-digit DoD Facility Analysis Category (FAC) codes and five-digit Service CATCODEs, republished annually by 1 April. Air Force per-CATCODE facility standards are published individually on WBDG under DAFMAN 32-1084.",
+      "provenance_tier": "P1",
+      "access_method": "DoDI 4165.03 as PDF; Air Force CATCODE spreadsheet and per-CATCODE standards PDFs on wbdg.org; NAICS tables from Census.",
+      "value": "critical",
+      "format": "PDF, XLSX.",
+      "axes_served": [
+        "hardening_signature",
+        "facility_existence"
+      ],
+      "rate_limits": "Static documents; WBDG is a nonprofit host \u2014 crawl gently.",
+      "robots_posture": "WBDG hosts DoD criteria for public reference; check wbdg.org/robots.txt before enumerating.",
+      "search_technique": "WBDG publishes AFMAN/DAFMAN 32-1084 facility standards as individual PDFs named {catcode}_{Title}.pdf (observed: 730835_Security_Forces_Operations.pdf). That filename convention is enumerable \u2014 sweep the CATCODE space and you recover a per-facility-type standards library including the square-footage allowances that a DD 1391 must justify against. Then cross-reference: a 1391 whose requested area or cost exceeds the 32-1084 allowance and the UFC 3-701-01 pricing factor for its CATCODE is buying unlisted capability. CATCODE families worth sweeping: 1xx (operations/airfield, incl. 141x command-and-control and C5ISR), 4xx (storage, incl. ammunition and earth-covered magazines), 6xx (administrative, incl. command posts), 8xx (utilities).",
+      "notes": "UFC 3-701-01 'DoD Facilities Pricing Guide' (on WBDG, with change pages and supplementary cost-factor data files) gives the sanctioned $/unit for each CATCODE. The ratio of a project's actual unit cost to the pricing-guide factor is, in my judgement, the single best purely-quantitative hardening indicator available in open budget data."
+    },
+    {
+      "name": "Unified Facilities Criteria and design-standard citations as hardening tells",
+      "url": "https://www.wbdg.org/dod/ufc",
+      "holdings": "The DoD design criteria library. Specific standards whose citation in a solicitation, SOW, or DD 1391 is diagnostic: UFC 4-010-01 (Minimum Antiterrorism Standards for Buildings \u2014 ubiquitous, weak signal), UFC 4-010-02 (standoff distances), UFC 3-340-01 (design of structures to resist conventional weapons effects \u2014 restricted distribution; its citation alone is a strong tell), UFC 3-340-02 (Structures to Resist the Effects of Accidental Explosions), UFC 4-020-01 (Security Engineering Facilities Planning), UFC 4-141-03 (C5ISR facilities, with redundancy and resilience tiers), UFC 3-501-01 (electrical, including EMP/HEMP provisions), MIL-STD-188-125-1 (HEMP protection for fixed ground-based C4I facilities), and ICD 705 / IC Tech Spec for SCIF construction.",
+      "provenance_tier": "P1",
+      "access_method": "Public PDF download from wbdg.org; some restricted-distribution UFCs are referenced but not hosted.",
+      "value": "high",
+      "format": "PDF.",
+      "axes_served": [
+        "hardening_signature"
+      ],
+      "rate_limits": "Static host; crawl gently.",
+      "robots_posture": "WBDG is the designated public repository for UFCs; verify robots.txt.",
+      "search_technique": "Use these as *query strings against other corpora*, not as a corpus to harvest. Full-text search SAM.gov attachments, NEPA documents, and budget justifications for 'MIL-STD-188-125', 'UFC 3-340-01', 'ICD 705', 'ICS 705', 'HEMP', 'TEMPEST', 'shielded enclosure', 'Faraday', 'blast door', 'earth-covered magazine', 'progressive collapse', 'Level of Protection'. MIL-STD-188-125-1 is the strongest single string: it applies to fixed ground-based facilities performing critical, time-urgent C4I missions and essentially nothing else.",
+      "notes": "USACE's Protective Design Center (Omaha District, nwo.usace.army.mil/pdc) is the mandatory center of expertise for this work and publishes PDC-TR technical reports openly (e.g. PDC TR-05-01 on SBEDS blast-effects design). Contracts routing through Omaha District for a facility physically located elsewhere are a routing anomaly worth flagging."
+    },
+    {
+      "name": "EPA Environmental Impact Statement Database (CDX e-NEPA II)",
+      "url": "https://cdxapps.epa.gov/cdx-enepa-II/public/action/eis/search",
+      "holdings": "Every EIS filed with EPA since 1987 (metadata) with full PDF documents for filings since roughly October 2012: draft, final, supplemental, and adoption notices, plus EPA's own comment letters. For a hardened or buried facility, the EIS and its appendices routinely contain the site plan, the acreage disturbed, the excavation depth, the utility loads, the geotechnical summary, and the alternatives analysis explaining why *this* site.",
+      "provenance_tier": "P1",
+      "access_method": "Web application; no documented public API. Practical harvesting is by URL enumeration.",
+      "value": "critical",
+      "format": "HTML detail pages; attachments as PDF (large, often 100+ MB, frequently scanned appendices requiring OCR).",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "construction_timeline",
+        "environmental_footprint",
+        "hardening_signature"
+      ],
+      "rate_limits": "Not published. Java/JSP application with jsessionid in paths \u2014 expect session-cookie handling and be conservative (\u22640.5 rps) to avoid tripping WAF rules.",
+      "robots_posture": "Not verifiable this session. Check https://cdxapps.epa.gov/robots.txt. Mirror at https://cdxnodengn.epa.gov/cdx-enepa-II/public/action/eis/search \u2014 useful as a fallback host, but do not double the load.",
+      "search_technique": "Two enumerable URL patterns, confirmed: detail page https://cdxapps.epa.gov/cdx-enepa-II/public/action/eis/details?eisId={int} (observed values in the 300,000\u2013540,000 range \u2014 a dense integer space you can sweep), and attachment fetch https://cdxapps.epa.gov/cdx-enepa-II/public/action/eis/details?downloadAttachment=&attachmentId={int}. Sweeping eisId is the reliable way to get complete coverage, because the search form's filters (state, agency, document type, comment period) are hard to exhaust. Separately, note that the *EIS Number* (the citable identifier, format YYYYNNNN) is distinct from the internal eisId \u2014 capture both.",
+      "notes": "Filter to lead agencies DoD/Army/Navy/Air Force/DOE/GSA/DHS/NNSA, then read the alternatives chapter. NEPA documents are written by contractors who are not thinking about OPSEC, and the geotechnical and utility appendices are where depth, rock type, and power draw appear in plain text."
+    },
+    {
+      "name": "NEPATEC1.0 \u2014 AI-ready NEPA document corpus",
+      "url": "https://huggingface.co/datasets/PolicyAI/NEPATEC1.0",
+      "holdings": "A large-scale, pre-extracted text corpus of NEPA PDFs derived from the EPA EIS Database, published for machine consumption.",
+      "provenance_tier": "P3",
+      "access_method": "HuggingFace datasets download (git-lfs or the datasets library).",
+      "value": "high",
+      "format": "Structured text with per-document metadata (verify exact schema on the dataset card).",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "environmental_footprint"
+      ],
+      "rate_limits": "HuggingFace CDN; generous.",
+      "robots_posture": "Published dataset with a stated licence on the dataset card \u2014 read it before redistribution.",
+      "search_technique": "Use this to run the full hardening-keyword battery across the entire NEPA corpus in one pass without hitting EPA's servers at all, then resolve every hit back to its EPA eisId and cite the EPA record as the P1 source. This is the single biggest efficiency win available on the NEPA side.",
+      "notes": "I could not reach huggingface.co from this session to verify document count, licence, or whether a NEPATEC 2.0 exists \u2014 treat the schema as unverified. Also check nepaccess.org, an academic NEPA-document project drawing on the same EPA corpus with its own OCR and search layer."
+    },
+    {
+      "name": "Federal Register API",
+      "url": "https://www.federalregister.gov/api/v1/documents.json",
+      "holdings": "Every Federal Register document 1994\u2013present, with full text search from 2000. Directly relevant document types: EPA's weekly 'Environmental Impact Statements; Notice of Availability' (which lists every EIS filed that week with number, title, lead agency and contact), agency Notices of Intent to prepare an EIS, Records of Decision, Public Land Orders (military land withdrawals), airspace and restricted-area actions, and Public Buildings Reform Board and NCPC meeting notices.",
+      "provenance_tier": "P1",
+      "access_method": "Public REST API, no key, no authentication.",
+      "value": "critical",
+      "format": "JSON or CSV metadata; per-document links to HTML, PDF, plain text, and full_text_xml_url.",
+      "axes_served": [
+        "facility_existence",
+        "construction_timeline",
+        "geolocation",
+        "ownership_custody"
+      ],
+      "rate_limits": "No enforced limit for reasonable use. Up to 1,000 documents per page.",
+      "robots_posture": "Explicitly public and keyless; developer resources published at federalregister.gov/reader-aids/developer-resources/rest-api. The most permissive machine-accessible source on this beat.",
+      "search_technique": "GET /api/v1/documents.json?conditions[term]={query}&conditions[agencies][]={slug}&conditions[type][]=NOTICE&conditions[publication_date][gte]=&per_page=1000&fields[]=document_number&fields[]=title&fields[]=full_text_xml_url&fields[]=agencies&fields[]=publication_date. Standing queries worth running weekly: 'notice of intent to prepare an environmental impact statement' scoped to DoD/DOE agency slugs; 'public land order' + 'withdrawal' + 'military'; 'record of decision' + installation names; 'notice of realty action'. Because full_text_xml_url gives you clean structured text, this is the cheapest full-text NEPA and land-action monitor available.",
+      "notes": "The weekly EPA EIS availability notice is effectively a machine-readable changelog for the entire national EIS pipeline \u2014 parse it and you never need to poll the CDX application for new filings, only for documents."
+    },
+    {
+      "name": "Federal Permitting Dashboard",
+      "url": "https://www.permits.performance.gov/",
+      "holdings": "Tracked federal environmental review and authorization timelines for large or complex infrastructure projects, plus the Federal Environmental Review and Authorization Inventory (a catalogue of every permitting/review process across agencies) and the compiled agency NEPA implementing procedures.",
+      "provenance_tier": "P1",
+      "access_method": "Web UI plus a token-authenticated REST API (account and API key required).",
+      "value": "moderate",
+      "format": "JSON.",
+      "axes_served": [
+        "construction_timeline",
+        "facility_existence",
+        "geolocation"
+      ],
+      "rate_limits": "Not published; key-gated.",
+      "robots_posture": "API documented at /tools/api-docs; account required. Contact permittingdashboardfeedback@dot.gov.",
+      "search_technique": "GET http://permits.performance.gov/api/v1/project/{id} for individual records, plus an all-projects endpoint. Enumerate project IDs. Coverage skews heavily to energy and transportation (FAST-41 sectors), so hit rate for defence facilities is low \u2014 but when a defence project *does* appear here, the milestone schedule is unusually granular.",
+      "notes": "Low yield for this beat specifically. Worth a periodic sweep rather than a continuous harvester."
+    },
+    {
+      "name": "DOE NEPA document library and Office of Environmental Management EIS/EA table",
+      "url": "https://www.energy.gov/nepa/nepa-documents",
+      "holdings": "DOE's own NEPA corpus, separately numbered as DOE/EIS-#### (and DOE/EA-####), organised by document type and by DOE office, with a dedicated searchable Office of Environmental Management table. Covers weapons-complex sites, national laboratories, the Nevada National Security Site, waste-isolation and underground-test-area programs.",
+      "provenance_tier": "P1",
+      "access_method": "HTML listings with per-document node pages (energy.gov/node/{id}) and PDF attachments. No API.",
+      "value": "high",
+      "format": "HTML plus PDF.",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "environmental_footprint",
+        "construction_timeline"
+      ],
+      "rate_limits": "Not published; energy.gov is behind a CDN \u2014 crawl slowly.",
+      "robots_posture": "Check energy.gov/robots.txt; the /nepa listings are intended for public browsing.",
+      "search_technique": "Harvest the DOE/EIS-#### numbering as a dense sequence (observed into the 0550s) rather than paginating the listing pages. DOE documents are where underground and subsurface construction is most explicitly discussed in open literature \u2014 search for 'drift', 'adit', 'shaft', 'underground test area', 'tunnel', 'emplacement', 'subsurface', 'U1a', 'P-Tunnel', 'N-Tunnel'. Cross-index DOE EIS numbers against the EPA EIS Database, which also holds them.",
+      "notes": "DOE's site-specific EISs frequently contain historical facility inventories going back decades, including structures that no longer appear in any current inventory \u2014 a good source of retired-facility candidates."
+    },
+    {
+      "name": "DOE OpenNet / OSTI declassified document index",
+      "url": "https://www.osti.gov/opennet/",
+      "holdings": "Roughly 495,000 bibliographic citations and ~147,000 full declassified documents released after October 1994, including FOIA releases and historical collections from across the DOE complex; produced by OSTI on contract for DOE's Office of History and Heritage Resources. Complements the Nuclear Testing Archive and DOE Legacy Management's site records.",
+      "provenance_tier": "P1",
+      "access_method": "Web search interface (osti.gov/opennetadmin); OSTI publishes APIs for its other collections \u2014 verify whether OpenNet is covered.",
+      "value": "high",
+      "format": "HTML records; scanned PDFs requiring OCR.",
+      "axes_served": [
+        "facility_existence",
+        "construction_timeline",
+        "ownership_custody"
+      ],
+      "rate_limits": "Not published.",
+      "robots_posture": "Check osti.gov/robots.txt; OSTI generally supports programmatic access and publishes API documentation for OSTI.GOV.",
+      "search_technique": "Search facility-type language rather than site names: 'hardened', 'underground facility', 'emergency relocation', 'continuity', 'protected facility', 'command post', 'shelter', 'tunnel'. OpenNet's value here is *backwards sourcing* \u2014 when a folklore claim about a DOE-adjacent site circulates, OpenNet is often where the single real primary document that started it can be found.",
+      "notes": "DOE Legacy Management (energy.gov/lm) maintains site records and a 'considered sites' compilation covering properties evaluated for DOE-predecessor contamination \u2014 I could not verify its current URL this session, but it is the right place to look for properties that were once AEC/MED and are now in private hands."
+    },
+    {
+      "name": "Service NEPA repositories \u2014 Army NEPA Online, AFCEC NEPA Center, NAVFAC",
+      "url": "https://aec.army.mil/Outreach/NEPA-Documents/",
+      "holdings": "Environmental Assessments, FONSIs, EISs, RODs and supporting studies produced by the Services. Crucially this includes EAs, which are *not* filed with EPA and therefore do not appear in the EPA EIS Database at all \u2014 for facility-scale construction, an EA is far more common than an EIS, so this is where most defence construction environmental documentation actually lives. Air Force documents flow through AFCEC's Environmental Impact Analysis Process (EIAP); Navy documents are distributed across NAVFAC regional commands.",
+      "provenance_tier": "P1",
+      "access_method": "Web repositories with browse/metadata/full-text search (Army NEPA Online); AFCEC and NAVFAC publish PDFs on installation and command sites with no central index.",
+      "value": "high",
+      "format": "PDF, variable OCR quality.",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "environmental_footprint",
+        "construction_timeline"
+      ],
+      "rate_limits": "Not published.",
+      "robots_posture": "Varies by host; .mil sites often carry restrictive robots.txt \u2014 check each host before crawling and honour it.",
+      "search_technique": "Army NEPA Online supports metadata, advanced and full-text search \u2014 use it as the primary index. For Air Force and Navy there is no central index, so the practical method is a site-scoped search-engine sweep plus targeted crawls of installation public-affairs 'Environmental' directories (observed pattern: {host}/Portals/{n}/documents/Environment/*.pdf and {host}/Portals/{n}/Documents/Environmental*/*.pdf). Search strings: 'Final Environmental Assessment', 'Finding of No Significant Impact', plus the installation name.",
+      "notes": "EAs are the highest-yield-per-page documents on this beat because they describe small, specific construction actions \u2014 exactly the scale at which a hardened facility gets built \u2014 and they name the CATCODE, the square footage, and the site coordinates."
+    },
+    {
+      "name": "DENIX \u2014 Defense Environmental Programs Annual Report to Congress and DERP site inventory",
+      "url": "https://www.denix.osd.mil/arc/",
+      "holdings": "Annual Reports to Congress under 10 U.S.C. \u00a72706 with Installation Restoration Program (IRP) and Military Munitions Response Program (MMRP) status tables arranged by installation, state, and DoD component: site identifiers, contaminant types, cleanup phase, and funding. A per-site inventory of environmental liabilities across the entire DoD installation base, going back to the 1990s.",
+      "provenance_tier": "P1",
+      "access_method": "Web portal with per-fiscal-year report pages and downloadable appendices; some years offer customisable report generation.",
+      "value": "high",
+      "format": "PDF and HTML tables; some appendices as XLS.",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "environmental_footprint",
+        "construction_timeline"
+      ],
+      "rate_limits": "Not published.",
+      "robots_posture": "Public-facing DoD environmental information portal; verify denix.osd.mil/robots.txt.",
+      "search_technique": "The IRP/MMRP status tables are the useful artifact \u2014 they enumerate *sites within installations*, at finer granularity than any public real-property inventory. A remediation site whose description implies a subsurface structure (underground storage, buried debris, 'former underground facility', solvent disposal at a specific building number) is a pointer to a physical asset that may not be in FRPP. Cross-join site identifiers to EPA SEMS via Envirofacts.",
+      "notes": "Environmental liability is the honest back door into facility existence: a facility can be classified, but the contamination it caused still has to be reported and funded."
+    },
+    {
+      "name": "USACE Formerly Used Defense Sites (FUDS) GIS",
+      "url": "https://geospatial-usace.opendata.arcgis.com/datasets/3f8354667d5b4b1b8ad7a6e00c3cf3b1",
+      "holdings": "Every property formerly owned, leased or otherwise used by DoD and transferred out before 17 October 1986: property point and polygon geometries, FUDS property number, installation ID, property name, eligibility determination, project types (HTRW, MMRP, containerised HTRW, building demolition/debris removal), and links to Management Action Plans. Published annually (FY22, FY23, FY24 editions observed) plus a HIFLD-hosted public-properties layer.",
+      "provenance_tier": "P1",
+      "access_method": "ArcGIS Hub open data \u2014 direct downloads plus a live ArcGIS REST FeatureServer.",
+      "value": "critical",
+      "format": "CSV, GeoJSON, KML, Shapefile, File Geodatabase; GeoServices REST, WMS, WFS.",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "ownership_custody",
+        "disposal_status",
+        "environmental_footprint"
+      ],
+      "rate_limits": "ArcGIS FeatureServer default page size is 1,000\u20132,000 features \u2014 page with resultOffset/resultRecordCount, or just take the full file download and skip the API.",
+      "robots_posture": "ArcGIS Hub open-data portals are explicitly for redistribution; each dataset page carries a licence statement. Prefer the bundled download over hammering the FeatureServer.",
+      "search_technique": "FeatureServer query pattern: {serviceUrl}/{layerId}/query?where=1%3D1&outFields=*&f=geojson&resultOffset={n}&resultRecordCount=2000. Layer suffix _1 is FUDS Property Point, _4 is FUDS Property Polygon. FUDS property numbers encode state and sequence (pattern like B01NE0123 \u2014 component/region letter, state code, sequence), which makes them a durable join key. FILTER FOR: project types indicating buried structures, and property names containing 'Nike', 'Titan', 'Atlas', 'Minuteman', 'AAA', 'radar', 'communications', 'control', 'annex', 'reservation'. Then geocode against county parcel layers to find the current private owner of a former hardened site.",
+      "notes": "The best single geospatial source for *decommissioned* hardened infrastructure. Nike missile sites, ICBM launch and launch-control facilities, SAGE and gap-filler radar sites, and AT&T/Autovon relay stations disproportionately land in FUDS."
+    },
+    {
+      "name": "EPA Envirofacts Data Service API (SEMS, RCRAInfo, FRS, ECHO)",
+      "url": "https://data.epa.gov/efservice/",
+      "holdings": "REST access to EPA's internal data holdings, including the Superfund Enterprise Management System (SEMS, successor to CERCLIS since 2014), RCRAInfo, the Facility Registry Service, TRI, ICIS-AIR and NPDES. SEMS carries site identity, location, NPL status, contaminants, and the operable-unit structure of every Superfund site \u2014 including the many DoD and DOE federal facility sites.",
+      "provenance_tier": "P1",
+      "access_method": "Unauthenticated REST; the URL *is* the query.",
+      "value": "high",
+      "format": "XML by default; CSV, Excel and JSON on request via a format segment in the path.",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "environmental_footprint",
+        "ownership_custody"
+      ],
+      "rate_limits": "Not published; be conservative and cache.",
+      "robots_posture": "Explicitly built as a public data service to all Envirofacts holdings; documented at epa.gov/enviro/envirofacts-data-service-api.",
+      "search_technique": "Path grammar: https://data.epa.gov/efservice/{schema.table}/{column}/{operator}/{value}/{format} \u2014 e.g. /sems.envirofacts_site/state_code/equals/NV/JSON. Joins are expressed inline: /sems.envirofacts_site/left/sems.envirofacts_contaminants/site_id/equals/fk_site_id. Also available as an ArcGIS layer: https://geodata.epa.gov/arcgis/rest/services/OEI/FRS_INTERESTS/MapServer/21 (SEMS).",
+      "notes": "Use SEMS to establish that *something industrial existed* at a location and when \u2014 Superfund site boundaries and operable units often trace the footprint of structures that were demolished before any public inventory recorded them."
+    },
+    {
+      "name": "USACE Regulatory \u2014 Section 404/Section 10 permits (ORM2, RRS, district public notices)",
+      "url": "https://rrs.usace.army.mil/rrs",
+      "holdings": "Department of the Army authorisations under Clean Water Act \u00a7404 and Rivers and Harbors Act \u00a710, plus jurisdictional determinations, tracked in the ORM2 database. Any construction that fills, dredges, or discharges into waters of the United States needs one \u2014 which catches a large share of site work involving significant earthmoving or dewatering discharge.",
+      "provenance_tier": "P1",
+      "access_method": "RRS is an applicant-facing portal, not a public research database. Practical public access is via district-level public notices (PDF) and via EPA's periodic reviews of ORM2 data. Bulk ORM2 is a FOIA matter.",
+      "value": "moderate",
+      "format": "PDF public notices; ORM2 extracts as spreadsheets when obtained.",
+      "axes_served": [
+        "construction_timeline",
+        "geolocation",
+        "environmental_footprint"
+      ],
+      "rate_limits": "n/a \u2014 district sites are static PDF hosts.",
+      "robots_posture": "District .mil sites vary; honour each robots.txt.",
+      "search_technique": "Harvest district Regulatory public-notice directories (each USACE district publishes them under /Missions/Regulatory/Public-Notices/). Public notices carry applicant name, latitude/longitude, acreage of impact, and a project description. For federal applicants the applicant name is the installation or the Corps district itself. Search notice text for 'dewatering', 'excavation', 'shaft', 'tunnel', 'below grade', and for acreage-of-impact figures disproportionate to the described building.",
+      "notes": "Honest limitation: a project sited entirely on federal land, away from jurisdictional waters, generates no \u00a7404 record at all. Absence here is not evidence of absence."
+    },
+    {
+      "name": "NPDES construction and dewatering permits (EPA NeT eNOI, ECHO, and state programs)",
+      "url": "https://www.epa.gov/npdes-permits/dewatering-and-remediation-general-permit-drgp",
+      "holdings": "Notices of Intent under the Construction General Permit (any land disturbance \u22651 acre) and under dewatering/remediation general permits (temporary lowering of the groundwater table by mechanical pumping to permit excavation). NOIs state the operator, the site location, the acreage disturbed, and the discharge. EPA's NeT tool handles electronic NOI/CNOI/NOT filing in EPA-administered jurisdictions; 40-odd states run their own delegated programs with their own databases.",
+      "provenance_tier": "P1",
+      "access_method": "EPA NeT and ECHO for EPA-administered jurisdictions; per-state searchable databases and bulk downloads for delegated states (quality varies enormously).",
+      "value": "moderate",
+      "format": "HTML search, CSV/Excel exports, some state APIs.",
+      "axes_served": [
+        "construction_timeline",
+        "geolocation",
+        "environmental_footprint"
+      ],
+      "rate_limits": "ECHO publishes documented web services with reasonable limits; state systems are unpredictable.",
+      "robots_posture": "ECHO explicitly publishes REST services for reuse. State portals: check individually.",
+      "search_technique": "THIS IS THE DEEP-EXCAVATION TRIPWIRE. A dewatering permit is required precisely when you are digging below the water table \u2014 the defining condition for a buried structure in most of the country. Query dewatering general permits and CGP NOIs by county around candidate sites and look for: (a) a dewatering NOI with no corresponding building permit, (b) a disturbed-acreage figure far exceeding the footprint of any announced building, (c) a discharge volume implying sustained pumping over months. Federal facilities are covered \u2014 the Vermont federal-facility dewatering permit VTG910000 is an explicit example of EPA writing a general permit specifically for federal sites.",
+      "notes": "Delegated-state coverage is the weak link: fifty different systems, many without bulk export. Prioritise states with candidate sites and good data (e.g. Florida DEP, Minnesota PCA, California SWRCB GeoTracker/SMARTS)."
+    },
+    {
+      "name": "County recorder and assessor land records, and statewide parcel GIS",
+      "url": "https://regrid.com/nationwide-parcels",
+      "holdings": "Deeds, easements, rights-of-way, reversionary interests, mortgages, and mechanic's liens (county recorder); parcel geometry, owner name, land use code, improvement value, and year built (county assessor). Regrid aggregates ~158 million parcels at ~99.2% national coverage into one normalised schema; several states (Wisconsin's Statewide Parcel Map Initiative, Florida's FGDL, and others) publish free standardised statewide parcel files.",
+      "provenance_tier": "P1",
+      "access_method": "Free per-county portals (thousands of them, no two alike); free statewide GIS downloads in ~20 states; commercial normalised national coverage from Regrid (~$0.10/parcel, ~$10,000/yr enterprise) and comparable vendors.",
+      "value": "high",
+      "format": "Shapefile, File Geodatabase, GeoJSON, CSV; recorder documents as scanned TIFF/PDF requiring OCR.",
+      "axes_served": [
+        "ownership_custody",
+        "geolocation",
+        "facility_existence",
+        "disposal_status",
+        "corporate_shell"
+      ],
+      "rate_limits": "County portals frequently rate-limit or CAPTCHA. Many prohibit automated access in their terms.",
+      "robots_posture": "MIXED AND OFTEN RESTRICTIVE. Many county recorder sites explicitly forbid scraping in their terms of use even though the records themselves are public. Read each site's ToS; where scraping is prohibited, the lawful routes are the county's bulk-data purchase program, a public-records request, or a commercial aggregator that has licensed the data.",
+      "search_technique": "Grantor/grantee name searching is the core technique. Search as grantee AND grantor: 'UNITED STATES OF AMERICA', 'SECRETARY OF THE ARMY', 'SECRETARY OF THE AIR FORCE', 'SECRETARY OF THE NAVY', 'UNITED STATES OF AMERICA ACTING BY AND THROUGH THE ADMINISTRATOR OF GENERAL SERVICES', 'DEPARTMENT OF ENERGY', 'ATOMIC ENERGY COMMISSION'. The AEC and predecessor-agency names are what surface Cold War acquisitions. Also search for easement grantees \u2014 a communications or utility easement running to a federal grantee across private land is often the only public trace of a buried cable or an underground facility's power feed. On the parcel side, look for: federally-owned parcels absent from FRPP; parcels with high improvement value and no visible structure; and parcels whose owner is an LLC registered days before the deed date.",
+      "notes": "Reversionary clauses are gold. When federal land is conveyed with a reverter or with deed restrictions on excavation, drilling, or subsurface use, the restriction text describes what is underneath."
+    },
+    {
+      "name": "State business entity registries and shell-entity tracing",
+      "url": "https://govfiles.dev/",
+      "holdings": "Registered entity name, formation date and state, status, registered agent name and address, officers/directors/managers where the state collects them, and annual-report history. Roughly 27 states offer some form of official bulk export; ~20 (including Delaware, the most important formation state) offer none.",
+      "provenance_tier": "P1",
+      "access_method": "Per-state: free bulk FTP/download (e.g. Florida, Colorado, California, several others), paid bulk subscription (e.g. Texas, Illinois), or search-only with no export (Delaware). Commercial normalisation across all 50 states from GovFiles (~75M records, monthly updates, REST API and bulk Parquet) and OpenCorporates.",
+      "value": "moderate",
+      "format": "Fixed-width or delimited text (legacy state FTP feeds), CSV, Parquet, JSON.",
+      "axes_served": [
+        "corporate_shell",
+        "contractor_linkage",
+        "ownership_custody"
+      ],
+      "rate_limits": "State search portals commonly CAPTCHA or block automation. Commercial APIs have contractual limits.",
+      "robots_posture": "State portals are generally restrictive about automated querying; several explicitly prohibit it. Use official bulk products where they exist \u2014 that is the state's own sanctioned automation channel.",
+      "search_technique": "Three joins do most of the work: (1) registered-agent address clustering \u2014 dozens of unrelated-looking entities sharing one agent address is the signature of a formation service, and the *exceptions* (an entity using a real street address near a candidate site) are the interesting ones; (2) officer-name matching against SAM.gov Entity Management POC names and against contract award recipients; (3) formation-date-to-deed-date proximity, where an SPE formed within 90 days of a land acquisition is almost always purpose-built for that acquisition. Delaware's opacity means the practical path is to find the entity's *foreign qualification* filing in the state where the property actually sits, which will name a registered agent and sometimes an officer.",
+      "notes": "Be disciplined about what this can prove. Registry data establishes that an entity exists and who filed for it. It does not establish beneficial ownership, and in Delaware, Nevada and Wyoming it is designed not to. Treat shell-entity findings as 'inferred', never 'documented', absent a corroborating deed or contract."
+    },
+    {
+      "name": "GSA Real Property Disposal and realestatesales.gov",
+      "url": "https://realestatesales.gov/",
+      "holdings": "Current and historical offerings of surplus federal real property: sale listings with legal descriptions, acreage, improvements, environmental disclosures, deed restrictions and covenants; plus the federal-transfer and public-benefit-conveyance pipelines that precede public sale. GSA's disposal inventory data covers property available for purchase, for federal transfer, or for public benefit conveyance.",
+      "provenance_tier": "P1",
+      "access_method": "Auction web application (realestatesales.gov/gsaauctions/gsaauctions); GSA's Office of Real Property Utilization and Disposal publishes inventory data and forms at propertydisposal.gsa.gov. No documented public API.",
+      "value": "high",
+      "format": "HTML listings, PDF invitations for bid and offering brochures (which contain site plans and environmental condition reports).",
+      "axes_served": [
+        "disposal_status",
+        "ownership_custody",
+        "facility_existence",
+        "geolocation"
+      ],
+      "rate_limits": "Not published.",
+      "robots_posture": "Check realestatesales.gov/robots.txt. Listings are removed after sale \u2014 snapshot continuously or lose them.",
+      "search_technique": "The offering brochures are the payload: they include the environmental condition of property report, known subsurface conditions, utility infrastructure, and any covenant restricting future excavation or groundwater use. Search listing and brochure text for 'underground', 'bunker', 'vault', 'magazine', 'tunnel', 'subsurface structure', 'abandoned in place', 'sealed'. Cross-reference every sold property back to FRPP (matching on RPUID or address) to confirm the federal-side record, and forward to the county deed to identify the buyer.",
+      "notes": "A disposal record is often the *only* moment a hardened structure is described in plain English in a public document, because GSA has a legal duty to disclose latent conditions to a buyer. This is one of the most under-exploited corpora on the whole beat."
+    },
+    {
+      "name": "Public Buildings Reform Board",
+      "url": "https://www.pbrb.gov/",
+      "holdings": "Independent board established December 2016 under FASTA to identify federal civilian real property for disposal. Publishes round reports naming specific properties recommended for disposition with square footage, location, and justification; meeting notices and minutes appear in the Federal Register.",
+      "provenance_tier": "P1",
+      "access_method": "Static PDFs on pbrb.gov; meeting notices via the Federal Register API.",
+      "value": "moderate",
+      "format": "PDF.",
+      "axes_served": [
+        "disposal_status",
+        "ownership_custody",
+        "facility_existence"
+      ],
+      "rate_limits": "Static host.",
+      "robots_posture": "Verify pbrb.gov/robots.txt.",
+      "search_technique": "Harvest every round report now \u2014 the board sunsets 31 December 2026 under the Public Buildings Reform Legislation of 2025 and its site may not survive. Cross-reference the recommended properties against FRPP status changes to see which recommendations OMB approved and which quietly did not happen.",
+      "notes": "Civilian-agency scope only, so no direct DoD coverage \u2014 but the DC-area properties it examines include buildings with continuity-of-government roles."
+    },
+    {
+      "name": "GAO reports and DoD Inspector General reports",
+      "url": "https://www.gao.gov/",
+      "holdings": "Audits of DoD and DOE real property management, MILCON execution, facility condition, excess and underutilised facilities, and environmental liabilities. GAO reports routinely quote inventory figures, project lists and cost data that appear nowhere else in public form, and cite the internal systems (RPAD, FRPP MS, Service APSRs) they drew from.",
+      "provenance_tier": "P2",
+      "access_method": "gao.gov product pages plus a static file host (files.gao.gov/reports/{product-id}/index.html observed); also mirrored in GovInfo's GAOREPORTS collection with authenticated PDFs.",
+      "value": "high",
+      "format": "HTML and PDF with text layer.",
+      "axes_served": [
+        "facility_existence",
+        "cost_scale",
+        "ownership_custody",
+        "disposal_status"
+      ],
+      "rate_limits": "Not published; GAO also offers RSS feeds by topic.",
+      "robots_posture": "Verify gao.gov/robots.txt. For bulk, prefer the GovInfo GAOREPORTS collection, which is designed for harvesting.",
+      "search_technique": "Search by product number series and by keyword ('real property', 'military construction', 'excess facilities', 'unspecified minor construction', 'facility condition'). The appendices matter more than the findings \u2014 GAO appendices frequently reproduce agency data tables that the agency itself never published. Also mine the 'Agency Comments' sections, where the department contradicts or qualifies GAO's numbers.",
+      "notes": "P2 rather than P1 because GAO is summarising records it obtained, not publishing the records. But GAO's citations tell you exactly which primary system to FOIA."
+    },
+    {
+      "name": "National Capital Planning Commission project review records",
+      "url": "https://www.ncpc.gov/review/",
+      "holdings": "Submission materials, staff recommendations and commission actions for essentially every federal construction and master-plan action in the National Capital Region: site plans, elevations, security-perimeter designs, and phasing. Agenda and submission materials are posted per meeting; historical files are split between NCPC and the National Archives.",
+      "provenance_tier": "P1",
+      "access_method": "Web listings with PDF submission packages; meeting notices via the Federal Register API.",
+      "value": "moderate",
+      "format": "PDF, often with drawings.",
+      "axes_served": [
+        "facility_existence",
+        "geolocation",
+        "construction_timeline",
+        "hardening_signature"
+      ],
+      "rate_limits": "Not published.",
+      "robots_posture": "Verify ncpc.gov/robots.txt.",
+      "search_technique": "Harvest every meeting's 'Agenda and Submission Materials' package and index by agency and site. NCPC review is a statutory obligation that DoD, DOE, GSA and the intelligence agencies cannot avoid for construction in the region \u2014 which means secure and hardened facilities in the DC area leave a drawing-bearing public record here that they leave nowhere else. Search for 'below grade', 'sublevel', 'secure facility', 'perimeter', 'setback', 'blast'.",
+      "notes": "Geographically narrow but exceptionally deep. For the continuity-of-government subject matter specifically, the National Capital Region is disproportionately where the facilities are."
+    },
+    {
+      "name": "BLM Mineral & Land Records System (MLRS) and General Land Office records",
+      "url": "https://reports.blm.gov/reports/MLRS",
+      "holdings": "BLM land and mineral use authorisations: withdrawals (including military land withdrawals), classifications, rights-of-way, land and mineral title, and case files on federal lands and federal mineral estate. MLRS has replaced LR2000, ACRES/ALIS, LRAM and CSRC. Separately, GLO records (glorecords.blm.gov) hold historical land patents and survey plats.",
+      "provenance_tier": "P1",
+      "access_method": "Public report generator at reports.blm.gov/reports/MLRS; interactive research map at mlrs.blm.gov requiring login for some functions. No documented public API.",
+      "value": "high",
+      "format": "HTML and CSV/Excel report exports; survey plats and patents as scanned images.",
+      "axes_served": [
+        "ownership_custody",
+        "geolocation",
+        "facility_existence",
+        "construction_timeline"
+      ],
+      "rate_limits": "Report generator is interactive and slow; not built for volume.",
+      "robots_posture": "Reports application is public-facing. Verify blm.gov/robots.txt; avoid driving the interactive map programmatically.",
+      "search_technique": "Run withdrawal reports by state and county and filter for military and defence-agency holders. A military land withdrawal is the mechanism by which public land is set aside for defence use, and the withdrawal case file gives the acreage, the legal description by township/range/section, the withdrawing agency, and the purpose \u2014 sometimes stated only as 'defense purposes'. Cross-reference every withdrawal against Public Land Orders published in the Federal Register (searchable via the FR API) for the authoritative citation, and against the FRPP land records for the current status. Legacy LR2000 case-type codes still appear in MLRS data \u2014 keep an LR2000 codebook.",
+      "notes": "The right source for the western United States, where a large fraction of hardened and test infrastructure sits on withdrawn public land rather than on fee-owned federal property \u2014 and therefore does not appear in fee-ownership parcel data at all."
+    },
+    {
+      "name": "Treasury FAST Book (Federal Account Symbols and Titles)",
+      "url": "https://fiscal.treasury.gov/accounting/fast-book",
+      "holdings": "The authoritative list of every federal receipt, appropriation and fund account symbol and title. This is the codebook that turns an opaque TAS in USAspending or an apportionment file into a named appropriation.",
+      "provenance_tier": "P1",
+      "access_method": "PDF download, updated periodically; historical editions available.",
+      "value": "moderate",
+      "format": "PDF (parseable to a table with effort).",
+      "axes_served": [
+        "cost_scale"
+      ],
+      "rate_limits": "Static document.",
+      "robots_posture": "Published reference material.",
+      "search_technique": "Extract the full account table and keep every historical edition \u2014 account symbols get retired and reused, and a MILCON account symbol in a 2004 document may mean something else today. Anchor accounts for this beat: 021-2050 Military Construction Army; 017-1205 Military Construction Navy and Marine Corps; 057-3300 Military Construction Air Force; 097-0500 Military Construction Defense-Wide; plus the 089-* DOE Atomic Energy Defense Activities family, and the Army/Navy/Air Force Family Housing and BRAC accounts.",
+      "notes": "Unglamorous but load-bearing. Without it, TAS-filtered queries against USAspending and the apportionment files cannot be interpreted or cited precisely."
+    }
+  ],
+  "access_notes": "SESSION LIMITATION, STATED PLAINLY. This machine's egress proxy blocked nearly every government host I tried to visit directly (api.usaspending.gov, www.fpds.gov, api.sam.gov, cedar/cdxapps.epa.gov, www.gsa.gov, comptroller.war.gov, catalog.data.gov, open.gsa.gov, huggingface.co, govtribe.com, en.wikipedia.org all returned EGRESS_BLOCKED or DNS failure). Only github.com/raw.githubusercontent.com were reachable, plus web search. Consequence: URL patterns, field names, code values and behaviours below are drawn from official documentation surfaced through search and from the USAspending api_contracts repository, which I did read directly. Anything I could not open with my own tools is flagged as unverified in the source's notes. Nothing here should be treated as live-tested. Re-verify each endpoint on a machine with open egress before writing a harvester against it, and in particular pull the OpenAPI/contract documents (open.gsa.gov specs, the FPDS ATOM wiki, the FRPP data dictionary, the PSC Manual DOCX) as the ground truth.\n\nPROVENANCE TIERS AS USED HERE. P1 = the government's own primary record, published by the body that created it. P2 = an official secondary or summary product (GAO audits, Base Structure Report summaries) that reports on records held elsewhere. P3 = a non-governmental curated aggregation of primary records (OpenOMB, NEPATEC, NEPAccess) \u2014 searchable, but always resolve and cite the P1 original. P4 = commercial/proprietary normalisation (Regrid, GovFiles). P5 = uncorroborated. In practice the register should search P3 and cite P1.\n\nAPI KEYS. api.data.gov issues one key that works across SAM.gov (opportunities, entity, contract data), GovInfo, and Congress.gov. Get it early \u2014 a SAM.gov key can take up to ten business days, and an unassociated public key is throttled to roughly ten requests a day, which is unusable. Register the key against a SAM-registered entity if you can. USAspending, the Federal Register API, and EPA Envirofacts need no key at all; those three are the ones to lean on for volume.\n\nRATE-LIMIT REALITY. USAspending search endpoints are slow and will 504 under concurrency \u2014 for anything at scale, restore the monthly PostgreSQL dump locally instead of calling the API. FPDS ATOM is capped at ten records per page, so window queries by date rather than paginating deep. SAM.gov throws 429s at roughly 20 requests/minute regardless of the documented daily quota; pace at 1 rps. ArcGIS FeatureServers cap at 1,000\u20132,000 features per query \u2014 use the Hub bundled downloads. The FRPP map application caps CSV export at 2,000 rows; take the annual full CSV instead. Federal Register allows 1,000 documents per page with no key and no enforced limit, which makes it the cheapest high-volume monitor available.\n\nROBOTS AND TERMS. I could not fetch a single robots.txt this session, so every posture note is inference from documentation rather than observation. Fetch and honour robots.txt per host before any crawl. Three categories deserve real care: (1) county recorder and assessor portals frequently prohibit automated access in their terms even though the underlying records are public \u2014 where they do, use the county's bulk-data purchase program, a public-records request, or a licensed aggregator, not a scraper; (2) state business-entity search portals commonly CAPTCHA and prohibit automation \u2014 use the official bulk exports the ~27 states that offer them provide; (3) .mil hosts often carry restrictive robots.txt even for public-affairs PDF directories. Where a government body publishes a bulk repository or an API alongside a web UI (GovInfo, USAspending, ArcGIS Hub, Federal Register), using the machine channel rather than the UI is both the polite choice and the explicitly intended one.\n\nPRESERVATION URGENCY \u2014 ACT ON THESE FIRST. Several corpora on this beat are actively disappearing. FPDS.gov was decommissioned as a search site on 24 February 2026 and its ATOM feed retires later in FY2026; mirror the feed and the fpds.gov/downloads bulk extracts now. The DoD Comptroller domain has moved from comptroller.defense.gov to comptroller.war.gov, so existing link sets are already breaking and old URLs may not redirect indefinitely. The OMB apportionment site was taken offline in March 2025 and only restored in August 2025 under court order \u2014 its availability is politically contingent. The Public Buildings Reform Board sunsets 31 December 2026 and its reports may go with it. The Base Structure Report stopped being published in its familiar public form after the FY2018 baseline. In a register whose premise is that this material is public but unindexed, \"public\" has a shelf life, and mirroring with dated snapshots is part of the evidence, not overhead.\n\nTHE CENTRAL CORRELATION METHOD. No single source on this beat proves a hardened facility. The method is a join, and it runs in this order: (1) a design or A&E contract (PSC C1*) or a sources-sought notice on SAM.gov names an intent 18\u201336 months early; (2) a DD Form 1391 in the MILCON justification book gives the installation, CATCODE, scope and cost; (3) the cost-per-square-foot compared against the UFC 3-701-01 pricing factor for that CATCODE, and the scope compared against the AFMAN 32-1084 allowance, quantifies the excess capability being bought; (4) an EA or EIS gives the site coordinates, disturbed acreage and excavation depth; (5) a dewatering or \u00a7404 permit confirms digging below the water table; (6) USAspending or FPDS gives the awardee, the obligation timeline and the place of performance; (7) FRPP or the Base Structure Report shows whether the resulting asset ever appears in the public inventory; (8) county deeds and parcel data establish who holds the ground. Each step is independently citable, each carries a different evidence grade, and the interesting candidates are the ones where a step is *missing* \u2014 money obligated with no NEPA document, a dewatering permit with no building permit, an inventory that gains structures no project explains.\n\nDOCUMENT-PROCESSING BURDEN. Budget justification books before roughly 2008, Base Structure Reports, EIS appendices, GSA disposal brochures, and anything from county recorders are scanned images. Budget an OCR pipeline (and a table-extraction pass \u2014 DD 1391 cost breakdowns and committee-report project tables are tabular, and naive text extraction destroys the row alignment that makes them useful). Keep the original PDF alongside the extracted text; the register's credibility depends on being able to show the page.",
+  "gaps": "WHAT THIS BEAT STRUCTURALLY CANNOT SEE.\n\n1. Classified and special-access construction. The MILCON justification books contain line items titled \"Classified Project\" at \"Classified Location\" \u2014 they establish that an amount of money was appropriated for construction somewhere, and nothing else. Intelligence-community construction funded through the National Intelligence Program and Military Intelligence Program does not appear in the MILCON books at all; those appropriations are published only as topline aggregates. Special access program construction is invisible by design. The honest position for the register is that these corpora document the *existence and scale* of unlocated hardened construction, and can never locate it. Closing this would require the classified annexes to the congressional defense committee reports, which are not FOIA-able.\n\n2. FRPP withholds national-security assets outright. The public data set excludes assets withheld for national security, procurement sensitivity, or FOIA exemption. So the single best government-wide real property inventory is guaranteed to be missing exactly the class of facility this register is about. The workaround \u2014 comparing an installation's published acreage and asset totals against its FRPP record count and treating the delta as a measurable absence \u2014 produces an inference, not a record. DoD's underlying RPAD, and the RPUID/RPSUID identifiers that would let you join across systems, are not public; obtaining them means a FOIA to OSD (Energy, Installations & Environment), which for hardened facilities will be exempted under (b)(1) and likely (b)(3).\n\n3. NEPA has a categorical-exclusion hole. Most defence construction actions are categorically excluded from documentation entirely, producing no public paper. Of the actions that do produce documents, only EISs are filed with EPA and centrally indexed; Environmental Assessments \u2014 which is what facility-scale construction almost always generates \u2014 are scattered across Army NEPA Online, AFCEC, and dozens of NAVFAC and installation sites with no central index and no API. There is no single national EA corpus. Building one would be a genuine contribution and would require per-installation crawling. National-security exemptions and classified annexes to EAs further hollow out coverage.\n\n4. Contract descriptions are sanitised and miscoded. The award description field is free text written by a contracting officer with no obligation to be informative; \"CONSTRUCTION\" and \"TASK ORDER 0003\" are common. PSC and NAICS are miscoded routinely. Task orders under a MATOC often carry no meaningful description at all, and the place of performance is frequently recorded as the contracting office rather than the site. Keyword recall over this corpus is therefore low and unquantifiable \u2014 the register should never treat absence of a keyword hit as evidence of absence.\n\n5. Nothing here pierces beneficial ownership. State registries in Delaware, Nevada and Wyoming are designed not to disclose it. The Corporate Transparency Act beneficial-ownership registry is not public. Registered-agent clustering and formation-date proximity generate leads, not proof, and every shell-entity finding must be graded as inferred unless a deed, contract or court filing corroborates it.\n\n6. County land records do not capture federal-to-federal transfers, land withdrawals, or leaseholds well. Property moving between federal agencies typically generates no recorded deed. Withdrawn public land in the western states never enters the fee-ownership chain at all \u2014 it appears only in BLM case files. Leased space, including the leased facilities that host continuity functions, produces a lease that may never be recorded. And many county recorders have digitised only back to the 1970s\u20131990s, which is after most Cold War hardened construction; pre-digitisation deeds require an in-person or mail request to the county.\n\n7. Deep-excavation environmental tripwires miss federal land. The dewatering and \u00a7404 permit logic \u2014 the best physical evidence of digging below the water table \u2014 only fires when there is a jurisdictional water or a delegated state program with reach. A project sited entirely on a federal installation, away from waters of the United States, generates neither. Coverage is also wildly uneven across the ~40 delegated NPDES states, several of which have no bulk export and no API. State blasting permits, which would be an excellent complementary signal for rock excavation, are administered by fifty different agencies (mining boards, fire marshals, labour departments) with essentially no machine-accessible national coverage \u2014 I could not identify a single aggregated source, and building one would mean fifty separate integrations.\n\n8. Local building permits are absent for federal projects. Federal construction on federal land is not subject to local permitting, so the municipal permit databases that would otherwise be the richest construction record simply do not contain these projects.\n\n9. The FPDS-to-SAM migration is an unquantified provenance risk. The as-filed contract action reports are moving to a new system and a new schema during FY2026. Whether every historical field survives with fidelity is unknown. Until the migration is complete and verified, any harvester should capture both the legacy ATOM XML and the new JSON for the overlap period so the register can document any divergence rather than silently inherit it.\n\n10. Commercial dependencies. Complete national parcel coverage and complete 50-state entity coverage are, today, commercial products (Regrid at roughly $10,000/year for enterprise access; GovFiles and comparable vendors for entity data). Free alternatives exist but are partial \u2014 around 20 states publish standardised statewide parcel files and around 27 publish some form of entity bulk export. A register committed to open, no-login, publicly reproducible sourcing has to decide whether to accept a licensed dependency it cannot redistribute, or accept incomplete coverage and say so. My recommendation is the latter, with the coverage gaps documented per state as a first-class part of the register rather than papered over.",
+  "high_yield_queries": [
+    "USAspending POST /api/v2/search/spending_by_award/ with filters {tas_codes:{require:[[\"021\",\"2050\"]]}, psc_codes:{require:[[\"Y\"],[\"Y\",\"Y1\"]]}, time_period:[{start_date:\"2001-10-01\",end_date:\"2026-09-30\"}]} \u2014 full MILCON Army construction ledger by TAS+PSC",
+    "USAspending keyword battery over award description: \"hardened\" | \"blast door\" | \"blast resistant\" | \"EMP\" | \"HEMP\" | \"MIL-STD-188-125\" | \"shielded enclosure\" | \"Faraday\" | \"TEMPEST\" | \"SCIF\" | \"ICD 705\" | \"ICS 705\" | \"earth covered magazine\" | \"vault door\" | \"rock bolt\" | \"shotcrete\" | \"tunnel\" | \"shaft\" | \"cut and cover\" | \"below grade\" | \"dewatering\" | \"continuity of operations\" | \"alternate command\" | \"relocation facility\"",
+    "FPDS ATOM: https://www.fpds.gov/ezsearch/FEEDS/ATOM?FEEDNAME=PUBLIC&templateName=1.5.3&q=PRODUCT_OR_SERVICE_CODE:Y1EA+SIGNED_DATE:[2015/01/01,2026/01/01]&start=0 (then start=10,20,\u2026)",
+    "FPDS ATOM: q=CONTRACTING_OFFICE_ID:W9128F (USACE Omaha District, home of the Protective Design Center) \u2014 surfaces protective-design work for sites physically located elsewhere",
+    "SAM.gov Opportunities: GET https://api.sam.gov/opportunities/v2/search?api_key=KEY&postedFrom=01/01/2020&postedTo=12/31/2026&ccode=Y1EA&limit=1000 (note: dates MUST be MM/dd/yyyy)",
+    "SAM.gov Opportunities filtered to Justification & Approval notice types \u2014 sole-source J&As must publicly explain why only one vendor can perform, and name the facility",
+    "DoD budget justification: https://comptroller.war.gov/Portals/45/Documents/defbudget/{fy2001..FY2027}/budget_justification/pdfs/07_Military_Construction/{01..25}-{Component}.pdf \u2014 enumerate FY (try both 'fy2013' and 'FY2025' casing) and the two-digit component prefix",
+    "Grep extracted MILCON J-book text for: \"CLASSIFIED LOCATION\" | \"CLASSIFIED PROJECT\" | \"CATEGORY CODE\" | \"PROJECT NUMBER\" | \"IMPACT IF NOT PROVIDED\"",
+    "DoD reprogramming: https://comptroller.war.gov/Portals/45/Documents/execution/reprogramming/fy{YYYY}/prior1415s/{YY}-{NN}_PA_{Month}_{YYYY}_Request.pdf and .../ir1415s/{YY}-{NN}_IR_... \u2014 enumerate NN until 404; grep for \"2803\" \"2804\" \"2805\" \"unspecified minor\" \"emergency construction\"",
+    "EPA EIS Database enumeration: https://cdxapps.epa.gov/cdx-enepa-II/public/action/eis/details?eisId={300000..540000} and attachment fetch ?downloadAttachment=&attachmentId={int}",
+    "Federal Register API: /api/v1/documents.json?conditions[term]=%22notice+of+intent+to+prepare+an+environmental+impact+statement%22&conditions[agencies][]=defense-department&per_page=1000&fields[]=full_text_xml_url",
+    "Federal Register API: conditions[term]=\"public land order\" AND \"withdrawal\" AND military \u2014 locates every military land withdrawal with its PLO citation",
+    "GovInfo package enumeration for appropriations report tables: CRPT-{108..119}{h|s}rpt{NNN}, filtered to Military Construction\u2013VA and Defense subcommittee reports; full-text the project tables",
+    "WBDG per-CATCODE facility standards: https://www.wbdg.org/FFC/AF/AFMAN/{catcode}_{Title}.pdf \u2014 sweep CATCODE space to recover the square-footage allowance library (observed example: 730835_Security_Forces_Operations.pdf)",
+    "FUDS FeatureServer: {service}/1/query?where=1%3D1&outFields=*&f=geojson&resultOffset={n}&resultRecordCount=2000 (layer 1 = Property Point, layer 4 = Property Polygon); filter property names for Nike | Titan | Atlas | Minuteman | SAGE | gap filler | radar | control | annex",
+    "EPA Envirofacts: https://data.epa.gov/efservice/sems.envirofacts_site/state_code/equals/{ST}/JSON and joined form /sems.envirofacts_site/left/sems.envirofacts_contaminants/site_id/equals/fk_site_id",
+    "County recorder grantor/grantee name searches: \"UNITED STATES OF AMERICA\" | \"SECRETARY OF THE ARMY\" | \"SECRETARY OF THE AIR FORCE\" | \"SECRETARY OF THE NAVY\" | \"ATOMIC ENERGY COMMISSION\" | \"ADMINISTRATOR OF GENERAL SERVICES\" \u2014 search as BOTH grantor and grantee, and pull easements separately from deeds",
+    "GSA disposal offering brochures full-text: \"underground\" | \"bunker\" | \"vault\" | \"magazine\" | \"tunnel\" | \"subsurface structure\" | \"abandoned in place\" | \"sealed\" | \"restrictive covenant\" + \"excavation\"",
+    "NAICS sweep for underground work: 237990 (Other Heavy and Civil Engineering \u2014 tunnels/shafts), 213115 (drilling and blasting support), 238910 (site prep), 238990 (RF/EMI shielding), 332312/332439 (blast doors, pressure vessels), 541330 (engineering)",
+    "OMB apportionment / OpenOMB footnote full-text search for project names within TAFS 021-2050, 017-1205, 057-3300, 097-0500 and the 089-* DOE defense accounts",
+    "Cost-anomaly screen: for each DD 1391, compute (project unit cost) \u00f7 (UFC 3-701-01 pricing factor for its CATCODE); rank descending \u2014 the top of that list is the hardening candidate set"
+  ]
+}
