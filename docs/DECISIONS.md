@@ -110,3 +110,25 @@ lands, W1 can build and exercise the pipeline but cannot publish a graded candid
 Nothing is deleted. Refuted and F-grade entries are retained with their refutations attached, and
 corrections are published rather than quietly applied — including corrections to this project's own
 reasoning.
+
+---
+
+## D-008 · Deploy main to Vercel once the application exists
+
+*Decided 2026-08-18.*
+
+The repository is linked to Vercel and `main` is the deploy source. Authorized by the owner.
+
+**Sequencing, and why it is not merely tidiness.** The register is public with no login, so the Supabase
+anon key ships in client-side code. That is correct by design — and it means the RLS posture and the
+PostgREST surface must be right *before* a public URL exists, not after. At the time of this decision
+PostgREST was pointed at `public` rather than `api`, so the published projection was unreachable while
+~965 PostGIS functions were exposed. Deploying in that state would have shipped the inverted surface.
+
+Order: hardening lands → W2 builds the app → merge to `main` → deploy.
+
+**Consequence:** the first deployment publishes a register with **zero candidates** — the grading model,
+the 34-case calibration suite, the sixteen documented fatal defects, and the D-006 verification
+limitation. That is the intended first artifact, not a placeholder. Shipping the methodology before the
+data is the correct order for this project: it lets the community see how a claim will be judged before
+any claim is made.
