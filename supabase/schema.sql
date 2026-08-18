@@ -2514,17 +2514,22 @@ create table core.proposition_rollup (
   -- written only when the grade MOVES, so the event's hash goes stale the
   evidence_state_hash text not null default '',
   computed_at timestamptz not null default now(),
-  current_grade_event_id uuid references core.grade_event(grade_event_id),
-  is_published boolean not null default false
+  -- DERIVED on every recompute from core.grade_event, which is append-only and
+  -- DELETE-forbidden. Stored for the join, never as the only copy.
+  current_grade_event_id uuid references core.grade_event(grade_event_id)
+  -- There is deliberately NO is_published column here. Publication is stated
+  -- once, in core.entity.publication_state and core.proposition.publication_state,
+  -- and read from there by core.proposition_is_public(). A cache that cannot
+  -- hold the publication bit cannot lose it on a rebuild -- and cannot invent
+  -- one either. See the RLS policy on this table.
 );
 create index prop_rollup_entity_idx on core.proposition_rollup(entity_id);
 create index prop_rollup_grade_idx  on core.proposition_rollup(grade);
 create index prop_rollup_rank_idx   on core.proposition_rollup(grade_rank desc);
 create index prop_rollup_class_idx  on core.proposition_rollup(class, grade);
-create index prop_rollup_pub_idx    on core.proposition_rollup(is_published) where is_published;
 
 comment on table core.proposition_rollup is
-  'Materialised read model, fully recomputable from core.observation via core.recompute_proposition(). The grade is never stored knowledge, only cached knowledge.';
+  'Materialised read model, fully recomputable from core.observation via core.recompute_proposition(): every column it holds is rebuilt from the observation rows and the grade_event log. The grade is never stored knowledge, only cached knowledge. It carries NO publication state, so deleting and rebuilding it can neither publish nor unpublish anything.';
 
 -- The register's own publication log. Feeds §5.1.8 self-exclusion and the
 -- §11.3 ratchet.
@@ -2626,7 +2631,7 @@ begin
     base_rate_reading, reference_class, citogenesis, sci, sci_numerator, sci_denominator,
     l_d2, l_d3, v_count, u_count, v_claim_count, v0_count, inert_count,
     place_derived_weight, claim_derived_weight, condition_results,
-    evidence_state_hash, computed_at)
+    evidence_state_hash, computed_at, current_grade_event_id)
   values (
     p_proposition_id, p.entity_id, p.class, final, pre_clamp,
     (ev->>'awarded_band')::core.grade, core.grade_rank(final), clamped_by,
@@ -2644,7 +2649,16 @@ begin
     (ev->>'l_d2')::int, (ev->>'l_d3')::int, (ev->>'v_count')::int, (ev->>'u_count')::int,
     (ev->>'v_claim_count')::int, (ev->>'v0_count')::int, (ev->>'inert_count')::int,
     (ev->>'place_derived_weight')::int, (ev->>'claim_derived_weight')::int,
-    ev->'conditions', core.evidence_state_hash(p_proposition_id), now())
+    ev->'conditions', core.evidence_state_hash(p_proposition_id), now(),
+    -- DERIVED, not remembered. core.grade_event is append-only and
+    -- DELETE-forbidden, so the current-event pointer is always recoverable
+    -- from it. Storing it without re-deriving it is what made a
+    -- delete-and-rebuild strip rubric_version, scorer_model_id and
+    -- evidence_state_hash off every published badge.
+    (select ge.grade_event_id from core.grade_event ge
+      where ge.proposition_id = p_proposition_id
+        and not ge.is_blind_double_score
+      order by ge.seq desc limit 1))
   on conflict (proposition_id) do update set
     grade=excluded.grade, grade_pre_clamp=excluded.grade_pre_clamp,
     awarded_band=excluded.awarded_band, grade_rank=excluded.grade_rank,
@@ -2663,7 +2677,8 @@ begin
     place_derived_weight=excluded.place_derived_weight,
     claim_derived_weight=excluded.claim_derived_weight,
     condition_results=excluded.condition_results,
-    evidence_state_hash=excluded.evidence_state_hash, computed_at=now();
+    evidence_state_hash=excluded.evidence_state_hash, computed_at=now(),
+    current_grade_event_id=excluded.current_grade_event_id;
 
   return ev || jsonb_build_object('grade', final, 'grade_pre_clamp', pre_clamp,
                                   'clamped_by', clamped_by);
@@ -3044,7 +3059,11 @@ begin
   update core.proposition pp set publication_state = 'PUBLISHED',
          published_at = coalesce(pp.published_at, now())
    where pp.entity_id = p_entity_id;
-  update core.proposition_rollup set is_published = true where entity_id = p_entity_id;
+  -- The rollup is NOT touched here. It carries no publication state at all;
+  -- publication is core.proposition.publication_state, set above, and the RLS
+  -- policy on core.proposition_rollup reads that through
+  -- core.proposition_is_public(). A cache that cannot hold the bit cannot
+  -- lose it on a rebuild, and cannot invent one either.
 
   -- V0 and quarantined observations publish too, marked inert with their
   -- exclusion_reason. Suppressing them would hide the register's own failures
@@ -3090,7 +3109,7 @@ begin
    where entity_id = p_entity_id;
   update core.proposition set publication_state = 'WITHDRAWN', withdrawn_reason = p_reason
    where entity_id = p_entity_id;
-  update core.proposition_rollup set is_published = false where entity_id = p_entity_id;
+  -- Nothing to undo in core.proposition_rollup: it holds no publication state.
   insert into core.publication_log (entity_id, event, actor, note)
   values (p_entity_id, 'WITHDRAW', p_actor, p_reason);
 end $$;
@@ -3236,19 +3255,27 @@ select
   -- is inside concave uncertainty polygons.
   st_pointonsurface(rg.geom) as label_point,
   st_transform(st_pointonsurface(rg.geom), 3857) as label_point_3857,
+  -- Counted from publication_state, not from a publication flag cached beside
+  -- the grade, so a rollup rebuild cannot change these numbers.
   (select count(*) from core.proposition_rollup r2
-    where r2.entity_id = e.entity_id and r2.is_published)              as proposition_count,
+     join core.proposition p2 on p2.proposition_id = r2.proposition_id
+    where r2.entity_id = e.entity_id
+      and p2.publication_state = 'PUBLISHED')                          as proposition_count,
   (select count(*) from core.proposition_rollup r3
-    where r3.entity_id = e.entity_id and r3.is_published and r3.grade='R') as refuted_count,
+     join core.proposition p3 on p3.proposition_id = r3.proposition_id
+    where r3.entity_id = e.entity_id
+      and p3.publication_state = 'PUBLISHED' and r3.grade='R')         as refuted_count,
   (select count(*) from core.proposition_rollup r4
-    where r4.entity_id = e.entity_id and r4.is_published and r4.grade='X') as unassessed_count,
+     join core.proposition p4 on p4.proposition_id = r4.proposition_id
+    where r4.entity_id = e.entity_id
+      and p4.publication_state = 'PUBLISHED' and r4.grade='X')         as unassessed_count,
   pr.computed_at as graded_at
 from core.entity e
 join core.proposition p
   on p.entity_id = e.entity_id and p.class = 'EXIST'
  and p.publication_state = 'PUBLISHED'
 join core.proposition_rollup pr
-  on pr.proposition_id = p.proposition_id and pr.is_published
+  on pr.proposition_id = p.proposition_id
 cross join lateral core.render_geometry(e.entity_id) rg
 where e.publication_state = 'PUBLISHED'
   and e.is_canary = false                       -- canaries never publish
@@ -3268,7 +3295,7 @@ create index map_feature_country_idx      on api.map_feature(country_code);
 create index map_feature_slug_idx         on api.map_feature(slug);
 
 comment on materialized view api.map_feature is
-  'Published map projection. The WHERE clause is the security boundary: materialised views do not enforce RLS. geom_3857 is stored and indexed so vector-tile queries are index scans — transforming per row at query time is a sequential scan of the whole register on every tile.';
+  'Published map projection. The WHERE clause is the security boundary: materialised views do not enforce RLS, and it reads publication_state on core.entity and core.proposition directly rather than a flag cached in the rollup. geom_3857 is stored and indexed so vector-tile queries are index scans — transforming per row at query time is a sequential scan of the whole register on every tile.';
 
 -- ---------------------------------------------------------------------
 -- Server-side clustering, pre-aggregated per zoom bucket.
@@ -3371,17 +3398,45 @@ returns bytea language sql stable parallel safe security invoker as $$
     from src where geom is not null
 $$;
 
+-- The blank-map guard is expressed in terms of state that a rollup rebuild
+-- cannot touch. Expressed in terms of a column the rebuild destroys, the one
+-- failure it exists to catch is the one failure it cannot see.
 create or replace function api.refresh_map() returns void
 language plpgsql security definer set search_path = api, core, registry, public as $$
-declare n_pub integer; n_feat integer;
+declare n_pub integer; n_feat integer; n_missing integer;
 begin
+  -- A published proposition with no rollup row at all is a broken cache, and
+  -- it is also the state in which the band-D check below would itself go
+  -- blind. core.assert_publishable() refuses publication until every
+  -- proposition of the entity has a rollup row, so this can only mean the
+  -- cache was emptied and not rebuilt. Refuse before refreshing, rather than
+  -- shipping an empty map and reporting success.
+  select count(*) into n_missing
+    from core.entity e
+    join core.proposition p on p.entity_id = e.entity_id
+     and p.publication_state = 'PUBLISHED'
+    left join core.proposition_rollup pr on pr.proposition_id = p.proposition_id
+   where e.publication_state = 'PUBLISHED' and e.is_canary = false
+     and pr.proposition_id is null;
+  if n_missing > 0 then
+    raise exception
+      '% published proposition(s) have no core.proposition_rollup row. The grade cache is incomplete - rebuild it with core.recompute_proposition() before refreshing the map.', n_missing;
+  end if;
+
   refresh materialized view concurrently api.map_feature;
   refresh materialized view concurrently api.map_cluster;
   -- A refresh that silently produced nothing is the failure mode of a
   -- SECURITY DEFINER refresh under FORCE ROW LEVEL SECURITY: the definer sees
   -- zero rows and the map goes blank without an error. Fail loudly instead.
-  select count(*) into n_pub from core.proposition_rollup
-   where is_published and grade in ('A','B','C','D');
+  -- Counted from publication_state and the rollup's GRADE, never from a
+  -- publication flag cached beside the grade.
+  select count(*) into n_pub
+    from core.entity e
+    join core.proposition p on p.entity_id = e.entity_id and p.class = 'EXIST'
+     and p.publication_state = 'PUBLISHED'
+    join core.proposition_rollup pr on pr.proposition_id = p.proposition_id
+   where e.publication_state = 'PUBLISHED' and e.is_canary = false
+     and coalesce(core.grade_rank(pr.grade),0) >= core.grade_rank('D');
   select count(*) into n_feat from api.map_feature;
   if n_pub > 0 and n_feat = 0 then
     raise exception
@@ -3568,8 +3623,11 @@ create policy anon_read on core.geometry_assertion for select to anon, authentic
   using (core.entity_is_public(entity_id));
 create policy anon_read on core.proposition for select to anon, authenticated
   using (publication_state = 'PUBLISHED' and core.entity_is_public(entity_id));
+-- The cache does not get a vote on publication. This reads the authoritative
+-- publication_state through the same SECURITY DEFINER helper every other
+-- child table uses, so a rollup rebuild cannot change what anon can see.
 create policy anon_read on core.proposition_rollup for select to anon, authenticated
-  using (is_published and core.proposition_is_public(proposition_id));
+  using (core.proposition_is_public(proposition_id));
 create policy anon_read on core.proposition_erp for select to anon, authenticated
   using (core.proposition_is_public(proposition_id));
 create policy anon_read on core.claim for select to anon, authenticated
@@ -3795,7 +3853,8 @@ select ar.agent,
 create view api.telemetry_band_occupancy with (security_invoker = true) as
 select pr.class, pr.grade, count(*) as n,
        round(100.0 * count(*) / nullif(sum(count(*)) over (), 0), 2) as pct
-  from core.proposition_rollup pr where pr.is_published
+  from core.proposition_rollup pr
+ where core.proposition_is_public(pr.proposition_id)
  group by pr.class, pr.grade;
 
 create view api.telemetry_refutation with (security_invoker = true) as
@@ -3803,7 +3862,8 @@ select count(*) filter (where pr.grade='R') as refuted,
        count(*) filter (where pr.refutation_state='R2') as r2_only,
        count(*) as graded,
        (select count(*) from core.refutation where reversed_at is not null) as reversed
-  from core.proposition_rollup pr where pr.is_published;
+  from core.proposition_rollup pr
+ where core.proposition_is_public(pr.proposition_id);
 
 grant select on api.proposition_badge, api.evidence_row, api.alternative_table,
                 api.claims_register, api.methodology_coverage, api.expected_record_table,

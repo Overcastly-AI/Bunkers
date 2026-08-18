@@ -1,0 +1,370 @@
+SQL executed against fsszjobpykbpmctlzxiv during the hardening run
+Full statements, verbatim, in execution order.
+==============================================================================
+
+--- [1] agent a6a78e049f :: READ ----------------------------------------
+select current_setting('pgrst.db_schemas', true) as cur,
+ (select array_agg(setconfig) from pg_db_role_setting s join pg_roles r on r.oid=s.setrole where r.rolname='authenticator') as auth_settings,
+ (select array_agg(setconfig) from pg_db_role_setting s where s.setrole=0) as db_settings,
+ version();
+
+--- [2] agent a6a78e049f :: READ ----------------------------------------
+select table_name, table_type from information_schema.tables where table_schema='api' union all select matviewname,'MATVIEW' from pg_matviews where schemaname='api' order by 1;
+
+--- [3] agent a6a78e049f :: READ ----------------------------------------
+select current_user, session_user,
+  (select rolsuper from pg_roles where rolname=current_user) as is_super,
+  (select string_agg(r2.rolname,',') from pg_auth_members m join pg_roles r2 on r2.oid=m.roleid join pg_roles r1 on r1.oid=m.member where r1.rolname=current_user) as memberships,
+  current_setting('supautils.privileged_role', true) as priv_role,
+  current_setting('supautils.reserved_roles', true) as reserved_roles;
+
+--- [4] agent a6a78e049f :: WRITE ----------------------------------------
+alter role authenticator set pgrst.db_schemas = 'api';
+
+--- [5] agent a6a78e049f :: READ ----------------------------------------
+select r.rolname, s.setconfig from pg_db_role_setting s join pg_roles r on r.oid=s.setrole where r.rolname='authenticator';
+
+--- [6] agent a6a78e049f :: READ ----------------------------------------
+select n.nspname,
+  has_schema_privilege('anon', n.oid, 'USAGE') as anon_usage,
+  has_schema_privilege('authenticated', n.oid, 'USAGE') as authd_usage,
+  has_schema_privilege('authenticator', n.oid, 'USAGE') as authr_usage
+from pg_namespace n where n.nspname in ('api','core','ingest','registry','public','extensions','graphql_public');
+
+--- [7] agent a6a78e049f :: READ ----------------------------------------
+notify pgrst, 'reload config';
+
+--- [8] agent a6a78e049f :: READ ----------------------------------------
+select p.proname, n.nspname from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='graphql_public'
+union all select c.relname, 'graphql_public-rel' from pg_class c join pg_namespace n on n.oid=c.relnamespace where n.nspname='graphql_public';
+
+--- [9] agent a6a78e049f :: WRITE ----------------------------------------
+create extension if not exists http with schema extensions;
+revoke all on schema extensions from anon, authenticated;
+select extname, n.nspname from pg_extension e join pg_namespace n on n.oid=e.extnamespace where extname='http';
+
+--- [10] agent a6a78e049f :: WRITE ----------------------------------------
+grant usage on schema extensions to anon, authenticated;
+revoke all on function extensions.http_get(text) from public, anon, authenticated;
+revoke all on function extensions.http(extensions.http_request) from public, anon, authenticated;
+select has_schema_privilege('anon','extensions','USAGE') as anon_ext_usage,
+       has_function_privilege('anon','extensions.http_get(text)','EXECUTE') as anon_http;
+
+--- [11] agent a6a78e049f :: WRITE ----------------------------------------
+grant usage on schema extensions to anon, authenticated;
+select p.oid::regprocedure::text as sig from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+join pg_depend d on d.objid=p.oid and d.deptype='e'
+join pg_extension e on e.oid=d.refobjid and e.extname='http'
+order by 1;
+
+--- [12] agent a6a78e049f :: READ ----------------------------------------
+with k as (select 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzc3pqb2JweWticG1jdGx6eGl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MjY1NjQsImV4cCI6MjEwMjUwMjU2NH0.LTrvjew5mXaR-fyi5IgX9I61V-RVx9R4jK2h4rpNnTU'::text as anon),
+probe(label, path) as (values
+  ('api.claims_register',        '/rest/v1/claims_register?select=*&limit=1'),
+  ('api.map_feature (matview)',  '/rest/v1/map_feature?select=*&limit=1'),
+  ('api.proposition_badge',      '/rest/v1/proposition_badge?select=*&limit=1'),
+  ('public.spatial_ref_sys',     '/rest/v1/spatial_ref_sys?select=srid&limit=1'),
+  ('rpc st_estimatedextent',     '/rest/v1/rpc/st_estimatedextent'),
+  ('rpc ops_publish_entity',     '/rest/v1/rpc/ops_publish_entity'),
+  ('core.entity',                '/rest/v1/entity?select=*&limit=1'),
+  ('ingest.agent_run',           '/rest/v1/agent_run?select=*&limit=1')
+)
+select probe.label,
+       r.status,
+       left(r.content, 220) as body
+from probe, k,
+lateral (select * from extensions.http((
+  'GET',
+  'https://fsszjobpykbpmctlzxiv.supabase.co' || probe.path,
+  array[extensions.http_header('apikey', k.anon), extensions.http_header('Authorization','Bearer '||k.anon)],
+  null, null)::extensions.http_request)) r;
+
+--- [13] agent a6a78e049f :: READ ----------------------------------------
+select p.oid::regprocedure::text as sig, p.prosecdef, p.proconfig,
+       pg_get_function_result(p.oid) as result
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where n.nspname='api' order by 1;
+
+--- [14] agent a6a78e049f :: READ ----------------------------------------
+with k as (select 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZzc3pqb2JweWticG1jdGx6eGl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY5MjY1NjQsImV4cCI6MjEwMjUwMjU2NH0.LTrvjew5mXaR-fyi5IgX9I61V-RVx9R4jK2h4rpNnTU'::text as anon),
+probe(label, path, body) as (values
+  ('rpc api.map_viewport', '/rest/v1/rpc/map_viewport', '{"west":-80.0,"south":37.0,"east":-79.0,"north":38.0,"zoom":8}'),
+  ('rpc api.map_tile',     '/rest/v1/rpc/map_tile',     '{"z":8,"x":72,"y":100}'),
+  ('rpc api.candidate_detail','/rest/v1/rpc/candidate_detail','{"p_slug":"nonexistent"}'),
+  ('rpc api.refresh_map',  '/rest/v1/rpc/refresh_map',  '{}')
+)
+select probe.label, r.status, left(r.content,200) as resp
+from probe, k, lateral (select * from extensions.http((
+  'POST','https://fsszjobpykbpmctlzxiv.supabase.co'||probe.path,
+  array[extensions.http_header('apikey',k.anon), extensions.http_header('Authorization','Bearer '||k.anon)],
+  'application/json', probe.body)::extensions.http_request)) r;
+
+--- [15] agent a6a78e049f :: READ ----------------------------------------
+begin;
+alter extension postgis set schema extensions;
+select 'relocation succeeded' as note,
+       (select n.nspname from pg_extension e join pg_namespace n on n.oid=e.extnamespace where extname='postgis') as now_in;
+rollback;
+
+--- [16] agent a6a78e049f :: READ ----------------------------------------
+select name, relocatable, installed_version from pg_available_extensions ae
+  join pg_available_extension_versions v on v.name=ae.name and v.version=ae.default_version
+where ae.name in ('postgis','pg_trgm','btree_gist','http');
+
+--- [17] agent a6a78e049f :: READ ----------------------------------------
+select v.name, v.relocatable, ae.installed_version, v.version
+from pg_available_extensions ae
+join pg_available_extension_versions v on v.name=ae.name and v.version=ae.default_version
+where v.name in ('postgis','pg_trgm','btree_gist','http') order by 1;
+
+--- [18] agent a6a78e049f :: READ ----------------------------------------
+-- every function in our schemas (plus public ops_*) with NO pinned search_path
+-- whose body textually references a PostGIS name unqualified
+with f as (
+  select p.oid, n.nspname, p.oid::regprocedure::text as sig, p.prolang::regtype::text as lang,
+         l.lanname, p.prosrc, p.proconfig, p.prosecdef,
+         pg_get_functiondef(p.oid) as def
+  from pg_proc p
+  join pg_namespace n on n.oid=p.pronamespace
+  join pg_language l on l.oid=p.prolang
+  where n.nspname in ('core','registry','api','ingest')
+     or (n.nspname='public' and p.proname like 'ops_%')
+)
+select nspname, sig, lanname, prosecdef,
+       (proconfig is not null and array_to_string(proconfig,',') like '%search_path%') as pinned,
+       -- which postgis tokens appear unqualified in the body
+       (select string_agg(distinct m[1], ', ')
+        from regexp_matches(
+              regexp_replace(prosrc, '(extensions|public)\.(st_|geometry|geography|box2d|box3d|postgis_)', 'QUALIFIED_', 'gi'),
+              '(?<![a-zA-Z0-9_.])(st_[a-z0-9_]+|geometry|geography|box2d|box3d|postgis_[a-z0-9_]+)(?![a-zA-Z0-9_])',
+              'gi') m) as unqualified_postgis_tokens
+from f
+where (select count(*) from regexp_matches(
+              regexp_replace(prosrc, '(extensions|public)\.(st_|geometry|geography|box2d|box3d|postgis_)', 'QUALIFIED_', 'gi'),
+              '(?<![a-zA-Z0-9_.])(st_[a-z0-9_]+|geometry|geography|box2d|box3d|postgis_[a-z0-9_]+)(?![a-zA-Z0-9_])','gi')) > 0
+order by pinned, nspname, sig;
+
+--- [19] agent a6a78e049f :: READ ----------------------------------------
+select prosrc from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='core' and p.proname='assert_publishable';
+
+--- [20] agent a6a78e049f :: READ ----------------------------------------
+-- (a) unpinned functions using PostGIS OPERATORS unqualified
+select n.nspname||'.'||p.proname as fn, 'operator' as kind
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where n.nspname in ('core','registry','api','ingest')
+  and (p.proconfig is null or array_to_string(p.proconfig,',') not like '%search_path%')
+  and (p.prosrc ~ '&&' or p.prosrc ~ '<->' or p.prosrc ~* '::\s*(geometry|geography)')
+union all
+-- (b) expression indexes (evaluated under CREATE INDEX / REINDEX = restricted)
+select i.indexrelid::regclass::text, 'expr_index: '||pg_get_indexdef(i.indexrelid)
+from pg_index i join pg_class c on c.oid=i.indrelid join pg_namespace n on n.oid=c.relnamespace
+where n.nspname in ('core','registry','api','ingest') and i.indexprs is not null
+union all
+-- (c) functions called by matview definitions
+select c.relname, 'matview_def_refs_function: '||coalesce((
+   select string_agg(distinct pr.oid::regprocedure::text, ', ')
+   from pg_depend d join pg_proc pr on pr.oid=d.refobjid
+   join pg_rewrite rw on rw.oid=d.objid
+   where rw.ev_class=c.oid and d.refclassid='pg_proc'::regclass), '(none)')
+from pg_class c join pg_namespace n on n.oid=c.relnamespace
+where c.relkind='m' and n.nspname='api';
+
+--- [21] agent a6a78e049f :: READ ----------------------------------------
+set search_path = pg_catalog, pg_temp;
+refresh materialized view api.map_feature;
+refresh materialized view api.map_cluster;
+select 'both matviews refreshed under search_path=pg_catalog,pg_temp' as result,
+  (select count(*) from api.map_feature) as features,
+  (select count(*) from api.map_cluster) as clusters;
+
+--- [22] agent a6a78e049f :: READ ----------------------------------------
+select n.nspname||'.'||p.proname as fn, l.lanname, p.proconfig, p.prosrc
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace join pg_language l on l.oid=p.prolang
+where n.nspname='core' and p.proname in ('grade_rank','rank_grade');
+
+--- [23] agent a6a78e049f :: READ ----------------------------------------
+select e.entity_id, e.slug, e.lifecycle_state,
+       (select count(*) from core.geometry_assertion g where g.entity_id=e.entity_id and g.superseded_at is null) as geoms
+from core.entity e order by geoms desc, e.slug;
+
+--- [24] agent a6a78e049f :: READ ----------------------------------------
+select e.entity_id, e.slug, e.publication_state,
+       (select count(*) from core.geometry_assertion g where g.entity_id=e.entity_id and g.superseded_at is null) as geoms
+from core.entity e order by geoms desc, e.slug;
+
+--- [25] agent a6a78e049f :: READ ----------------------------------------
+set search_path = pg_catalog, pg_temp;
+select 'core.render_geometry' as fn, (select count(*) from core.render_geometry('f57c5144-4f76-4923-b173-c3170853b8e4'::uuid)) as rows_ok;
+
+--- [26] agent a6a78e049f :: READ ----------------------------------------
+set search_path = pg_catalog, pg_temp;
+select 'api.map_viewport' as fn, api.map_viewport(-80.0,37.0,-79.0,38.0,8,null,null,null) is not null as ok
+union all select 'api.map_tile', api.map_tile(8,72,100) is not null
+union all select 'api.candidate_detail', api.candidate_detail('test-mappable') is not null;
+
+--- [27] agent a6a78e049f :: READ ----------------------------------------
+begin;
+create function core._ctl_unpinned() returns text language plpgsql as $$
+declare g geometry; begin g := st_buffer(st_point(0,0)::geography, 10)::geometry; return 'ok'; end $$;
+create function core._ctl_pinned() returns text language plpgsql set search_path = core, public, extensions as $$
+declare g geometry; begin g := st_buffer(st_point(0,0)::geography, 10)::geometry; return 'ok'; end $$;
+set local search_path = pg_catalog, pg_temp;
+select 'pinned control' as which, core._ctl_pinned() as result;
+
+--- [28] agent a6a78e049f :: READ ----------------------------------------
+set search_path = pg_catalog, pg_temp;
+select core._ctl_unpinned() as unpinned_result;
+
+--- [29] agent a6a78e049f :: WRITE ----------------------------------------
+create function core._ctl_unpinned() returns text language plpgsql as $$
+declare g geometry; begin g := st_buffer(st_point(0,0)::geography, 10)::geometry; return 'ok'; end $$;
+
+create function core._ctl_pinned() returns text language plpgsql set search_path = core, public, extensions as $$
+declare g geometry; begin g := st_buffer(st_point(0,0)::geography, 10)::geometry; return 'ok'; end $$;
+
+do $outer$
+declare r text;
+begin
+  perform set_config('search_path','pg_catalog, pg_temp', true);
+  begin r := core._ctl_unpinned(); raise notice 'UNPINNED -> %', r;
+  exception when others then raise notice 'UNPINNED -> FAILED: % %', sqlstate, sqlerrm; end;
+  begin r := core._ctl_pinned();   raise notice 'PINNED   -> %', r;
+  exception when others then raise notice 'PINNED   -> FAILED: % %', sqlstate, sqlerrm; end;
+end $outer$;
+
+drop function core._ctl_unpinned();
+drop function core._ctl_pinned();
+select 'control complete' as done;
+
+--- [30] agent a6a78e049f :: WRITE ----------------------------------------
+create function core._ctl_unpinned() returns text language plpgsql as $$
+declare g geometry; begin g := st_buffer(st_point(0,0)::geography, 10)::geometry; return 'ok'; end $$;
+create function core._ctl_pinned() returns text language plpgsql set search_path = core, public, extensions as $$
+declare g geometry; begin g := st_buffer(st_point(0,0)::geography, 10)::geometry; return 'ok'; end $$;
+
+create function core._ctl_run() returns table(which text, outcome text) language plpgsql as $outer$
+declare r text;
+begin
+  perform set_config('search_path','pg_catalog, pg_temp', true);
+  begin r := core._ctl_unpinned(); which:='unpinned'; outcome:='SUCCEEDED: '||r;
+  exception when others then which:='unpinned'; outcome:='FAILED '||sqlstate||': '||sqlerrm; end;
+  return next;
+  begin r := core._ctl_pinned(); which:='pinned'; outcome:='SUCCEEDED: '||r;
+  exception when others then which:='pinned'; outcome:='FAILED '||sqlstate||': '||sqlerrm; end;
+  return next;
+end $outer$;
+
+select * from core._ctl_run();
+
+--- [31] agent a6a78e049f :: WRITE ----------------------------------------
+drop function if exists core._ctl_run();
+drop function if exists core._ctl_unpinned();
+drop function if exists core._ctl_pinned();
+select count(*) as leftover_ctl from pg_proc p join pg_namespace n on n.oid=p.pronamespace where n.nspname='core' and p.proname like '\_ctl%';
+
+--- [32] agent a6a78e049f :: READ ----------------------------------------
+select 'as_postgres' as who,
+ (select count(*) from api.claims_register) as claims,
+ (select count(*) from api.map_feature) as mapfeat,
+ (select count(*) from api.proposition_badge) as badges,
+ (select count(*) from api.evidence_row) as evidence,
+ (select count(*) from api.alternative_table) as alts,
+ (select count(*) from api.expected_record_table) as expected,
+ (select count(*) from api.methodology_coverage) as methcov;
+
+--- [33] agent a6a78e049f :: READ ----------------------------------------
+select e.slug, e.publication_state, e.published_at,
+  (select count(*) from core.proposition p where p.entity_id=e.entity_id) as props,
+  (select count(*) from core.proposition_rollup pr where pr.entity_id=e.entity_id) as rollups
+from core.entity e where e.publication_state='PUBLISHED';
+
+--- [34] agent acbf42b867 :: READ ----------------------------------------
+select n.nspname, p.proname, pg_get_function_identity_arguments(p.oid) as args
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where n.nspname in ('core','api','ingest','registry','public')
+  and pg_get_functiondef(p.oid) ilike '%is_published%'
+order by 1,2;
+
+--- [35] agent acbf42b867 :: READ ----------------------------------------
+select schemaname, tablename, policyname, cmd, qual, with_check
+from pg_policies where tablename='proposition_rollup';
+
+--- [36] agent acbf42b867 :: READ ----------------------------------------
+select n.nspname||'.'||p.proname as fn
+from pg_proc p join pg_namespace n on n.oid=p.pronamespace
+where n.nspname in ('core','api','ingest','public') and p.prokind='f'
+  and p.prosrc ilike '%is_published%'
+order by 1;
+
+--- [37] agent acbf42b867 :: READ ----------------------------------------
+select c.relname, c.relkind, c.relrowsecurity, c.relforcerowsecurity
+from pg_class c join pg_namespace n on n.oid=c.relnamespace
+where n.nspname='core' and c.relname='proposition_rollup';
+
+--- [38] agent acbf42b867 :: READ ----------------------------------------
+select n.nspname || '.' || p.proname as fn from pg_proc p, pg_namespace n where n.oid = p.pronamespace and n.nspname in ('core','api','ingest','public') and p.prokind = 'f' and position('is_published' in p.prosrc) > 0 order by 1;
+
+--- [39] agent acbf42b867 :: READ ----------------------------------------
+select n.nspname||'.'||c.relname as v, c.relkind from pg_class c, pg_namespace n where n.oid=c.relnamespace and c.relkind in ('v','m') and n.nspname in ('api','core','registry') and position('is_published' in pg_get_viewdef(c.oid)) > 0 order by 1;
+
+--- [40] agent acbf42b867 :: READ ----------------------------------------
+select
+ (select count(*) from core.entity) as entities,
+ (select count(*) from core.entity where publication_state='PUBLISHED') as pub_entities,
+ (select count(*) from core.proposition) as props,
+ (select count(*) from core.proposition where publication_state='PUBLISHED') as pub_props,
+ (select count(*) from core.proposition_rollup) as rollups,
+ (select count(*) from core.proposition_rollup where is_published) as rollup_pub,
+ (select count(*) from core.proposition_rollup where current_grade_event_id is not null) as rollup_evt,
+ (select count(*) from core.grade_event) as grade_events,
+ (select count(*) from api.map_feature) as map_features;
+
+--- [41] agent acbf42b867 :: READ ----------------------------------------
+select slug, canonical_name, publication_state, is_canary from core.entity order by slug;
+
+--- [42] agent acbf42b867 :: READ ----------------------------------------
+select ops_publish_entity(entity_id, 'sec6.1-verification') from core.entity where slug in ('test-greenbrier','test-mappable');
+
+--- [43] agent acbf42b867 :: READ ----------------------------------------
+select api.refresh_map();
+
+--- [44] agent acbf42b867 :: READ ----------------------------------------
+select 'A. BASELINE (live PG17, entities re-published)' as stage,
+ (select count(*) from core.entity where publication_state='PUBLISHED') as pub_entities,
+ (select count(*) from core.proposition where publication_state='PUBLISHED') as pub_props,
+ (select count(*) from core.proposition_rollup where is_published) as rollup_is_published,
+ (select count(*) from core.proposition_rollup where current_grade_event_id is not null) as rollup_with_event,
+ (select count(*) from core.proposition_rollup pr where pr.is_published and core.proposition_is_public(pr.proposition_id)) as anon_visible_rollup_rows,
+ (select count(*) from api.map_feature) as map_features;
+
+--- [45] agent acbf42b867 :: WRITE ----------------------------------------
+do $$
+begin
+  delete from core.proposition_rollup;
+  perform core.recompute_proposition(proposition_id) from core.proposition
+    order by case class when 'EXIST' then 0 else 1 end;
+  perform core.recompute_proposition(proposition_id) from core.proposition
+    order by case class when 'EXIST' then 0 else 1 end;
+end $$;
+select 'B. AFTER the REQ10 delete-and-rebuild, BEFORE the fix' as stage,
+ (select count(*) from core.entity where publication_state='PUBLISHED') as pub_entities,
+ (select count(*) from core.proposition where publication_state='PUBLISHED') as pub_props,
+ (select count(*) from core.proposition_rollup where is_published) as rollup_is_published,
+ (select count(*) from core.proposition_rollup where current_grade_event_id is not null) as rollup_with_event,
+ (select count(*) from core.proposition_rollup pr where pr.is_published and core.proposition_is_public(pr.proposition_id)) as anon_visible_rollup_rows,
+ (select count(*) from api.map_feature) as map_features;
+
+--- [46] agent acbf42b867 :: READ ----------------------------------------
+select api.refresh_map() as guard_did_not_raise;
+
+--- [47] agent acbf42b867 :: READ ----------------------------------------
+select api.refresh_map();
+
+--- [48] agent acbf42b867 :: READ ----------------------------------------
+select 'C. AFTER refresh_map() returned SUCCESS' as stage,
+ (select count(*) from core.entity where publication_state='PUBLISHED') as pub_entities,
+ (select count(*) from core.proposition where publication_state='PUBLISHED') as pub_props,
+ (select count(*) from core.proposition_rollup where is_published) as rollup_is_published,
+ (select count(*) from api.map_feature) as map_features,
+ (select count(*) from api.map_cluster) as map_clusters;
+

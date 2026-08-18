@@ -787,20 +787,91 @@ begin
 end $$;
 
 -- The rollup really is a cache: drop it and rebuild it exactly.
+--
+-- Comparing only `grade` here is what allowed the rollup to lose is_published
+-- and current_grade_event_id on every rebuild while this test still reported
+-- success: it certified the property it was violating. The comparison is now
+-- over EVERY column the rollup holds, over what an anonymous reader actually
+-- sees, and over the whole public badge projection including its grade-event
+-- provenance. Publication is the boundary between what the register asserts
+-- publicly and what it is still deliberating, and a cache rebuild must not be
+-- able to cross it in EITHER direction: it must not unpublish, and it must
+-- not publish.
 do $$
 declare before_state jsonb; after_state jsonb;
+        before_badges jsonb; after_badges jsonb;
+        n_prov integer; n_private integer;
+        n_pub_props integer; n_anon_before integer; n_anon_after integer;
+        me text := current_user;
 begin
-  select jsonb_object_agg(proposition_id::text, grade::text) into before_state
-    from core.proposition_rollup;
+  -- Ground truth, read from publication_state on core.proposition and
+  -- core.entity -- different tables from the one under test, so the
+  -- comparisons below are not the tautology of counting an RLS-filtered set
+  -- against itself.
+  select count(*) into n_pub_props
+    from core.proposition p join core.entity e using (entity_id)
+   where p.publication_state = 'PUBLISHED'
+     and e.publication_state = 'PUBLISHED' and not e.is_canary;
+
+  -- Preconditions, so none of the comparisons can pass vacuously.
+  select count(*) into n_prov from api.proposition_badge where rubric_version is not null;
+  select count(*) into n_private from core.proposition_rollup pr
+   where not exists (select 1 from core.proposition p join core.entity e using (entity_id)
+                      where p.proposition_id = pr.proposition_id
+                        and p.publication_state = 'PUBLISHED'
+                        and e.publication_state = 'PUBLISHED' and not e.is_canary);
+  perform t_ok(n_pub_props > 0 and n_private > 0 and n_prov > 0,
+    'REQ10 the rebuild comparison is not vacuous: published rows, unpublished rows and badge provenance all exist to be lost');
+
+  select jsonb_object_agg(pr.proposition_id::text, to_jsonb(pr) - 'computed_at')
+    into before_state from core.proposition_rollup pr;
+  select jsonb_object_agg(b.proposition_id::text, to_jsonb(b) - 'graded_at')
+    into before_badges from api.proposition_badge b;
+
+  -- What an anonymous reader can actually see, decided by the RLS policy
+  -- itself rather than by re-stating its predicate.
+  execute 'set local role anon';
+  select count(*) into n_anon_before from core.proposition_rollup;
+  execute format('set local role %I', me);
+  perform t_ok(n_anon_before = n_pub_props,
+    format('REQ10 before the rebuild, anon sees exactly the %s published propositions in the rollup', n_pub_props));
+
   delete from core.proposition_rollup;
   perform core.recompute_proposition(proposition_id) from core.proposition
     order by case class when 'EXIST' then 0 else 1 end;
   perform core.recompute_proposition(proposition_id) from core.proposition
     order by case class when 'EXIST' then 0 else 1 end;
-  select jsonb_object_agg(proposition_id::text, grade::text) into after_state
-    from core.proposition_rollup;
+
+  select jsonb_object_agg(pr.proposition_id::text, to_jsonb(pr) - 'computed_at')
+    into after_state from core.proposition_rollup pr;
+  select jsonb_object_agg(b.proposition_id::text, to_jsonb(b) - 'graded_at')
+    into after_badges from api.proposition_badge b;
+  execute 'set local role anon';
+  select count(*) into n_anon_after from core.proposition_rollup;
+  execute format('set local role %I', me);
+
   perform t_ok(before_state = after_state,
-    'REQ10 the rollup is a CACHE: deleted and rebuilt from the observation rows, it is bit-identical');
+    'REQ10 the rollup is a CACHE: deleted and rebuilt from the observation rows, EVERY column is bit-identical, not just the grade');
+  perform t_ok(n_anon_after = n_pub_props,
+    'REQ10 a rollup rebuild crosses the publication boundary in NEITHER direction: anon still sees exactly the published propositions, no fewer and no more');
+  perform t_ok(before_badges = after_badges,
+    'REQ10 api.proposition_badge survives a rollup rebuild unchanged, grade-event provenance included');
+end $$;
+
+-- A rollup rebuild must not be able to PUBLISH either. An unpublished
+-- proposition that is recomputed stays invisible.
+do $$
+declare hidden uuid; n integer; me text := current_user;
+begin
+  select pr.proposition_id into hidden from core.proposition_rollup pr
+    join core.proposition p using (proposition_id)
+   where p.publication_state <> 'PUBLISHED' limit 1;
+  perform core.recompute_proposition(hidden);
+  execute 'set local role anon';
+  select count(*) into n from core.proposition_rollup where proposition_id = hidden;
+  execute format('set local role %I', me);
+  perform t_ok(n = 0,
+    'REQ10 recomputing an UNPUBLISHED proposition does not make it visible: the cache cannot publish');
 end $$;
 
 do $$ begin raise notice '=== ALL ACCEPTANCE TESTS PASSED ==='; end $$;
