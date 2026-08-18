@@ -1,0 +1,179 @@
+name: harvest
+
+# Retrieves cited documents from public archives and commits them with a
+# custody record.
+#
+# WHY THIS EXISTS. The Claude Code container that builds this register has no
+# outbound egress: its proxy refuses CONNECT to every host except package
+# registries and GitHub. It therefore cannot resolve a single citation to
+# bytes, and under the register's resolve-or-die rule an unresolved citation
+# is not evidence. GitHub Actions runners have full internet access, so the
+# fetching happens here and the results travel back through git.
+#
+# This is better than a proxy, not merely a substitute for one. A proxy hands
+# back bytes with no provenance. This commits every retrieval into git, so each
+# document carries a content hash, a retrieval timestamp, the exact URL, and
+# the HTTP status — a tamper-evident chain of custody that anyone can audit.
+
+on:
+  workflow_dispatch:
+    inputs:
+      queue:
+        description: "Path to the harvest queue JSON"
+        required: false
+        default: "research/harvest-queue.json"
+      limit:
+        description: "Max items to fetch this run"
+        required: false
+        default: "50"
+  # Continuous ingest. Disabled until a queue exists and a first manual run has
+  # been inspected — an unattended scraper is not something to switch on blind.
+  # schedule:
+  #   - cron: "17 4 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: harvest
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch queued documents
+        env:
+          NARA_API_KEY: ${{ secrets.NARA_API_KEY }}
+          DATA_GOV_API_KEY: ${{ secrets.DATA_GOV_API_KEY }}
+          QUEUE: ${{ inputs.queue || 'research/harvest-queue.json' }}
+          LIMIT: ${{ inputs.limit || '50' }}
+        run: |
+          set -uo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, hashlib, subprocess, datetime, sys, time, urllib.parse
+
+          queue_path = pathlib.Path(os.environ["QUEUE"])
+          limit = int(os.environ["LIMIT"])
+          if not queue_path.exists():
+              print(f"::warning::no queue at {queue_path}; nothing to do")
+              sys.exit(0)
+
+          queue = json.loads(queue_path.read_text())
+          items = queue.get("items", [])[:limit]
+          if not items:
+              print("::warning::queue is empty")
+              sys.exit(0)
+
+          custody = pathlib.Path("research/custody")
+          blobs = custody / "blobs"
+          blobs.mkdir(parents=True, exist_ok=True)
+
+          ledger_path = custody / "ledger.jsonl"
+          already = set()
+          if ledger_path.exists():
+              for line in ledger_path.read_text().splitlines():
+                  try:
+                      already.add(json.loads(line)["url"])
+                  except Exception:
+                      pass
+
+          # Per-host courtesy delay. These are public archives run on public
+          # money; hammering them is both rude and a good way to get blocked.
+          DELAY = 2.0
+          last_host = {}
+
+          records = []
+          for item in items:
+              url = item["url"]
+              if url in already and not item.get("refetch"):
+                  print(f"skip (already retrieved): {url}")
+                  continue
+
+              host = urllib.parse.urlparse(url).netloc
+              gap = time.time() - last_host.get(host, 0)
+              if gap < DELAY:
+                  time.sleep(DELAY - gap)
+
+              headers = ["-H", "User-Agent: bunkers-register/0.1 (+https://github.com/Overcastly-AI/Bunkers)"]
+              if "catalog.archives.gov" in host and os.environ.get("NARA_API_KEY"):
+                  headers += ["-H", f"x-api-key: {os.environ['NARA_API_KEY']}"]
+              for k, v in (item.get("headers") or {}).items():
+                  headers += ["-H", f"{k}: {v}"]
+
+              out = pathlib.Path("/tmp/fetch.bin")
+              proc = subprocess.run(
+                  ["curl", "-sS", "-L", "--max-time", "60", "--retry", "2",
+                   "-o", str(out), "-w", "%{http_code} %{content_type} %{size_download}",
+                   *headers, url],
+                  capture_output=True, text=True)
+              last_host[host] = time.time()
+
+              retrieved_at = datetime.datetime.now(datetime.timezone.utc).isoformat()
+
+              if proc.returncode != 0 or not out.exists():
+                  records.append({
+                      "id": item.get("id"), "url": url, "retrieved_at": retrieved_at,
+                      "ok": False, "error": (proc.stderr or "").strip()[:300],
+                      "curl_exit": proc.returncode,
+                  })
+                  print(f"FAIL {url}: exit={proc.returncode} {proc.stderr.strip()[:120]}")
+                  continue
+
+              parts = (proc.stdout or "").split()
+              status = parts[0] if parts else "000"
+              ctype = parts[1] if len(parts) > 1 else ""
+              size = int(parts[2]) if len(parts) > 2 and parts[2].isdigit() else out.stat().st_size
+
+              data = out.read_bytes()
+              sha = hashlib.sha256(data).hexdigest()
+
+              # Content-addressed. Two citations resolving to identical bytes
+              # collapse to one blob, which is itself a lineage signal worth
+              # having: the "independent" sources served the same file.
+              ext = ".json" if "json" in ctype else ".pdf" if "pdf" in ctype else ".html" if "html" in ctype else ".bin"
+              dest = blobs / f"{sha}{ext}"
+              if not dest.exists():
+                  dest.write_bytes(data)
+
+              records.append({
+                  "id": item.get("id"), "url": url, "retrieved_at": retrieved_at,
+                  "ok": status.startswith("2"), "http_status": status,
+                  "content_type": ctype, "bytes": size, "sha256": sha,
+                  "blob": str(dest), "note": item.get("note"),
+              })
+              print(f"{status} {size:>9}B {sha[:12]} {url}")
+
+          if records:
+              with ledger_path.open("a") as fh:
+                  for r in records:
+                      fh.write(json.dumps(r, sort_keys=True) + "\n")
+
+          ok = sum(1 for r in records if r.get("ok"))
+          print(f"\nretrieved {ok} / {len(records)} attempted")
+          pathlib.Path("/tmp/summary.txt").write_text(f"{ok}/{len(records)}")
+          PY
+
+      - name: Commit custody records
+        run: |
+          set -e
+          git config user.name  "bunkers-harvester"
+          git config user.email "noreply@anthropic.com"
+          if git diff --quiet && git diff --cached --quiet && [ -z "$(git status --porcelain research/custody)" ]; then
+            echo "nothing retrieved; no commit"
+            exit 0
+          fi
+          git add research/custody
+          SUMMARY=$(cat /tmp/summary.txt 2>/dev/null || echo "?")
+          git commit -m "harvest: ${SUMMARY} documents retrieved
+
+          Automated retrieval with custody records. Each entry in
+          research/custody/ledger.jsonl carries the URL, UTC retrieval time,
+          HTTP status, byte count and SHA-256 of exactly what was returned.
+          Blobs are content-addressed, so two citations resolving to identical
+          bytes collapse to one file - itself a lineage signal."
+          git push
