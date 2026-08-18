@@ -151,13 +151,31 @@ jobs:
               if not dest.exists():
                   dest.write_bytes(data)
 
+              # A 2xx does not mean you got what you asked for. Unauthenticated
+              # requests to catalog.archives.gov/api/v2 return 200 with the
+              # JavaScript app shell rather than 401 — measured on run #1. An
+              # agent trusting http_status alone would believe it held the
+              # document. Where the caller declared what it expected, check.
+              expect = item.get("expect")
+              mismatch = None
+              if expect and status.startswith("2"):
+                  body_head = data[:400].lstrip()[:200].decode("utf-8", "replace").lower()
+                  looks_html = body_head.startswith("<!doctype html") or body_head.startswith("<html")
+                  if expect == "json" and ("json" not in ctype.lower() or looks_html):
+                      mismatch = f"expected json, received {ctype or 'unknown'}" + (" (HTML document)" if looks_html else "")
+                  elif expect == "pdf" and "pdf" not in ctype.lower():
+                      mismatch = f"expected pdf, received {ctype or 'unknown'}"
+
               records.append({
                   "id": item.get("id"), "url": url, "retrieved_at": retrieved_at,
-                  "ok": status.startswith("2"), "http_status": status,
+                  "ok": status.startswith("2") and not mismatch,
+                  "http_status": status,
                   "content_type": ctype, "bytes": size, "sha256": sha,
                   "blob": str(dest), "note": item.get("note"),
+                  **({"content_mismatch": mismatch} if mismatch else {}),
               })
-              print(f"{status} {size:>9}B {sha[:12]} {url}")
+              flag = f"  !! {mismatch}" if mismatch else ""
+              print(f"{status} {size:>9}B {sha[:12]} {url}{flag}")
 
           if records:
               with ledger_path.open("a") as fh:

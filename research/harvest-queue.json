@@ -1,41 +1,30 @@
 {
   "_comment": [
-    "Documents for the harvester to retrieve. Written by adjudication agents that need a citation",
-    "resolved to bytes; consumed by .github/workflows/harvest.yml, which runs on GitHub's",
-    "infrastructure because the build container has no outbound egress.",
+    "Documents for the harvester to retrieve. Written by agents that need a citation resolved to",
+    "bytes; consumed by .github/workflows/harvest.yml, which runs on GitHub's infrastructure because",
+    "the build container has no outbound egress. See docs/HARVEST.md.",
     "",
-    "Each item: id (stable key), url, optional headers, optional note, optional refetch:true to",
-    "re-retrieve something already in the ledger.",
+    "Fields: id (stable key), url, optional note, optional headers, optional expect ('json'|'pdf')",
+    "to have the harvester verify content type, optional refetch:true to re-retrieve.",
     "",
-    "This starting set is a SMOKE TEST, not research. It is chosen to prove the mechanism and to",
-    "distinguish the failure modes from each other: a host needing no key, a host needing a key we",
-    "may not have yet, and a host that is expected to work regardless."
+    "SET 'expect' WHENEVER YOU KNOW THE FORMAT. Run #1 established that unauthenticated requests to",
+    "catalog.archives.gov/api/v2 return HTTP 200 carrying the JavaScript app shell rather than 401.",
+    "A 2xx alone does not mean you received the document you asked for."
   ],
   "items": [
     {
       "id": "smoke-nara-search",
       "url": "https://catalog.archives.gov/api/v2/records/search?q=underground%20facility&limit=5",
-      "note": "NARA Catalog API v2. Returns 401/403 without NARA_API_KEY in repo secrets - which is itself the useful signal, since it proves egress works and isolates the key as the only missing piece."
-    },
-    {
-      "id": "smoke-govinfo-collections",
-      "url": "https://api.govinfo.gov/collections?api_key=DEMO_KEY",
-      "note": "GovInfo accepts DEMO_KEY at a low rate limit, so this should succeed with no secret configured at all."
-    },
-    {
-      "id": "smoke-usaspending-agency",
-      "url": "https://api.usaspending.gov/api/v2/references/agency/456/",
-      "note": "USAspending needs no key. A clean 200 here proves the harvester path end to end."
-    },
-    {
-      "id": "smoke-usgs-tnm",
-      "url": "https://tnmaccess.nationalmap.gov/api/v1/products?datasets=US%20Topo&max=2",
-      "note": "USGS National Map product query, no key required. The historical topo series is the GEO axis's primary source."
+      "expect": "json",
+      "refetch": true,
+      "note": "Run #1 returned 200 with an HTML app shell - no API key configured. With expect:json the harvester now marks this ok:false instead of appearing to succeed. Re-fetch once NARA_API_KEY is set in repository secrets."
     },
     {
       "id": "smoke-fcc-asr",
       "url": "https://opendata.fcc.gov/resource/hp9q-qxhx.json?$limit=2",
-      "note": "FCC antenna structure registration via Socrata, no key required."
+      "expect": "json",
+      "refetch": true,
+      "note": "Run #1 returned 404 'dataset.missing' for id hp9q-qxhx - the dataset identifier is wrong and needs re-deriving from the FCC open data catalogue. Retained deliberately: this is a live example of a citation that does not resolve."
     }
   ]
 }
