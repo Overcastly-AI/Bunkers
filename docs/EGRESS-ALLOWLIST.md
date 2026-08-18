@@ -376,9 +376,27 @@ a source is reachable only through an MCP connector, the network policy is irrel
 From a **new** session:
 
 ```bash
-curl -sS -o /dev/null -w "%{http_code}\n" "https://catalog.archives.gov/api/v2/records/search?q=test&limit=1"
+curl -sS -o /tmp/nara.json -w "http_code=%{http_code}\n" \
+  "https://catalog.archives.gov/api/v2/records/search?q=test&limit=1"; echo "exit=$?"; head -c 300 /tmp/nara.json
 ```
 
-`403` means the CONNECT was refused — the policy did not take. `401`/`403` *from NARA itself* with a
-JSON body means egress works and the API key is what is missing. `200` means both are in place, and the
-verification tier can run for the first time.
+Read the result by **exit code first**, not by `http_code`. When the proxy refuses the CONNECT tunnel
+there is no HTTP response at all, so `%{http_code}` reports `000` and the real signal is on stderr.
+
+| What you see | Meaning |
+|---|---|
+| `curl: (56) CONNECT tunnel failed, response 403` · `http_code=000` · `exit=56` | **Egress still blocked.** The policy did not take — check you selected Custom, saved, and started a NEW session. |
+| `http_code=403` or `401` with a JSON body in `/tmp/nara.json` | **Egress works.** NARA itself is rejecting the request; the API key is what is missing. |
+| `http_code=200` with records in the body | **Both in place.** The verification tier can run for the first time. |
+
+The distinction matters because both failures print a `403` somewhere, but they mean opposite things:
+one is our network policy refusing to open a tunnel, the other is NARA answering us over a tunnel that
+opened fine.
+
+Measured in this environment on 2026-08-18, before any policy change:
+
+```
+curl: (56) CONNECT tunnel failed, response 403
+000
+exit=56
+```
