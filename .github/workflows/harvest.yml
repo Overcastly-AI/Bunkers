@@ -16,6 +16,17 @@ name: harvest
 # the HTTP status — a tamper-evident chain of custody that anyone can audit.
 
 on:
+  # PRIMARY TRIGGER. An agent appends a citation to the queue and commits;
+  # the push fires the harvest. This is deliberate rather than a fallback:
+  # API dispatch is unavailable to the integration token here, and making the
+  # queue file the interface means the request for a document and the record
+  # of that request are the same committed object.
+  push:
+    branches: [main]
+    paths:
+      - "research/harvest-queue.json"
+      - ".github/workflows/harvest.yml"
+
   workflow_dispatch:
     inputs:
       queue:
