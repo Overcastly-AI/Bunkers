@@ -1,0 +1,1329 @@
+{
+ "beat": "The fringe corpus - tracing underground-facility claims backwards to their earliest traceable appearance (Denver International Airport, Dulce, DUMBs, the Phil Schneider material, claimed tunnel networks, and the older strata beneath them)",
+ "method_notes": "WHAT I ACTUALLY DID, AND THE ONE FACT THAT GOVERNS EVERYTHING BELOW.\n\nI resolved nothing. Not one citation in this file was retrieved to bytes. WebSearch works in this container; WebFetch is blocked for essentially every host that matters. I attempted four fetches and all four returned EGRESS_BLOCKED: archives.denverlibrary.org (the New World Airport Commission finding aid), www.loc.gov (the HAER survey for Wright-Patterson Building 18), digital.library.unt.edu (the mirror of LA-5354-MS), and cdnc.ucr.edu (the San Pedro News Pilot page of 30 January 1934). Those four are, not coincidentally, the four most diagnostic items I found. Everything else in this file is a search-result title or summary. Under BES 2.2 every row here is receipt_state UNRESOLVED-UNREACHABLE, receipt_class R-NONE, membership V0 - arithmetically inert on every condition, retained and displayed. V is empty for every proposition in this file, which means CAP-5 caps every one of them at F, and SCI is approximately 0, which under 9.4 step 2 returns X instead. That is why nearly every proposed_band reads 'X - VERIFICATION PENDING' with a named ceiling. It is the correct answer, not a hedge.\n\nThe distinction I have tried to hold on every line: a search summary describing a document is evidence that a description exists. It is not evidence of the document's contents. Where I state a report number, a patent number, an archival identifier or a date, it came from a search-result title or snippet and NOT from my own recall - and I have said so at each one. I generated no identifiers. Where I had no URL I left the field empty and marked the source CITED-BY-OTHERS-NOT-SEEN rather than constructing a plausible address. The one place I constructed a URL is the Google Patents address for US 3,693,731, and I have flagged it in the source record as constructed rather than retrieved.\n\nWHAT I SEARCHED. Roughly twenty targeted queries, built backwards from claims to artifacts rather than forwards from claims to descriptions: origin-artifact queries pinning a person, a date and a venue (Shufelt/LA Times January 1934; Dorr's notarised affidavit; the Coast to Coast broadcast of 21 February 1997; Lewin's NYTBR recantation; Amazing Stories March 1945; the Preparedness Expo lecture; Pollock 1976; the Goldwater letter of 28 March 1975; Chardy's Miami Herald piece of 5 July 1987); mundane-alternative queries designed to find the specific thing a claim is mistaking itself for (Wright-Patterson Building 18's real identity; the New World Airport Commission's real charter; the real DIA baggage tunnels; the Rainier Mesa U12 complex; Kittitas County property records); and documentary-kernel queries testing whether a fringe claim sits on a real record (the nuclear subterrene report series and patent; the Iran-Contra hearing exchange).\n\nWHAT WORKED. Backward origin-tracing works remarkably well against an indexed web, because origins are dated artifacts and dated artifacts are indexable. Mundane-alternative hunting worked better than I expected and produced the two best findings in the file - the Denver Public Library's processed archival collection for the New World Airport Commission, and the Library of Congress HAER survey identifying Wright-Patterson Building 18 as a Power Plant Laboratory Complex. Both are affirmative undercutting rows at instance scope from bodies with authority over the fact, which is a different and much stronger thing than an absence, and both are unreachable from here.\n\nWHAT I COULD NOT ESTABLISH, STATED PLAINLY. (1) Not one ORIGIN grade in this file is earned, because an ORIGIN proposition under BES requires a dated earliest artifact WITH a logged negative receipt across the canonical ORIGIN corpora - Wayback CDX with collapse=digest, IA full-text hits_inside, the AFU newsletter runs, UTZOO, Arctic Shift, Chronicling America and Open ONI - showing no earlier appearance. I ran zero of those. I can say where a claim is FOUND. I cannot yet say where it ORIGINATES, and the difference is the whole proposition class. (2) I could not test whether the convergent origin chains I kept finding are independent reconstructions or one account propagated; under BES 5.1.7's default they are SAME lineage and I have treated them so. (3) I could not verify a single one of the record numbers I am passing along.\n\nONE THING I WANT ON THE RECORD ABOUT MY OWN OUTPUT. I am one model running one set of weights. Under BES 5.0 and 5.1.2 everything in this file is ONE lineage, capped at one by construction, and if another agent in this fleet returns the same claims that is not corroboration - it is the same witness speaking twice. My fan-out exists for recall. It contributes nothing to confirmation and I have not written a line as though it does.",
+ "candidates": [
+  {
+   "name": "Dulce Base, Archuleta Mesa, Rio Arriba County, New Mexico",
+   "aliases": [
+    "Dulce",
+    "Archuleta Mesa base",
+    "the Dulce facility",
+    "Nightmare Hall",
+    "Level 7"
+   ],
+   "era": "Claim originates 1979-1980; expands 1987-1991; aggregated and vastly extended through the 1990s",
+   "jurisdiction": "Rio Arriba County, New Mexico; Jicarilla Apache Nation lands adjoin the claimed location",
+   "typology": "unknown-anomaly",
+   "location": {
+    "description": "Archuleta Mesa, north of the village of Dulce, New Mexico, on or adjacent to Jicarilla Apache Nation land near the Colorado state line. I hold no receipted coordinate. The claim itself has never been given consistent coordinates by its own sources.",
+    "precision": "claimed-only",
+    "basis": "Place name only, from search summaries. No parcel, no PLSS description, no coordinate was retrieved. I have not invented one."
+   },
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The Dulce underground-base claim first appears with Paul Bennewitz in Albuquerque, 1979-1980, and acquires its canonical multi-level-facility form through Thomas Allen LeVesque writing as 'Jason Bishop III' (1989) and the 'Thomas Castello' persona (c. 1987-1991), then through Bruce Alan Walton writing as 'BRANTON'.",
+     "assessment": "This is the proposition where the record is strongest and where the register can say something affirmative. Search summaries consistently give the same chain with the same dates, and the chain is not merely asserted: LeVesque is a real, dated, findable person (1948-2018) with a Wikipedia biography; his 1989 authorship of 'The Dulce Base' under the Bishop pseudonym is attributed in multiple summaries; and Norio Hayakawa published a dated post (2016) identifying LeVesque as the personality behind the Dulce story, followed by a 2021 post reporting LeVesque's admission that Castello never existed. What I have NOT done is the thing an ORIGIN grade actually requires under BES: the dated earliest artifact retrieved with a receipt, PLUS a logged negative receipt across the canonical ORIGIN corpora (Wayback CDX, IA hits_inside, the AFU newsletter runs, UTZOO, Arctic Shift) establishing that no earlier appearance exists. I ran none of those. I have search summaries describing a lineage, which is evidence that a description of a lineage exists.",
+     "proposed_band": "X - VERIFICATION PENDING (SCI approximately 0; V empty; ceiling if the 1989 Bishop text and the pre-1985 newsletter run resolve with a negative receipt behind them: A). The register's own calibration case A-12 already fixes this at A; nothing I found moves it, and nothing I found independently establishes it.",
+     "supporting": [
+      "Wikipedia, 'Thomas Allen LeVesque' - a standing biographical article dating him 1948-2018 and naming the Jason Bishop III pseudonym and the 1989 'The Dulce Base' text (search snippet only)",
+      "Norio Hayakawa, 'The mysterious Jason Bishop III...', noriohayakawa.wordpress.com, dated 27 November 2016 (search snippet only)",
+      "Norio Hayakawa, 'Thomas E. Castello never existed, admitted the late Tal Levesque...', dated 23 April 2021 (search snippet only)",
+      "Greg Bishop, 'Project Beta' (Paraview Pocket Books / Simon & Schuster, 2005) - the reconstruction of the Bennewitz affair (search snippet only; ISBN 9780743470926 appears in bookseller listings)"
+     ],
+     "undercutting": [
+      "None found against the origin chain itself. That is unsurprising and uninformative: I did not search the corpora in which an earlier appearance would live.",
+      "A structural caution that cuts against my own confidence: every summary I read gives the SAME chain in the SAME order. Under BES 5.1.6 that is a signature of one account propagated, not of independent reconstruction. The chain may all descend from Greg Bishop 2005 plus Hayakawa. I could not test that."
+     ],
+     "diagnosticity_note": "For an ORIGIN proposition, a dated artifact IS the evidence, so a resolved 1989 text would be D4 on its face. But the diagnosticity here is entirely in the negative receipt, not the positive one: showing the claim exists in 1989 is trivial, showing nothing earlier exists is the whole assertion, and I have not run a single one of the searches that would establish it. My positive evidence therefore discriminates nothing at all between 'the claim began in 1979-89' and 'the claim began earlier and these are the copies that survived indexing'."
+    },
+    {
+     "class": "EXIST",
+     "statement": "A substantial artificial subsurface structure exists beneath or within Archuleta Mesa, New Mexico.",
+     "assessment": "Nothing I retrieved supports this and one thing I retrieved cuts against it. The strongest single item is that Gabe Valdez - a New Mexico State Police officer, resolvable in unrelated records because his cattle-mutilation investigations were reported in the contemporaneous press from 1976, and placed in exactly the role asserted - concluded before his death in 2011 that the mutilations were environmental-contamination sampling connected to 1960s nuclear testing and that the objects reported around Archuleta Mesa were government aircraft. That is a named, position-to-know, in-role denial from the investigating officer, which BES 5.4 scores normally as UNDERCUTS. It is reported to me by search summaries of a Santa Fe New Mexican article and of a book by his son Greg Valdez, so it is second-hand and unreceipted.",
+     "proposed_band": "X - VERIFICATION PENDING (SCI approximately 0). Ceiling if the Valdez material and the county/BLM/Jicarilla land records resolve: R. The register's calibration case R-05 already fixes this at R (R1), on LeVesque's admission. I flag one honest weakness in that route below.",
+     "supporting": [
+      "None. I found no record of any class supporting a structure."
+     ],
+     "undercutting": [
+      "Santa Fe New Mexican article summary reporting Gabe Valdez's own conclusion that the mutilations were environmental sampling tied to 1960s nuclear testing on Jicarilla Apache land and that the Archuleta Mesa objects were government aircraft (search snippet only)",
+      "LeVesque's reported admission to Adam Gorightly that the Dulce material, including Castello, was fabricated creative writing (search snippet only, via Hayakawa 2021)"
+     ],
+     "diagnosticity_note": "Valdez's denial discriminates strongly, because the mundane alternative does not require a named investigating officer to affirmatively state that the anomalies had a different cause; it merely permits it. The LeVesque admission is the R1 trigger the register relies on. But note what R1 requires: 'an admission by a participant'. What exists is a THIRD-PARTY REPORT of an admission by a participant, relayed by Gorightly and republished by Hayakawa, after LeVesque's death. Under BES 5.4 attestation custody, an account of what a named person said is one lineage with whoever is asserting it, not with the person. That does not make it false - Gorightly and Hayakawa are both named, dated and findable - but it means the R1 route rests on unreceipted second-hand testimony about a dead man, and the register should say so rather than treat R1 as clean."
+    },
+    {
+     "class": "FUNC",
+     "statement": "A joint human and non-human research and detention facility of seven or more sublevels operated at Dulce.",
+     "assessment": "V is empty for this proposition and the artifacts that carry it are authored by the claimants, whose probative content is the claim itself - the BES 2.5 self-attestation exclusion in its cleanest form. Nothing survives to be graded. This is F-shaped, not R-shaped: nothing affirmatively contradicts a seven-level facility because there is nothing there to contradict.",
+     "proposed_band": "X - VERIFICATION PENDING on search completeness; provisional band F (CAP-5, V empty) once the canonical EXIST/FUNCTION search set is executed with logged negative receipts.",
+     "supporting": [],
+     "undercutting": [
+      "Same Valdez material as above, which speaks to the anomalies rather than to the sublevels"
+     ],
+     "diagnosticity_note": "No observation I hold discriminates. The sublevel-numbering convention itself is the diagnostic feature worth recording: BES-relevant because when it appears attached to a DIFFERENT real facility, it is evidence of textual descent from this cluster rather than of independent observation."
+    },
+    {
+     "class": "PROG",
+     "statement": "A US Air Force Office of Special Investigations disinformation operation was conducted against Paul Bennewitz in the early 1980s.",
+     "assessment": "This is the real documentary kernel under the folklore and it deserves separate grading, because it is the part most likely to be true and it is the part the fringe corpus got closest to. Richard Doty, an AFOSI special agent, has stated on the record in multiple named venues that he fed Bennewitz false material and produced hoaxed documents. Doty's AFOSI employment is the sort of fact that should be resolvable in records created for unrelated purposes, which would satisfy the position-to-know clause. But the CONTENT of the operation is Doty's own attestation about his own conduct, decades later, by a person whose credibility is itself contested - and self-serving admission is still self-attestation about an unwitnessed act. Greg Bishop's 2005 book is the disciplined secondary reconstruction.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if AFOSI personnel or investigative records resolve: B or better. On Doty's testimony alone the honest ceiling is C, and lower if his position-to-know record does not resolve.",
+     "supporting": [
+      "The Debrief, 'Richard Doty: Disinformation, Paul Bennewitz, and UAP Whistleblower Fallout' (search snippet only)",
+      "HuffPost, 'Ex-Air Force Law Enforcement Agent Says He Hoaxed Major UFO Mythologies' (search snippet only)",
+      "KLAS/8newsnow Mystery Wire interview with Doty (search snippet only)",
+      "Greg Bishop, 'Project Beta', 2005 (search snippet only)"
+     ],
+     "undercutting": [
+      "Doty's account of his own activities has been disputed within the same community that reports it; I did not retrieve the specific disputes and cannot weigh them."
+     ],
+     "diagnosticity_note": "A documented AFOSI disinformation operation discriminates powerfully IF established, because it supplies a complete alternative generator for the entire Dulce corpus - and it is the one alternative that explains why the material has the texture of official documents. It also carries a trap: an operation that produced hoaxed documents means that ANY apparently-official document surfacing from this lineage is presumptively suspect, which raises rather than lowers the verification bar on everything downstream."
+    }
+   ],
+   "mundane_alternative": "A11, claim fabricated - specifically, a fabrication generated inside a documented AFOSI disinformation operation against one man, then extended as deliberate creative writing by LeVesque. The co-null is A12, a decommissioned facility of a different known typology: Project Gasbuggy, the 1967 Plowshare nuclear detonation, is roughly 21 miles from Dulce and is a real, documented, government-caused subsurface anomaly in the same district. Distinguishing them: Gasbuggy is at INSTANCE scope for Gasbuggy and ADJACENT for Archuleta Mesa, so under BES 2.4 it is excluded from V here entirely - proximity is not support, and it is equally not a substitute. What would actually distinguish: BLM/Jicarilla land-status records, a spoil-volume signature for an excavation of the claimed scale, or any procurement trace. None retrieved.",
+   "claim_origin": "Paul Bennewitz, Albuquerque, 1979-1980, generating the raw material while being fed disinformation; Myrna Hansen's 1980 hypnotic regression supplying the underground imagery; Thomas Allen LeVesque as 'Jason Bishop III' authoring 'The Dulce Base' in 1989; the 'Thomas Castello' persona circulated c. 1987-1991; Bruce Alan Walton as 'BRANTON' aggregating and expanding through the 1990s. LeVesque reportedly admitted before his 2018 death that Castello never existed. I traced this through search summaries only; I did not retrieve the 1989 text, and I ran none of the negative searches that an ORIGIN grade requires.",
+   "expected_records": "For a facility of the claimed scale on or adjacent to tribal and federal land: BLM land-status and MLRS records (X2), a Jicarilla Apache Nation land record (X2), a spoil-volume signature for an excavation of the asserted magnitude (X3 - the universal floor for excavation of this size, and the most damaging absence available here), a procurement trace above 50M USD for an appropriated agency (X3), county deed records for any private parcel touched (X3). None of these absences is surprising for a classified facility; ALL of them are surprising for a facility of the asserted physical scale, because spoil and money are not classifiable. That is the correct reading and it is why this is not a case where silence protects the claim.",
+   "lineage_note": "Every summary I read gives the identical chain in the identical order with the identical dates. Under BES 5.1.6 that is consistent with one reconstruction propagated, most plausibly Greg Bishop 2005 plus Hayakawa, rather than with independent corroboration. I treat the whole set as ONE lineage under the default-SAME rule and record that I could not test it.",
+   "confidence_note": "The origin trace is the register's strongest available product here, and it is also the part I could least verify. I resolved nothing. The one genuinely new thing I can offer is a caution rather than a finding: the R1 refutation route depends on a second-hand report of a dead man's admission, and the register should carry that caveat explicitly rather than present R1 as settled.",
+   "sources": [
+    {
+     "citation": "Wikipedia, 'Thomas Allen LeVesque' (biographical article; dates 1948-2018, Jason Bishop III pseudonym, 1989 'The Dulce Base')",
+     "url": "https://en.wikipedia.org/wiki/Thomas_Allen_LeVesque",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a search-result title and summary asserting the biography exists. INFER: the article contains the dates and pseudonym attribution. Crowd-edited, so a lead under BES 2.4, never evidence."
+    },
+    {
+     "citation": "Norio Hayakawa, 'The mysterious Jason Bishop III (a.k.a. Tal Levesque)...', 27 November 2016",
+     "url": "https://noriohayakawa.wordpress.com/2016/11/27/the-mysterious-jason-bishop-iii-a-k-a-tal-levesque-a-k-a-tal-the-illusive-personality-behind-the-dulce-base-story/",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: title and date in results. INFER: contents. Self-published blog by a named, dated, long-active participant in the Albuquerque milieu - primary-adjacent, not institutional."
+    },
+    {
+     "citation": "Norio Hayakawa, 'Thomas E. Castello never existed, admitted the late Tal Levesque...', 23 April 2021",
+     "url": "https://noriohayakawa.wordpress.com/2021/04/23/thomas-e-castello-never-existed-admitted-the-late-tal-levesque-originator-of-the-dulce-base-myths/",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: title and date. This is the public locus of the confession claim. It is a third-party report of an admission, not the admission - the distinction that weakens the R1 route."
+    },
+    {
+     "citation": "Greg Bishop, 'Project Beta: The Story of Paul Bennewitz, National Security, and the Creation of a Modern UFO Myth', Paraview Pocket Books / Simon & Schuster, 2005, ISBN 9780743470926",
+     "url": "https://www.simonandschuster.com/books/Project-Beta/Greg-Bishop/9780743470926",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: publisher page title and ISBN in results. INFER: that it is the disciplined reconstruction the register's source list says it is. I did not read a page of it."
+    },
+    {
+     "citation": "The Debrief, 'Richard Doty: Disinformation, Paul Bennewitz, and UAP Whistleblower Fallout'",
+     "url": "https://thedebrief.org/richard-doty-disinformation-paul-bennewitz-and-uap-whistleblower-fallout/",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary asserting Doty admits feeding disinformation and producing hoaxed documents. This is Doty's own attestation relayed by an outlet, i.e. self-attestation about unwitnessed acts."
+    },
+    {
+     "citation": "HuffPost, 'Ex-Air Force Law Enforcement Agent Says He Hoaxed Major UFO Mythologies'",
+     "url": "https://www.huffpost.com/entry/exair-force-law-enforceme_b_5312650",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: headline and summary. A named outlet reporting Doty's claims. Same self-attestation caveat."
+    },
+    {
+     "citation": "Santa Fe New Mexican, 'Book claims government behind cattle mutilations' (reporting Gabe Valdez's conclusions)",
+     "url": "https://www.santafenewmexican.com/news/local_news/book-claims-government-behind-cattle-mutilations/article_5c78559b-39a3-5610-b49b-df0a8a327af8.html",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary reporting that Valdez, the investigating NM State Police officer, concluded the mutilations were environmental sampling tied to 1960s nuclear testing and that the Archuleta Mesa objects were government aircraft. This is the strongest undercutting item on the entry and I have it only at second hand."
+    },
+    {
+     "citation": "Wikipedia, 'Gabe Valdez'",
+     "url": "https://en.wikipedia.org/wiki/Gabe_Valdez",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: existence of a standing biographical article, which is weak support for the resolvability of the person. Crowd-edited."
+    },
+    {
+     "citation": "Wikipedia, 'Dulce Base'",
+     "url": "https://en.wikipedia.org/wiki/Dulce_Base",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: listed in results only. Recorded because the register's source registry uses it as the entry point for this cluster."
+    }
+   ]
+  },
+  {
+   "name": "Denver International Airport - claimed hardened federal facility beneath the terminal",
+   "aliases": [
+    "DIA",
+    "DEN",
+    "the Denver airport bunker",
+    "the deep underground base at DIA"
+   ],
+   "era": "Airport opened 28 February 1995; the underground-facility claim enters circulation 1993-1996",
+   "jurisdiction": "City and County of Denver, Colorado (the airport parcel lies in Denver, surrounded by Adams County)",
+   "typology": "unknown-anomaly",
+   "location": {
+    "description": "Beneath the Jeppesen Terminal and concourses, Denver International Airport, Denver, Colorado.",
+    "precision": "regional",
+    "basis": "Named airport and municipality only, from search summaries. No receipted coordinate, no parcel identifier, no plan sheet. None invented."
+   },
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The specific claim of a multi-level hardened complex beneath DIA - 'eight levels', a '4.5 square mile underground city', an '88.5 square mile base' - originates with Phil Schneider and was propagated in print by Alex Christopher, whose 'Pandora's Box' appeared in 1993 and whose 'Pandora's Box II: The Denver International Airport Story' followed in 1996.",
+     "assessment": "This is the most useful thing I found on this beat, and it is a LINEAGE finding rather than a new site. Search summaries of Christopher's own text attribute the specific figures to Schneider directly. If that holds, then the DIA claim and the '129 DUMBs' claim are not two independent bodies of folklore that happen to agree - they share a terminus in one man's 1995 lecture circuit. Under BES 5.7 that is the non-monotone case: discovering the link MERGES two lineages and can lower a grade rather than raise it. The register should record it as such. I have not read Christopher's text; I have search summaries of a scanned copy on Internet Archive and of at least two mirror transcriptions.",
+     "proposed_band": "X - VERIFICATION PENDING (SCI approximately 0). Ceiling if the 1993 and 1996 texts resolve with dated custody and the Wayback/Usenet negative receipt is run: A. Note that the ORIGIN grade for DIA is not in the calibration set; only the FUNCTION grade (E-01) is.",
+     "supporting": [
+      "archive.org item 'pandoras-box-ii-the-denver-international-airport-story-by-alex-christopher' - a dated, addressable IA identifier (search snippet only; I did not open it)",
+      "Two mirror transcriptions of the same text (docshare.tips, pdfcoffee.com) - copies, not independent sources",
+      "A dated KSEO interview transcript with Alex Christopher, 26 April 1996 (search snippet only)"
+     ],
+     "undercutting": [
+      "None found. I did not run the Wayback CDX or Usenet checks that would test whether the claim predates 1993."
+     ],
+     "diagnosticity_note": "For ORIGIN, a dated artifact is the evidence. The distinctive numerals - 8 levels, 4.5 square miles, 88.5 square miles - function as a fingerprint in exactly the way BES 5.1.7's distinctive-error test describes: they are idiosyncratic, unsourced, and carried forward verbatim, so any page bearing them is in this lineage. That is a genuinely discriminating test and it survives paraphrase."
+    },
+    {
+     "class": "EXIST",
+     "statement": "Large underground works exist at Denver International Airport.",
+     "assessment": "True, boring, and documented - and it is the reason this entry cannot be dismissed as pure fabrication. The airport's own operators acknowledge multiple subterranean levels beneath the main terminal: the passenger train tunnels between concourses, and the abandoned BAE automated baggage system with its 26 miles of steel track and 35-plus miles of conveyor, walled off after the system was retired in 2008. Reporting in 2025-2026 indicates the airport intends to convert some of those disused baggage tunnels into pedestrian walkways with construction from 2027. That last detail is the most evidentially interesting thing on this entry: an operator opening the voids to the public is a strong future UNDERCUTS row against the concealed-facility reading.",
+     "proposed_band": "X - VERIFICATION PENDING on my own search; substantively this is the register's A-grade half. Calibration E-01 already carries EXIST(large underground works at DIA) at A on T1 records. I resolved none of them.",
+     "supporting": [
+      "9News investigation into the underground tunnels of DIA (search snippet only)",
+      "Fox News report that the airport will open tunnels to the public (search snippet only)",
+      "Visit Denver and multiple trade summaries describing the BAE system's 26 miles of track and its 2008 abandonment (search snippets only; these are secondary and partly promotional)"
+     ],
+     "undercutting": [],
+     "diagnosticity_note": "Every one of these observations is on the BES universal-D0 list or its equivalent: large excavation volume, tunnels, dedicated electrical load, deep wells, a fuel farm. They are exactly what a very large airport built badly in the early 1990s produces. They establish EXIST and discriminate nothing about function. This is the point of calibration case E-01 and my search reproduced it exactly - six or seven real signals, none diagnostic."
+    },
+    {
+     "class": "FUNC",
+     "statement": "A hardened non-airport federal facility operates beneath the DIA terminal.",
+     "assessment": "V-claim is empty. Everything real I found is a property of the place, not of the claim, and the origin artifacts are self-attesting under BES 2.5 and route to ORIGIN rather than into V. CAP-2b holds the ceiling at E. I add one item the calibration does not carry: the 'New World Airport Commission', whose name is the single most-cited textual hook for the New World Order reading, is a documented real organisation - the Denver Public Library holds a processed archival collection of its records, described as covering public relations for the airport's opening, active 1994, 1997 and 1998, with correspondence to and from its president Charles Ansbacher. A finding aid at the holding repository is a T1 artifact whose issuing body has authority over the fact of what it holds. That is an affirmative, instance-scope UNDERCUTS row against the NWO reading of the name, not merely an absence.",
+     "proposed_band": "X - VERIFICATION PENDING on my own search; substantively E, per calibration E-01, via CAP-2b. The DPL finding aid, if it resolves, does not move FUNCTION to R - it undercuts one textual hook, not the whole claim - but it belongs in U and should be published.",
+     "supporting": [],
+     "undercutting": [
+      "Denver Public Library ArchivesSpace, 'New World Airport Commission Records', repositories/3/resources/6538 (FETCH-BLOCKED by the egress proxy; I have only the search summary of the finding aid)",
+      "Westword's reported explanation that the name alludes to Dvorak's New World Symphony (search snippet only, reported at second hand)",
+      "The operator's stated intention to open the disused baggage tunnels to the public from 2027 - a future ticketed-access-class negative in BES 4.4 terms"
+     ],
+     "diagnosticity_note": "The DPL finding aid discriminates: a temporary municipal PR commission with a processed archival collection, a named president and a 1994-1998 activity window is not what the New World Order reading predicts, and the mundane reading predicts it exactly. That is an E0-under-H / A3-under-null cell, which the BES 4.4 matrix scores as UNDERCUTS at minus D3. It is the single strongest discriminating item I found anywhere on this beat, and I could not open it."
+    }
+   ],
+   "mundane_alternative": "A07/A08 in combination - a very large civil airport, built over budget in the early 1990s, whose automated baggage system failed catastrophically and left walled-off concrete voids. What would distinguish a concealed hardened facility from that: a structural floor-loading filing, a blast-door or blast-valve line item in a Denver building-department record, a NEPA document specifying CBR filtration or shielding, or a real-property record showing a federal custodial entity for space beneath the terminal. None retrieved, and per BES 6.1 their absence here is genuinely informative rather than routine, because a municipal airport is not a classified-construction authority and its permit record is not structurally withheld.",
+   "claim_origin": "Phil Schneider, on the 1994-1995 lecture circuit, supplying the specific figures; Alex Christopher, 'Pandora's Box' (1993) and 'Pandora's Box II: The Denver International Airport Story' (1996), putting them into circulating print and attributing them to Schneider. The 'New World Airport Commission' hook is a real name lifted from a real temporary PR body. I traced this through search summaries; I opened none of the texts.",
+   "expected_records": "Denver building-department filings for the terminal (X2 - a municipal permit record is not structurally withheld, so absence of any hardening specification is informative); FPDS/USAspending awards naming federal construction at the site post-2008 (X1 - descriptions are sanitised and place-of-performance is often the contracting office); FRPP entry for a federal asset at a municipal airport (X2); NEPA documentation for the airport as a major federal action (X2). For a MUNICIPAL facility these profiles are meaningfully non-zero, which is what separates DIA from Greenbrier-1991: silence here is not free.",
+   "lineage_note": "The DIA claim and the 129-DUMBs claim share a terminus in Schneider. If that holds, they are ONE lineage, not two, and any register treating them as mutually corroborating is double-counting a single 1995 lecture. This is the merge that BES 5.7 says can lower a grade because a link was found.",
+   "confidence_note": "The register's calibration already fixes this entry. My contribution is two specific, checkable items: the Schneider-to-Christopher lineage merge, and the Denver Public Library finding aid for the New World Airport Commission as an affirmative undercutting row. Both are search-snippet-only; the DPL host is egress-blocked from this container.",
+   "sources": [
+    {
+     "citation": "Denver Public Library ArchivesSpace, 'New World Airport Commission Records', repositories/3/resources/6538",
+     "url": "https://archives.denverlibrary.org/repositories/3/resources/6538",
+     "tier": "P1",
+     "retrieval_state": "FETCH-BLOCKED",
+     "what_it_actually_shows": "SAW: a search summary describing a processed archival collection - press releases, pamphlets, memos, meeting minutes, correspondence to and from president Charles Ansbacher, active 1994, 1997, 1998. FETCH RETURNED EGRESS_BLOCKED. This is the single most diagnostic item I found on the entry and I could not open it. It is the first thing the harvester should fetch."
+    },
+    {
+     "citation": "9News (KUSA), 'An investigation into the underground tunnels of DIA'",
+     "url": "https://www.9news.com/article/travel/denver-international-airport/urban-legands-dia/73-f2419e2b-1515-41cc-bc83-cf34f6d55486",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: title and summary. Local broadcast journalism with apparent site access. INFER: contents."
+    },
+    {
+     "citation": "Fox News, 'Denver Airport tunnels plagued by conspiracy theories will open to public'",
+     "url": "https://www.foxnews.com/travel/mysterious-airport-tunnels-open-beneath-hub-long-tied-conspiracy-theories",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary stating the airport intends to convert disused baggage tunnels to pedestrian walkways with construction from 2027, and that officials acknowledge several subterranean levels including the train and the defunct baggage system. If accurate this is a future ticketed-access-class negative."
+    },
+    {
+     "citation": "Internet Archive item 'pandoras-box-ii-the-denver-international-airport-story-by-alex-christopher'",
+     "url": "https://archive.org/details/pandoras-box-ii-the-denver-international-airport-story-by-alex-christopher",
+     "tier": "P5",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a dated, addressable IA identifier for the 1996 text. T5 content, T2 archive channel - both must be recorded per BES 3.1. Not opened."
+    },
+    {
+     "citation": "KSEO interview transcript with Alex Christopher, 26 April 1996",
+     "url": "http://pages.suddenlink.net/anomalousimages/images/christo.html",
+     "tier": "P5",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a dated transcript title. Useful only as an ORIGIN chronology marker."
+    },
+    {
+     "citation": "Visit Denver, 'Myths and Legends Behind Denver International Airport'",
+     "url": "https://visitdenver.com/blog/post/myths-denver-airport/",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary. This is promotional material from the city's tourism body - a party with an interest - and is recorded as such, not as neutral."
+    }
+   ]
+  },
+  {
+   "name": "The nuclear subterrene and the claimed transcontinental tunnel network",
+   "aliases": [
+    "subterrene",
+    "nuclear tunnel boring machine",
+    "the DUMB tunnel network",
+    "maglev subshuttle network"
+   ],
+   "era": "Los Alamos Scientific Laboratory research programme c. 1970-1975; the tunnel-network folklore attaches to it from the mid-1990s",
+   "jurisdiction": "Los Alamos County, New Mexico (the research programme); the claimed network is non-located",
+   "typology": "research",
+   "location": {
+    "description": "The research programme is located at Los Alamos Scientific Laboratory, New Mexico. The claimed transcontinental network has no location and never has had one - no source in the lineage gives a portal, an alignment, or a coordinate.",
+    "precision": "none",
+    "basis": "The programme is institutionally located by its report series. The claimed network is non-located in the BES 10.4 sense - documented as a claim, coordinates genuinely never asserted. No coordinate invented."
+   },
+   "propositions": [
+    {
+     "class": "PROG",
+     "statement": "A US government research programme to develop a nuclear-powered rock-melting tunnelling machine (the 'subterrene') was proposed, funded and prosecuted at Los Alamos Scientific Laboratory in the early 1970s, and was cancelled without a full-scale prototype.",
+     "assessment": "This is the strongest 'the fringe was sitting on real documents' case I found, and it is why the beat brief's warning against assuming falsity matters. Search results surface machine-resolvable identifiers of exactly the class BES treats as D4-capable: LA-5354-MS, 'Systems and Cost Analysis for a Nuclear Subterrene Tunneling Machine: A Preliminary Study', J. H. Altseimer, Los Alamos Scientific Laboratory informal report, September 1973, sponsored in part by NSF RANN, with an OSTI DOI of 10.2172/4444905 and a UNT Digital Library ark of 67531/metadc1033181; an earlier LA-4547, 'A Preliminary Study of the Nuclear Subterrene'; and US Patent 3,693,731, issued 26 September 1972 to Armstrong, McInteer, Mills and Potter, assigned to the US Atomic Energy Commission, for a method and apparatus for tunnelling by melting. I resolved NONE of these. I am recording identifiers that appeared in search-result titles and snippets from OSTI, UNT, INIS and patent aggregators - which is materially better than an identifier I generated, and materially worse than a document. The register should treat them as leads and queue them.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if LA-5354-MS resolves at OSTI and the patent resolves at USPTO: A. This is a PROGRAM proposition and under BES 1.4 it is clamp-exempt, so it can stand at A beside an EXIST at F on the same page - the DUCC pattern (calibration A-11) applied to a fringe-adjacent subject.",
+     "supporting": [
+      "OSTI technical-report listing for LA-5354-MS with DOI 10.2172/4444905 (search snippet only; osti.gov is a .gov host and was not attempted or would be blocked)",
+      "UNT Digital Library record ark:/67531/metadc1033181 for the same report (FETCH-BLOCKED by the egress proxy)",
+      "INIS record for the same report (search snippet only)",
+      "OSTI listing for LA-4547, 'A Preliminary Study of the Nuclear Subterrene' (search snippet only)",
+      "US Patent 3,693,731, 26 September 1972, assigned to the US Atomic Energy Commission (search snippet only; not resolved at USPTO or any patent office interface)"
+     ],
+     "undercutting": [
+      "Multiple summaries state the programme was transferred in 1975 and quietly ended without proceeding beyond small-scale work - which is an UNDERCUTS row against construction while SUPPORTING the programme's existence. Under BES these are different propositions and it is correct that one artifact does both."
+     ],
+     "diagnosticity_note": "A DOE report series number and an AEC-assigned patent are near-dispositive for a PROGRAM proposition because the issuing bodies have authority over the fact of their own research programme and their own patent assignment - BES 3.4(e) is satisfied on its face. They are near-worthless for any EXIST proposition about a tunnel, and that gap is the entire analytical content of this entry."
+    },
+    {
+     "class": "EXIST",
+     "statement": "A network of tunnels constructed by nuclear subterrene technology connects US military and government installations.",
+     "assessment": "Nothing supports this and the programme record cuts against it. The inferential move the fringe corpus makes here is visible and nameable: from 'the AEC patented a rock-melting tunneller' to 'therefore a national tunnel network was melted', with no intervening evidence. Sauder makes this move explicitly and it is the single most instructive error in the corpus, because the first half is genuinely documented and the second half is not documented at all. Worse for the claim: the 1972 patent's own stated advantage - that the process produces no muck or tailings - is used downstream as the explanation for why no spoil exists, which converts the absence of the most diagnostic possible signal into apparent support. That is a claim structured to be unfalsifiable, and BES should say so rather than merely score it low.",
+     "proposed_band": "X - VERIFICATION PENDING on search completeness; provisional F (CAP-5, V empty) once the canonical EXIST search set is run with logged negative receipts. Not R: the programme's documented termination is a negative, and BES 8.4 forbids R on negatives alone.",
+     "supporting": [],
+     "undercutting": [
+      "Programme-termination summaries (search snippet only)",
+      "Absence of any portal, alignment or coordinate anywhere in the lineage - not a search result but a property of the claim itself, and the reason LOCT is unassessable"
+     ],
+     "diagnosticity_note": "The 'no muck' argument is the case study this register needs for its diagnosticity section. Spoil volume is on the BES expected-record table at X3 for excavation above 1e5 cubic metres - the strongest negative available. A claim that pre-emptively explains away the X3 signal has not answered it; it has removed its own falsifiability. Under BES 4.4 the correct handling is that the claim's expectedness under H becomes indistinguishable from its expectedness under the null, which is the D0 cell, at any volume of assertion."
+    },
+    {
+     "class": "FUNC",
+     "statement": "The claimed tunnel network functions as high-speed transit between deep underground military bases.",
+     "assessment": "Carried entirely by the same self-attesting corpus. V-claim is empty; CAP-2b applies before anything else does.",
+     "proposed_band": "X - VERIFICATION PENDING; provisional F.",
+     "supporting": [],
+     "undercutting": [],
+     "diagnosticity_note": "Nothing I hold discriminates. The 'Mach 2 maglev' detail is a distinctive-error fingerprint of the same order as the DIA numerals and is worth indexing as a lineage tracer."
+    }
+   ],
+   "mundane_alternative": "A11 for the network, and for the underlying documents nothing mundane is needed at all - they are what they appear to be. The specific alternative to a melted transcontinental tunnel is: a cancelled 1970s civil-tunnelling R&D programme funded partly by the National Science Foundation for civil applications, plus the genuinely large body of real US deep-underground construction that already has names and records - the Rainier Mesa U12 tunnel complex at the Nevada Test Site being the clearest example, where six nuclear weapons-effects tests were conducted in the U12t tunnel alone between 1970 and 1987, with drifts, a portal, a tailings pile and a published DOE historical evaluation. What would distinguish: any portal, any alignment, any spoil accounting, any procurement trace. None exists in the lineage.",
+   "claim_origin": "The documents are genuine and predate the folklore. The INFERENCE from them to a constructed network traces to the 1990s fringe-book corpus, principally Richard Sauder, 'Underground Bases and Tunnels' (Adventures Unlimited, 1995), who reproduced real AFWL, RAND, Bureau of Mines and Corps of Engineers material and then moved from 'the government studied deep basing and rock-melting' to 'therefore deep bases and tunnels were built'. Phil Schneider's 1995 lecture supplies the numbers. I did not open Sauder's text; the register's own source registry records the same reading and I could not test it independently.",
+   "expected_records": "For a constructed transcontinental tunnel: spoil-volume signature (X3, and specifically defeated-by-construction in this claim), procurement trace above 50M USD for an appropriated agency (X3), NEPA documentation for a major federal action crossing multiple states (X2), county deed and easement records along any alignment (X3 - the universal floor). For the RESEARCH PROGRAMME: OSTI/DTIC/NTRL report holdings (X2 for a declassified programme over 25 years old, and they appear to be present). The contrast is the finding: the programme leaves exactly the records a programme leaves, and the network leaves none of the records a network would leave.",
+   "lineage_note": "Two distinct lineages that must not be merged. The document lineage is institutional and independent by BES 5.1.7's access test - LASL, the AEC and NSF each recorded their own programme for their own purposes. The network lineage is a single 1990s fringe-book cluster. A register that lets the first launder the second has performed citogenesis on itself, and that is precisely the Sauder-as-bibliography trap the calibration set flags at F-03.",
+   "confidence_note": "I am more confident about this entry's SHAPE than about any identifier in it. The identifiers came from search-result titles at OSTI, UNT and INIS rather than from my own memory, and they are internally consistent across four independent-looking hosts, but I did not resolve one byte and any of them could be wrong in a digit. They are queued as leads, not cited as evidence.",
+   "sources": [
+    {
+     "citation": "OSTI technical report LA-5354-MS, J. H. Altseimer, 'Systems and Cost Analysis for a Nuclear Subterrene Tunneling Machine: A Preliminary Study', Los Alamos Scientific Laboratory, September 1973, DOI 10.2172/4444905",
+     "url": "https://www.osti.gov/servlets/purl/4444905",
+     "tier": "P1",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: an OSTI-hosted result title matching this report number and an INIS record for the same. NOT FETCHED - osti.gov is a .gov host and this container's proxy blocks .gov egress. The report number, author, date and DOI came from search-result metadata, not from my memory and not from the document. Treat as a lead, queue it, do not cite it as evidence."
+    },
+    {
+     "citation": "UNT Digital Library, 'Systems and cost analysis for a Nuclear Subterrene Tunneling Machine. A preliminary study', ark:/67531/metadc1033181",
+     "url": "https://digital.library.unt.edu/ark:/67531/metadc1033181/",
+     "tier": "P2",
+     "retrieval_state": "FETCH-BLOCKED",
+     "what_it_actually_shows": "SAW: the ark identifier and title in results. FETCH RETURNED EGRESS_BLOCKED. A faithful mirror of a federal technical report; would be R-MIRROR under BES 2.8 and capped at B without corroboration at the issuing authority."
+    },
+    {
+     "citation": "OSTI report LA-4547, 'A Preliminary Study of the Nuclear Subterrene', Los Alamos Scientific Laboratory",
+     "url": "https://www.osti.gov/servlets/purl/4687637/",
+     "tier": "P1",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: an OSTI purl in results with this title. Not fetched. Lead only."
+    },
+    {
+     "citation": "US Patent 3,693,731, 'Method and apparatus for tunneling by melting', issued 26 September 1972, inventors Armstrong, McInteer, Mills and Potter, assigned to the US Atomic Energy Commission",
+     "url": "https://patents.google.com/patent/US3693731A/en",
+     "tier": "P1",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: the number, date, inventor list and assignee in a search summary. NOT RESOLVED at USPTO or any patent office interface, and the URL given here is a constructed aggregator address, not one I retrieved. This is exactly the kind of format-regular identifier BES 2.2 treats as the highest-risk confabulation surface, and it must be resolved at the issuing authority before use."
+    },
+    {
+     "citation": "Richard Sauder, 'Underground Bases and Tunnels: What Is the Government Trying to Hide?', Adventures Unlimited Press, 1995",
+     "url": "https://archive.org/details/richard-sauder-underground-bases-and-tunnels-what-is-the-government-trying-to-hide",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: an IA identifier and bookseller listings. Not opened. Per BES the correct treatment is to promote his citations to leads and leave his conclusions at T4."
+    },
+    {
+     "citation": "Desert Research Institute / DOE, 'A Historical Evaluation of the U12t Tunnel, Nevada Test Site, Nye County, Nevada' (6 volumes), OSTI biblio 1010327 and 1010606",
+     "url": "https://www.osti.gov/biblio/1010327/",
+     "tier": "P1",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: OSTI result titles and a summary listing six nuclear weapons-effects tests in U12t from 1970-1987, drifts, portal, tailings pile. Not fetched. Cited here as the named mundane alternative anchor - real, documented US deep underground construction with a public record."
+    }
+   ]
+  },
+  {
+   "name": "Los Angeles 'Lizard People' catacomb city, Fort Moore Hill, downtown Los Angeles",
+   "aliases": [
+    "the Lizard People tunnels",
+    "Fort Moore Hill catacombs",
+    "the Shufelt shaft",
+    "518 North Hill Street shaft"
+   ],
+   "era": "Claim originates 1933-1934; excavation abandoned spring 1934",
+   "jurisdiction": "City and County of Los Angeles, California",
+   "location": {
+    "description": "A vacant lot at 518 North Hill Street, downtown Los Angeles, on the old Banning property overlooking Sunset Boulevard, Spring Street and North Broadway; the claimed 'Key Room' was placed beneath Broadway and Second Street. The Fort Moore Hill site has since been substantially regraded and built over.",
+    "precision": "approximate",
+    "basis": "A named street address reported in contemporaneous newspaper coverage, retrieved as a search summary. I hold no receipted coordinate and no parcel record. None invented."
+   },
+   "typology": "unknown-anomaly",
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The claim first appears in the Los Angeles Times of 29 January 1934, in an article by Jean Bosquet headed 'Lizard People's Catacomb City Hunted', reporting the assertions of mining engineer G. Warren Shufelt.",
+     "assessment": "This is the cleanest origin trace on my beat and the one closest to actually being resolvable, because the artifact is a dated metropolitan newspaper of record and the excavation left an administrative trail. Two things make it unusually tractable: the contemporaneous San Pedro News Pilot of 30 January 1934 carried the story and is indexed in the California Digital Newspaper Collection at a stable addressable identifier (SPNP19340130.2.36), and the excavation itself was authorised by a contract that the Los Angeles County Board of Supervisors is reported to have approved on 21 February 1933, with Rex McCreary, Warren Shufelt and Ray Martin, on a treasure-split basis. A Board of Supervisors minute is a T1 record from a body with authority over the fact of its own contracting. I resolved neither. cdnc.ucr.edu is egress-blocked from this container.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the CDNC page and the Board of Supervisors minute resolve: A. This is a candidate for the register's cleanest published ORIGIN entry precisely because it is nearly a century old, the corpus is free and machine-accessible, and the county record exists.",
+     "supporting": [
+      "California Digital Newspaper Collection, San Pedro News Pilot, 30 January 1934, item SPNP19340130.2.36 (FETCH-BLOCKED by the egress proxy; the identifier appeared as a search result URL)",
+      "Los Angeles Times, 29 January 1934, Jean Bosquet, 'Lizard People's Catacomb City Hunted' (search snippet only; also referenced by the LA Times' own @latimespast archival account)",
+      "UCLA Library Special Collections, Los Angeles Times photographic archive, item edu.ucla.library.specialCollections.latimes:5644, 'Mining engineer G. Warren Shufelt with radio X-ray device for underground observations, Los Angeles, 1934 or 1935' (search snippet only)",
+      "LAist, 'Shocktober: Lost Lair of the Lizard People', and PBS SoCal, 'Lost! The Golden Hoard of L.A.'s Lizard People' - secondary retellings that cite the 1933 Board of Supervisors contract and the shaft chronology (search snippets only)"
+     ],
+     "undercutting": [
+      "None. I did not search for a pre-1933 appearance of the underground-city motif in the Los Angeles vernacular record, which is the check an ORIGIN grade requires."
+     ],
+     "diagnosticity_note": "A dated newspaper page IS the evidence for ORIGIN and the UCLA photographic accession is unusually strong corroboration of the ARTIFACT rather than the claim - a catalogued press photograph of the man with his device, held by a university special collection, ties the person and the episode to 1934-35 independently of anything the Times printed. That discriminates cleanly between 'this episode happened and was reported' and 'this is a later legend backdated', which is the only thing at issue for ORIGIN."
+    },
+    {
+     "class": "EXIST",
+     "statement": "A shaft was sunk at 518 North Hill Street to a depth of roughly 250 feet in 1933-34.",
+     "assessment": "Probably true and mundane. Multiple secondary retellings, all apparently descending from the same contemporaneous coverage, give a consistent chronology: 200 feet by late November 1933, 250 feet by January 1934, work halted when mud and water entered, the holes covered by the city. The shaft is the only physical object in this entry and it is the register's 'the hole is certain, the function is not' case in almost pure form - except that here even the hole is only newspaper-attested.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the Board of Supervisors minute and any city permit or backfill record resolve: A or B. On newspaper reporting alone, C at best.",
+     "supporting": [
+      "Consistent shaft-depth chronology across LAist, PBS SoCal, Los Angeleno and the LA Almanac (search snippets only - and these are copies of one another, not four lineages)"
+     ],
+     "undercutting": [],
+     "diagnosticity_note": "A shaft is on the BES universal-D0 list. It is equally consistent with a treasure dig, a water prospect, a mine and a foundation investigation. It supports EXIST and contributes nothing whatever to FUNC."
+    },
+    {
+     "class": "FUNC",
+     "statement": "A pre-Columbian underground city with a 'Key Room' and gold tablets lies beneath Fort Moore Hill.",
+     "assessment": "This is the rare fringe claim that was affirmatively tested at the time, by the claimant, with the county's permission and with a hole in the ground - and it failed. Weeks of digging to 250 feet produced no tunnels and no tablets; funding and press attention ended; the excavation was abandoned and covered. This is an informative negative in the strict BES 6.1 sense: the search was carried out by the party with every incentive to succeed, with lawful access, at the claimed location, and it produced nothing. That is not the argument from silence. It is a failed test.",
+     "proposed_band": "X - VERIFICATION PENDING on search completeness; provisional R (R2-shaped) if the excavation-failure record resolves at the county or in the contemporaneous press, because the failed dig is affirmative content improbable under the proposition rather than a mere absence of records. If it does not resolve, F.",
+     "supporting": [],
+     "undercutting": [
+      "Contemporaneous and secondary accounts of the excavation's failure and abandonment (search snippets only)",
+      "The 'radio X-ray' device on which the entire location claim rested has no independent validation of any kind; the UCLA photograph documents that the object existed, not that it worked"
+     ],
+     "diagnosticity_note": "The failed excavation discriminates hard. Under BES 4.4, 'the claimant dug to the claimed depth at the claimed spot and found nothing' is E0 under H and A3 under the null - the minus-D3 cell. This is one of the very few entries in the whole fringe corpus where a genuine affirmative disconfirmation is available, and the register should prize it accordingly."
+    }
+   ],
+   "mundane_alternative": "A11 combined with a documented 1930s Los Angeles treasure-hunting boom: a mining engineer with an unvalidated instrument, a county willing to take a share of a hypothetical find at no cost to itself, and a metropolitan newspaper with an appetite for the story. What would distinguish a real subsurface city from that: any artefact, any void encountered by the shaft, any later encounter during the extensive regrading and construction that has since occurred across Fort Moore Hill - a century of downtown excavation constitutes an enormous accidental search with an entirely negative result.",
+   "claim_origin": "G. Warren Shufelt, a mining engineer, on the basis of readings from a self-built 'radio X-ray' device, reported by Jean Bosquet in the Los Angeles Times of 29 January 1934. The Los Angeles County Board of Supervisors is reported to have approved the excavation contract on 21 February 1933, before the story ran, which means the county record predates the publication - a useful chronological handle. Traced through search summaries; nothing resolved.",
+   "expected_records": "County deed and Board of Supervisors minutes for the contract (X3 - the universal CONUS floor, and here the record is reported to exist); Los Angeles city permit for the shaft and its backfilling (X2 - municipal, not federal, so not structurally withheld); contemporaneous newspaper coverage (X3 - CDNC and the LA Times index both cover 1933-34, so absence would have been highly informative and is not the case); any later utility, subway or foundation encounter with a void (X2 across a century of downtown construction). This is a case where the expected-record table works FOR the register: the records that should exist appear to exist, and they say the dig failed.",
+   "lineage_note": "The four modern retellings I found are copies of one another and of the 1934 coverage, not independent lineages. The genuinely independent items are the newspaper page, the county contract and the UCLA photographic accession - three bureaucracies recording the same episode for three unrelated purposes, which is exactly the BES 5.1.7 access-test pattern.",
+   "confidence_note": "The most tractable entry on my beat. Everything needed is free, old, machine-accessible and outside the classification system. That it is nonetheless unresolved here is a statement about this container's egress, not about the record.",
+   "sources": [
+    {
+     "citation": "California Digital Newspaper Collection, San Pedro News Pilot, 30 January 1934, item SPNP19340130.2.36",
+     "url": "https://cdnc.ucr.edu/?a=d&d=SPNP19340130.2.36",
+     "tier": "P2",
+     "retrieval_state": "FETCH-BLOCKED",
+     "what_it_actually_shows": "SAW: the identifier as a search-result URL. FETCH RETURNED EGRESS_BLOCKED. A faithful scan of a contemporaneous newspaper page in an open academic corpus; the single most resolvable item on this entry and the top harvest-queue candidate."
+    },
+    {
+     "citation": "Los Angeles Times, 29 January 1934, Jean Bosquet, 'Lizard People's Catacomb City Hunted'",
+     "url": "https://obscurantist.com/texts/la-times-lizard-peoples-catacomb-city-hunted/",
+     "tier": "P2",
+     "retrieval_state": "CITED-BY-OTHERS-NOT-SEEN",
+     "what_it_actually_shows": "The ARTICLE is T2 content. What I have is a third-party transcription on a personal site plus the LA Times' own archival social-media account referencing the date and byline. I have not seen the page. A web transcription of uncertain fidelity is not the article."
+    },
+    {
+     "citation": "UCLA Library Special Collections, Los Angeles Times photographic archive, 'Mining engineer G. Warren Shufelt with radio X-ray device for underground observations, Los Angeles, 1934 or 1935', item edu.ucla.library.specialCollections.latimes:5644",
+     "url": "https://dl.library.ucla.edu/islandora/object/edu.ucla.library.specialCollections.latimes:5644",
+     "tier": "P1",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: the accession title and identifier in results. Not fetched. A catalogued press photograph in a university special collection ties the person and the device to 1934-35 independently of what the newspaper asserted - corroboration of the artifact, not the claim."
+    },
+    {
+     "citation": "LAist, 'Shocktober: Lost Lair of the Lizard People'",
+     "url": "https://laist.com/news/shocktober-lost-lair-of-the-lizard-people",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary reporting the 21 February 1933 County Board of Supervisors contract with Rex McCreary, Warren Shufelt and Ray Martin on a treasure-split basis, and the shaft chronology. The county contract is the T1 record this points at; I have the pointer, not the record."
+    },
+    {
+     "citation": "PBS SoCal, 'Lost! The Golden Hoard of L.A.'s Lizard People'",
+     "url": "https://www.pbssocal.org/socal-focus/lost-the-golden-hoard-of-l-a-s-lizard-people",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary consistent with LAist on the chronology and the failure of the dig. Likely not an independent lineage - both appear to work from the same 1933-34 coverage."
+    },
+    {
+     "citation": "Los Angeles Almanac, 'Legend of the Underground People of Los Angeles County'",
+     "url": "http://www.laalmanac.com/mysterious/my02.php",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: listing only. A copy, recorded for lineage-mapping."
+    }
+   ]
+  },
+  {
+   "name": "Kokoweef Peak - the claimed underground river of gold, San Bernardino County, California",
+   "aliases": [
+    "Kokoweef",
+    "Crystal Cave",
+    "Dorr's cavern",
+    "the Lost River of Gold"
+   ],
+   "era": "Claimed exploration May 1927; affidavit notarised 16 November 1934; published 1940; excavation continuous from the 1930s to the present",
+   "jurisdiction": "San Bernardino County, California; BLM Needles Field Office administers the surrounding claims",
+   "typology": "unknown-anomaly",
+   "location": {
+    "description": "Kokoweef Peak, eastern Mojave Desert, San Bernardino County, California. Real, mapped, and the site of continuously worked mining claims. The claimed cavern's location within the peak has never been consistently specified - Dorr's affidavit reportedly does not name Kokoweef Peak or Crystal Cave at all.",
+    "precision": "regional",
+    "basis": "Named peak and county from search summaries, plus a BLM lode claim ('RAINBOW', 20.66 acres, San Bernardino County, located 2007, serial reported as CAMC289854) surfaced through a third-party mirror of BLM MLRS. I did not resolve the claim record at BLM and hold no receipted coordinate."
+   },
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The claim originates in a notarised affidavit by Earl Dorr, executed in Pasadena on 16 November 1934, first published in the California Mining Journal, November 1940.",
+     "assessment": "Unusually well-specified for a fringe origin, and unusually testable. Search summaries give a notarisation date and place, a publication date and venue six years later, and - importantly - report that at least two versions of the affidavit circulate, one bearing a 10 December 1934 notarisation and claimed by its holder to be the original. Competing versions of a foundational document are a textual-criticism problem, not a rumour problem, and they are resolvable: a notarised instrument leaves a notary journal entry, and the California Mining Journal is a physical serial. The most diagnostic detail I found is negative and cuts against the whole downstream tradition: the affidavit reportedly does not mention Kokoweef Peak, Crystal Cave, or the Peysert brothers at all. If that holds, then the specific location and the Native American provenance story are LATER accretions attached to Dorr's text, not content of it - which is the classic backsourcing result.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the November 1940 California Mining Journal issue resolves and both affidavit variants are collated: A. The variant problem means the honest ceiling on 'what the affidavit says' is lower than on 'that an affidavit exists'.",
+     "supporting": [
+      "The Mojave Project, 'Kokoweef: Still Searching for the Lost River of Gold' - a documentary field project with a dispatch on the site, reporting the 16 November 1934 Pasadena notarisation, the November 1940 California Mining Journal publication, the two-variant problem, and the absence of Kokoweef, Crystal Cave and the Peyserts from the affidavit text (search snippet only)",
+      "PBS SoCal Artbound, 'Still Searching for the Mojave's Lost River of Gold' (search snippet only)",
+      "kokoweefinc.net, 'The Legend from Earl Dorr' - the operator's own hosting of the text, which is a party to the claim (search snippet only)"
+     ],
+     "undercutting": [
+      "The existence of two notarised variants is itself an UNDERCUTS row against any claim about what the affidavit says, though not against its existence"
+     ],
+     "diagnosticity_note": "A notarised instrument with a date and a notary is a genuinely discriminating artifact for ORIGIN: it fixes a terminus ante quem in a public-facing legal form and it can be checked. The accretion finding - Kokoweef, Crystal Cave and the Peyserts absent from the source text but universal downstream - is the single most diagnostic thing available on this entry, because a later tradition that adds specifics the source lacks is descent, not corroboration."
+    },
+    {
+     "class": "EXIST",
+     "statement": "A cave system exists beneath Kokoweef Peak.",
+     "assessment": "Apparently true and mundane. Crystal Cave and adjacent caves under Kokoweef are described in summaries as real and verified, and Dorr is reported to have genuinely explored them before 1934. The register's characteristic split applies exactly: the hole is (probably) certain, the function is not.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the MRDS/USMIN/California mine-records entries and the BLM claim record resolve: A. Note that BES treats MSHA/BLM regulated-mine records as UNDERCUTS at minus D1 for any HARDEN or concealed-facility reading while supporting EXIST - one artifact, opposite signs on two propositions.",
+     "supporting": [
+      "Multiple summaries describing verified caves beneath Kokoweef, including Crystal Cavern (search snippets only)",
+      "BLM lode claim 'RAINBOW', 20.66 acres, San Bernardino County, located 2007, held by Kokoweef Inc., surfaced via thediggings.com (a T4 mirror of BLM MLRS; the underlying BLM record was not resolved)"
+     ],
+     "undercutting": [],
+     "diagnosticity_note": "Cave existence is D0 for the gold-river claim - a limestone peak in the Mojave producing solution caves is exactly what the geology predicts with or without a river of gold."
+    },
+    {
+     "class": "EXTN",
+     "statement": "A cavern system approximately 3000 feet deep containing a flowing underground river over gold-bearing black sands exists beneath Kokoweef Peak.",
+     "assessment": "This is the entry that most repays the register's insistence that absence is only evidence where presence is expected - because here it emphatically is. Since the 1930s, parties with lawful access, direct physical presence, sustained funding and the maximum possible incentive have excavated at the claimed location continuously. Summaries report Excavations Incorporated reorganised in 2006 into Kokoweef, Inc., funded by somewhere between 300 and 1,000 stockholders at a 600 USD minimum, with at least eleven individuals reported to have put in 100,000 USD each. Roughly ninety years of motivated, funded, lawful, on-site searching by the claimants themselves has not produced the river. That is not a classified facility's silence. It is a failed search of the strongest available kind, run by the proponents, and it is signed evidence.",
+     "proposed_band": "X - VERIFICATION PENDING on my own search completeness; provisional R (R2-shaped) once the excavation history and the corporate/claim records resolve, because ninety years of proponent-run on-site negative results is affirmative content improbable under the proposition, not a documentary absence. If those records do not resolve, F.",
+     "supporting": [
+      "Dorr's affidavit itself - excluded from V under BES 2.5 as self-attesting, since the author is the claimant and the probative content is the claim; routed to ORIG and graded there"
+     ],
+     "undercutting": [
+      "Ninety years of continuous proponent-funded excavation without the claimed find (search snippets only, from The Mojave Project, PBS SoCal and RareGoldNuggets)",
+      "Reported absence of Kokoweef, Crystal Cave and the Peyserts from the affidavit itself - the location claim is an accretion",
+      "Reported scepticism that Dorr explored real caves but fabricated the treasure content"
+     ],
+     "diagnosticity_note": "This is the cleanest diagnosticity case on my beat. The BES expected-record framework is built around classified facilities where silence is routine; this entry inverts it. The expected-record profile for a privately-funded treasure excavation is the opposite of the profile for a covert federal facility: the proponents publish, incorporate, sell stock, file mining claims and dig, so a negative result is loud rather than silent. The register should carry a distinct ERP profile for proponent-searchable claims, and this entry is the argument for it."
+    },
+    {
+     "class": "FUNC",
+     "statement": "The Kokoweef workings are or conceal something other than a mineral-exploration operation.",
+     "assessment": "No source I found asserts this and I include the proposition only to close it. The workings are an openly advertised, investor-funded mineral exploration on filed BLM claims. There is no concealed-facility claim here at all.",
+     "proposed_band": "X - NOT ASSESSED; no claim to grade. Recorded so the entry cannot be misread as a hardened-facility candidate.",
+     "supporting": [],
+     "undercutting": [
+      "Open corporate solicitation of investors, published mining claims, and public site presence - the BES 4.4 minus-D3 cell for any concealment reading"
+     ],
+     "diagnosticity_note": "Included to demonstrate the register can hold a site with a genuine underground void, a genuine legend and a genuine origin document while affirmatively declining to treat it as a bunker candidate."
+    }
+   ],
+   "mundane_alternative": "A02, a commercial mine and solution-cave system in Mojave limestone, plus A11 for the treasure content specifically. What would distinguish: any assay, any survey, any sonar or geophysical return consistent with a 3000-foot cavern and a flowing river, or any independent visitor's account of the described chamber. Ninety years have produced none.",
+   "claim_origin": "Earl Dorr, notarised affidavit, Pasadena, 16 November 1934, describing an exploration allegedly conducted in May 1927 with an unnamed civil engineer; published in the California Mining Journal, November 1940. A second notarised variant dated 10 December 1934 also circulates and is claimed by its holder to be the original. The Kokoweef Peak location, the Crystal Cave identification and the Peysert brothers' discovery narrative are reported to be absent from the affidavit and therefore to be later accretions. Traced through search summaries only.",
+   "expected_records": "For the CLAIM: notary journal for the 1934 instrument (X2 - California notary journals are retained and are a real record class); California Mining Journal, November 1940 (X3 - a physical serial held in California mining and state libraries). For the SITE: BLM MLRS claim records (X3), MRDS and USMIN entries (X2), California state mine-map repository (X2), MSHA records for post-1970 underground work (X3), San Bernardino County assessor and recorder (X3, the universal floor), and California or SEC securities filings for a corporation soliciting several hundred investors (X2). Almost none of these absences would be routine. This is a claim that lives entirely inside public record classes.",
+   "lineage_note": "One origin document, one operator hosting it, and a small set of documentary and journalistic retellings that all cite the affidavit. The Mojave Project dispatch is the only item I found that appears to have done independent archival work on the affidavit's variants, and it is therefore the only candidate for a second lineage. Everything else collapses to Dorr.",
+   "confidence_note": "I am confident this belongs in the register and confident it is not a bunker. Its value is methodological: it is the best available demonstration that the negative-evidence rules must be conditioned on who is doing the searching, and it is a claim with real financial consequences for real people, which is the strongest argument for publishing a graded record of it.",
+   "sources": [
+    {
+     "citation": "The Mojave Project, 'Kokoweef: Still Searching for the Lost River of Gold'",
+     "url": "https://mojaveproject.org/dispatches-item/kokoweef-still-searching-for-the-lost-river-of-gold/",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary giving the 16 November 1934 Pasadena notarisation, the November 1940 California Mining Journal publication, the existence of a competing variant notarised 10 December 1934, and - the key finding - that the affidavit reportedly names neither Kokoweef Peak, nor Crystal Cave, nor the Peysert brothers. This is the only item I found that appears to have done independent work on the document itself."
+    },
+    {
+     "citation": "PBS SoCal Artbound, 'Still Searching for the Mojave's Lost River of Gold'",
+     "url": "https://www.pbssocal.org/shows/artbound/still-searching-for-the-mojaves-lost-river-of-gold",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: title and summary. Documentary journalism on the site. Likely shares sourcing with the Mojave Project dispatch."
+    },
+    {
+     "citation": "Kokoweef Inc., 'The Legend from Earl Dorr'",
+     "url": "https://kokoweefinc.net/legend/",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: the operator's own hosting of the affidavit text. The operator is a party to the claim and is soliciting investment on it - SELF-PUBLISHED and self-attesting under BES 2.4/2.5. A version of the text, not an authority on it."
+    },
+    {
+     "citation": "BLM lode mining claim 'RAINBOW', 20.66 acres, San Bernardino County, California, located 2007, holder Kokoweef Inc., serial reported as CAMC289854, via thediggings.com",
+     "url": "https://thediggings.com/mines/camc289854",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a third-party mirror of BLM MLRS data giving claim name, acreage, county, location year and holder. The underlying BLM record was NOT resolved. A mirror of a T1 index is a lead; the BLM MLRS record is the citation."
+    },
+    {
+     "citation": "RareGoldNuggets, 'California's Lost Underground River of Gold at Kokoweef Peak'",
+     "url": "https://raregoldnuggets.com/?p=5984",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary describing the investor structure - 300 to 1,000 stockholders at a 600 USD minimum, at least eleven at 100,000 USD each. Unsourced enthusiast material; the figures should be treated as unverified and are the ones that most need a securities or corporate filing behind them."
+    }
+   ]
+  },
+  {
+   "name": "Mel's Hole, Manastash Ridge area, Kittitas County, Washington",
+   "aliases": [
+    "Mel's Hole",
+    "the bottomless pit near Ellensburg",
+    "Mel Waters' hole"
+   ],
+   "era": "Claim originates 21 February 1997; repeated 24 February 1997, 2000 and 2002",
+   "jurisdiction": "Kittitas County, Washington - claimed as private rural land approximately nine miles west of Ellensburg",
+   "typology": "unknown-anomaly",
+   "location": {
+    "description": "Claimed as rural private property roughly nine miles west of Ellensburg, Kittitas County, Washington, in the Manastash Ridge area. No parcel has ever been identified and organised ground searches have not located any such feature.",
+    "precision": "claimed-only",
+    "basis": "A claimed distance and direction from a named town, given on air by a person whose existence in the county record has not been established. I hold no coordinate, no parcel and no receipted record, and I have not invented any."
+   },
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The claim first appears on the Coast to Coast AM broadcast of 21 February 1997, from a caller identifying himself as Mel Waters, with a second appearance on 24 February 1997 and further appearances in 2000 and 2002.",
+     "assessment": "A precisely datable broadcast origin, which is the best kind for this register: the artifact is a dated recording with an addressable identifier convention in the Internet Archive Coast to Coast collections. A dated broadcast is excellent evidence of when a claim entered circulation and no evidence at all of whether it is true - the register should be able to hold both, and here it can. I did not retrieve the recording or confirm the date against the archive's own metadata; I have consistent search summaries.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the dated broadcast resolves in the IA Coast to Coast collection and a Wayback/Usenet negative receipt is run for any pre-February-1997 appearance: A.",
+     "supporting": [
+      "Wikipedia, 'Mel's Hole', giving the 21 and 24 February 1997 dates and the 2000 and 2002 reappearances (search snippet only; T4, crowd-edited, a lead rather than evidence under BES 2.4)",
+      "Ellensburg Daily Record and Yakima Herald retrospectives (search snippets only)"
+     ],
+     "undercutting": [],
+     "diagnosticity_note": "A dated broadcast fixes the entry point precisely. It discriminates 'this began in 1997 on national radio' from 'this is an older local tradition that reached radio in 1997' only if the negative search is run - and the DNR geologist's remark about a real local mine shaft (below) is a specific reason to suspect an older local substrate that the broadcast overwrote."
+    },
+    {
+     "class": "EXIST",
+     "statement": "A shaft or pit of extraordinary depth exists at the claimed location in Kittitas County.",
+     "assessment": "The refutation here is unusually strong for a fringe claim and it is affirmative rather than merely absent. Reporters are described as having pulled the Kittitas County records and found no Mel Waters as a property owner, no wife employed at Central Washington University, and no rural parcel matching the description. A county assessor's record is a T1 artifact from a body with authority over the fact of ownership, and a search of it returning no such owner and no such parcel is content, not silence. Separately, an organised ground search of about thirty people with GPS and metal detectors crossed Manastash Ridge in 2002 with a Seattle Times reporter present and found nothing. Under BES 8, that combination is R3-shaped - but only if the county record itself resolves; what I hold is journalists' reports of having searched it.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the Kittitas County assessor and recorder records resolve: R (R3). If they do not resolve, F (CAP-5, V empty) - which would be the letter the skeptic wants for the reason the skeptic does not want, exactly the tension the calibration set records at F-06.",
+     "supporting": [],
+     "undercutting": [
+      "Reported Kittitas County record search returning no Mel Waters as owner and no matching parcel (search snippet only, via local press retrospectives)",
+      "Reported absence of any Central Washington University employment record for the claimed wife",
+      "The 2002 organised ground search across Manastash Ridge finding nothing, with contemporaneous Seattle Times coverage",
+      "Jack Powell, then a geologist with the Washington State Department of Natural Resources, quoted in the Ellensburg Daily Record in 2012 stating that a hole of the type described is physically impossible, and identifying a real old gold-mine shaft northwest of Ellensburg, perhaps 300 feet at most, as the plausible substrate"
+     ],
+     "diagnosticity_note": "Two of these discriminate hard and one does not. The county-record negative is diagnostic because a named private landowner in a CONUS county is the single most reliably recorded fact in this whole domain - BES puts county deed and assessor records at X3, the universal floor, and this is precisely the case the floor exists for. Powell's statement is diagnostic on two counts: he is a resolvable named person in exactly the role asserted, employed by the state geological authority, speaking about his own jurisdiction, and he supplies a specific mundane referent rather than a general denial. The 2002 ground search is weaker than it looks - failure to find a feature in mountainous terrain is a genuine but limited negative."
+    },
+    {
+     "class": "FUNC",
+     "statement": "The claimed pit possesses anomalous physical properties, including unmeasurable depth and the revival of dead animals.",
+     "assessment": "V is empty. The only artifact is the claim, spoken by the claimant. BES 2.5 excludes it and routes it to ORIG. Nothing survives to grade.",
+     "proposed_band": "X - VERIFICATION PENDING on search completeness; provisional F (CAP-5).",
+     "supporting": [],
+     "undercutting": [
+      "Powell's physical-impossibility statement"
+     ],
+     "diagnosticity_note": "Nothing discriminates because nothing exists to discriminate. The value of the proposition is that it forces the entry to separate 'is there a hole' from 'does the hole do this', and the answers differ in kind."
+    }
+   ],
+   "mundane_alternative": "A11, a fabricated or performed claim, with a specific and named physical substrate: an existing abandoned gold-mine shaft northwest of Ellensburg on private land, perhaps 300 feet deep, identified by the state DNR geologist as something the caller may have known about. What would distinguish: a Kittitas County parcel record for any owner named Waters in the relevant period, a Washington DNR or MSHA mine record for a shaft at the claimed location, or a lidar return over Manastash Ridge showing an anomalous aperture. Washington has substantial lidar coverage and this is a genuinely runnable test.",
+   "claim_origin": "A caller identifying himself as Mel Waters, on Coast to Coast AM with Art Bell, 21 February 1997, with a follow-up on 24 February 1997 and further appearances in 2000 and 2002. Later material, including the 2002 expedition led by a figure known as Red Elk, is accretion onto that broadcast. Traced through search summaries only; I retrieved no recording and no county record.",
+   "expected_records": "Kittitas County assessor and recorder for a named private landowner, any era (X3 - the universal CONUS floor; this absence is maximally informative and is the crux of the entry); Washington DNR and MSHA records for a shaft (X2-X3 for post-1970 underground workings); Central Washington University employment records (X1, personnel records are not generally public); Washington lidar coverage over Manastash Ridge (X1-X2). Unlike a classified facility, this claim sits entirely inside record classes that exist and are searchable, so the silence is loud.",
+   "lineage_note": "One broadcast, one claimant, and a large derivative literature. The genuinely independent items are the county record search and Powell's statement - two parties who reached the question through their own institutional routes rather than through the claim.",
+   "confidence_note": "A strong candidate for the register's clearest published R, if the county record resolves. It is also a useful control: the reason this claim is refutable and Dulce is not is that it names a private parcel in a CONUS county, and that is the most reliably recorded object in American life.",
+   "sources": [
+    {
+     "citation": "Ellensburg Daily Record, 'Getting to the bottom of Mel's Hole' (2012), carrying Jack Powell, Washington State Department of Natural Resources geologist",
+     "url": "https://www.dailyrecordnews.com/news/getting-to-the-bottom-of-mels-hole/article_d72b6a68-7ac2-11e1-b3ce-001a4bcf887a.html",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary reporting Powell's statement that such a hole is physically impossible and identifying a real old gold-mine shaft northwest of Ellensburg, perhaps 300 feet deep, as the likely substrate. A named state geologist speaking about his own jurisdiction - the best-positioned witness on the entry, and I have him at second hand."
+    },
+    {
+     "citation": "Yakima Herald, 'Myth of Mel's Hole continues to inspire fantastic storytelling in Central WA'",
+     "url": "https://www.yakimaherald.com/news/local/happened/myth-of-mels-hole-continues-to-inspire-fantastic-storytelling-in-central-wa/article_54c87a28-75bc-11ee-ba4b-13c787668172.html",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary reporting that local reporters pulled Kittitas County records and found no Mel Waters as an owner, no matching parcel, and no CWU employment for the claimed wife; and describing the 2002 Manastash Ridge search of about thirty people with Seattle Times coverage. The county record is the T1 object; this is a report of having searched it."
+    },
+    {
+     "citation": "Wikipedia, 'Mel's Hole'",
+     "url": "https://en.wikipedia.org/wiki/Mel%27s_Hole",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary giving the 21 and 24 February 1997 broadcast dates and the 2000 and 2002 reappearances. Crowd-edited - a lead for the dates, not evidence of them."
+    },
+    {
+     "citation": "Kittitas County Assessor / Auditor property records (the object all of the above point at)",
+     "url": "",
+     "tier": "P1",
+     "retrieval_state": "CITED-BY-OTHERS-NOT-SEEN",
+     "what_it_actually_shows": "NOT SEEN. Named here because it is the record that decides the entry: a county assessor and recorder returning no such owner and no such parcel would be an R3-capable row from a body with authority over the fact. Everything I have is journalists reporting that they searched it."
+    }
+   ]
+  },
+  {
+   "name": "'Report from Iron Mountain' and the Iron Mountain facility near Hudson, New York",
+   "aliases": [
+    "Report from Iron Mountain on the Possibility and Desirability of Peace",
+    "the Iron Mountain report",
+    "the Special Study Group"
+   ],
+   "era": "Book published 1967; authorship admitted 19 March 1972; recirculated as genuine from the early 1990s",
+   "jurisdiction": "Columbia County, New York (the facility named in the text); the document itself is non-located",
+   "typology": "storage-archive",
+   "location": {
+    "description": "The text names an underground facility 'near the town of Hudson', New York, described as a nuclear hideout used by large American corporations for records storage and substitute headquarters. That describes a real class of facility and, on its face, a real one. I did not establish which specific site.",
+    "precision": "regional",
+    "basis": "A place name given inside a document I have not read, reported in search summaries. No coordinate, no parcel, none invented."
+   },
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The 'Report from Iron Mountain' was written by Leonard C. Lewin, published by Dial Press in 1967, and admitted by Lewin to be a satirical fabrication in the New York Times Book Review of 19 March 1972.",
+     "assessment": "One of the very few claims in this entire corpus where the origin is not merely traced but CONFESSED, in a named national publication, by the named author, at a checkable date. Search summaries are consistent: Lewin wrote the whole thing with help including editors of the satire magazine Monocle, framed it as leaked to him by a participant, and recanted in print in 1972. Both artifacts - the 1967 Dial Press first edition and the 19 March 1972 NYT Book Review piece - are ordinary published objects with catalogue records and no classification issues.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the 1967 imprint and the dated 1972 NYTBR page resolve: A. This is the strongest available ORIGIN candidate on my beat because the admission is documentary rather than testimonial.",
+     "supporting": [
+      "Wikipedia, 'Leonard C. Lewin' and 'The Report from Iron Mountain', giving the 19 March 1972 New York Times Book Review admission (search snippets only; T4, crowd-edited)",
+      "Foreign Policy, 'Trump's Hoax Promotions Are a Longtime U.S. Habit' (2026), treating the episode as a documented hoax (search snippet only)",
+      "Multiple full-text mirrors of the 1967 text on fringe hosts - copies, evidentially worthless except as lineage tracers"
+     ],
+     "undercutting": [
+      "Search results include at least two currently-live pages arguing the text is genuine, including a machine-generated encyclopedia entry. Under BES these are POST-2022-UNATTRIBUTED or T5 and contribute zero lineages, but their presence is the finding: the 1972 admission demonstrably did not settle the matter in circulation."
+     ],
+     "diagnosticity_note": "An author's signed public recantation in a named periodical is about as diagnostic as ORIGIN evidence gets, and it satisfies BES 8's R1 branch on its face - not a third-party report of an admission, but the admission itself, in print, under the author's own name. Contrast this directly with the Dulce R1 route, which rests on a second-hand account of a dead man. The register should publish the two side by side, because they look identical in a summary and are completely different in kind."
+    },
+    {
+     "class": "EXIST",
+     "statement": "An underground records-storage and corporate-relocation facility exists near Hudson, New York.",
+     "assessment": "Probably true and entirely mundane, and this is the trap the entry exists to close. Lewin's satire worked precisely because he set it in a real place doing a real thing - underground corporate records storage in a former mine in the Hudson Valley. That real facility class is well documented in the commercial record. Note the entity-resolution hazard: the register already holds Iron Mountain / Boyers, Pennsylvania at band A (calibration A-06), which is a DIFFERENT facility in a different state under a different history. Under BES 11.1 these must not merge; name similarity flags and never merges.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if Columbia County deed and assessor records and the operator's own corporate filings resolve: A. Materially this is a boring true fact.",
+     "supporting": [
+      "The text's own description, which is a description inside a fabricated document and therefore evidence of nothing except what Lewin wrote",
+      "General commercial-record descriptions of underground records storage in the Hudson Valley (search snippets only)"
+     ],
+     "undercutting": [],
+     "diagnosticity_note": "Nothing here discriminates a hardened continuity facility from commercial underground records storage, and nothing needs to - the mundane reading is the documented one and the operator advertises it. This is the SubTropolis pattern: near-maximum place-signals, zero claim-signals, and the correct answer is a boring A on EXIST with an R on anything more."
+    },
+    {
+     "class": "FUNC",
+     "statement": "A secret federal Special Study Group met at the Iron Mountain facility from August 1963 to March 1966 and produced the report.",
+     "assessment": "Affirmatively refuted by the author's own published admission. This is R1 in its cleanest form: the sole origin lineage is shown fabricated by an admission from the participant, published in a named periodical at a fixed date. Everything downstream - the militia-circulated bootleg editions of the 1990s, the current live pages arguing authenticity - is one lineage with the 1967 book.",
+     "proposed_band": "X - VERIFICATION PENDING on my own retrieval; substantively R (R1) once the 1972 NYTBR page resolves. Not F: something affirmatively resolves against this, which is exactly the R/F distinction BES Part 8 draws.",
+     "supporting": [],
+     "undercutting": [
+      "Lewin's admission of authorship, New York Times Book Review, 19 March 1972 (search snippet only)"
+     ],
+     "diagnosticity_note": "A signed authorial recantation is improbable under the proposition that the document is a genuine government report, and near-certain under the proposition that it is a satire. That is the E0/A3 cell and it is affirmative content rather than an absence, which is what BES 8.4 requires before R can fire."
+    }
+   ],
+   "mundane_alternative": "A11 for the report, A06 for the facility - general underground commercial storage in a former Hudson Valley mine. What would distinguish a genuine federal study group from a satire: any appropriations line, any agency record of the group's convening, any named participant, any archival deposit. None exists, and the author says why.",
+   "claim_origin": "Leonard C. Lewin, 'Report from Iron Mountain on the Possibility and Desirability of Peace', Dial Press, 1967, framed as a leaked government document; authorship admitted by Lewin in the New York Times Book Review, 19 March 1972. Bootleg editions were circulating among US militia groups in the 1990s as authentic, and pages asserting authenticity remain live in 2026. Traced through search summaries only.",
+   "expected_records": "For a genuine 1963-66 federal study group: a convening authority record, an appropriations or contract trace, a NARA accession, and named participants (all X2-X3 for an unclassified policy study of that era - their total absence is informative, though BES 8.4 correctly forbids R on that basis alone; the R here comes from the confession, not the silence). For the facility: Columbia County deed and assessor records (X3) and ordinary corporate filings (X2).",
+   "lineage_note": "One author, one book, and a very large derivative literature including armed political movements. The 1972 admission and the book are the same lineage - author and recantation - which is why the recantation is decisive rather than merely contradictory.",
+   "confidence_note": "Included because it is the entry-resolution and R1 teaching case: a documented literary hoax whose setting is a real underground facility with a name that collides with a different real underground facility the register already grades at A. Three distinct objects, one word.",
+   "sources": [
+    {
+     "citation": "Leonard C. Lewin, admission of authorship, New York Times Book Review, 19 March 1972",
+     "url": "",
+     "tier": "P1",
+     "retrieval_state": "CITED-BY-OTHERS-NOT-SEEN",
+     "what_it_actually_shows": "NOT SEEN. The decisive artifact and I have no URL for it. Reported consistently across several summaries. A dated NYTBR page is an ordinary published object with library and database holdings and should be retrievable; I could not retrieve it here."
+    },
+    {
+     "citation": "Wikipedia, 'Leonard C. Lewin' / 'The Report from Iron Mountain'",
+     "url": "https://en.wikipedia.org/wiki/Leonard_C._Lewin",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: summaries giving Dial Press 1967, the Monocle connection, the 19 March 1972 NYTBR admission, and the 1990s militia recirculation. Crowd-edited."
+    },
+    {
+     "citation": "Foreign Policy, 'Trump's Hoax Promotions Are a Longtime U.S. Habit' (24 April 2026)",
+     "url": "https://foreignpolicy.com/2026/04/24/iron-mountain-hoax-fake-news-trump/",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: title and summary treating the report as a documented hoax. An editorially-reviewed outlet, but a commentary piece, not an archival source."
+    },
+    {
+     "citation": "Grokipedia, 'The Report from Iron Mountain'",
+     "url": "https://grokipedia.com/page/The_Report_from_Iron_Mountain",
+     "tier": "P5",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: presence in results. Recorded ONLY as evidence that machine-generated pages on this subject are live in 2026. Under BES 3.3 this host is on the blocklist, is POST-2022-UNATTRIBUTED by construction, contributes zero lineages, and is retained and displayed as inert."
+    },
+    {
+     "citation": "Multiple full-text mirrors of the 1967 text on fringe and personal hosts",
+     "url": "https://silverbearcafe.com/private/ironmt3.html",
+     "tier": "P5",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: several such hosts in results. Evidentially worthless except as lineage tracers demonstrating continued circulation as authentic."
+    }
+   ]
+  },
+  {
+   "name": "'Hangar 18' and the 'Blue Room', Wright-Patterson Air Force Base, Ohio",
+   "aliases": [
+    "Hangar 18",
+    "the Blue Room",
+    "the Blue Hangar",
+    "Building 18",
+    "the Wright-Patterson underground vaults"
+   ],
+   "era": "Claim cluster from the 1950s-60s; the most-cited artifact is dated 28 March 1975",
+   "jurisdiction": "Greene and Montgomery Counties, Ohio; Wright-Patterson AFB, Area B",
+   "typology": "military-hardened",
+   "location": {
+    "description": "Area B, Wright-Patterson Air Force Base, near Dayton, Ohio. The Library of Congress HAER survey documents a Building 18 in Area B at the northeast corner of C and Fifth Streets, identified as the Power Plant Laboratory Complex.",
+    "precision": "regional",
+    "basis": "A named installation and a street intersection given in a HAER survey title retrieved as a search summary. loc.gov is egress-blocked from this container. No coordinate invented."
+   },
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The most-cited documentary artifact behind the claim is a letter of 28 March 1975 from Senator Barry Goldwater to Shlomo Arnon, stating that Goldwater had roughly a decade earlier sought access to the building at Wright-Patterson where Air Force UFO material was held and had been refused, and that the material remained classified.",
+     "assessment": "This is the fringe artifact on my beat that most deserves careful treatment rather than dismissal, and it is the one where BES's position-to-know gate does the most interesting work. Goldwater is unambiguously real, resolvable in vast quantities of unrelated record, and was a sitting US Senator and an Air Force Reserve major general - so he passes the identity gate trivially and passes a general position-to-know gate as a legislator. But BES 5.4 requires the record to place the person in THE ROLE ASSERTED. The role asserted here is not 'senator' but 'person with knowledge of what is in that building', and by the letter's own content he was refused access - so the letter is affirmative evidence that Goldwater did NOT know what was in the building. It is a strong artifact for a proposition about Goldwater's request and a weak one for any proposition about the building's contents. The related account of a telephone refusal by General Curtis LeMay is second-hand, attributed via a later author, and does not carry the same status.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the letter resolves in a Goldwater papers collection (Arizona State University holds his papers) or in a dated facsimile with custody: A for ORIG. Note carefully: A for ORIG here means 'we know exactly what artifact this story rests on', not 'the story is true'.",
+     "supporting": [
+      "Multiple independent-looking secondary accounts giving the same date (28 March 1975), recipient (Shlomo Arnon) and substance (search snippets only; several are T4/T5 hosts)",
+      "A CIA reading-room record titled 'Letter to Honorable Barry M. Goldwater from Vernon A. Walters' surfaced in results - a different letter, but evidence that Goldwater-related correspondence exists in released collections (search snippet only; cia.gov is a .gov host and was not retrievable)"
+     ],
+     "undercutting": [
+      "Every version I found is a secondary retelling. I located no archival citation to the Goldwater papers and no image of the letter from a custodial repository."
+     ],
+     "diagnosticity_note": "The letter, if resolved, is highly diagnostic for ORIG and close to null for EXIST or FEAT, because its content is a refusal. That asymmetry is the whole point: a genuine artifact by a genuine, powerful, resolvable person can establish precisely one thing and be routinely cited for a different thing."
+    },
+    {
+     "class": "IDNT",
+     "statement": "'Hangar 18' names a specific structure at Wright-Patterson Air Force Base.",
+     "assessment": "This is where the claim comes apart, and it is a genuinely useful refutation because it is a naming error rather than a factual dispute. The Library of Congress HAER survey records Building 18 in Area B as part of the Power Plant Laboratory Complex - an engine and power-plant research facility whose earliest structures date to the Wright Field era - documented under survey number HAER OH-79-AN with photographic coverage. That is not a hangar. Separately, the Foreign Technology Division, which is the organisation the claim is really reaching for, occupied Building 856, built in the 1970s, becoming FASTC in 1992 and NASIC in 2003. So the folklore's 'Hangar 18' conflates a laboratory building number with a hangar, and attaches to it the function of an organisation housed in a different building entirely.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the HAER documentation resolves at the Library of Congress: R for the identity claim, on a T1 record from a survey with authority over the fact of what the building is. This is the single most resolvable refutation on this entry and loc.gov is blocked here.",
+     "supporting": [],
+     "undercutting": [
+      "Library of Congress HAER OH-79-AN, 'Wright-Patterson Air Force Base, Area B, Building 18, Power Plant Laboratory Complex, Northeast corner of C & Fifth Streets, Dayton, Montgomery County, OH' (FETCH-BLOCKED; title retrieved as a search result)",
+      "Accounts placing the Foreign Technology Division in Building 856 from the 1970s, and its successors FASTC and NASIC (search snippets only)"
+     ],
+     "diagnosticity_note": "A HAER survey title states the building's identity and function on its face and the survey's issuing authority - the Historic American Engineering Record, under the National Park Service, working with the installation - has authority over that determination. Under BES 3.4 that is a D4-gate candidate for IDNT and for TYPO, and it discriminates completely: a power-plant laboratory complex is not a hangar and the null does not have to strain at all to produce the documentation."
+    },
+    {
+     "class": "EXIST",
+     "statement": "Substantial subsurface vaults or complexes exist beneath Wright-Patterson AFB.",
+     "assessment": "Genuinely unresolved and I decline to close it. A major inter-war and Second World War aeronautical research installation with power-plant laboratories, wind tunnels and test cells will have real subsurface structures - utility tunnels, test chambers, basements - and the claim that 'underground vaults exist' is close to trivially true for any facility of this class while telling you nothing. The specific assertions I found come from investigators who toured the base and inferred a vast system from what they saw, which is interpretation and takes their tier, not the base's.",
+     "proposed_band": "X - NOT ASSESSED. SCI approximately 0; the canonical EXIST set was not run. Any grade here would be manufactured.",
+     "supporting": [
+      "Accounts by Bill Jones and Irena Scott describing a toured facility and inferring extensive subsurface works (search snippets only; interpretation by named non-custodial parties, T5 under BES 3.1 until independently confirmed)"
+     ],
+     "undercutting": [],
+     "diagnosticity_note": "Basements, tunnels and vaults are on the BES universal-D0 list. For a research installation of this age they are expected under every hypothesis, so they discriminate nothing, and a visitor's impression of extent is an interpretation that inherits the visitor's tier."
+    },
+    {
+     "class": "FUNC",
+     "statement": "Recovered non-human craft or bodies were or are stored in a facility at Wright-Patterson.",
+     "assessment": "V-claim is empty on everything I retrieved. The Goldwater letter records a refusal, not a content. The witness accounts are unresolved. CAP-2b holds the ceiling at E even before anything else is considered.",
+     "proposed_band": "X - VERIFICATION PENDING on search completeness; provisional E if any verified third-party record of real facts enters V, otherwise F. Note the E/F line: unlike Montauk, there ARE real third-party records here (the base, the FTD, the classification posture), so this may sit at E rather than F once the search set is run.",
+     "supporting": [],
+     "undercutting": [
+      "The Goldwater letter's own content - a refusal of access is not knowledge of contents"
+     ],
+     "diagnosticity_note": "No observation I hold discriminates. Expected-record reasoning is nearly useless here in both directions: an Air Force installation's internal storage records are structurally withheld (X0), so silence carries almost no information, and that is the correct and unsatisfying answer."
+    }
+   ],
+   "mundane_alternative": "A08 plus a naming error - an ordinary, very large, genuinely classified military research installation whose real Foreign Technology Division work on recovered FOREIGN (Soviet and Chinese) aircraft is documented, misread as work on non-terrestrial material, with the building number of an unrelated power-plant laboratory attached to it. What would distinguish: any real-property record, CATCODE, or engineering drawing for a storage facility of the claimed type; any AFHRA unit history for the relevant organisation. None retrieved.",
+   "claim_origin": "A diffuse mid-century cluster rather than a single text - which is itself a finding, and distinguishes this from Dulce and Montauk. The single most-cited documentary anchor is Goldwater's 28 March 1975 letter to Shlomo Arnon. The 'Hangar 18' name was cemented by a 1980 feature film of that title, which I did not investigate and which the register should trace, because a movie title propagating back into the nomenclature would be a textbook citogenesis event.",
+   "expected_records": "AFHRA unit histories by IRIS number for the Foreign Technology Division and predecessors (X1 - the AFHRA index is public but most content is not digitised, flag ARCHIVE-GAP); real-property and CATCODE records for Area B buildings (X1-X2); HAER and NRHP documentation for Area B historic structures (X2-X3 - and these appear to exist); NPRC personnel files for USAF 1947-1964 (X0, RECORD-DESTROYED, the 1973 St. Louis fire). The last is a genuine and underappreciated constraint on every mid-century Wright-Patterson witness claim and the register should carry it explicitly.",
+   "lineage_note": "The Goldwater letter appears across many hosts in near-identical wording, which is one lineage. The HAER record and the FTD building history are institutional and independent of the claim by BES 5.1.7's access test.",
+   "confidence_note": "I have graded the naming claim harder than the substantive one, deliberately. The identity refutation is resolvable, cheap and decisive; the storage claim is not resolvable from open records and I decline to pretend otherwise. Treating a famous claim fairly sometimes means refusing to close it.",
+   "sources": [
+    {
+     "citation": "Library of Congress, HAER OH-79-AN, 'Wright-Patterson Air Force Base, Area B, Building 18, Power Plant Laboratory Complex, Northeast corner of C & Fifth Streets, Dayton, Montgomery County, OH'",
+     "url": "https://www.loc.gov/item/oh1655",
+     "tier": "P1",
+     "retrieval_state": "FETCH-BLOCKED",
+     "what_it_actually_shows": "SAW: the survey title and number in a search-result title. FETCH RETURNED EGRESS_BLOCKED for www.loc.gov. This is the item that refutes the identity claim and I could not open it. Top harvest-queue candidate for this entry."
+    },
+    {
+     "citation": "Barry Goldwater to Shlomo Arnon, 28 March 1975",
+     "url": "",
+     "tier": "P1",
+     "retrieval_state": "CITED-BY-OTHERS-NOT-SEEN",
+     "what_it_actually_shows": "NOT SEEN. Reported consistently across many secondary hosts with the same date, recipient and substance. No archival citation to the Goldwater papers (held at Arizona State University) and no custodial facsimile located. Until it resolves it is many copies of one claim."
+    },
+    {
+     "citation": "CIA reading room record, 'Letter to Honorable Barry M. Goldwater from Vernon A. Walters'",
+     "url": "https://www.cia.gov/readingroom/node/50865",
+     "tier": "P1",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a result title only. This is a DIFFERENT letter and is NOT evidence for the Arnon letter. Recorded to make explicit that I did not conflate them, and because it shows Goldwater correspondence exists in released collections."
+    },
+    {
+     "citation": "Accounts placing the Foreign Technology Division in Building 856 (FTD to FASTC 1992 to NASIC 2003)",
+     "url": "https://wordpresscom507.wordpress.com/2019/08/03/hideouts-at-wright-patterson/",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary giving the building number and the organisational succession. Self-published host; the underlying facts should be resolvable in AFHRA and NASIC public histories and were not."
+    }
+   ]
+  },
+  {
+   "name": "The '129/131 deep underground military bases' numerology (Phil Schneider, Preparedness Expo 1995)",
+   "aliases": [
+    "129 DUMBs",
+    "131 underground bases",
+    "1,477 bases worldwide",
+    "the Schneider figures"
+   ],
+   "era": "Lecture delivered 1995 (sources differ between September and November); Schneider died January 1996",
+   "jurisdiction": "Non-located - the claim is a national and global count with no site list",
+   "typology": "unknown-anomaly",
+   "location": {
+    "description": "None. In thirty years of circulation the claim has never been accompanied by coordinates, a site list, or a single named facility that can be checked. That absence is a property of the claim, not of my search.",
+    "precision": "none",
+    "basis": "Non-located in the BES 10.4 sense. No coordinate exists to record and none invented."
+   },
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The figures - approximately 129 or 131 active secret underground bases in the United States, approximately 1,477 worldwide, at 17 to 19 billion dollars each - originate in Phil Schneider's 1995 Preparedness Expo lecture and have no antecedent.",
+     "assessment": "The artifact is solid and unusually convenient: a dated recording deposited on the Internet Archive under the identifier 'philexpo'. A dated recording is excellent evidence of when a claim entered circulation. The register's own source registry already flags that the pre-1995 negative check has NOT been run and should be - and I did not run it either. So the honest statement is that I have an artifact and no negative receipt, which means I can say where the claim is FOUND and not yet that it ORIGINATES there. That distinction is the entire content of the ORIGIN proposition class and I am not entitled to skip it.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the IA item resolves with its deposit metadata AND a Wayback CDX / UTZOO Usenet / IA full-text negative receipt returns nothing pre-1995: A. Without the negative receipt the ceiling is C no matter how good the recording is.",
+     "supporting": [
+      "archive.org item 'philexpo', 'Phil Schneider - Preparedness Expo - Underground Bases, New World Order' (search snippet only; a dated, addressable identifier I did not open)",
+      "Multiple secondary sources giving the 131 US / 1,477 worldwide figures and attributing them to the 1995 lecture (search snippets only; these are copies)"
+     ],
+     "undercutting": [
+      "Sources disagree on whether the lecture was September or November 1995, and at least one describes a September 1995 Preparedness Expo appearance titled 'For Peace of Mind in Our Changing World'. A two-month uncertainty in the origin date is minor for the claim but fatal for a clean A, because ORIGIN is a statement about dates."
+     ],
+     "diagnosticity_note": "The numerals themselves are the diagnostic instrument. They are idiosyncratic, unsourced and carried verbatim, so under BES 5.1.7's distinctive-error test any page bearing '1,477' or '129 underground bases' is in this lineage regardless of what else it says - and the test survives paraphrase and machine regeneration, which MinHash does not. This is the most operationally useful thing on my beat: a string that mechanically classifies a large fraction of the fringe web into one lineage."
+    },
+    {
+     "class": "EXIST",
+     "statement": "Approximately 129 to 131 secret hardened underground facilities were operating in the United States in 1995.",
+     "assessment": "V is empty. No coordinate has ever been supplied for any of the 129, no procurement record exists for a construction programme of the asserted scale, and no spoil accounting has been offered. Calibration case F-03 already fixes this at F and asserts specifically that the deep expected-record negatives here must NOT license R - which is the characteristic failure mode of any evidence model with signed negatives, and it is worth restating because the negatives really are deep and really are tempting.",
+     "proposed_band": "X - VERIFICATION PENDING on search completeness; substantively F (SILENCE-DOMINATED) per calibration F-03. Explicitly NOT R: refutation_state R0, because nothing affirmatively disconfirms and BES 8.4 forbids R on negatives alone.",
+     "supporting": [],
+     "undercutting": [
+      "Absence of any procurement trace above 50M USD across 129 facilities (X3 profile)",
+      "Absence of any spoil-volume signature (X3 profile)",
+      "Absence of any coordinate for any of the 129 - a property of the claim rather than a search result"
+     ],
+     "diagnosticity_note": "This is the entry that most sharply illustrates why the register separates F from R. The negatives are overwhelming and they are still only negatives. A model that converts them to refutation would also refute the Greenbrier in 1991, which is the exact error the whole rubric was rebuilt to prevent."
+    },
+    {
+     "class": "FUNC",
+     "statement": "The claimed facilities house black-budget programmes including joint human and non-human operations.",
+     "assessment": "Carried entirely by the claimant's own lecture. BES 2.5 excludes it from V and routes it to ORIG. Note also the biographical layer: Schneider's asserted credentials as a geologist and structural engineer involved in base construction are the disputed element, which under BES 5.4 means he fails the position-to-know clause even though he is a real, findable, publicly identifiable person who gave dated public lectures. This is the Lazar pattern (calibration F-04) in a second instance, and the register should note that the same gate resolves both.",
+     "proposed_band": "X - VERIFICATION PENDING; substantively F (CAP-5).",
+     "supporting": [],
+     "undercutting": [],
+     "diagnosticity_note": "Nothing discriminates. The useful analytic point is structural: identity and position-to-know are different gates, and a corpus that keeps producing real, findable people whose credentials are the contested element is exactly what BES 5.4 was rewritten for."
+    }
+   ],
+   "mundane_alternative": "A11, a number asserted without a source in a single lecture and repeated. The specific mundane referent that makes the claim superficially plausible is real and large: the United States genuinely operates and has operated a substantial number of hardened underground facilities, and several hundred are documented by name - Cheyenne Mountain, Raven Rock, Mount Weather, Manzano, KUMMSC, the Rainier Mesa U12 tunnel complex, hundreds of missile launch facilities. What would distinguish the claim from that: a list. Thirty years have produced none.",
+   "claim_origin": "Philip Schneider, lecture at the Preparedness Expo, 1995 (September or November, sources differ), deposited on the Internet Archive as 'philexpo'. Schneider died in January 1996, which converted the lecture into a fixed canonical text that could not be revised or defended. Traced through search summaries; I did not open the recording and did not run the negative search.",
+   "expected_records": "Procurement trace above 50M USD, appropriated agency (X3); spoil-volume signature for excavation above 1e5 cubic metres (X3); MILCON line existence even where scope is classified (X3 for the existence of a line, X0 for its scope and location). For 129 facilities these absences are not routine at any level of secrecy, because money and rock are not classifiable. And still: BES 8.4 correctly refuses to convert them into R.",
+   "lineage_note": "One lecture, one man, one lineage - and it merges with the Denver International Airport claim, whose specific figures Alex Christopher attributes to Schneider directly. Any register treating DIA and the DUMB corpus as mutually corroborating is counting one 1995 lecture twice.",
+   "confidence_note": "The register already holds this at F. My contribution is the lineage merge with DIA and an explicit note that the pre-1995 negative receipt - the thing that would actually license the ORIGIN grade - has still not been run by anyone, including me.",
+   "sources": [
+    {
+     "citation": "Internet Archive item 'philexpo', 'Phil Schneider - Preparedness Expo - Underground Bases, New World Order'",
+     "url": "https://archive.org/details/philexpo",
+     "tier": "P5",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: the identifier and title in results. NOT OPENED, so I have not confirmed the deposit metadata or the lecture date from the artifact itself. T5 content in a T2 archive channel - record both."
+    },
+    {
+     "citation": "Secondary sources giving 131 US / 1,477 worldwide and attributing them to the 1995 lecture",
+     "url": "https://www.goodreads.com/topic/show/1961051-the-curious-case-of-philip-schneider",
+     "tier": "P5",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: several summaries repeating the figures. These are copies of one lecture and are recorded as one lineage, not as corroboration."
+    },
+    {
+     "citation": "Sources disagreeing on whether the Preparedness Expo lecture was September or November 1995",
+     "url": "https://timefordisclosure.com/phil-schneider-november-1995-lecture/",
+     "tier": "P5",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: one host asserting November 1995 while another describes a September 1995 Preparedness Expo appearance. A two-month uncertainty that matters because ORIGIN is a claim about dates."
+    }
+   ]
+  },
+  {
+   "name": "Mount Weather - the 'underground city' and the 'Western Virginia Office of Controlled Conflict Operations'",
+   "aliases": [
+    "Mount Weather Emergency Operations Center",
+    "High Point Special Facility",
+    "Western Virginia Office of Controlled Conflict Operations",
+    "WVOCCO"
+   ],
+   "era": "Facility from 1954; the folklore layer originates March 1976",
+   "jurisdiction": "Loudoun and Clarke Counties, Virginia, near Bluemont",
+   "typology": "COG-COOP",
+   "location": {
+    "description": "Near Bluemont, Virginia, on the Loudoun/Clarke county line. The facility is federally acknowledged and its location is public.",
+    "precision": "regional",
+    "basis": "Named locality only, from search summaries. No receipted coordinate; the register holds this site elsewhere at band A and I am not the source for its geometry."
+   },
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The circulating description of an underground city with streets, sidewalks, a lake and its own transit system, and the standing-shadow-cabinet framing, originate in Richard Pollock, 'The Mysterious Mountain', The Progressive, March 1976, resting on Senate subcommittee material and off-the-record interviews with former officials.",
+     "assessment": "The register already holds this (calibration E-03) and I did not improve on the origin trace. What I did find is a new and specific citogenesis observation that I have not seen recorded, and it is worth the entry on its own. The phrase 'Western Virginia Office of Controlled Conflict Operations' - which appears to be a Pollock-era coinage carrying no documentary attestation I could find - now appears as an ALTERNATE OFFICIAL NAME in the page titles of both the FAS Nuclear Information Project and GlobalSecurity: 'Mount Weather / High Point Special Facility (SF) / Western Virginia Office of Controlled Conflict Operations'. FAS is a T2/T3 source in this register's own tier table and GlobalSecurity is T4. A folklore coinage that has migrated into the nomenclature of two reference sites that researchers treat as institutional is exactly the laundering pattern CAP-3 exists to catch, and it is happening in the register's own source list.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the March 1976 Progressive issue resolves from a library copy (not a web reproduction) and the negative search for the phrase in federal records is run: A for ORIG of the phrase specifically, which is a narrower and more checkable claim than ORIG of the whole folklore.",
+     "supporting": [
+      "FAS Nuclear Information Project page title carrying the phrase as an alternate name (search snippet only; nuke.fas.org)",
+      "GlobalSecurity page title carrying the identical phrase (search snippet only)",
+      "Multiple fringe pages carrying the phrase verbatim without attributing Pollock (search snippets only)"
+     ],
+     "undercutting": [
+      "I did not search federal records for the phrase. If it turns out to be a genuine historical designation, this finding collapses entirely - and that is the check the register must run before publishing it."
+     ],
+     "diagnosticity_note": "The phrase functions as a fingerprint with an unusual property: because it is a proper-noun-shaped string with no documentary attestation, its appearance on ANY page is evidence of descent from the 1976 article, and its appearance on an INSTITUTIONAL-looking page is evidence of laundering rather than of documentation. That is a directly checkable test with a binary outcome - either the phrase exists in a federal record or it does not - and it is cheap to run."
+    },
+    {
+     "class": "FEAT",
+     "statement": "Mount Weather contains an underground city with streets, sidewalks, a lake and its own mass transit system.",
+     "assessment": "Calibration E-03 fixes this at E with a citogenesis flag, and records a deliberate one-band divergence from the reviewer's D. I found nothing to move it. Pollock is a journalist reporting others' attestation rather than the claimant, so BES 2.5 does not exclude him; he enters V at the unresolvable-attestation floor of D0, giving E rather than F.",
+     "proposed_band": "X - VERIFICATION PENDING on my own search; substantively E with citogenesis flag, per calibration E-03. CAP-3 and CAP-2b both reach the same ceiling by different routes.",
+     "supporting": [
+      "Pollock 1976, at the D0 unresolvable-attestation floor (search snippet only; I did not obtain the article)"
+     ],
+     "undercutting": [],
+     "diagnosticity_note": "There are no signals here at all, only a report of testimony - which is why E ('the claim survives only as a claim') describes it better than D ('signals equally consistent with the alternative'). The FEAT proposition sits inside a site graded A on EXIST, and the flag attaches to the proposition rather than the site. That structural separation is the product."
+    },
+    {
+     "class": "FUNC",
+     "statement": "Mount Weather houses a standing shadow cabinet - a parallel government-in-waiting with named departmental counterparts - receiving raw intelligence from every federal department.",
+     "assessment": "This is the half of the Pollock material that is most often quoted and least often separated from the underground-city description, and the register should hold them apart because they fail differently. The facility's continuity-of-government FUNCTION is federally acknowledged and separately well documented; what is at issue here is the specific institutional claim of a standing parallel cabinet with named counterparts, which rests on the same 1976 unnamed off-the-record sourcing and on Senate subcommittee material whose actual content I have not seen. V-claim is empty on everything I retrieved and CAP-2b applies before anything else does. Note that the Senate subcommittee material is the interesting half: a published hearing is a T1 record from a body with authority over its own proceedings, and if it says what Pollock says it says, this proposition moves. Nobody appears to have gone and looked - including me.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the underlying Senate subcommittee record resolves and states the institutional arrangement on its face: A. Without it, E at best via CAP-2b, alongside the citogenesis flag.",
+     "supporting": [
+      "Pollock 1976, at the D0 unresolvable-attestation floor (search snippet only)"
+     ],
+     "undercutting": [],
+     "diagnosticity_note": "Nothing I hold discriminates a standing shadow cabinet from an ordinary staffed continuity facility with departmental liaison functions, and the two are close enough that a loosely-worded description of the second reads as the first. That is the most likely mechanism here and it is why the proposition needs the hearing record rather than more retellings."
+    },
+    {
+     "class": "EXIST",
+     "statement": "A substantial hardened federal subsurface facility exists at Mount Weather.",
+     "assessment": "Federally acknowledged and on the public record since at least the TWA Flight 514 crash into the mountain on 1 December 1974. Calibration A-04 holds it at A. I add nothing and resolved nothing.",
+     "proposed_band": "X on my own evidence; substantively A per calibration A-04.",
+     "supporting": [],
+     "undercutting": [],
+     "diagnosticity_note": "Not at issue. Recorded so that the FEAT grade cannot be misread as doubt about the site."
+    }
+   ],
+   "mundane_alternative": "For the FEAT claim: A10/A08 - a real, large, hardened federal emergency operations centre whose actual interior is classified, described in 1976 in terms supplied by unnamed former officials and never since corroborated. What would distinguish an underground city from a large hardened EOC: any floor-area figure in a GSA or FEMA record, any NEPA document, any construction drawing. The site's own documentary record is genuinely rich; the city is not in it.",
+   "claim_origin": "Richard Pollock, 'The Mysterious Mountain', The Progressive, March 1976. The 'Western Virginia Office of Controlled Conflict Operations' designation appears to trace to the same period and to carry no documentary attestation, yet now appears as an alternate official name on FAS and GlobalSecurity.",
+   "expected_records": "For the FEAT claim: GSA or FEMA real-property records giving floor area (X2); NEPA documentation (X1 - much of this is categorically excluded); Loudoun and Clarke County deed records (X3). For the PHRASE: any federal record of any kind using it (X2 for an organisational designation of a real federal office - an organisational name is not a classifiable secret, so its total absence from the record would be informative).",
+   "lineage_note": "One 1976 article and several hundred copies. The specific new observation is that two sources the register itself tiers at T2/T3 and T4 have absorbed a folklore coinage into their title metadata, which means the citogenesis loop now runs through the register's own source list and must be flagged at the source level, not only at the proposition level.",
+   "confidence_note": "The nomenclature finding is the only original thing here and it is falsifiable in one search. I state it as a hypothesis with a named test, not as a conclusion.",
+   "sources": [
+    {
+     "citation": "FAS Nuclear Information Project, 'Mount Weather / High Point Special Facility (SF) / Western Virginia Office of Controlled Conflict Operations'",
+     "url": "https://nuke.fas.org/guide/usa/c3i/mt_weather.htm",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: the page TITLE carrying the phrase as an alternate name. That title is the finding - a folklore coinage sitting in the nomenclature of a source this register tiers as institutional. I did not read the page and do not know whether it attributes the phrase."
+    },
+    {
+     "citation": "GlobalSecurity, 'Mount Weather / High Point Special Facility (SF) / Western Virginia Office'",
+     "url": "https://www.globalsecurity.org/wmd/facility/mt_weather.htm",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: an identical title pattern. GlobalSecurity is registered in this project's tier table as a trap and a hop, never a terminus - and the identical title strongly suggests one of these two copied the other, which would make them one lineage."
+    },
+    {
+     "citation": "Richard Pollock, 'The Mysterious Mountain', The Progressive, March 1976",
+     "url": "",
+     "tier": "P3",
+     "retrieval_state": "CITED-BY-OTHERS-NOT-SEEN",
+     "what_it_actually_shows": "NOT SEEN. The Progressive's own archive is not freely online for 1976 and the web reproductions are of uncertain fidelity. The register's stated method - establish the canonical text from a library copy, then string-match downstream - remains undone, by me and by everyone else I could find."
+    },
+    {
+     "citation": "Cryptome, 'Eyeballing the Mount Weather Continuity of Government Bunker'",
+     "url": "https://cryptome.org/eyeball/weather/weather-eyeball.htm",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: listing only. Recorded as part of the circulation map."
+    }
+   ]
+  },
+  {
+   "name": "REX 84 and the claimed network of underground federal detention facilities",
+   "aliases": [
+    "Rex 84",
+    "Readiness Exercise 1984",
+    "FEMA camps",
+    "the 800 detention camps",
+    "Garden Plot",
+    "Cable Splicer"
+   ],
+   "era": "Underlying planning documents 1984; public disclosure July 1987; the underground-facility accretion from the 1990s",
+   "jurisdiction": "National; the claimed facilities are non-located",
+   "typology": "COG-COOP",
+   "location": {
+    "description": "None. The 'detention camps' list that circulates has never resolved to a set of checkable parcels; where individual sites are named they are typically existing, publicly known federal installations.",
+    "precision": "none",
+    "basis": "Non-located. No coordinate exists to record and none invented."
+   },
+   "propositions": [
+    {
+     "class": "PROG",
+     "statement": "A federal emergency-planning exercise designated REX 84 existed in 1984, and contingency planning involving continuity of government, population movement and detention of aliens was the subject of public congressional attention in July 1987.",
+     "assessment": "This is a real documentary kernel and the register should say so plainly. Alfonso Chardy, an investigative reporter for the Miami Herald, published on 5 July 1987 an account of Reagan-era emergency contingency planning; Chardy is a real, named, Pulitzer-associated journalist and the article is an ordinary published artifact. More importantly the matter reached the congressional record: on 13 July 1987 Representative Jack Brooks questioned Oliver North about contingency provisions during the Iran-Contra hearings, and that exchange, if it occurred as described, is in a published hearing transcript - a T1 record from a body with authority over its own proceedings. That is a genuinely resolvable D4-gate candidate sitting under a claim that is usually dismissed wholesale. The register's own source registry flags this cluster as 'COG-folklore fingerprints with real documentary kernels underneath' and I think that is exactly right.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the Iran-Contra hearing transcript resolves at GovInfo or in the published committee volumes and the Chardy article resolves: A for a carefully worded PROGRAM proposition. Note the wording matters enormously: 'contingency planning existed and was publicly questioned' is A-capable; 'a plan to suspend the Constitution was adopted' is not the same proposition and is not supported by anything I retrieved.",
+     "supporting": [
+      "Alfonso Chardy, Miami Herald, 5 July 1987 (search snippet only; not retrieved)",
+      "Reported exchange between Rep. Jack Brooks and Lt. Col. Oliver North, Iran-Contra hearings, 13 July 1987 (search snippet only; the hearing transcript was not retrieved)",
+      "A MuckRock FOIA request page for Rex 84 - evidence that a documented FOIA process exists, and under BES 3.3 a caution, since a requester's own half of a FOIA exchange is SOLICITED-BY-CLAIMANT and contributes nothing (search snippet only)",
+      "We Are The Mutants, 'Look It Up, Check It Out: REX 84 and the History of an American Conspiracy' - a sourced secondary treatment (search snippet only)"
+     ],
+     "undercutting": [
+      "Several summaries describe the plan's most dramatic provisions in language that traces to Chardy's characterisation rather than to a released document. The distinction between 'a reporter described a plan' and 'a released plan says this' is not maintained anywhere downstream, and I could not resolve it either."
+     ],
+     "diagnosticity_note": "A congressional hearing transcript is near-dispositive for a PROGRAM proposition and worthless for any EXIST proposition about a facility. That gap is this entry's whole point. It also carries the BES 1.4 lesson: PROGRAM is clamp-exempt, so a well-documented planning programme can sit at a high band beside an EXIST at F without contradiction - the DUCC pattern again."
+    },
+    {
+     "class": "EXIST",
+     "statement": "A network of underground federal detention facilities was constructed under or in connection with REX 84.",
+     "assessment": "Nothing supports this. The underground element does not appear in the 1987 disclosure at all as far as I can tell; it is a later accretion, and the circulating site lists resolve either to nothing or to existing publicly-known installations. The related 'H.R. 645' item is a real bill - a National Emergency Centers Establishment Act introduced in 2009 - which was introduced and not enacted, and which concerns above-ground centres on existing military installations. A real bill that was introduced and died is a documented PROGRAM fact and a refutation of the constructed-facility claim in the same object.",
+     "proposed_band": "X - VERIFICATION PENDING on search completeness; provisional F (CAP-5, V empty). Not R on the negatives alone, per BES 8.4 - though if the H.R. 645 legislative record resolves showing introduction without enactment, that is affirmative documentation of non-funding, which is an explicit R3 branch.",
+     "supporting": [],
+     "undercutting": [
+      "Reported non-enactment of H.R. 645 (2009) - if it resolves at Congress.gov, this is R3-shaped: a body with authority over the fact documenting non-funding",
+      "Absence of any procurement, MILCON or NEPA trace for constructed detention facilities at the asserted scale (X2-X3 profiles)"
+     ],
+     "diagnosticity_note": "The legislative record discriminates cleanly in both directions and is free and machine-accessible. This is the rare fringe claim whose central factual assertion can be settled by reading a bill's status page."
+    },
+    {
+     "class": "FUNC",
+     "statement": "Existing federal facilities are held in readiness as mass detention centres.",
+     "assessment": "V-claim is empty on everything I retrieved. Where individual named sites circulate, they are real installations with documented and different functions - which under BES 4.4 makes the published function of each an UNDERCUTS row rather than a neutral fact.",
+     "proposed_band": "X - VERIFICATION PENDING; provisional E at best (CAP-2b) and more likely F, depending on whether any verified third-party record enters V.",
+     "supporting": [],
+     "undercutting": [
+      "Documented alternative functions for the named installations (search snippets only, not individually verified)"
+     ],
+     "diagnosticity_note": "This is the DIA pattern applied to a national list: real T1 facts about real places, none of which discriminate. A published mission for an installation is the E0/A3 cell against a concealed-detention reading."
+    }
+   ],
+   "mundane_alternative": "A08 plus A11 in combination: real Cold War and post-Cold-War federal emergency contingency planning, some of it genuinely alarming and genuinely documented, whose actual products are plans and authorities rather than buildings - overlaid with a later accretion of constructed underground facilities for which no record of any class exists. What would distinguish: MILCON lines, NEPA filings, FRPP entries, county deeds, or spoil. The planning half leaves exactly the records planning leaves; the construction half leaves none.",
+   "claim_origin": "Alfonso Chardy, Miami Herald, 5 July 1987, reporting Reagan-era emergency contingency planning; amplified by the Brooks-North exchange in the Iran-Contra hearings of 13 July 1987. The underground-facility element is a later accretion whose own origin I did NOT trace and which remains an open item on this beat.",
+   "expected_records": "For the PROGRAM: published congressional hearing volumes (X3 for a public hearing - born-digital GovInfo coverage begins around the 103rd Congress, so pre-1994 material is scanned-only, flag ARCHIVE-GAP); Federal Register and executive-order series (X3); NSC and FEMA records at NARA (X1, ARCHIVE-GAP). For the FACILITIES: MILCON, FPDS, FRPP, NEPA and county deeds (X2-X3 across the board). The asymmetry is the entire finding.",
+   "lineage_note": "Two lineages that the corpus fuses and the register must split: the 1987 journalism plus the congressional record on one side, institutional and independent by the access test; the 1990s underground-camps literature on the other, a single derivative cluster. Fusing them lets a real congressional exchange launder an unevidenced construction claim, which is precisely the Sauder-as-bibliography error in a political register.",
+   "confidence_note": "Included because the beat brief is right that some fringe material sits on real documents that mainstream sources ignored, and this is the clearest political-continuity instance of it. The correct treatment is not to grade the claim up but to grade its parts separately, and I have deliberately worded the PROGRAM proposition narrowly enough that it could actually be established.",
+   "sources": [
+    {
+     "citation": "Alfonso Chardy, Miami Herald, 5 July 1987",
+     "url": "",
+     "tier": "P2",
+     "retrieval_state": "CITED-BY-OTHERS-NOT-SEEN",
+     "what_it_actually_shows": "NOT SEEN. Referenced consistently by date across several summaries. A metropolitan newspaper of record by a named investigative reporter; retrievable in principle from newspaper databases and not retrievable here."
+    },
+    {
+     "citation": "Iran-Contra hearings, exchange between Rep. Jack Brooks and Lt. Col. Oliver North, 13 July 1987",
+     "url": "",
+     "tier": "P1",
+     "retrieval_state": "CITED-BY-OTHERS-NOT-SEEN",
+     "what_it_actually_shows": "NOT SEEN. This is the entry's D4-gate candidate: a published congressional hearing transcript from a body with authority over its own proceedings. Pre-1994 congressional material in GovInfo is scanned-only or absent (flag ARCHIVE-GAP), which is why it is a real acquisition task rather than a search."
+    },
+    {
+     "citation": "We Are The Mutants, 'Look It Up, Check It Out: REX 84 and the History of an American Conspiracy' (13 March 2017)",
+     "url": "https://wearethemutants.com/2017/03/13/look-it-up-check-it-out-rex-84-and-the-history-of-an-american-conspiracy/",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: title and summary. An edited essay-length treatment that appears to do source work; the most promising secondary lead on the entry."
+    },
+    {
+     "citation": "MuckRock FOIA request page for Rex 84",
+     "url": "https://www.muckrock.com/foi/united-states-of-america-10/rex-84-70333/",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: existence of a FOIA request record. Under BES 3.3 the requester's own half is SOLICITED-BY-CLAIMANT and contributes nothing; only agency-originated content whose creation date predates the request is UNSOLICITED. Recorded so the distinction is not lost."
+    },
+    {
+     "citation": "Wikipedia, 'Rex 84' and 'Alfonso Chardy'",
+     "url": "https://en.wikipedia.org/wiki/Rex_84",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: summaries giving the 5 July 1987 date, the 13 July 1987 hearing exchange, and the Brinkerhoff/North attribution. Crowd-edited leads."
+    },
+    {
+     "citation": "Grokipedia, 'Rex 84'",
+     "url": "https://grokipedia.com/page/Rex_84",
+     "tier": "P5",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: presence in results. Blocklisted, POST-2022-UNATTRIBUTED, zero lineages, retained and displayed as inert."
+    }
+   ]
+  },
+  {
+   "name": "The Shaver Mystery - the underground cavern civilisation (Amazing Stories, March 1945)",
+   "aliases": [
+    "the Shaver Mystery",
+    "I Remember Lemuria!",
+    "the Deros",
+    "the cavern world"
+   ],
+   "era": "Published March 1945; the magazine ran Shaver material through a dedicated issue in June 1947",
+   "jurisdiction": "Non-located; the claimed caverns are global and unspecified",
+   "typology": "unknown-anomaly",
+   "location": {
+    "description": "None. The claim asserts a worldwide cavern system with no located instance.",
+    "precision": "none",
+    "basis": "Non-located. No coordinate invented."
+   },
+   "propositions": [
+    {
+     "class": "ORIG",
+     "statement": "The template for an American 'vast inhabited underground facility' narrative - a multi-level cavern world, a hidden population, advanced technology, and a claimant reporting personal experience presented as fact inside a fiction venue - is fixed by Richard Sharpe Shaver's 'I Remember Lemuria!', the cover story of Amazing Stories for March 1945, published and promoted as substantially true by editor Ray Palmer.",
+     "assessment": "This entry exists because the beat's job is to trace backwards, and the DUMB corpus is routinely dated to the 1990s when its narrative template is thirty-five years older and has a fixed, dated, commercially published origin. The artifact is a mass-market magazine with a cover date, held in library and fan collections and in the Internet Archive pulp collections; Shaver (1907-1975) and Palmer are both real, dated and documented, with a standing encyclopedia entry in the Science Fiction Encyclopedia. Crucially the truth-claim is documented too: the controversy is specifically that Shaver and Palmer asserted the material was fundamentally true while publishing it as fiction, which is the exact structural move the later corpus repeats.",
+     "proposed_band": "X - VERIFICATION PENDING. Ceiling if the March 1945 issue resolves with its cover date and the Palmer editorial framing: A for a template-origin proposition, which is narrower than a claim-origin proposition and correspondingly more defensible.",
+     "supporting": [
+      "Science Fiction Encyclopedia entry for Richard S. Shaver - a curated reference work with editorial standards (search snippet only)",
+      "Wikipedia, 'Richard Sharpe Shaver', giving dates 1907-1975 and the Palmer relationship (search snippet only; T4)",
+      "Multiple reprint and facsimile listings of the March 1945 issue, including a modern facsimile edition with an ISBN (search snippets only)"
+     ],
+     "undercutting": [
+      "'Template origin' is a weaker and vaguer proposition than 'claim origin', and it is genuinely arguable that hollow-earth literature from Symmes onward, or Bulwer-Lytton's 'The Coming Race' (1871), is the real ancestor. I did not test those and the register should not treat 1945 as a floor without doing so."
+     ],
+     "diagnosticity_note": "A dated commercial magazine is dispositive for when a text appeared and says nothing about influence. The discriminating question - does the later DUMB corpus DESCEND from this, or merely resemble it - is answerable by the BES 5.1.7 citation test, and there is a concrete handle for it: Thomas Allen LeVesque, the Dulce fabricator, is described in the same sources as a key figure in spreading Shaver Mystery material. If that holds, the citation test connects the 1945 template to the 1989 Dulce text through one identified person, which would be an actual documented descent rather than a resemblance."
+    },
+    {
+     "class": "EXIST",
+     "statement": "An inhabited cavern system with advanced technology exists beneath the earth's surface.",
+     "assessment": "V is empty and the origin artifact is a work published in a fiction magazine by its own author-claimant. BES 2.5 excludes it. This is the Telos pattern (calibration F-02): a claim whose origin document is openly a work of fiction.",
+     "proposed_band": "X - VERIFICATION PENDING on search completeness; substantively F (CAP-5).",
+     "supporting": [],
+     "undercutting": [],
+     "diagnosticity_note": "Nothing discriminates and nothing needs to."
+    },
+    {
+     "class": "FUNC",
+     "statement": "The claimed caverns house a hostile population operating machinery that influences surface humans.",
+     "assessment": "Same disposition. Recorded only so the entry carries the required decomposition.",
+     "proposed_band": "X - VERIFICATION PENDING; substantively F.",
+     "supporting": [],
+     "undercutting": [],
+     "diagnosticity_note": "Nothing discriminates."
+    }
+   ],
+   "mundane_alternative": "A11 in its literary form: a pulp magazine serial written by a claimant and promoted as fact by an editor with a circulation incentive, which the sources describe as having roughly doubled reader engagement and drawn over 2,500 letters. What would distinguish a real cavern civilisation from that: literally any physical trace. None has ever been offered, in eighty years, by anyone.",
+   "claim_origin": "Richard Sharpe Shaver, 'I Remember Lemuria!', Amazing Stories, March 1945, cover story, edited and promoted as fundamentally true by Raymond A. Palmer; extended through further Shaver material culminating in a June 1947 issue given over entirely to the subject.",
+   "expected_records": "For the ARTIFACT: library holdings and pulp-collection scans of Amazing Stories, March 1945 (X3 - a mass-circulation commercial magazine; absence would be extraordinary and is not the case). For the CLAIM: nothing, in any record class, ever. This is a case where the expected-record framework has nothing to say and correctly says nothing.",
+   "lineage_note": "The important lineage question is downstream, not upstream: whether the 1990s DUMB corpus descends from Shaver by citation or merely resembles him by genre convergence. The reported LeVesque connection is a concrete, checkable bridge and is the single item on this entry worth further work.",
+   "confidence_note": "Included as the beat's deepest backsourcing result and flagged as the weakest-worded proposition in my set. 'Template origin' is a genuine claim but a soft one, and I have said so rather than dressing it up. The measurable version is the citation test through LeVesque, and that is what I would hand to the next cycle.",
+   "sources": [
+    {
+     "citation": "Science Fiction Encyclopedia, entry 'Shaver, Richard S'",
+     "url": "https://sf-encyclopedia.com/entry/shaver_richard_s",
+     "tier": "P3",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: the entry title in results. A curated reference work with named editors and editorial standards - the best-tiered source available on this entry. Not read."
+    },
+    {
+     "citation": "Wikipedia, 'Richard Sharpe Shaver'",
+     "url": "https://en.wikipedia.org/wiki/Richard_Sharpe_Shaver",
+     "tier": "P4",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a summary giving 1907-1975, the Palmer relationship, the March 1945 cover story, the truth-claim controversy, the 2,500 letters and the June 1947 dedicated issue. Crowd-edited."
+    },
+    {
+     "citation": "Amazing Stories, March 1945, vol. 19 no. 1 (facsimile edition, ISBN 9781773445038)",
+     "url": "https://www.amazon.com/Amazing-Stories-March-1945-Remember/dp/1773445030",
+     "tier": "P2",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a bookseller listing for a modern facsimile with an ISBN, which is weak evidence that the issue exists and is reproducible. The ORIGINAL issue in a library or pulp-collection scan is the citation; a facsimile listing is not."
+    },
+    {
+     "citation": "Para Normal (X post) asserting Thomas Allen LeVesque was a key figure in spreading Shaver Mystery material as well as Dulce",
+     "url": "https://x.com/ParaN_rmal/status/2034488643142685085",
+     "tier": "P5",
+     "retrieval_state": "SEARCH-SNIPPET-ONLY",
+     "what_it_actually_shows": "SAW: a social-media post asserting the LeVesque-Shaver link. T5, ADVERSARY-WRITABLE channel, zero evidential weight. Recorded ONLY because it names the specific checkable bridge between the 1945 template and the 1989 Dulce text, which is the hypothesis worth testing."
+    }
+   ]
+  }
+ ],
+ "refuted_or_hollow": [
+  {
+   "claim": "'Thomas Castello', an alleged RAND-employed Dulce security technician who escaped with the 'Dulce Papers', thirty photographs and a videotape",
+   "origin": "The persona circulates c. 1987-1991 within the Dulce cluster; Thomas Allen LeVesque, writing as 'Jason Bishop III', is reported to have admitted to author Adam Gorightly before his death in December 2018 that Castello never existed and that the material was creative writing. Christa Tilton is separately reported to have reached the same conclusion.",
+   "why_hollow": "The person does not resolve outside the claim. Under BES 5.4 a name that resolves to nothing in any record created for an unrelated purpose scores D0 regardless of how much text is attributed to it, and the attestation-custody rule means an anonymous account of what a named person said is one lineage with whoever is asserting - never with the person. Two caveats I insist on: the admission reaches me second-hand, after the admitter's death, through named but non-institutional channels, so the R1 route is weaker than the register's calibration presents it; and I did not run the negative search that would independently establish non-existence.",
+   "mundane_explanation": "A pseudonymous authorial persona created as fiction inside a milieu already saturated by a documented AFOSI disinformation operation against Paul Bennewitz."
+  },
+  {
+   "claim": "The 'New World Airport Commission' named on the Denver International Airport dedication capstone is a New World Order body",
+   "origin": "Absorbed into the DIA folklore from the mid-1990s, principally via Alex Christopher's 'Pandora's Box' (1993) and 'Pandora's Box II' (1996).",
+   "why_hollow": "The Denver Public Library holds a processed archival collection, 'New World Airport Commission Records', described as a public-relations body for the airport's opening, active 1994, 1997 and 1998, with correspondence to and from its president Charles Ansbacher. A finding aid at the holding repository is a T1 record from a body with authority over the fact of what it holds, and it describes a temporary municipal PR commission. This is an affirmative undercutting row, not an absence. FETCH BLOCKED - I have the finding aid's summary, not the finding aid.",
+   "mundane_explanation": "A temporary civic commission organised to run the opening festivities of a new airport, its name most likely alluding to Dvorak's New World Symphony."
+  },
+  {
+   "claim": "'Hangar 18' is a specific structure at Wright-Patterson Air Force Base",
+   "origin": "A diffuse mid-century cluster rather than a single text, cemented in the nomenclature by a 1980 feature film of that title - a citogenesis route the register should trace directly.",
+   "why_hollow": "The Library of Congress HAER survey records Building 18 in Area B as part of the Power Plant Laboratory Complex, at the northeast corner of C and Fifth Streets - an engine and power-plant research facility, not a hangar. The organisation the claim is actually reaching for, the Foreign Technology Division, occupied Building 856 from the 1970s, becoming FASTC in 1992 and NASIC in 2003. The claim conflates a laboratory building number with a hangar and attaches to it the function of an organisation housed elsewhere. FETCH BLOCKED at loc.gov.",
+   "mundane_explanation": "A large, genuinely classified aeronautical research installation whose documented Foreign Technology Division work on recovered SOVIET and CHINESE aircraft is real, misread and misnumbered."
+  },
+  {
+   "claim": "The specific Denver International Airport figures - eight underground levels, a 4.5 square mile underground city, an 88.5 square mile base",
+   "origin": "Phil Schneider, reported by Alex Christopher in 'Pandora's Box II' (1996) as Schneider's own statements.",
+   "why_hollow": "The figures have no source and no antecedent, and their route into circulation runs through one man's 1995 lecture circuit. The register should record the consequence: the DIA claim and the '129 DUMBs' claim are ONE lineage, not two, so any treatment of them as mutually reinforcing double-counts a single lecture. Under BES 5.7 this is the non-monotone case where finding a link lowers a grade.",
+   "mundane_explanation": "The real subterranean levels beneath the terminal are the inter-concourse passenger train and the abandoned BAE automated baggage system - 26 miles of steel track, retired in 2008 and walled off, which the airport now reportedly intends to open to the public as pedestrian walkways from 2027."
+  },
+  {
+   "claim": "'1,477 underground bases worldwide' and '129 (or 131) secret underground bases in the United States'",
+   "origin": "Phil Schneider's Preparedness Expo lecture, 1995 (sources differ between September and November), deposited on the Internet Archive as 'philexpo'. Schneider died in January 1996, freezing the text as canon.",
+   "why_hollow": "No source, no antecedent, no coordinate for any of the 129, no procurement record, no spoil accounting - and thirty years without a list. The figures function as a lineage fingerprint: any page carrying '1,477' or '129 underground bases' is in this lineage regardless of what else it says, and that test survives paraphrase and machine regeneration where shingle-matching does not. NOTE CAREFULLY: this is F, not R. The expected-record negatives here are deep and real and BES 8.4 forbids converting them into refutation - a model that refutes on negatives alone would also have refuted the Greenbrier in 1991.",
+   "mundane_explanation": "A number asserted in one lecture and repeated. The genuine referent that makes it superficially plausible is the real and substantial body of documented US hardened underground facilities, which have names, records and coordinates."
+  },
+  {
+   "claim": "'Report from Iron Mountain' is a genuine suppressed federal study",
+   "origin": "Leonard C. Lewin, Dial Press, 1967, framed as leaked to him by a participant; authorship admitted by Lewin in the New York Times Book Review of 19 March 1972.",
+   "why_hollow": "The author confessed in print, under his own name, in a named national periodical, at a fixed date. That is BES 8's R1 branch in its cleanest possible form - an admission by the participant, documentary rather than testimonial - and it stands in instructive contrast to the Dulce R1 route, which rests on a second-hand report of a dead man's admission. The two look identical in a one-line summary and are completely different in kind. Recirculation as authentic continued through 1990s militia bootlegs and persists on live pages in 2026, including machine-generated ones.",
+   "mundane_explanation": "A political satire, set at a real underground corporate records-storage facility near Hudson, New York - which is itself a different object again from the Iron Mountain / Boyers, Pennsylvania facility the register already grades at band A. Three distinct things, one word, and BES 11.1 forbids merging them on name similarity."
+  },
+  {
+   "claim": "A pre-Columbian 'Lizard People' city with a Key Room and gold tablets lies beneath Fort Moore Hill, Los Angeles",
+   "origin": "G. Warren Shufelt, on readings from a self-built 'radio X-ray' device; reported by Jean Bosquet, Los Angeles Times, 29 January 1934. The Los Angeles County Board of Supervisors is reported to have approved the excavation contract on 21 February 1933 with Rex McCreary, Warren Shufelt and Ray Martin on a treasure-split basis.",
+   "why_hollow": "It was affirmatively tested at the time, by the claimant, with the county's permission, and it failed. A shaft was sunk to roughly 250 feet at the claimed spot; no tunnels and no tablets were found; water and mud entered; funding and press attention ended and the holes were covered. A century of downtown regrading and construction has since constituted an enormous accidental search with an entirely negative result. This is not the argument from silence - it is a failed test, which is affirmative content improbable under the proposition.",
+   "mundane_explanation": "A 1930s treasure-hunting venture built on an unvalidated instrument, given administrative cover by a county with nothing to lose and publicity by a metropolitan newspaper with a taste for the story."
+  },
+  {
+   "claim": "'Mel's Hole', a bottomless pit on private land nine miles west of Ellensburg, Washington",
+   "origin": "A caller identifying himself as Mel Waters on Coast to Coast AM with Art Bell, 21 February 1997, with a follow-up on 24 February 1997 and further appearances in 2000 and 2002.",
+   "why_hollow": "Local reporters are described as having searched the Kittitas County records and found no Mel Waters as a property owner, no matching rural parcel, and no employment record for the claimed wife at Central Washington University. County deed and assessor records sit at X3 on the expected-record table - the universal CONUS floor - so this absence is maximally informative rather than routine. A thirty-person ground search of Manastash Ridge in 2002 with GPS and metal detectors, covered by the Seattle Times, found nothing. Jack Powell, then a Washington DNR geologist, stated in 2012 that such a hole is physically impossible and identified a real abandoned gold-mine shaft northwest of Ellensburg, perhaps 300 feet deep, as the plausible substrate. CAVEAT: everything above is journalists reporting that they searched the county record. The record itself is unretrieved, and it is the difference between R and F.",
+   "mundane_explanation": "A performed or fabricated call, plausibly built on local knowledge of a real 300-foot abandoned mine shaft on private land."
+  },
+  {
+   "claim": "A national tunnel network was melted by nuclear subterrene machines, and the absence of spoil proves it",
+   "origin": "The inference, not the documents. The documents are genuine 1970s Los Alamos research. The move from 'the AEC patented a rock-melting tunneller' to 'therefore a network was melted' traces to the 1990s fringe-book corpus, principally Richard Sauder's 'Underground Bases and Tunnels' (1995), with Schneider supplying the numbers.",
+   "why_hollow": "The 1972 patent's own stated advantage - that the process produces no muck or tailings - is deployed downstream to explain why the most diagnostic possible signal is missing. Spoil-volume signature sits at X3 on the expected-record table, the strongest negative available. A claim structured so that the absence of its own strongest disconfirming signal counts as support has removed its own falsifiability, and under BES 4.4 that collapses to the D0 cell at any volume of assertion. Separately: the programme record indicates transfer in 1975 and quiet termination without a full-scale prototype.",
+   "mundane_explanation": "A cancelled civil-tunnelling R&D programme, funded partly by the National Science Foundation, plus the very large body of real, named, documented US deep underground construction - the Rainier Mesa U12 tunnel complex being the clearest instance, with six nuclear weapons-effects tests in U12t alone between 1970 and 1987 and a published DOE historical evaluation."
+  },
+  {
+   "claim": "'Western Virginia Office of Controlled Conflict Operations' is an official designation of the Mount Weather facility",
+   "origin": "Apparently a coinage of the Mount Weather folklore layer originating with Richard Pollock, 'The Mysterious Mountain', The Progressive, March 1976. I found no documentary attestation for it in any federal record - though I also did not search federal records for it, which is the check that would settle this.",
+   "why_hollow": "STATED AS A HYPOTHESIS WITH A NAMED TEST, NOT A CONCLUSION. The phrase now appears as an alternate official name in the page titles of both the FAS Nuclear Information Project and GlobalSecurity - a T2/T3 source and a T4 source in this project's own tier table. A folklore coinage that has migrated into the nomenclature of reference sites researchers treat as institutional is the laundering pattern CAP-3 exists to catch, and here it is running through the register's own source list. The test is binary and cheap: does the phrase appear in any federal record. If it does, this finding collapses entirely and should be struck.",
+   "mundane_explanation": "A journalist's characterising phrase from 1976, repeated without attribution until it acquired the appearance of nomenclature."
+  },
+  {
+   "claim": "A network of underground federal detention facilities was constructed under REX 84",
+   "origin": "The underground element is a 1990s accretion whose own origin I did NOT trace and which remains open. The documented kernel beneath it is real: Alfonso Chardy, Miami Herald, 5 July 1987, and the Brooks-North exchange in the Iran-Contra hearings of 13 July 1987.",
+   "why_hollow": "The construction claim leaves no MILCON line, no procurement trace, no NEPA filing, no FRPP entry and no county deed - record classes that sit at X2 and X3 and are not structurally withheld for facilities of this kind. The related 'H.R. 645' item is a real bill, introduced in 2009 and not enacted, concerning above-ground centres on existing military installations; if the legislative record resolves, non-enactment is affirmative documentation of non-funding and an explicit R3 branch. IMPORTANT: the PLANNING half of this claim is not hollow and should not be graded as though it were. The register must split the two, or a real congressional exchange will launder an unevidenced construction claim.",
+   "mundane_explanation": "Real Cold War and post-Cold-War federal emergency contingency planning, whose actual products were plans and legal authorities rather than buildings."
+  }
+ ],
+ "coverage_gaps": "THE PRIORITY HARVEST QUEUE, in the order I would fetch it. Each of these is a specific document that would move a specific proposition, and every one is free and outside the classification system:\n1. https://cdnc.ucr.edu/?a=d&d=SPNP19340130.2.36 - San Pedro News Pilot, 30 January 1934. Would ground the cleanest ORIGIN entry on the beat. FETCH-BLOCKED here.\n2. https://www.loc.gov/item/oh1655 and the HAER OH-79-AN photographic set - would refute the 'Hangar 18' identity claim from a T1 survey. FETCH-BLOCKED here.\n3. https://archives.denverlibrary.org/repositories/3/resources/6538 - the New World Airport Commission finding aid. FETCH-BLOCKED here.\n4. https://www.osti.gov/servlets/purl/4444905 (LA-5354-MS) and https://www.osti.gov/servlets/purl/4687637 (LA-4547) - would establish the subterrene PROGRAM proposition at a real band.\n5. US Patent 3,693,731 at the USPTO's own interface, not an aggregator - forgery pricing under BES A6 requires the issuing authority.\n6. Kittitas County Assessor and Auditor property records for any owner named Waters, late 1990s - the single record that decides whether Mel's Hole is R or F.\n7. New York Times Book Review, 19 March 1972 - Lewin's admission, the beat's cleanest R1.\n8. Los Angeles County Board of Supervisors minutes, 21 February 1933 - the Shufelt excavation contract.\n9. Iran-Contra hearing transcript, 13 July 1987 - pre-1994 congressional material is scanned-only in GovInfo, so this is an acquisition task, not a search. Flag ARCHIVE-GAP.\n10. California Mining Journal, November 1940 - the Dorr affidavit as first published, plus a collation against the 10 December 1934 variant.\n\nWHAT THIS BEAT STILL HAS NOT DONE, AND IT IS THE MAIN THING. Not one negative receipt was logged. Every ORIGIN proposition in this file is therefore a statement about where a claim is FOUND rather than where it ORIGINATES, and the register should not publish them as origins until the canonical ORIGIN set has been run: Wayback CDX with collapse=digest, IA full-text hits_inside, the AFU 'ufonewsletters' collection, UTZOO Usenet, textfiles.com, Arctic Shift, Chronicling America and Open ONI. The single highest-value unrun search on the whole beat is the pre-1995 check on the strings '1,477' and '129 underground bases', which the register's own source registry already flags as unverified.\n\nOPEN THREADS I DID NOT CLOSE. (a) The origin of the UNDERGROUND element of the FEMA-camps claim - I traced the political kernel to 1987 and the underground accretion to nobody. (b) Whether the 1980 film 'Hangar 18' created the nomenclature it appears to describe, which would be a textbook citogenesis event. (c) Whether the 1990s DUMB corpus descends from Shaver 1945 by citation or merely resembles it - the concrete handle is the reported LeVesque connection to Shaver Mystery material, which would link the 1945 template to the 1989 Dulce text through one identified person. (d) Whether 'Western Virginia Office of Controlled Conflict Operations' appears in any federal record.\n\nA STRUCTURAL GAP IN THE RUBRIC ITSELF, offered for consideration rather than as a finding. The expected-record framework is built for facilities where concealment is the controlling variable and silence is routine. Two entries here invert that: at Kokoweef and at Fort Moore Hill, the searchers were the PROPONENTS, funded, motivated, with lawful access, digging at the claimed location - for ninety years in one case. Their failure is signed evidence of a different and much stronger kind than a missing MILCON line, and there is no ERP profile for it. I would propose a 'proponent-searchable claim' profile where a sustained, funded, on-site negative by the claimant's own party scores as affirmative UNDERCUTS rather than as documentary absence, which would let those two entries reach R by a legitimate route instead of resting at F.\n\nWHAT I DELIBERATELY DID NOT DO. I did not manufacture coordinates. Six of the twelve entries carry precision 'none' or 'claimed-only' and no lat/lon, because the claims themselves have never been located, and a precise pin manufactured from imprecise evidence would be the register performing its own citogenesis at the interface layer. I also declined to close Wright-Patterson EXIST, which is genuinely unresolved from open records, rather than grade it to look decisive."
+}

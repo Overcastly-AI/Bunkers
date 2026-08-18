@@ -1,0 +1,1377 @@
+{
+  "beat": "Continuity of government and federal relocation (COG/COOP, Federal Relocation Arc, FEMA/DCPA/OCD regional centres, Presidential Emergency Facilities, departmental emergency relocation sites)",
+  "method_notes": "RETRIEVAL STATE, STATED FIRST BECAUSE IT GOVERNS EVERYTHING BELOW. WebFetch is blocked for every host I attempted, without exception: clui.org, en.wikipedia.org, coldwar-ct.com, www.orau.org, gao.justia.com, coldwar-c4i.net, www.globalsecurity.org. The repository's research/egress-allowlist.txt lists 118 hosts including en.wikipedia.org, coldwar-c4i.net, globalsecurity.org, apps.dtic.mil, www.gao.gov and www.archives.gov, but that allowlist is NOT live: I tested allowlisted non-.gov hosts (coldwar-c4i.net, globalsecurity.org, en.wikipedia.org) and all three returned EGRESS_BLOCKED. `curl $HTTPS_PROXY/__agentproxy/status` shows selective=false with an empty recentRelayFailures list, i.e. a blanket proxy posture rather than per-tool scoping. CONSEQUENCE UNDER BES v0.2: I did not open a single document in this sweep. Every observation below derives from WebSearch result titles, URLs and the search tool's own prose summaries of pages it retrieved on my behalf. I have evidence that summaries exist; I do not have evidence of any document's contents. Per BES 2.2 the correct receipt state for every row is UNRESOLVED-UNREACHABLE (network failure, explicitly NOT measured fabrication) and every row is therefore tier V0 and arithmetically inert. Per BES 7.1 the canonical corpora for this beat (CREST, DTIC, NARA Catalog, GovInfo, MILCON J-books, NEPA repositories, GSA disposal, FRPP, county recorders) returned UNSEARCHED, not NEGATIVE. SCI is therefore approximately 0 for every proposition. Per BES 9.4 step 2, with SCI < 0.5 and V empty, EVERY proposition in this file is X — NOT ASSESSED. I have written the band I believe each proposition would reach if its named leads resolved into the `assessment` field, as verification debt under BES 10.5; that conditional is a research target, not a grade, and no proposition here should be published at any band above X. WHAT I SEARCHED. Roughly twenty WebSearch queries across: the OCDM/OCD/DCPA/FEMA regional headquarters programme and each of its eight regional sites; the Presidential Emergency Facility microwave network and its individual code-named sites; the Federal Relocation Arc framing and its numerical claims; departmental emergency relocation sites outside the DC arc; the Raven Rock and Greenbrier anchors for calibration; and backward-tracing queries aimed at the origin of the Mount Weather 'underground city' claim and of the post-2022 bunker-listicle corpus. WHAT WORKED. Searching for the ADMINISTRATIVE STRUCTURE rather than for bunkers was by far the highest-yield technique and it is the one I would repeat. The query that produced the single most valuable result of the sweep asked about the Defense Civil Preparedness Agency's regional office locations and renumbering, not about any facility: it returned a fully enumerated, dated, eight-member list of regional headquarters with their moves (Region 1 Harvard MA 1958-69 then Maynard MA; Region 2 Olney MD; Region 3 Thomasville GA; Region 4 Battle Creek MI; Region 5 Denton TX; Region 6 Denver CO; Region 7 Santa Rosa CA; Region 8 Everett WA 1958-69 then Bothell WA), attributed to the NARA Guide to Federal Records for RG 397 / RG 304. That is a closed candidate set with a hard denominator, arriving from a finding aid rather than from an enthusiast list, and it is exactly the index-enumeration discovery mode BES 5.8(a) prescribes over model-prior-driven searching. Two further techniques paid off: querying historic-preservation channels rather than defence channels surfaced Building 710 at the Denver Federal Center as an NRHP-listed property with a State Historic Preservation Office record, which is the strongest documentary anchor in this beat and has essentially no popular bunker profile; and querying for the COVER STORY rather than the facility surfaced the Front Royal, Virginia State Department relocation site operating under USDA beef-cattle-research-station cover, which is the best novel find here. WHAT WAS BLOCKED. Everything. Specifically blocked and therefore recorded as UNSEARCHED rather than negative: the NARA Guide to Federal Records pages for RG 304, 396, 397 and 311 that are the apparent source of the eight-region enumeration; the ERDC-CERL Phase I archaeological survey of Raven Rock Mountain Complex Site C, whose DTIC accession AD1078617 I saw only as a string inside a search-result URL and did not resolve; the FEMA/ORAU civil defence history PDF (cdhistory.pdf) that would carry the regional-centre construction programme; the GAO civil defence reports NSIAD-84-11, NSIAD-88-52 and LCD-76-464; the NRHP nomination for Building 710; the Smithsonian Institution Archives record on the Front Royal land transfer; and the FRASER finding aid for Federal Reserve Record Group 82 Boston Box 2644 that bears on the Notch currency claim. Each of those is a named, machine-resolvable acquisition target with a known path, and each would be R-SURROGATE or better on a working network. WHAT I COULD NOT ESTABLISH. (1) The size of the regional-centre programme. Three mutually inconsistent counts circulate and I could not adjudicate any of them: 'close to a dozen' regional centres (CLUI), 'six similar operations centers' (Bothell local press), and 'all eight of its regions' (the OCDM planning framing). The eight-region administrative list is well-formed; whether all eight received a purpose-built hardened structure is a different proposition and I have direct construction evidence for only some. (2) Whether Kansas City, Missouri ever held a hardened regional centre. It appears in one compiler's list of built centres but is absent from the eight-region enumeration, and FEMA Region 7's Kansas City office resolves to an ordinary street address. I have left this as an open candidate-set boundary problem rather than calling it either way. (3) Any interior condition, dimension or hardening specification anywhere in this file. Every figure quoted — 37,734 sq ft at Thomasville, 36,000 sq ft at Denver, 120x140 ft and 450 tons of steel at Bothell, one megaton at one mile at Denton, $1.86M and $2.7M construction costs — reached me through a search summary and none is receipted. (4) Whether the Front Royal, Corkscrew or Notch claims survive contact with their primaries. (5) The origin of the '75 Presidential Emergency Facilities among the 90 or so Federal Relocation Arc sites' figure, which is attributed only to unnamed 'former government employees' and which contradicts the separately circulating 'nine PEFs within a 25-minute helicopter trip' figure by a factor of eight. AGENT-INDEPENDENCE DISCLAIMER, PER BES 5.0. I am one agent over one model family searching one indexed web. Nothing in this file is corroborated by the fact that I found it, and if another agent on this fleet returns any of these claims that is the same source found twice, not a second witness. My fan-out value here is recall only.",
+  "candidates": [
+    {
+      "name": "Building 710, Denver Federal Center — Defense Civil Preparedness Agency Region 6 Operations Center",
+      "aliases": [
+        "Building 710",
+        "DCPA Region 6 Operations Center",
+        "FEMA Region 8 Operations Center",
+        "Denver FEMA Center",
+        "Denver Federal Regional Center"
+      ],
+      "era": "Completed 1969; DCPA Region 6 operations centre to 1979; FEMA Region 8 operations centre 1979 to present; NRHP-listed 16 December 1999",
+      "jurisdiction": "Jefferson County, Colorado (Lakewood), on the federally owned Denver Federal Center",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Within the Denver Federal Center campus, Lakewood, Colorado. Reported as an earth-covered structure under approximately three feet of soil, 36,000 sq ft over two levels.",
+        "precision": "regional",
+        "basis": "Named campus and municipality only, from search summaries of GSA and History Colorado pages. I hold no receipted coordinate, no parcel identifier and no NRHP reference number. I have not fabricated a lat/lon and none is supplied."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A substantial earth-covered subsurface federal structure designated Building 710 exists on the Denver Federal Center campus.",
+          "assessment": "Multiple independent-looking channels describe the structure, and critically it is described as listed on the National Register of Historic Places, which if true means a nomination form exists in a public register with a physical description on its face. That is a document class that states the proposition explicitly and whose issuing authority (the Keeper of the National Register, via the Colorado SHPO) has authority over the fact of listing. I resolved none of it. Verification debt: if the NRHP nomination resolves at the National Register or at History Colorado, EXIST would plausibly reach A via BES 3.4; on today's record it is X.",
+          "proposed_band": "X — VERIFICATION PENDING (SCI≈0, V=∅; ceiling if the NRHP nomination resolves: A)",
+          "supporting": [
+            "GSA 'Explore Historic Buildings' page for Denver Federal Center Building 710 (search snippet only)",
+            "History Colorado location record titled 'Building 710, Defense Civil Preparedness Agency Region 6 Operations Center' (search snippet only)",
+            "Lakewood, CO municipal PDF listing NRHP properties in Lakewood (search snippet only; not opened, so I cannot confirm Building 710 appears on it)"
+          ],
+          "undercutting": [
+            "None found. I note that I searched for undercutting evidence and found none, which given SCI≈0 is uninformative rather than reassuring."
+          ],
+          "diagnosticity_note": "An NRHP listing record discriminates strongly IF its statement of significance describes the structure as a hardened operations centre, because the ordinary-federal-office null does not produce a Cold War Defense Structure listing. But the diagnosticity lives entirely in text I have not read. The bare fact 'a building exists on a federal campus' is D0."
+        },
+        {
+          "class": "HRDN",
+          "statement": "Building 710 was engineered to survive the effects of nuclear attack beyond ordinary construction for a 1960s federal office building.",
+          "assessment": "Search summaries attribute to GSA and History Colorado the statements that the building was 'designed specifically to withstand a nuclear attack' and 'constructed of reinforced concrete, except for interior partition walls', and was 'designed and constructed by the United States Army Corps of Engineers'. If GSA's own page says that, GSA is the custodial agency and has authority over the fact for its own building, which would be a BES 3.4 gate candidate. I have not seen the page. Note also that 'reinforced concrete with metal-stud partitions' is not by itself a hardening specification — it describes most institutional construction of the period — and no overpressure rating, blast-door specification or design standard reached me. Verification debt: A if the GSA/NRHP text states protective engineering on its face; B if it asserts survivability without specification.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if GSA/NRHP text resolves: A)",
+          "supporting": [
+            "Reported GSA historic-buildings text describing design to withstand nuclear attack (search snippet only)",
+            "Reported USACE as designer and constructor (search snippet only)",
+            "Reported earth cover of approximately three feet (search snippet only)"
+          ],
+          "undercutting": [
+            "The only construction detail that reached me — reinforced concrete with metal-stud interior partitions — is not diagnostic of hardening and is equally consistent with the mundane alternative."
+          ],
+          "diagnosticity_note": "Discriminating: a stated design overpressure, a blast-door or blast-valve line item, a CBR filtration specification, or a USACE design memorandum citing a protective-construction standard. NOT discriminating and present here: earth cover, reinforced concrete, being windowless, being on a federal campus. Earth-bermed and partially buried construction was a common 1960s energy and siting choice and appears on the BES universal-D0 list in substance."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The structure served as the Defense Civil Preparedness Agency Region 6 emergency operations centre and subsequently as the FEMA Region 8 operations centre.",
+          "assessment": "The function is carried in the building's own registered historic name, which is a strong form of claim-property evidence because a naming authority recorded the function for its own unrelated purpose. It also fits the independently arriving eight-region administrative enumeration, in which Denver is Region 6 under OCDM/OCD/DCPA. The renumbering to FEMA Region 8 in 1979 is a real trap: 'Region 6' in a pre-1979 document and 'Region 6' in a post-1979 document are different places (post-1979 Region 6 is Denton, Texas), and any register entry that merges them on the region number alone is committing an entity-resolution error.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if the NRHP name and nomination resolve: A)",
+          "supporting": [
+            "The registered property name itself, as reported by History Colorado (search snippet only)",
+            "Independent administrative enumeration placing Denver as OCDM/DCPA Region 6 (search snippet only, attributed to NARA Guide to Federal Records)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "The registered historic name is claim-property evidence of an unusual kind: a naming authority recorded the function for its own preservation purpose, unrelated to any bunker claim, which is the BES 5.1.7 access test being satisfied. NOT discriminating: FEMA's current occupancy, which is equally predicted by the null that an ordinary federal building was later assigned to a regional office."
+        },
+        {
+          "class": "STAT",
+          "statement": "As of the most recent reporting reaching me, the facility remains in federal use as a FEMA regional operations centre.",
+          "assessment": "Reported as current, but 'current' in a search summary can be years stale and FEMA's regional footprint has been under active reorganisation pressure. Not established.",
+          "proposed_band": "X",
+          "supporting": [],
+          "undercutting": [],
+          "diagnosticity_note": "Status claims decay. Calibration case R-01 (Cheyenne Mountain still being NORAD HQ) is the standing warning that a stale status claim can be affirmatively refuted while the site's EXIST remains A."
+        }
+      ],
+      "mundane_alternative": "A08 — an ordinary earth-bermed or partially below-grade federal office building of late-1960s design on a large federal campus, whose Cold War name reflects the agency that happened to occupy it rather than any protective engineering. This null is genuinely strong: the Denver Federal Center is a sprawling multi-building campus assembled from a wartime ordnance plant, and it contains a great deal of unremarkable government construction. What would distinguish it: the NRHP nomination's statement of significance, or the USACE design record, specifying a design overpressure, blast closures, shielding or CBR filtration. What would NOT distinguish it: earth cover, reinforced concrete, absence of windows, a generator, or the building's Cold War-era name.",
+      "claim_origin": "Not a folklore claim and there is no fringe origin to trace — this is an administratively named federal property. The earliest traceable appearance in the material reaching me is institutional rather than popular: the National Register listing dated 16 December 1999, which would have been preceded by a nomination prepared by or for the property's federal custodian. Popular circulation appears to postdate and derive from that institutional record and from the Center for Land Use Interpretation's early-2000s survey, not the reverse. This is the inverse of the usual pattern in this register and it is why the candidate is worth prioritising.",
+      "expected_records": "For a 1969 USACE-designed facility on a federal campus for an appropriated civil-defence agency, the records that SHOULD exist are: a construction appropriation or MILCON-equivalent line (X3 for an appropriated agency in this era); USACE design and as-built drawings in RG 77 (X1, flagged ARCHIVE-GAP — roughly 96% of NARA textual holdings are undigitised); a GSA real-property record (X2); and the NRHP nomination form (X3 — NRHP nominations for non-restricted properties are systematically public and their absence WOULD be surprising). The NRHP nomination is the single most valuable expected record here precisely because its absence would be informative, which is rare in this beat. All returned UNSEARCHED, not NEGATIVE.",
+      "lineage_note": "Two apparently distinct origins that may not be distinct: the federal historic-preservation record (GSA page, History Colorado record, Lakewood NRHP list) and the enthusiast/curatorial survey (CLUI, virtualglobetrotting). The second almost certainly descends from the first — CLUI's method is to work from public property records — so under the BES 5.1.7 access test and the default-SAME rule these are ONE lineage until a citation graph is actually built. The Lakewood municipal PDF and the History Colorado record may also both descend from the single NRHP nomination, collapsing further. I am not counting lineages here; I am flagging that the apparent breadth is probably illusory.",
+      "confidence_note": "Highest-priority candidate in this beat, and the one I would verify first. Reason: it is the only entry here whose decisive document is a public, indexed, machine-resolvable form (an NRHP nomination) rather than a classified or undigitised record. It is therefore the cheapest possible test of whether this beat can produce a band-A proposition at all. If the register cannot verify Building 710, it cannot verify anything on this beat.",
+      "sources": [
+        {
+          "citation": "U.S. General Services Administration, 'Denver Federal Center: Building 710, Lakewood, CO', Explore Historic Buildings",
+          "url": "https://www.gsa.gov/real-estate/explore-historic-buildings/find-a-historic-federal-building/denver-federal-center-building-710-lakewood-co",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: the page title and URL in search results, plus a search-tool summary attributing to it the statements that the building was completed in 1969, designed and built by USACE, designed to withstand nuclear attack, and constructed of reinforced concrete with metal-stud partitions. INFER (not seen): that the page states those things in those words, and that GSA is asserting them in its custodial capacity. The distinction matters because GSA custodial assertion is what would satisfy the BES 3.4(e) authority-over-fact condition."
+        },
+        {
+          "citation": "History Colorado, location record 'Building 710, Defense Civil Preparedness Agency Region 6 Operations Center'",
+          "url": "https://www.historycolorado.org/location/building-710-defense-civil-preparedness-agency-region-6-operations-center",
+          "tier": "P2",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: the record's title, which itself carries the DCPA Region 6 Operations Center designation, and a summary asserting NRHP listing on 16 December 1999 and a 36,000 sq ft two-level structure under about three feet of earth. INFER: that a NRHP nomination form underlies it. History Colorado is the Colorado State Historic Preservation Office, so this is curation over a federal primary rather than an independent observation."
+        },
+        {
+          "citation": "City of Lakewood, 'Lakewood Properties Listed in the National Register of Historic Places' (PDF)",
+          "url": "https://www.lakewoodco.gov/files/assets/public/v/1/planning/comprehensive-planning/pdfs/lakewood-properties-listed-in-the-national-register-of-historic-places.pdf",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: the document title and URL only. I did NOT open it and therefore cannot confirm that Building 710 appears on it. Listed here as an acquisition target, not as corroboration."
+        },
+        {
+          "citation": "Center for Land Use Interpretation, 'Denver FEMA Center' site entry",
+          "url": "https://clui.org/ludb/site/denver-fema-center",
+          "tier": "P3",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: clui.org returns EGRESS_BLOCKED. SAW: title and URL in search results only. CLUI is a curatorial land-use survey working from public property records; treat as a probable derivative of the historic-preservation record rather than an independent lineage."
+        },
+        {
+          "citation": "Colorado Nuclear Atlas, Denver Federal Center / mobilization entry",
+          "url": "https://www.coloradonuclearatlas.org/site/denver-federal-center-1/mobilization",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL only. Not opened. A state-scoped Cold War documentation project; unknown whether it works from primaries."
+        },
+        {
+          "citation": "National Archives, Guide to Federal Records, record groups 304 / 396 / 397 / 311 (OCDM, OCD, DCPA, FEMA)",
+          "url": "https://www.archives.gov/research/guide-fed-records/groups/397.html",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: page titles and URLs, and a search-tool summary reproducing an eight-member dated list of civil-defence regional headquarters including Denver as Region 6. INFER (NOT seen): that this list is actually on these NARA pages in this form. This is the single most load-bearing unverified item in the whole file and every structural claim in it depends on the enumeration being real."
+        }
+      ]
+    },
+    {
+      "name": "Federal Regional Center, Denton, Texas",
+      "aliases": [
+        "FEMA Region 6 Federal Regional Center",
+        "Denton Federal Regional Bunker",
+        "OCD/OCDM Region 5 headquarters (pre-1979 numbering)"
+      ],
+      "era": "Opened 1964; OCD/OCDM/DCPA Region 5 headquarters; FEMA Region 6 headquarters from 1979 to present",
+      "jurisdiction": "Denton County, Texas",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Denton, Texas. Reported as two below-grade levels of approximately 25,000 sq ft each behind a 13-ton blast door.",
+        "precision": "regional",
+        "basis": "Municipality only, from search summaries. No receipted coordinate, parcel or address. No lat/lon supplied because I hold none."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A two-level subsurface federal structure exists at Denton, Texas, opened in 1964.",
+          "assessment": "The most broadly attested facility in this set, including through channels that imply direct physical access: national and regional broadcast journalism covering FEMA's Hurricane Harvey response from inside it (2017), a Denton County government history-office article (2024), and a civil defence museum virtual tour. Journalists filming inside a facility are, in principle, resolvable direct observers under BES A1-alt, though I have no georeferenced imagery matched to a control point and no named observer resolvable in a record predating the claim. Verification debt: plausibly A via A1-alt or via a GSA/FEMA real-property record; today X.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if broadcast footage plus a GSA record resolve: A)",
+          "supporting": [
+            "WUSA9 / WFAA broadcast reporting from inside the facility during the 2017 Harvey response (search snippet only)",
+            "KSAT reporting on the facility, 2018 (search snippet only)",
+            "Denton County Office of History and Culture blog article, July 2024 (search snippet only)",
+            "civildefensemuseum.com virtual shelter tour of the Denton Federal Regional Center (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Journalists admitted inside and filming discriminates weakly but genuinely: it establishes an interior exists and is of a described character. It is NOT dispositive, because BES A1-alt additionally requires resolvable named observers with georeferenced imagery matched to a public control point, and broadcast footage supplies none of those. The bare existence of a building on a federal site is D0."
+        },
+        {
+          "class": "HRDN",
+          "statement": "The facility was engineered against nuclear blast effects, including a rated blast door and a stated design overpressure.",
+          "assessment": "This is the most specific hardening claim reaching me anywhere on this beat: a 13-ton blast door, air scrubbers, and a design criterion stated as surviving a one-megaton detonation at one mile. A stated design criterion is qualitatively different from 'hardened' as an adjective and is the kind of assertion that traces to an engineering document. But it reached me through popular journalism and a county history blog, not through the engineering record, and a figure of this shape is exactly the sort that propagates unchanged across copies while losing its provenance. The 13-ton door is a physical object a visitor can see and describe; the one-megaton-at-one-mile figure is not, and the two should not be graded together.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if the design criterion is traced to a construction record: A; if only visitor description of the door survives: B)",
+          "supporting": [
+            "Reported 13-ton blast door, air scrubbers and ventilation (search snippet only)",
+            "Reported design criterion of one megaton at one mile (search snippet only)",
+            "Reported construction cost of $2.7 million in 1964 (search snippet only)"
+          ],
+          "undercutting": [
+            "No design standard, contract or drawing is named in any source reaching me. The overpressure figure is quoted without attribution in every instance I saw."
+          ],
+          "diagnosticity_note": "The blast door is diagnostic and discriminates cleanly: an ordinary federal office basement does not have a 13-ton rated door, and the named null cannot produce one. The unit cost is weakly diagnostic — $2.7M in 1964 for 50,000 sq ft is high for ordinary office construction and would become properly diagnostic if checked against a period cost-per-square-foot norm for the building class, which is a concrete verification task. The air scrubbers are diagnostic for CBR filtration. Earth cover and being underground are D0."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The facility served as the federal regional emergency operating centre for its civil-defence region and continues as a FEMA regional operations centre.",
+          "assessment": "Function is asserted consistently across sources and is corroborated structurally by the independently arriving eight-region administrative enumeration, in which Denton is Region 5 pre-1979. Reported capacity of about 500 federal employees. The 1979 renumbering to FEMA Region 6 is the same entity-resolution trap flagged at Denver and cuts in the opposite direction.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A)",
+          "supporting": [
+            "Continuous documented FEMA occupancy including operational use during the 2017 Harvey response (search snippet only)",
+            "Administrative enumeration placing Denton as OCDM/DCPA Region 5 (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Continuous documented federal emergency-management occupancy across two agency generations discriminates against a 'this was never an operations centre' null but not against 'this is an ordinary regional office'. The administrative enumeration is CLASS-scope structural evidence and cannot certify the instance."
+        },
+        {
+          "class": "PROG",
+          "statement": "The Office of Civil Defense and Mobilization planned purpose-built hardened regional centres for all eight of its civil-defence regions, and Denton was the first constructed.",
+          "assessment": "Two separable claims. The 'first in the nation' priority claim is a distinctive assertion that either is or is not in the construction record, and it is the kind of claim local boosters generate spontaneously — I would test it before repeating it. The eight-region programme claim is independently supported by the administrative enumeration. Note that PROGRAM carries no physical claim about any individual site and is clamp-exempt under BES 1.4.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if the programme record resolves: A for the programme; the 'first' claim is separately testable)",
+          "supporting": [
+            "Reported OCDM planning for underground complexes in all eight regions (search snippet only, appearing in CLUI-derived text)"
+          ],
+          "undercutting": [
+            "The programme's realised size is contested: 'close to a dozen', 'six', and 'eight' all circulate. See the candidate-set problem in method_notes."
+          ],
+          "diagnosticity_note": "PROGRAM evidence is CLASS scope and under BES 2.4 is excluded from V for any individual site. It cannot certify Denton, Thomasville or any other member; it can only support the candidate-set path. This is the C-01 Federal Relocation Arc rule and it applies here directly."
+        }
+      ],
+      "mundane_alternative": "A10 — a federal office building whose below-grade levels carry a civil-defence fallout-shelter designation and nothing more, with 'bunker' being a local honorific applied to an ordinary basement. This null is weakened, though not excluded, by the 13-ton door: fallout-shelter designation required shielding mass, not blast closures, and licensed shelter space in ordinary basements was enormously common. What would distinguish it: the door's engineering rating, or an OCD construction contract as opposed to an OCD shelter-survey licence. What would NOT distinguish it: being underground, thick walls, ventilation equipment, a generator, or a shelter sign.",
+      "claim_origin": "No fringe origin. Earliest traceable appearance in the reaching material is institutional and contemporaneous — the facility opened publicly in 1964 as a named federal installation and was never concealed. Modern circulation has two visible nodes, neither of which invented the claim: the Center for Land Use Interpretation's site survey, and the 2017 Harvey news cycle in which FEMA itself invited cameras inside. The civildefensemuseum.com virtual tour appears to be independent of both and works from period civil-defence material.",
+      "expected_records": "For 1964 construction by an appropriated civil-defence agency: an appropriation or construction line (X3 — its absence WOULD be surprising for this agency and era); GSA real-property and, latterly, FRPP entries (X2); a Denton County deed for the parcel (X3, the universal floor); USACE or agency design records (X1, ARCHIVE-GAP); local building permits (X0 — federal construction on federal land does not permit locally). Chronicling America coverage of 1964 local press is X0 because the free corpus is copyright-bounded after 1963, which is an unlucky boundary for exactly this facility and pushes the local-press check to newspapers.com or NewsBank. All UNSEARCHED.",
+      "lineage_note": "The 2017 broadcast cluster (WUSA9, WFAA, KSAT) is ONE lineage, not three: these are affiliate carriage of a single news event and in one case appear to be the same package on two station sites. CLUI and virtualglobetrotting are separate from the news cluster but virtualglobetrotting is a crowd-annotated map layer and is a lead, not evidence, under BES 2.4. The Denton County history office and civildefensemuseum.com are the two most likely genuinely independent termini, because both work from local and period records rather than from each other.",
+      "confidence_note": "Existence is not seriously in doubt on any reading; this is a publicly acknowledged, currently operating, camera-toured federal facility. The live propositions are HARDEN (specifically, whether the one-megaton figure has a documentary parent) and the 'first in the nation' priority claim. Second verification priority after Building 710.",
+      "sources": [
+        {
+          "citation": "Cold War Era Civil Defense Museum, 'Virtual Shelter Tours — Federal Regional Center, FEMA Region 6 Center, Denton, Texas'",
+          "url": "https://www.civildefensemuseum.com/denton/index.html",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. Not opened. A long-running enthusiast archive that reproduces period civil-defence documents and photography; probably the most useful single source on this candidate and probably independent of the news cluster."
+        },
+        {
+          "citation": "Denton County Office of History and Culture, 'Nukes and Natural Disasters: Denton's Massive Cold War Bunker', 19 July 2024",
+          "url": "https://dentoncountyhistoryandculture.wordpress.com/2024/07/19/nukes-and-natural-disasters-dentons-massive-cold-war-bunker/",
+          "tier": "P2",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title, date and URL, plus summary text attributing the 1964 opening, the $2.7M cost, the two 25,000 sq ft levels and the one-megaton-at-one-mile design criterion. A county government history office is a curatorial body with access to local records; INFER (not seen) that it cites them."
+        },
+        {
+          "citation": "WUSA9 / WFAA, 'In Cold War bomb shelter, FEMA coordinates Harvey response', 2017",
+          "url": "https://www.wusa9.com/article/news/in-cold-war-bomb-shelter-fema-coordinates-harvey-response/65-469871812",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: two near-identical headlines and URLs on two station sites, which is affiliate carriage of ONE package — recorded as one lineage, not two. Shows that journalists were admitted inside the facility in 2017, which is the basis for treating direct observation as available in principle."
+        },
+        {
+          "citation": "KSAT, 'Cold War era underground government facility in Denton built to survive nuclear attack', 3 May 2018",
+          "url": "https://www.ksat.com/news/2018/05/03/cold-war-era-underground-government-facility-in-denton-built-to-survive-nuclear-attack/",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: headline, date, URL. A third broadcast outlet; likely descends from the same FEMA-facilitated access and the same fact sheet."
+        },
+        {
+          "citation": "Center for Land Use Interpretation, 'Denton Federal Regional Bunker'",
+          "url": "https://clui.org/ludb/site/denton-federal-regional-bunker",
+          "tier": "P3",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: EGRESS_BLOCKED. SAW: title and URL, and summary text including the 13-ton orange blast door and the two-stories-underground description. CLUI is also the apparent origin of the class-level 'close to a dozen regional centers' sentence that propagates across three of my candidates."
+        },
+        {
+          "citation": "Denton County Magazine, 'Blast (Shelter) from the past', Time Machine column",
+          "url": "https://www.dentoncountymagazine.com/time_machine/blast-shelter-from-the-past/article_bdaca6e6-a453-11eb-b196-c3e0f2d28c1a.html",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: headline and URL only. Regional lifestyle magazine; almost certainly derivative."
+        }
+      ]
+    },
+    {
+      "name": "Federal Regional Center, Bothell, Washington",
+      "aliases": [
+        "FEMA Region 10 Federal Regional Center",
+        "Bothell FEMA Center",
+        "OCDM/DCPA Region 8 headquarters (pre-1979 numbering)",
+        "successor to the Everett, Washington regional office"
+      ],
+      "era": "Built 1968 on a former Nike missile site; OCD/DCPA Region 8 headquarters; FEMA Region 10 headquarters from 1979",
+      "jurisdiction": "Snohomish County, Washington (reported as 228th Street Southwest)",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Snohomish County, Washington, near Bothell, reported on 228th Street Southwest on a former Nike missile site. Reported footprint 120 by 140 feet.",
+        "precision": "approximate",
+        "basis": "A named street in a named county, from a search summary of local journalism. This is a street name, not a receipted address or parcel, and I have not converted it to a coordinate. No lat/lon supplied."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A subsurface federal structure of approximately 120 by 140 feet exists near Bothell, Washington, constructed in 1968.",
+          "assessment": "Attested by Seattle-area journalism across at least two outlets and two decades (a 1999 Seattle Times piece and later HeraldNet and Bothell-Kenmore Reporter coverage), plus CLUI. The 1999 Seattle Times article is the most interesting item on this candidate because it predates the modern bunker-listicle corpus by a decade and was written when the facility was an ordinary local news subject rather than a mystery. Not resolved.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if the construction record or a deed resolves: A)",
+          "supporting": [
+            "Seattle Times archive article dated 26 February 1999 (search snippet only; identified by its archive slug)",
+            "HeraldNet and Bothell-Kenmore Reporter local coverage (search snippets only)",
+            "CLUI site entry for the Bothell FEMA Center (search snippet only; fetch blocked)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Local journalism describing a building is weakly discriminating at best and its diagnosticity here rests almost entirely on the 1999 date, which places the description before the modern listicle corpus could have contaminated it. Pre-contamination dating is a real and underused diagnosticity dimension in this beat."
+        },
+        {
+          "class": "HRDN",
+          "statement": "The structure is engineered beyond ordinary construction, with walls and roof of 12 to 36 inches and approximately 450 tons of steel reinforcement.",
+          "assessment": "Unusually specific and unusually checkable numbers — a thickness range, a steel tonnage, and a 1968 construction cost of $1,860,000 with an explicitly stated 1983 replacement estimate of over $25 million. Numbers of that shape usually descend from a single engineering or budget document, and the presence of a dated 1983 comparison strongly suggests a FEMA or DCPA facility document as the parent. Finding that parent is a concrete task. Note that a 36-inch reinforced roof is a real hardening signal, while a 12-inch wall is ordinary; quoting the range as if it were uniform is how such claims inflate.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if the parent document resolves: A; B on visitor description alone)",
+          "supporting": [
+            "Reported 12-to-36-inch walls and roof and 450 tons of steel reinforcement (search snippet only)",
+            "Reported 1968 cost of $1,860,000 with a 1983 replacement estimate exceeding $25 million (search snippet only)"
+          ],
+          "undercutting": [
+            "No design standard or overpressure rating is stated anywhere in the material reaching me — unlike Denton, where at least a criterion is asserted."
+          ],
+          "diagnosticity_note": "Discriminating: the steel tonnage relative to footprint. 450 tons of reinforcement in a 16,800 sq ft footprint is a computable reinforcement ratio and can be compared against ordinary institutional construction of the period — that is a genuine arithmetic test the register could run and it would discriminate. NOT discriminating: being underground, the earth cover, the site being a former missile site."
+        },
+        {
+          "class": "IDNT",
+          "statement": "The Bothell facility is the successor to the Everett, Washington regional office, and the two are separate structures rather than one renamed site.",
+          "assessment": "The administrative enumeration reports Region 8 at Everett 1958-69 then Bothell 1969-72, which parallels Region 1's Harvard-to-Maynard move exactly. Two regions relocating on the same schedule suggests a programme-wide replacement of leased or converted regional offices with purpose-built centres in 1968-69, which is a testable structural hypothesis and would explain both the Bothell and Maynard construction dates. Under BES 11.1 these must NOT be merged without an IDENTITY proposition at C+, and coordinate or name proximity flags rather than merges.",
+          "proposed_band": "X",
+          "supporting": [
+            "Administrative enumeration giving Everett 1958-69 then Bothell 1969-72 (search snippet only)",
+            "Reported 1968 construction date for the Bothell structure (search snippet only), which is consistent with the handover date"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Sharply discriminating IF resolved, and cheaply: Nike launcher magazines have a known standard geometry, so a 120x140 ft footprint either matches a Nike structure or it does not, and that single arithmetic check separates purpose-built from refurbished. NOT discriminating: the site's Nike heritage as such, which is equally consistent with both readings and is exactly what makes this candidate ambiguous."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The facility served as the regional civil-defence emergency operating centre and serves as FEMA's Region 10 headquarters.",
+          "assessment": "Continuously reported and operationally current. The occupancy is not in doubt in any source; what is undocumented to me is the original design function versus the current administrative use.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A)",
+          "supporting": [],
+          "undercutting": [],
+          "diagnosticity_note": "Continuous FEMA occupancy is consistent with both the purpose-built and the refurbished readings and therefore contributes nothing to distinguishing them. Recorded as non-contributing rather than omitted."
+        }
+      ],
+      "mundane_alternative": "A12 — a decommissioned Nike missile installation whose existing magazines and control structures were refurbished into ordinary underground office space, with the 'bunker' character inherited from the Nike works rather than purpose-built. This is the strongest surviving alternative and it has real teeth, because the site genuinely was a Nike installation and Nike magazines are genuinely subsurface reinforced concrete. One source explicitly describes the facility as 'an underground office facility located in a refurbished decommissioned Nike missile site', which if accurate substantially undercuts the purpose-built reading. What would distinguish it: a 1968 new-construction contract or drawing set, as against a refurbishment contract. The reported $1.86M 1968 cost and the 120-by-140 footprint are the levers — a Nike launcher magazine has a known standard geometry and 120 by 140 feet does not match it, which is a concrete discriminating test. What would NOT distinguish it: being underground, being on a former military site, having blast-type doors (Nike magazines had them).",
+      "claim_origin": "No fringe origin. Earliest appearance reaching me is the 26 February 1999 Seattle Times piece, whose framing ('Fixtures Reveal It's No Ordinary Office — FEMA Headquarters Was Fallout Shelter') is that of a local-colour story about a known building, not a revelation. That headline is itself evidence about the claim's status: in 1999 this was a mildly interesting fact about a government office, and its later migration into bunker listicles is a change in the surrounding corpus, not in the world.",
+      "expected_records": "1968 construction by an appropriated agency: appropriation line X3; Snohomish County deed and the underlying Army land transfer from the Nike site X3 for the county deed but X0 for a federal-to-federal transfer, which matters here because the Nike-to-civil-defence handover would be exactly the federal-to-federal case that leaves no county trace; USACE design records X1 ARCHIVE-GAP; the Nike site's own Army real-property and disposal records X2. The Nike-era records are the underexploited channel: Nike installations are exhaustively documented by site number and the Army's disposal record for this specific site would establish what was standing in 1968 before the FRC was built, which is the single cleanest way to settle the purpose-built-versus-refurbished question. All UNSEARCHED.",
+      "lineage_note": "Local journalism (Seattle Times 1999, HeraldNet, Bothell-Kenmore Reporter) is plausibly two or three genuine lineages since these are separate newsrooms covering a local institution over decades, but the specific numbers (450 tons, 12-36 inches, $1,860,000) appear identically across them, which under the BES 5.1.7 distinctive-detail test suggests all of them are quoting one FEMA-supplied fact sheet. Default SAME. CLUI is likely a fourth terminus but works from the same public material.",
+      "confidence_note": "The purpose-built-versus-Nike-refurbishment question is the whole entry and it is answerable from ordinary Army records without touching anything classified. That makes this candidate unusually tractable and a good test of whether the register can discriminate a real distinction rather than just accumulate agreement.",
+      "sources": [
+        {
+          "citation": "The Seattle Times, 'Fixtures Reveal It's No Ordinary Office — FEMA Headquarters Was Fallout Shelter', 26 February 1999",
+          "url": "https://archive.seattletimes.com/archive/?date=19990226&slug=2946287",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: headline, date and archive slug in search results. NOT opened. The most valuable item on this candidate because its 1999 date puts it a decade ahead of the modern bunker-listicle corpus, and its headline frames the facility as a mundane local curiosity rather than a discovery."
+        },
+        {
+          "citation": "Bothell-Kenmore Reporter, 'Bothell bunker houses FEMA, ready to roll in emergencies'",
+          "url": "https://www.bothell-reporter.com/opinion/bothell-bunker-houses-fema-ready-to-roll-in-emergencies/",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: headline and URL, plus summary text carrying the 120x140 ft footprint, 450 tons of steel, 12-36 inch walls and roof, the 1968 date, the 228th Street SW location, the $1,860,000 cost and the 1983 $25M replacement estimate. That the same figure set appears across outlets indicates ONE parent document, probably a FEMA fact sheet."
+        },
+        {
+          "citation": "HeraldNet (Everett Herald), 'FEMA bunker in Bothell ready for disaster'",
+          "url": "https://www.heraldnet.com/news/fema-bunker-in-bothell-ready-for-disaster/",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: headline and URL only. A separate Snohomish County newsroom; genuinely separate authorship but probably the same underlying fact sheet."
+        },
+        {
+          "citation": "Center for Land Use Interpretation, 'Bothell FEMA Center, Washington'",
+          "url": "https://clui.org/ludb/site/bothell-fema-center",
+          "tier": "P3",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: EGRESS_BLOCKED. SAW: title and URL. Also the apparent source of the description of the facility as located in a 'refurbished decommissioned Nike missile site', which is the statement that most undercuts the purpose-built reading and is therefore the most important sentence on this candidate."
+        },
+        {
+          "citation": "Wikimapia, 'Reinforced bunker — Bothell, Washington'",
+          "url": "http://wikimapia.org/27860088/Reinforced-bunker",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. Crowd-edited and adversary-writable; under BES 2.4 this is a LEAD only and contributes zero lineages and zero conditions. Recorded so it is visible as inert rather than silently dropped."
+        }
+      ]
+    },
+    {
+      "name": "Federal Regional Center, Maynard, Massachusetts",
+      "aliases": [
+        "FEMA Region 1 Federal Regional Center",
+        "FEMA New England Headquarters",
+        "successor to the Harvard, Massachusetts regional office"
+      ],
+      "era": "Construction date contested across sources: 1950s, early 1960s, mid-1960s, or 1969 all appear; OCD/DCPA Region 1 headquarters from 1969; FEMA Region 1 headquarters from 1979",
+      "jurisdiction": "Middlesex County, Massachusetts (Maynard)",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Maynard, Massachusetts, reported as approximately 20 miles from Boston.",
+        "precision": "regional",
+        "basis": "Municipality and an approximate distance-from-Boston, from search summaries. No receipted coordinate or parcel. No lat/lon supplied."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A subsurface federal facility housing FEMA's New England regional operations centre exists at Maynard, Massachusetts.",
+          "assessment": "Consistently attested and not in serious doubt, including by a state-focused Cold War documentation project and a CLUI site entry. Not resolved.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A)",
+          "supporting": [
+            "CLUI 'FEMA New England Headquarters' site entry (search snippet only; fetch blocked)",
+            "coldwar-ct.com and coldwar-ma.com Massachusetts Cold War documentation pages (search snippets only; fetch blocked)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Multiple compilers agreeing that a federal facility exists in a small town is close to zero diagnosticity — nobody disputes it. The interesting propositions here are the date and the hardening, and neither is touched by existence evidence."
+        },
+        {
+          "class": "EXTN",
+          "statement": "The facility is a nuclear-hardened underground centre capable of accommodating several hundred people for 30 days or more.",
+          "assessment": "This capacity-and-duration figure is the CLUI programme-level description of the regional-centre class generally, not a measurement of Maynard specifically. Applying a class description to an instance is precisely the scope error BES 2.4 excludes: as written, this is CLASS scope and contributes nothing to the Maynard instance. I flag it because it is the most-copied sentence about this facility and it is being read as instance evidence across the web.",
+          "proposed_band": "X (and the underlying row would be CLASS scope, hence excluded from V even on a working network)",
+          "supporting": [],
+          "undercutting": [],
+          "diagnosticity_note": "Zero diagnosticity for this instance regardless of its truth for the class. This is the C-01 Federal Relocation Arc failure mode reappearing at a smaller scale, and it is worth carrying in the register explicitly as an example."
+        },
+        {
+          "class": "ORIG",
+          "statement": "No source reaching me agrees on when the Maynard facility was built, and the disagreement is unresolved in the public record as indexed.",
+          "assessment": "This is the substantive finding on this candidate and I state it as a proposition rather than burying it. The circulating dates are '1950s', 'early 1960s', 'mid-sixties', and — by inference from the administrative enumeration, which gives Region 1 as Harvard MA to 1969 and Maynard thereafter — 1969. A spread of that width across a facility this ordinary is a reliable signature that NOBODY IN THE CITATION GRAPH HAS SEEN THE CONSTRUCTION RECORD, and that every date is an estimate that acquired false precision through copying. The administrative handover date of 1969 is the only one of the four that arrives from a finding aid rather than from a narrative source, and it is therefore the one I would weight — but I have not resolved it either.",
+          "proposed_band": "X",
+          "supporting": [
+            "Search summaries explicitly noting 'slightly different accounts of when it was built' across sources (search snippet only)",
+            "Administrative enumeration giving the Harvard-to-Maynard move as 1969 (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Date dispersion is diagnostic about the CITATION GRAPH, not about the facility. It is evidence that the lineage count is lower than it appears, because independent sources working from a real record would converge."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The facility serves as FEMA's regional operations centre for the six New England states.",
+          "assessment": "Uncontested and operationally current. The reported roof-mounted communications antenna array is consistent but not diagnostic.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A)",
+          "supporting": [],
+          "undercutting": [],
+          "diagnosticity_note": "Current FEMA regional occupancy is fully predicted by the null (an ordinary federal regional office) and is D0. The roof antenna array is on the universal-D0 list in substance: every emergency-management office, every broadcaster and every public-safety agency has one."
+        }
+      ],
+      "mundane_alternative": "A08 — an ordinary partially below-grade federal office building whose 'bunker' description is retrospective, with fallout-shelter-grade rather than blast-grade protection. Massachusetts has a dense population of genuine Cold War hardened sites (the Hadley PACCS facility, Nike sites, Air Force stations), and the regional habit of calling any government structure with earth on it a bunker is strong. What would distinguish it: a construction record with a protective specification, or the 1969 handover documentation showing what was actually built. What would NOT distinguish it: roof antennas (every regional emergency office has them), being underground, or proximity to Boston.",
+      "claim_origin": "Institutional. There is no revelation event and no fringe origin — the facility appears in state Cold War documentation projects and CLUI's survey as a known government office. I note that one search result was a 2015 'Before It's News' post styling the facility as a revealed 'D.U.M.B.', which is the mechanism by which an ordinary FEMA office enters the deep-underground-military-base corpus: not by anyone claiming anything new, but by a listicle aggregator restyling a known building. That transition is dated and traceable and belongs in the register as an origin fact about the CLAIM, distinct from any fact about the building.",
+      "expected_records": "Construction line for an appropriated agency X3; Middlesex County deed X3; GSA real property X2; USACE design records X1 ARCHIVE-GAP. Massachusetts is well-served by digitised local newspapers and by Digital Commonwealth, so period local press coverage of a federal construction project in a small town is a realistic and underused channel — a 1968-69 Maynard or Concord paper would likely have covered it. All UNSEARCHED.",
+      "lineage_note": "coldwar-ct.com and coldwar-ma.com appear to be the same project or closely related projects and should be treated as one lineage pending a check. CLUI is separate. The 'close to a dozen regional centers... several hundred people for 30 days' sentence is CLUI's and every downstream appearance of it is a copy — I saw it reproduced verbatim in results for Maynard, Denton and Thomasville alike, which is a clean demonstration that one compiler's class-level sentence is being read as instance evidence at three different sites.",
+      "confidence_note": "Lower priority than Denver or Denton as a facility, but HIGH priority as a methodological specimen: it is the clearest case in this beat of a class description masquerading as instance evidence, and of date dispersion revealing a shallow citation graph. Worth carrying for that reason alone.",
+      "sources": [
+        {
+          "citation": "Center for Land Use Interpretation, 'FEMA New England Headquarters'",
+          "url": "https://clui.org/ludb/site/fema-new-england-headquarters",
+          "tier": "P3",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: EGRESS_BLOCKED. SAW: title and URL, and the class-level sentence about FEMA constructing 'close to a dozen sophisticated regional centers' accommodating 'several hundred people for 30 days or more'. That sentence is CLASS scope; I saw it returned for Maynard, Denton and Thomasville alike, which is the clearest single demonstration in this sweep of one compiler's class description being read as instance evidence at three sites."
+        },
+        {
+          "citation": "coldwar-ct.com, 'FEMA Regional HQ Maynard'",
+          "url": "https://coldwar-ct.com/FEMA_Regional_HQ_Maynard.html",
+          "tier": "P3",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: EGRESS_BLOCKED. SAW: title and URL only."
+        },
+        {
+          "citation": "coldwar-ma.com, 'Government Facilities'",
+          "url": "http://coldwar-ma.com/Government_Facilities.html",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. Probably the same project as coldwar-ct.com or closely related; treated as ONE lineage with it pending a check."
+        },
+        {
+          "citation": "Before It's News, 'Report: FEMA Bunker (D.U.M.B.) Revealed! Maynard MA', 2015",
+          "url": "https://beforeitsnews.com/blogging-citizen-journalism/2015/07/report-fema-bunker-d-u-m-b-revealed-maynard-ma-fema-base-fully-operational-includes-video-and-interview-at-fusion-center-2515010.html",
+          "tier": "P5",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: headline, date and URL. Recorded NOT as evidence about the facility but as a dated ORIGIN datapoint: this is the visible mechanism and approximate moment at which an ordinary, publicly known FEMA regional office is restyled as a 'deep underground military base'. That transition is a fact about the claim and is gradeable; it says nothing about the building."
+        }
+      ]
+    },
+    {
+      "name": "Federal Regional Center, Thomasville, Georgia",
+      "aliases": [
+        "FEMA Region 4 Federal Regional Center",
+        "Thomasville FEMA Center",
+        "OCDM/DCPA Region 3 headquarters (pre-1979 numbering)"
+      ],
+      "era": "Reported built in the early 1970s; OCD/DCPA Region 3 headquarters; FEMA Region 4 headquarters from 1979",
+      "jurisdiction": "Thomas County, Georgia (Thomasville), reported on South Broad Street or a South-side parcel",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Thomasville, Georgia. Reported as a 37,734 sq ft subterranean protected facility on a 38-acre site.",
+        "precision": "regional",
+        "basis": "Municipality only, from search summaries. The '38-acre site' and square footage are reported figures I have not receipted. No lat/lon supplied."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A subterranean federal facility of approximately 37,734 sq ft exists on an approximately 38-acre site at Thomasville, Georgia.",
+          "assessment": "The square footage is given to the square foot — 37,734 — which is a property-record figure, not a journalist's estimate. A number of that precision descends from a real-property inventory, a GSA record, or a FEMA facility description, and its shape is the single most useful thing about this candidate: it names the record class to go and find. That said, precision is not accuracy and an unreceipted precise number is exactly the kind of item this register exists to distrust.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if the FRPP or GSA record resolves: A)",
+          "supporting": [
+            "Reported figure of 37,734 sq ft on a 38-acre site, with independent water, power and support systems (search snippet only; phrasing suggests a FEMA or GSA facility description)",
+            "CLUI 'Thomasville FEMA Center' site entry (search snippet only; fetch blocked)",
+            "Thomasville historical society social-media post referencing the FEMA Federal Regional Center bunker (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "A square footage given to the unit is diagnostic about the SOURCE rather than about the facility: it indicates a real-property record parent, which names the record class to pursue. It says nothing about hardening or function, and an unreceipted precise number is exactly the item class this register exists to distrust."
+        },
+        {
+          "class": "HRDN",
+          "statement": "The facility is protected against attack effects beyond ordinary construction.",
+          "assessment": "The reported description is conspicuously hedged in a way worth noticing: 'designed to withstand hazards, ranging from severe storms and tornadoes to a worst-case, National Security event'. That is agency language that asserts survivability while specifying nothing, and the tornado framing does real work — a tornado-resistant subterranean structure in south Georgia is not evidence of nuclear hardening. If this phrasing is FEMA's own, then FEMA has authority over the fact for its own facility but has declined to state a protective specification, and the correct reading is that HARDEN is asserted-but-unspecified rather than documented.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling on the current phrasing: B at best; A requires a specification)",
+          "supporting": [
+            "Reported independent water, power and support systems (search snippet only)"
+          ],
+          "undercutting": [
+            "The only hardening language reaching me specifies no standard, no overpressure and no closure type, and explicitly leads with severe-weather rather than attack resistance."
+          ],
+          "diagnosticity_note": "Independent water and power are on the BES universal-D0 list in substance — every remote federal operations centre has them and so does every data centre and every hospital. The early-1970s construction date is mildly informative in the other direction: by the early 1970s civil-defence construction had shifted markedly away from blast hardening toward fallout protection and crisis relocation, so a 1970s regional centre is a priori LESS likely to be blast-hardened than the 1964 Denton or 1968-69 Bothell/Denver cohort. That is a real, checkable, era-based discriminator and it cuts against the hardening claim here."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The facility serves as FEMA's Region 4 regional operations centre and previously as the OCD/DCPA Region 3 headquarters.",
+          "assessment": "Consistent with the administrative enumeration, which places Thomasville as Region 3 pre-1979. Independently, the NARA guide for RG 397 is reported to hold Region 4 office correspondence at Thomasville for 1967-68 concerning the State Surplus Property Donation Program — note the region-number conflict there, which is either a renumbering artefact or an error in one of the two reports reaching me, and which I have not resolved.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A)",
+          "supporting": [
+            "Administrative enumeration placing Thomasville as OCDM/DCPA Region 3 (search snippet only)",
+            "Reported NARA RG 397 holding of Thomasville regional office correspondence, 1967-68 (search snippet only)"
+          ],
+          "undercutting": [
+            "The two reports reaching me assign Thomasville to different region numbers (3 and 4) for overlapping periods. Unresolved."
+          ],
+          "diagnosticity_note": "The administrative enumeration is CLASS scope and excluded from V for this instance under BES 2.4. The reported NARA holding of Thomasville regional office correspondence is genuinely instance-scope and would discriminate, since a null in which no regional office existed here cannot produce a folder of that office's correspondence — but the two reports reaching me disagree on the region number, which must be resolved before the item is used."
+        }
+      ],
+      "mundane_alternative": "A08 — an ordinary below-grade federal regional office with severe-weather protection, built in an era when civil-defence construction had already moved away from blast hardening. This null is strengthened, not weakened, by the facility's own reported description. A secondary null worth naming is A06 (storage): a 37,734 sq ft subterranean structure with independent utilities is an equally good records or materiel store. What would distinguish it: a construction specification, a DCPA design record, or the parcel's real-property CATCODE. What would NOT distinguish it: acreage, square footage, independent utilities, being subterranean, or the presence of communications equipment.",
+      "claim_origin": "Institutional; no fringe origin traced. The circulating description appears to originate in a FEMA or GSA facility text and to propagate from there through CLUI and local history channels. I separately note that Thomasville appears in a 2026-dated, unbylined 'Georgia Underground Bases' page presenting FEMA regional centres as 'regional nodes' of a covert network; that page is a post-2022 machine-generated artefact and is recorded in refuted_or_hollow, not here.",
+      "expected_records": "Early-1970s DCPA construction: appropriation line X3; Thomas County deed X3; GSA real property and FRPP X2; NEPA — X1 at best and plausibly X0, since facility-scale actions of this era were frequently categorically excluded and there is no central EA index. The FRPP entry is the highest-value target because the reported square footage is precisely the kind of figure FRPP carries, and a match would bind the number to an issuing authority. All UNSEARCHED.",
+      "lineage_note": "The precise square footage appears in multiple downstream places with identical digits, which under the distinctive-detail test means one parent document and one lineage however many sites repeat it. CLUI is a probable second terminus. The Thomasville historical society post is a possible third but is social-media-hosted and adversary-writable in the BES sense.",
+      "confidence_note": "Existence is unlikely to be wrong. HARDEN is the proposition I would expect to fall on verification, and the era argument is the reason: this is the youngest facility in the regional-centre cohort and the least likely to be blast-designed. I would treat a confirmed early-1970s date as mildly undercutting the hardening claim rather than as neutral.",
+      "sources": [
+        {
+          "citation": "Center for Land Use Interpretation, 'Thomasville FEMA Center, Georgia'",
+          "url": "https://clui.org/ludb/site/thomasville-fema-center",
+          "tier": "P3",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: EGRESS_BLOCKED (clui.org confirmed blocked on two separate attempts). SAW: title and URL only."
+        },
+        {
+          "citation": "Unattributed facility description reproduced in search results: '37,734 square foot subterranean, protected facility situated on a 38-acre site... built in the early 70s... own separate water, power and support systems'",
+          "url": "",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: this text in a search-tool summary WITHOUT a resolvable parent. Its register and precision (a square footage to the unit) strongly suggest a FEMA or GSA facility description, but I could not identify the hosting document and I am recording it as parentless rather than attributing it. Locating its parent is the first verification task on this candidate. Tiered P4 because an unattributed string is not a tier-1 record no matter what it sounds like."
+        },
+        {
+          "citation": "Thomasville History social-media post referencing the FEMA Federal Regional Center bunker on South Broad",
+          "url": "https://www.facebook.com/thomasvillehistory/posts/410213751148558/",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: post title fragment and URL. Social-media hosted and therefore adversary-writable in the BES sense; a lead, not evidence, though a local history organisation is a plausible route to period photographs."
+        },
+        {
+          "citation": "National Archives, Guide to Federal Records RG 397 (DCPA) — reported holding of Thomasville regional office correspondence, 1967-68",
+          "url": "https://www.archives.gov/research/guide-fed-records/groups/397.html",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: a search summary asserting that RG 397 includes Region 4 office correspondence at Thomasville on the State Surplus Property Donation Program, 1967-68. NOTE THE CONFLICT: this assigns Thomasville to Region 4 while the regional enumeration assigns it Region 3 for the same era. Unresolved; recorded rather than smoothed."
+        },
+        {
+          "citation": "subterraneanbases.com, 'Georgia Underground Bases: 2026 Intelligence & FEMA Regional Nodes'",
+          "url": "http://www.subterraneanbases.com/georgias-underground/",
+          "tier": "P5",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. Recorded as an inert, quarantined artefact: post-2022, unbylined, future-dated framing. Under BES 3.3 this is POST-2022-UNATTRIBUTED, contributes zero to every condition and counts as zero lineages by construction. Retained and displayed rather than deleted, per BES 2.4."
+        }
+      ]
+    },
+    {
+      "name": "Federal Regional Center, Santa Rosa, California",
+      "aliases": [
+        "OCDM/OCD/DCPA Region 7 headquarters (pre-1979 numbering)",
+        "Santa Rosa Federal Regional Center",
+        "former Naval Auxiliary Air Station Santa Rosa munitions magazine"
+      ],
+      "era": "Reported converted in the 1950s from a Second World War naval munitions magazine; regional headquarters through the OCDM/OCD/DCPA period; a proposed purpose-built replacement near Healdsburg was cancelled circa 1970",
+      "jurisdiction": "Sonoma County, California",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Sonoma County, California, on or adjacent to the former Naval Auxiliary Air Station Santa Rosa. The commonly cited Chanate Road association did not survive my searching and I do not carry it forward as established.",
+        "precision": "claimed-only",
+        "basis": "A former installation name and a county. I could not confirm the specific parcel, and the Chanate Road attribution I searched for was not corroborated by any result. No lat/lon supplied."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A converted subsurface federal facility existed in Sonoma County, California, serving as the civil-defence regional centre for the western region.",
+          "assessment": "Attested principally through one photographic documentation project (a Flickr album by a Cold War archaeology photographer) and through the administrative enumeration placing Region 7 at Santa Rosa. A photographic survey by a named documentarian is potentially strong direct-observation evidence under BES A1-alt if the photographer is resolvable and the imagery is georeferenced to a control point — but a Flickr album is a self-published channel and I have neither the photographer's identity nor any georeferencing. Not resolved.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if Navy disposal records plus the photographic survey resolve: A)",
+          "supporting": [
+            "Flickr photographic album titled 'FEMA Federal Regional Center Santa Rosa California' by an account styled coldwararchaeology (search snippet only)",
+            "Administrative enumeration placing Santa Rosa as OCDM/DCPA Region 7 (search snippet only)",
+            "militarymuseum.org 'Historic California Posts' entry for Naval Auxiliary Air Station Santa Rosa (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Photographic documentation of a structure is potentially strong for EXIST but only under the A1-alt conditions, none of which are met here. Absent those, this is one self-published channel asserting a structure exists — and note that the naval-magazine null predicts a structure at full strength, so EXIST is barely contested while the interesting propositions are entirely undetermined by it."
+        },
+        {
+          "class": "HRDN",
+          "statement": "The facility was hardened against attack effects.",
+          "assessment": "The word used in the source reaching me is 'semi-hardened', which is a genuinely useful hedge and I want to preserve it rather than round it up. A converted naval munitions magazine is inherently a heavy reinforced-concrete earth-covered structure — that is what magazines are — but magazine design protects the outside world from the contents, not the contents from a weapon, and the two are not the same engineering problem. Converting a magazine yields blast resistance almost incidentally and yields essentially no attack-specific protection (no CBR filtration, no shock isolation, no EMP treatment) unless it was deliberately added.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: C or D on the current record; the 'semi-hardened' characterisation is itself the strongest statement available)",
+          "supporting": [],
+          "undercutting": [
+            "The magazine origin means every structural signal is explained by the null without any civil-defence conversion at all.",
+            "The source's own qualifier 'semi-hardened' is a hedge from a sympathetic describer, which is the most informative kind."
+          ],
+          "diagnosticity_note": "This is the sharpest diagnosticity case in my beat and I would use it as a teaching example. Thick reinforced concrete, earth cover, blast-type doors, magazine geometry and a remote parcel are ALL fully predicted by 'this is a Second World War ordnance magazine' — the null produces every one of them at full strength. Under the BES E/A matrix these sit at E3/A3, which is D0: they contribute nothing at any volume. Only an OCD conversion contract, a communications licence, or filtration and shock-isolation equipment would discriminate."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The converted magazine served as the civil-defence regional headquarters and communications facility for the western region (OCDM/OCD/DCPA Region 7).",
+          "assessment": "Supported by the administrative enumeration, which places Region 7 at Santa Rosa across the OCDM/OCD/DCPA period, and by the photographic project's descriptive text characterising the site as a Federal Regional Center and communications facility. The regional-headquarters function is the better-supported half; the 'communications facility' half is the more checkable one, because a communications station leaves emitter and circuit traces even when its structure leaves none. Note the reported converting agency in one summary is the 'Federal Civil Preparedness Agency', which is an anachronism for a 1950s conversion — that agency name belongs to the 1970s — and is a small but real indication that the account reaching me has been compressed across two decades of agency renaming.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if agency or NTIA records resolve: B; A would require a document naming the site and its function on its face)",
+          "supporting": [
+            "Administrative enumeration placing Santa Rosa as OCDM/OCD/DCPA Region 7 headquarters (search snippet only)",
+            "Photographic project text describing the site as a Federal Regional Center and communications facility (search snippet only)"
+          ],
+          "undercutting": [
+            "The converting-agency name given in the account is anachronistic for the stated decade, indicating compression or error somewhere in the chain."
+          ],
+          "diagnosticity_note": "Discriminating: an NTIA/IRAC frequency assignment at the coordinate, an OCD circuit diagram, or a regional-office administrative record naming the location. NOT discriminating: antennas, the magazine structure, remoteness, or federal ownership — all of which the naval-magazine null produces at full strength. The function claim is the ONLY thing that separates this site from an ordinary surplus ordnance magazine, which is why it must not be allowed to lean on the structure."
+        },
+        {
+          "class": "PROG",
+          "statement": "A purpose-built hardened Federal Regional Center was proposed for the former CIA Foreign Broadcast Information Service site near Healdsburg to replace the Santa Rosa facility, and was cancelled.",
+          "assessment": "The most interesting claim on this candidate, and structurally a DUCC-shaped one: a programme proposition about a facility that was never built, which under BES 1.4 is clamp-exempt and can carry a high grade even where EXIST is refuted or non-located. The source reaching me is candid that the cancellation reason is unknown ('for unknown reasons—probably financial'), which is the mark of someone reporting rather than confabulating. A cancelled federal construction proposal of this era should leave an appropriations trace, and cancellations are frequently BETTER documented than completions because they generate correspondence.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if an appropriations or agency record resolves: A for the programme, with STATUS never-built)",
+          "supporting": [
+            "Reported proposal to relocate the regional centre to the vacated FBIS site near Healdsburg, and its cancellation (search snippet only, from the photographic project's descriptive text)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "PROGRAM carries no physical claim about any site and must not be allowed to donate credibility to EXIST at either Santa Rosa or Healdsburg. The calibration set's DUCC case (PROGRAM A, EXIST R) is the model."
+        },
+        {
+          "class": "STAT",
+          "statement": "The current disposition of the Santa Rosa facility — retained, converted, sold or demolished — is unknown to me.",
+          "assessment": "I searched specifically for demolition or sale and found nothing either way. Under BES this is genuinely X (unsearched in the canonical sense), not a low grade, and it must render distinctly from a negative finding.",
+          "proposed_band": "X",
+          "supporting": [],
+          "undercutting": [],
+          "diagnosticity_note": "No diagnosticity in either direction, because nothing was found. Under BES 6.2 an unsearched record class produces NO ROW — not a zero, an absence — and this must render as X rather than as a low grade."
+        }
+      ],
+      "mundane_alternative": "A12 — a decommissioned Second World War naval munitions magazine, subsequently reused for federal offices and communications, whose subterranean and reinforced character is entirely inherited from its ordnance-storage origin. This null is DOCUMENTED, not merely available: the naval air station and its magazine are independently attested in California military-post histories and in a state water-board cleanup document for the former NAAS. Under BES 4.6 a documented null is the condition for null_state = DOMINANT. What would distinguish the civil-defence claim: an OCD conversion contract, an FCC or NTIA assignment at the coordinate, or filtration and shock-isolation plant. What would NOT distinguish it: concrete thickness, earth cover, doors, remoteness, or the parcel's federal ownership.",
+      "claim_origin": "The descriptive text about the conversion and the cancelled Healdsburg replacement appears to originate with a single Cold War photographic documentation project and to have limited independent circulation. This candidate has essentially NO popular profile, which is exactly the condition the beat brief asks for, and it also means the claim rests on a single narrow lineage. Those two facts are the same fact.",
+      "expected_records": "Navy real-property and disposal records for the NAAS magazine area X2; the state water board's Department of Defense cleanup file for the former NAAS, which is a live, indexed, non-classified document class and the most promising single target here X2; Sonoma County deed X3 for any non-federal transfer but X0 for federal-to-federal; OCD conversion contract X1 given the era and the small dollar value; FCC/NTIA assignment X0 for a federal emitter, since federal spectrum sits with NTIA and the GMF is withheld. All UNSEARCHED.",
+      "lineage_note": "Effectively ONE lineage for the civil-defence claims (the photographic project) plus a genuinely independent lineage for the naval-magazine null (military post histories and the water-board cleanup file). That asymmetry matters: the null is better sourced than the claim, which is the configuration in which null_state tends toward DOMINANT.",
+      "confidence_note": "Deliberately included as the weakest-but-most-instructive member of the regional-centre set. It is the case where the mundane alternative is documented and the hardened reading is not, and where the honest register output is a low or refuted HARDEN sitting beside a well-supported EXIST and an interesting cancelled-programme proposition. If the register cannot produce that shape here, its diagnosticity rule is not working.",
+      "sources": [
+        {
+          "citation": "Flickr album 'FEMA Federal Regional Center Santa Rosa California', account styled coldwararchaeology",
+          "url": "https://www.flickr.com/photos/coldwararchaeology/albums/72157631886168987/",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: album title, account name and URL, plus summary text carrying the conversion account (former NAAS munitions magazine, 'semi-hardened', converted in the 1950s) and the cancelled Healdsburg/FBIS replacement proposal. This is a SELF-PUBLISHED channel: photographic documentation could in principle support direct observation under BES A1-alt, but only with a resolvable named photographer and georeferencing to a public control point, and I have neither. Effectively the sole lineage for the civil-defence claims here."
+        },
+        {
+          "citation": "California State Military Museum, 'Historic California Posts: Naval Auxiliary Air Station, Santa Rosa'",
+          "url": "https://www.militarymuseum.org/NAASSantaRosa.html",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. Attests the NAVAL installation — i.e. it supports the NULL, not the claim. Recorded deliberately: the mundane alternative here is better sourced than the hardened-facility reading."
+        },
+        {
+          "citation": "California State Water Resources Control Board, 'Public Participation Plan, Former Santa Rosa Naval Auxiliary Air Station' (PDF)",
+          "url": "https://www.waterboards.ca.gov/water_issues/programs/dept_of_defense/docs/1ppb.pdf",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL only. A live, indexed, unclassified state regulatory document on the former NAAS — the most promising single acquisition target on this candidate, because DoD cleanup files routinely describe structures and their histories parcel by parcel."
+        },
+        {
+          "citation": "National Archives, Guide to Federal Records — regional enumeration placing Santa Rosa as Region 7",
+          "url": "https://www.archives.gov/research/guide-fed-records/groups/304.html",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: only the search-tool summary of the enumeration. Same caveat as elsewhere: the list is unverified and everything structural rests on it."
+        }
+      ]
+    },
+    {
+      "name": "Olney Support Center / Alternate National Warning Facility, Maryland",
+      "aliases": [
+        "Olney Federal Support Center",
+        "Olney Special Facility",
+        "Alternate National Warning Center (ANWC)",
+        "OCDM/OCD/DCPA Region 2 headquarters (pre-1979 numbering)"
+      ],
+      "era": "Site in federal use from 1951 as a civil-defence training establishment; a Nike missile installation phase is reported to about 1960; underground construction reported under DCPA in the 1970s; FEMA custody from 1979; reported transfer away from FEMA in March 2019",
+      "jurisdiction": "Montgomery County, Maryland (Olney), reported on Georgia Avenue",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Olney, Montgomery County, Maryland, in the northern Washington suburbs.",
+        "precision": "regional",
+        "basis": "Municipality and county from search summaries. No receipted parcel or coordinate. No lat/lon supplied."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A protected underground federal facility exists at Olney, Maryland.",
+          "assessment": "Widely attested including by FAS and GlobalSecurity facility pages and by CLUI, and the site's federal character is not in dispute. Note that GlobalSecurity is registered T4 in this project's own source registry and is explicitly a tier trap and a hop rather than a terminus, so its agreement adds nothing on its own. Not resolved.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A)",
+          "supporting": [
+            "FAS Nuclear Forces guide page for Olney (search snippet only)",
+            "CLUI 'Olney Federal Support Center' site entry (search snippet only; fetch blocked)",
+            "Cryptome 'eyeball' imagery-annotation page for the Olney Federal Support Center (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Open-source analysis projects agreeing that a federal facility exists at Olney is near-zero diagnosticity; the site's federal character is undisputed. The prior Nike and civil-defence-training uses mean the null produces subsurface reinforced structures without any continuity facility at all, so even 'there is something underground here' fails to discriminate."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The facility housed the Alternate National Warning Center, the standby control point for the National Warning System (NAWAS).",
+          "assessment": "The strongest and most specific function claim on this candidate, and it has an attractive property: NAWAS was a deliberately PUBLIC system with over 1,200 local warning points, which means its architecture is documented in ordinary civil-defence literature and in state emergency-management records rather than only in classified files. A warning-system control point is not a secret by design. Reported as staffed 24 hours alongside the primary National Warning Center. This is the rare COG function claim where the expected-record profile is favourable.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if DCPA/FEMA NAWAS documentation resolves: A)",
+          "supporting": [
+            "FAS and GlobalSecurity descriptions of the Alternate National Warning Center at Olney and its NAWAS role (search snippets only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Discriminating: a NAWAS circuit diagram, a state warning-point directory naming the alternate control point, or a DCPA operations document. These are real, unclassified, findable document classes. NOT discriminating: antennas, generators, fencing, guarded access — all universal D0."
+        },
+        {
+          "class": "ORIG",
+          "statement": "The publicly circulating chronology of the Olney site is internally incoherent and no source reaching me reconciles it.",
+          "assessment": "I record this as a finding rather than smoothing it over. The summary reaching me states, in sequence, that the site was developed as a civil-defence training site in 1951 with a mock-city facility, and then that this was 'before its conversion to a U.S. Army Nike missile installation operational until around 1960', and then that major underground construction began after the Defense Civil Preparedness Agency was established in 1972. That ordering is at minimum garbled, and possibly conflates two adjacent parcels — a civil-defence training school and a Nike battery — into one site history. The separately arriving administrative enumeration places the OCDM Region 2 headquarters at Olney from 1958, which the narrative chronology does not accommodate. Additionally, the Federal Civil Defense Administration's Staff College is independently reported to have moved FROM Olney to Battle Creek in 1954, which is a fourth thread the narrative does not carry.",
+          "proposed_band": "X",
+          "supporting": [
+            "Search summary containing the incoherent 1951/Nike/1972 sequence (search snippet only)",
+            "Independent report of the National Civil Defense Training Agency Staff College relocating from Olney, Maryland to Battle Creek in 1954 (search snippet only)",
+            "Administrative enumeration placing Region 2 headquarters at Olney (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Chronological incoherence across a claim's carriers is diagnostic about the citation graph. Where several sources carry the same garble, they are one lineage; where they carry DIFFERENT garbles, at least some are working from separate incomplete records. Distinguishing those two cases is a real test and it is cheap."
+        },
+        {
+          "class": "CTRL",
+          "statement": "Custody of the facility passed from FEMA to another federal component in or around March 2019.",
+          "assessment": "One search summary states that 'the NSWC acquired the facility from FEMA in March 2019'. I could not expand or corroborate the acronym and I am not going to guess it — the two obvious readings (Naval Surface Warfare Center; National Special Weapons Center or similar) point in very different directions, and inventing the expansion is exactly the failure this register exists to catch. Recorded as an unresolved lead with a dated, checkable transfer event attached. A 2019 federal custody transfer should appear in GSA or agency real-property records.",
+          "proposed_band": "X",
+          "supporting": [
+            "Search summary asserting a March 2019 acquisition from FEMA by an entity abbreviated NSWC (search snippet only; acronym unexpanded and uncorroborated)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "A dated federal custody transfer is highly diagnostic about CONTROL if resolved, because real-property transfers are recorded by parties with authority over the fact for their own unrelated purposes — the strongest form of independence available in this domain. As it stands, with the acquiring agency's acronym unexpanded and uncorroborated, it discriminates nothing and is a lead only."
+        }
+      ],
+      "mundane_alternative": "A12 combined with A08 — a multi-phase federal parcel comprising a 1950s civil-defence training school and a decommissioned Nike battery, later reused as ordinary federal support offices, in which the 'underground bunker' is the Nike magazine complex plus a hardened communications room rather than a purpose-built continuity facility. This null is unusually strong here because the site demonstrably had at least two prior federal uses that independently produce subsurface reinforced structures. What would distinguish the COG reading: DCPA-era construction documentation for the 1970s underground work, or NAWAS operational records naming Olney as the alternate control point. What would NOT distinguish it: subsurface concrete (Nike produces it), antennas, guarded access, or the site's federal ownership.",
+      "claim_origin": "No single fringe origin. The facility has been in the public documentation stream since at least the 1990s via FAS, GlobalSecurity and Cryptome, all of which are open-source-analysis projects rather than claimants. The garbled chronology appears to have entered the general corpus through wiki-family text and to have propagated into dbpedia, IPFS mirrors and a Grokipedia page without correction — the Grokipedia instance is a post-2022 machine-generated derivative and contributes zero lineages under BES 3.3 by construction.",
+      "expected_records": "NAWAS system documentation and state warning-point directories X2 and unusually favourable, because the warning system was public by design; DCPA 1970s construction line X3; Montgomery County deed X3 for the parcel but X0 for federal-to-federal transfers; GSA disposal or transfer record for the 2019 event X2; Nike-era Army real-property and disposal records X2. Olney sits in a well-documented, heavily developed suburban county with excellent land records, so the county channel is stronger here than at any other site in this beat. All UNSEARCHED.",
+      "lineage_note": "FAS and GlobalSecurity are near-certainly ONE lineage on this subject: both maintained parallel Cold War facility guides in the same period with substantial shared text and shared contributors. Treating their agreement as corroboration would be a straightforward error. Cryptome is a separate terminus working from imagery. The wiki family (Wikipedia, IPFS mirror, dbpedia, Grokipedia) is one lineage and mostly a post-2022 machine derivative at the far end.",
+      "confidence_note": "Included because it is the Federal Relocation Arc site with the most favourable expected-record profile — a public warning system, a suburban county with good deeds, and a dated 2019 custody event — and simultaneously the one with the most incoherent public chronology. That combination makes it high-yield: the records that would settle it are the kind that actually exist.",
+      "sources": [
+        {
+          "citation": "Federation of American Scientists, Nuclear Forces guide, 'Alternate National Warning Facility / Olney Special Facility'",
+          "url": "https://nuke.fas.org/guide/usa/c3i/olney.htm",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL, plus summary text on the ANWC's NAWAS role and 24-hour staffing. FAS and GlobalSecurity maintained parallel Cold War facility guides in the same period with substantial shared text; I treat their agreement as ONE lineage, not two."
+        },
+        {
+          "citation": "GlobalSecurity.org, 'Alternate National Warning Facility'",
+          "url": "https://www.globalsecurity.org/wmd/facility/olney.htm",
+          "tier": "P4",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: EGRESS_BLOCKED, despite globalsecurity.org appearing on this repository's own egress allowlist — which is how I established the allowlist is not live. This project's source registry classes GlobalSecurity P4 and marks it a tier trap and a hop, never a terminus; recorded accordingly."
+        },
+        {
+          "citation": "Center for Land Use Interpretation, 'Olney Federal Support Center, Maryland'",
+          "url": "https://clui.org/ludb/site/olney-federal-support-center",
+          "tier": "P3",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: EGRESS_BLOCKED. SAW: title and URL."
+        },
+        {
+          "citation": "Cryptome, 'Eyeballing the FEMA Federal Support Center, Olney, MD'",
+          "url": "https://cryptome.wikileaks.org/eyeball/fsc/fsc-eyeball.htm",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. An imagery-annotation page; a genuinely separate terminus from the FAS/GlobalSecurity pair since it works from overhead imagery rather than from text, but imagery interpretation inherits the tier of whoever asserted it and is a hypothesis, not evidence, under BES 3.1."
+        },
+        {
+          "citation": "Wikipedia, 'Olney Support Center', and its derivatives (dbpedia, en.wikipedia-on-ipfs.org, Grokipedia)",
+          "url": "https://en.wikipedia.org/wiki/Olney_Support_Center",
+          "tier": "P4",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: en.wikipedia.org returns EGRESS_BLOCKED. SAW: the article title plus three derivative mirrors in one result set — ONE lineage presenting as four. The Grokipedia instance is post-2022 machine-generated and contributes zero lineages by construction under BES 3.3. This lineage is also the apparent carrier of the incoherent 1951/Nike/1972 chronology."
+        },
+        {
+          "citation": "Unresolved custody lead: a search summary asserting 'the NSWC acquired the facility from FEMA in March 2019'",
+          "url": "",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: this sentence in a search-tool summary. The acronym is NOT expanded in anything reaching me and I have deliberately NOT guessed at it — the plausible expansions point to very different agencies and inventing one would be precisely the confabulation this register exists to catch. Recorded as a dated, checkable lead against GSA and agency real-property records."
+        }
+      ]
+    },
+    {
+      "name": "Front Royal, Virginia — Department of State Emergency Relocation Site under USDA research-station cover",
+      "aliases": [
+        "Front Royal Beef Cattle Research Station",
+        "USDA Front Royal Research Station",
+        "State Department 'C team' relocation site",
+        "later the Smithsonian Conservation Biology Institute / National Zoo Conservation and Research Center"
+      ],
+      "era": "Former US Cavalry remount depot; USDA beef cattle research station through the 1950s and 1960s; State Department emergency relocation site and communications station in the same period; State function reported reduced to the communications station by 1972; USDA research terminated June 1973; property subsequently to the Smithsonian Institution",
+      "jurisdiction": "Warren County, Virginia (Front Royal)",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Front Royal, Warren County, Virginia, on the property now occupied by the Smithsonian Conservation Biology Institute.",
+        "precision": "approximate",
+        "basis": "A named, currently operating, publicly identifiable institution occupies the property, so the parcel is unambiguous even though I hold no receipted coordinate. No lat/lon supplied because I have not resolved one."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "Federal buildings at the Front Royal property were equipped and stocked as a Department of State emergency relocation site.",
+          "assessment": "The reported particulars are unusually mundane and therefore unusually credible in character: office space equipped for the Secretary and a reported 700 State Department employees, a stockpile including a reported 200 typewriters and 10,000 sheets of paper, and regional highway improvements undertaken to support evacuation. Nobody fabricating a bunker story invents a typewriter inventory. That said, character is not evidence, the figures reached me through a popular-history channel, and I have resolved none of it. Note carefully that this proposition is about EQUIPPED BUILDINGS, not about a hardened structure — see HRDN below, which I expect to go the other way.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if State Department or GSA records resolve: A)",
+          "supporting": [
+            "Atlas Obscura entry for the Smithsonian Conservation Biology Institute describing the Cold War State Department continuity use and the USDA cover (search snippet only)",
+            "Reported detail of buildings equipped as offices for the Secretary and 700 employees, with the function reduced to a communications station by 1972 (search snippet only)",
+            "Smithsonian Institution Archives record 'Permission to Use Front Royal Land Granted' (search snippet only; an institutional record whose existence I saw but whose content I did not)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "The stockpile inventory is the discriminating item and it is discriminating precisely because it is boring: an office-supply hoard sized for hundreds of staff is E0 under the null that this was only a cattle research station, while it is required under the relocation hypothesis. That is a high-diagnosticity pattern in the BES E/A sense. NOT discriminating: the buildings, the acreage, the federal ownership, the distance from Washington, all of which the agricultural station produces on its own."
+        },
+        {
+          "class": "HRDN",
+          "statement": "The Front Royal relocation site was hardened against attack effects.",
+          "assessment": "I assess this as probably FALSE and I state that plainly rather than leaving it unaddressed. Everything reaching me describes equipped surface buildings on a working agricultural research station — offices, stockpiles, a communications station — and nothing describes a subsurface or protected structure. Under the Federal Relocation Arc's own reported three-layer architecture, the outer 'C team' layer was the LEAST survivable of the three, which is consistent with dispersal-and-continuity rather than blast protection. A relocation site is not necessarily a bunker, and this register should be able to hold that distinction.",
+          "proposed_band": "X (and I expect this to resolve low or negative rather than high)",
+          "supporting": [],
+          "undercutting": [
+            "No source reaching me describes any subsurface, blast-protected or shielded structure at this site.",
+            "The site's reported role as an outer 'C team' location places it in the least-protected tier of the reported arc architecture."
+          ],
+          "diagnosticity_note": "This is the entry's methodological point. FUNCTION(COG relocation) and HARDEN are independent propositions and this site plausibly separates them cleanly — a genuine, documented, federal continuity site that was almost certainly not hardened at all. A register that cannot publish 'real COG function, no hardening' has collapsed two different facts into one."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The USDA beef cattle research station served, in part, as cover for the State Department relocation function.",
+          "assessment": "The strongest and most interesting claim here and a direct structural analogue to the Greenbrier's Forsythe Associates arrangement. One source states the property 'drew official cover as a Department of Agriculture beef cattle breeding station'. But note the alternative reading that no source reaching me excludes: the USDA research station may have been entirely genuine — it published research, it had named scientists, its termination in June 1973 is reported as a research-programme decision — and the State Department may simply have been a co-located tenant on a convenient federal parcel. 'Cover' and 'co-location' are very different claims and the sources reaching me do not distinguish them.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: B at best, because 'cover' is an intent claim and intent claims rarely reach D4)",
+          "supporting": [
+            "Reported characterisation of the USDA station as official cover (search snippet only)",
+            "Independently attested genuine USDA research output at Front Royal, including a published progress report on beef cattle research at the Front Royal Station (search snippet only, via a government-documents catalogue)"
+          ],
+          "undercutting": [
+            "The USDA research programme was demonstrably real and published — which is evidence that the agricultural function was genuine, and therefore evidence AGAINST reading it as pure cover.",
+            "The co-location reading explains every reported fact without requiring any concealment at all."
+          ],
+          "diagnosticity_note": "The published USDA research is a genuinely signed piece of evidence and it cuts against the cover reading, which is why I have entered it as undercutting rather than ignoring it. Discriminating evidence would be a State Department or interagency record describing the arrangement as concealment; a co-location licence or use permit would support the mundane reading. Note the calibration parallel and the difference: at the Greenbrier, Forsythe Associates was a shell with no independent purpose; at Front Royal, the cover organisation was doing real science."
+        },
+        {
+          "class": "STAT",
+          "statement": "The continuity function ended by the early 1970s and the property passed to the Smithsonian Institution.",
+          "assessment": "Reported consistently: State function reduced to the communications station by 1972, USDA research terminated June 1973, property later to the Smithsonian, and the site operates today as a publicly known conservation institute. The current use is not in doubt.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A, since the Smithsonian transfer is an institutional record)",
+          "supporting": [
+            "Smithsonian Institution Archives record on the Front Royal land grant (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Institutional property transfers are strongly diagnostic for STATUS and weakly relevant to everything else. The Smithsonian's current, public, published occupancy is also signed evidence under BES against any claim of continuing continuity use at this site."
+        }
+      ],
+      "mundane_alternative": "A08/A06 — a genuine USDA agricultural research station and former cavalry remount depot, on which the State Department was an ordinary co-located federal tenant occupying some surface buildings for contingency office space, with no concealment and no hardening. This null accounts for every reported physical fact: the buildings, the stockpile, the communications station, even the highway improvements (Warren County sits on the Skyline Drive corridor and had independent reasons for road investment). What would distinguish the concealment reading: a State Department, GSA or interagency record describing the arrangement, or an emergency-relocation designation document naming the site. What would NOT distinguish it: federal ownership, remoteness, distance from Washington, the presence of a radio station, or the site's later Smithsonian use.",
+      "claim_origin": "This is the one candidate in my set where I could NOT trace the claim to a satisfying origin and I want that recorded as a limitation rather than papered over. The circulating account appears in a popular-geography channel (Atlas Obscura) and in the Federal Relocation Arc wiki article, and the specific colourful details — 200 typewriters, 10,000 sheets of paper — have the texture of something quoted from a declassified inventory or from a specific secondary work, but no source reaching me names that parent. Finding it is the first task on this candidate. Until it is found, the whole entry rests on an untraced lineage however plausible it reads, and plausibility is precisely what this register is built not to credit.",
+      "expected_records": "State Department emergency-relocation planning records X1 to X2 depending on classification posture; USDA property and programme records for the research station X3, since the agricultural side was entirely unclassified and well-published; Warren County deeds for the parcel X3, the universal floor; the Smithsonian transfer record X3, since Smithsonian acquisitions are institutionally documented and the SI Archives record I saw is exactly this class; General Records Schedule material on federal emergency relocation X1. The USDA and Smithsonian channels are the strong ones and neither is classified — the unclassified half of a concealed arrangement is often the way in, which is a generalisable technique.",
+      "lineage_note": "Two visible lineages, probably collapsing to one: the Federal Relocation Arc wiki article and its many derivatives (fandom, wikidata, Grokipedia — all one lineage), and the Atlas Obscura entry. The colourful stockpile details appear only in the latter. The USDA research publications and the Smithsonian Institution Archives record are genuinely independent of both, but they attest the AGRICULTURAL and PROPERTY facts, not the continuity claim — which is the classic configuration in which real records get read as corroborating an adjacent claim they do not touch.",
+      "confidence_note": "My best novel find on this beat and the one I would most want another cycle to pursue, but also the one whose claim origin I most conspicuously failed to trace. It is valuable precisely because it is NOT a bunker: it tests whether the register can hold a documented continuity function apart from a hardening claim, and whether it can resist crediting genuine USDA and Smithsonian records to a State Department proposition they say nothing about.",
+      "sources": [
+        {
+          "citation": "Atlas Obscura, 'Smithsonian Conservation Biology Institute', Front Royal",
+          "url": "https://www.atlasobscura.com/places/smithsonian-conservation-biology-institute",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL, plus summary text carrying the distinctive particulars — cavalry remount origin, the USDA beef-cattle station as 'official cover', State Department stockpiling, the reported 200 typewriters and 10,000 sheets of paper, evacuation highway improvements, abandonment by 1973. These details have the texture of something quoted from a specific parent (a declassified inventory or a monograph) but NO source is named, and I could not find the parent. That untraced parent is the single biggest weakness of my best novel candidate."
+        },
+        {
+          "citation": "Wikipedia, 'Federal Relocation Arc', and its derivatives (Military Wiki/Fandom, Wikidata Q25080088)",
+          "url": "https://en.wikipedia.org/wiki/Federal_Relocation_Arc",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL plus two derivatives in the same result sets — ONE lineage. Carries the arc's three-layer A/B/C team architecture, the 30-to-300-mile extent, the 'some 90 relocation sites... as of July 1958' figure, and the identification of Front Royal as a 'C' team site for both State and Agriculture. Also carries the unattributed '75 PEFs' figure that I treat as hollow."
+        },
+        {
+          "citation": "Smithsonian Institution Archives, record 'Permission to Use Front Royal Land Granted'",
+          "url": "https://siarchives.si.edu/collections/siris_sic_1218",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: the record title and URL in a search result — i.e. I established that an institutional archival record about the Front Royal land transfer EXISTS and is catalogued. I did NOT see its content and it may say nothing whatever about continuity of government. Recorded as an R-SURROGATE-class acquisition target: catalogue metadata resolvable, content unavailable."
+        },
+        {
+          "citation": "Government-documents catalogue entry: Bovard, K. P. and Briode, B. M., 'Progress report on research with beef cattle at Front Royal Station'",
+          "url": "https://mocat.library.unt.edu/catalog/817-1656",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: the catalogue title, named authors and URL. This is the entry I use as SIGNED UNDERCUTTING evidence against the 'pure cover' reading: the USDA research programme published under named authors, which is evidence the agricultural function was genuine. Recorded on the undercutting side deliberately, because a register that only logs supporting hits is not measuring anything."
+        }
+      ]
+    },
+    {
+      "name": "Presidential Emergency Facility 'Corkscrew', Lambs Knoll, Maryland",
+      "aliases": [
+        "PEF Site 7",
+        "Corkscrew",
+        "Lambs Knoll relay",
+        "reported later as an FAA facility"
+      ],
+      "era": "Constructed in the early 1960s as part of the Presidential Emergency Facility microwave network; reported no longer in service as a presidential shelter; reported subsequent FAA use",
+      "jurisdiction": "Washington County / Frederick County, Maryland — reported on South Mountain between Middletown and Rohrersville, near the Appalachian Trail",
+      "typology": "comms-relay",
+      "location": {
+        "description": "Lambs Knoll, on the South Mountain ridge in western Maryland, close to the Appalachian Trail corridor.",
+        "precision": "approximate",
+        "basis": "A named, mapped, publicly accessible topographic summit with an existing public communications tower. The named place is unambiguous; the specific structure and its extent are not. No lat/lon supplied because I have not receipted one and the summit name is sufficient to locate the search."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A communications structure exists at Lambs Knoll, Maryland, comprising a tower and associated built works.",
+          "assessment": "Not seriously in doubt at the tower level: Lambs Knoll carries a publicly known communications tower serving Maryland state and local agencies, replacing a converted fire tower, and the site is on public land near a heavily walked trail. That is the easy half. Note that the register must not let the tower's certain existence donate credibility to the bunker claim beneath it — they are separate propositions about separate objects.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling for the tower: A; the tower is not the interesting proposition)",
+          "supporting": [
+            "FAS Nuclear Forces guide page for Boonsboro (search snippet only)",
+            "Reports of a converted fire tower replaced by a modern tower and building serving Maryland state and local agencies (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "A tower on a ridgeline summit is among the least diagnostic observations available anywhere — eastern US ridgelines carry hundreds and the null produces them at full strength. Recorded explicitly as D0 so that the tower's certain existence cannot leak credibility into the bunker proposition beneath it, which is the specific failure this candidate invites."
+        },
+        {
+          "class": "FEAT",
+          "statement": "A two-level subsurface bunker encircles the base of the tower, containing a WHCA communications centre and presidential office and living quarters in pie-shaped rooms on the lower level.",
+          "assessment": "This is the load-bearing and most vulnerable claim on the candidate. Its origin is specific and traceable: a blog maintained by and about White House Communications Agency personnel, describing facilities its author's community operated. That is participant testimony, not fabrication — but under BES 5.4 testimony reaches D3 only if the individual is independently locatable in a record that predates the claim, was created for an unrelated purpose, AND places them in the role asserted; and under the attestation-custody rule the lineage terminus is whoever is asserting, not whoever is quoted. A self-published blog satisfies none of the custody conditions as it stands, however genuine the author. The architectural detail — pie-shaped rooms in an annulus around a tower base — is distinctive and internally coherent, which is a mild positive signal and also exactly what makes the claim propagate.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling on the current custody: D0 floor for unresolvable attestation, hence low; A only via WHCA or Army Signal Agency records)",
+          "supporting": [
+            "whcacannonball.blogspot.com pages for PEF Site 7 'Corkscrew' (search snippet only)",
+            "coldwar-c4i.net Corkscrew index page (search snippet only; fetch blocked)",
+            "Reported direct microwave shots from Corkscrew to Cactus, Cannonball and Cartwheel, i.e. an internally consistent network topology (search snippet only)"
+          ],
+          "undercutting": [
+            "The claim is carried by self-published participant testimony without receipted custody. No institutional record naming the structure reached me."
+          ],
+          "diagnosticity_note": "The network-topology detail is more diagnostic than the bunker description, and I would pursue it first: a microwave path is a physical, licensable, surveyable thing, and a consistent multi-site path geometry between named summits is hard to fabricate and easy to check against terrain. If the reported shots to Cactus, Cannonball and Cartwheel are line-of-sight-plausible from the actual summits, that is real corroboration of a network; if they are not, the account is in trouble. This is a computable test the register can run offline from elevation data. NOT diagnostic: the tower itself, the fenced compound, the access road, government ownership."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The site functioned as a Presidential Emergency Facility relay and relocation point within the WHCA microwave network.",
+          "assessment": "The PEF network as a programme is well attested across several channels including a dedicated documentation project that publishes PDF monographs on individual sites. Individual site assignment (Corkscrew as Site 7) is consistent across the sources reaching me but those sources are not clearly independent of one another. Note also the count problem: 'nine Presidential Emergency Facilities within a 25-minute helicopter trip' in one framing versus 'seven locations that would become the core PEFs' in another versus a claimed 75 PEFs in a third. The first two are reconcilable as core-versus-expanded; the third is not, and it is discussed in refuted_or_hollow.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if Army Signal Agency or WHCA records resolve: A)",
+          "supporting": [
+            "coldwar-c4i.net PEF monograph series including a microwave-network PDF and per-site PDFs (search snippets only; fetch blocked)",
+            "Reported technical detail of a Raytheon KTR 1000A microwave RF system carrying AN/TCC-13 voice multiplexing across the network (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "The named equipment types are a strong lead precisely because equipment nomenclature is checkable against procurement and technical-manual literature independently of any bunker claim. If the AN/TCC-13 and KTR 1000A pairing is period-correct and traceable to a Signal Corps procurement, the account's author demonstrably had access to real technical material, which raises the prior on the rest without proving any of it."
+        },
+        {
+          "class": "STAT",
+          "statement": "The facility is no longer in presidential-shelter service and is reported to be used by the Federal Aviation Administration.",
+          "assessment": "Reported but unresolved. An FAA facility designation is an unusually favourable target: FAA facility inventories and frequency records are public, and a wikimapia annotation reaching me styles the site an 'FAA Alternate Primary Facility', which is a phrase specific enough to check. Wikimapia itself is crowd-edited and is a lead only, never evidence, under BES 2.4.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if an FAA facility record resolves: A)",
+          "supporting": [],
+          "undercutting": [],
+          "diagnosticity_note": "A current FAA facility designation would be moderately diagnostic for STATUS and, indirectly, for the site's federal communications lineage. FAA facility records are public and reachable in principle, making this the cheapest resolvable proposition on the candidate. The claim currently rests on a crowd-edited annotation, which is a lead and contributes nothing."
+        }
+      ],
+      "mundane_alternative": "A05/A07 — an ordinary mountaintop microwave relay and public-safety radio site, of which the eastern US ridgelines carry hundreds, whose Cold War federal ownership and hilltop compound are entirely unremarkable, with the 'presidential bunker' reading supplied retrospectively by veterans' recollection and enthusiast documentation. This null explains the tower, the compound, the access road, the fencing, the federal ownership and the current agency use without any bunker at all. What would distinguish it: an Army Signal Agency or WHCA construction or engineering record; a surveyable subsurface structure; or documented living quarters. What would NOT distinguish it: the tower, the microwave dishes, the summit location, the compound, the road, or the fact that the government owns it. A fire-tower conversion on a state-forest summit is the single most ordinary structure in Appalachian Maryland.",
+      "claim_origin": "Traceable and recent. The detailed per-site descriptions circulating today appear to originate with two related efforts of the late 2000s and 2010s: the WHCA veterans' blog (posts dated 2012, revised 2024) and the coldwar-c4i.net documentation project. Earlier and thinner coverage exists via the FAS Nuclear Forces guide. The distinctive architectural details — pie-shaped rooms, floor counts, the 103-foot tower height repeated across several sites — appear to enter general circulation from the veterans' blog. That the SAME 103-foot tower figure is attached to Cartwheel, Cannonball, Cowpuncher and Corkscrew is either a genuine standard design (plausible, and testable against a standard drawing) or a single figure propagating across sites (equally plausible), and distinguishing those is a concrete task.",
+      "expected_records": "Army Signal Agency / WHCA construction records X1 with an ARCHIVE-GAP flag; FCC records X0, because a federal emitter sits with NTIA and the Government Master File is withheld — which is one of the cleanest cases in this beat where an absence is genuinely uninformative; FAA facility inventory for the current use X2 and favourable; Maryland state land records for the summit parcel X3 if non-federal, X0 if federal-to-federal or a state-forest withdrawal; USGS historical topographic quadrangle coverage of this summit X3, and the temporal stack is genuinely informative here because a tower appearing between quadrangle editions is datable and the HTMC series has essentially complete CONUS coverage. The USGS temporal stack is the single most promising unclassified channel for this candidate.",
+      "lineage_note": "The WHCA veterans' blog and coldwar-c4i.net are probably NOT independent — enthusiast documentation projects in this niche cite and feed each other, and the shared technical vocabulary suggests contact. Default SAME under BES 5.1.7. FAS is a plausible third and earlier terminus. Wikimapia is crowd-edited and contributes zero. The wiki-family Presidential Emergency Facility article is one further lineage that likely descends from the enthusiast projects rather than preceding them, and if so it collapses too — which would leave this candidate on ONE effective lineage, and CAP-1 would cap it at C even with everything resolved.",
+      "confidence_note": "The PEF network's existence as a programme is solid; the interior description of any individual site rests on a narrow and custody-deficient base. I have deliberately graded the tower, the network and the bunker as three separate propositions because conflating them is how this candidate would go wrong. The line-of-sight test against terrain data is the most attractive next step because it is offline, cheap, model-prior-independent and genuinely discriminating.",
+      "sources": [
+        {
+          "citation": "whcacannonball.blogspot.com, 'Presidential Emergency Facility Site 7 — Corkscrew' (and companion pages for Sites 2, 3, 4 and 6; posts dated 2012, revised 2024)",
+          "url": "https://whcacannonball.blogspot.com/p/presidential-emergency-facility-site-7.html",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: page titles, dates and URLs, plus summary text carrying the two-level bunker encircling the tower base, the WHCA communications centre, the presidential office and living quarters in pie-shaped rooms, the 103-foot tower height, and the microwave shot geometry to Cactus, Cannonball and Cartwheel. This is PARTICIPANT TESTIMONY on a self-published channel: not fabrication, but failing the BES 5.4 custody conditions as it stands, since the attestation is not receipted to a custody path the witness controlled or a third party recorded. The lineage terminus is the asserter, not the agency."
+        },
+        {
+          "citation": "coldwar-c4i.net, 'Presidential Emergency Facility — Corkscrew' index, and the PEF microwave-network monograph (PDF)",
+          "url": "https://coldwar-c4i.net/PEF/index.html",
+          "tier": "P3",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: EGRESS_BLOCKED, despite coldwar-c4i.net appearing on this repository's egress allowlist. SAW: index and per-site PDF titles and URLs, plus summary text carrying the Raytheon KTR 1000A / AN/TCC-13 equipment pairing. A documentation project that publishes per-site monographs; probably NOT independent of the WHCA blog given shared vocabulary — default SAME under BES 5.1.7."
+        },
+        {
+          "citation": "Federation of American Scientists, Nuclear Forces guide, 'Boonsboro'",
+          "url": "https://nuke.fas.org/guide/usa/c3i/boonsboro.htm",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. A plausible third and earlier terminus, predating the enthusiast projects."
+        },
+        {
+          "citation": "Wikimapia, 'WHCA Corkscrew Facility / FAA Alternate Primary Facility'",
+          "url": "http://wikimapia.org/6118957/Corkscrew-Presidential-Emergency-Facility",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. Crowd-edited: a LEAD only, zero lineages. Its value is the specific phrase 'FAA Alternate Primary Facility', which is precise enough to check against public FAA facility records."
+        },
+        {
+          "citation": "Wikipedia, 'Presidential Emergency Facility'",
+          "url": "https://en.wikipedia.org/wiki/Presidential_Emergency_Facility",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL plus summary text giving 'nine Presidential Emergency Facilities within a 25-minute helicopter trip from Washington DC' as of 1984, and the decommissioning of Cartwheel, Corkscrew, Cowpuncher and Cannonball. Probably descends from the enthusiast projects rather than preceding them; if so this candidate rests on ONE effective lineage and CAP-1 caps it at C even fully resolved."
+        }
+      ]
+    },
+    {
+      "name": "Hart-Dole-Inouye Federal Center, Battle Creek, Michigan — Federal Civil Defense Administration national headquarters",
+      "aliases": [
+        "Battle Creek Federal Center",
+        "Percy Jones Army Hospital (prior use)",
+        "FCDA / OCDM national headquarters",
+        "OCD Staff College, Battle Creek",
+        "OCDM/DCPA Region 4 headquarters (pre-1979 numbering)"
+      ],
+      "era": "Battle Creek Sanitarium buildings acquired by the Army 1942 and operated as Percy Jones Army Hospital to 1953; FCDA national headquarters relocated from Washington in 1954 together with the civil defence staff college from Olney, Maryland; regional headquarters function thereafter; currently a Defense Logistics Agency site reported as listed for accelerated disposition",
+      "jurisdiction": "Calhoun County, Michigan (Battle Creek)",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Battle Creek, Michigan, on Washington Avenue. A large, conspicuous, above-ground historic building complex.",
+        "precision": "approximate",
+        "basis": "A named, currently operating, NRHP-associated federal building complex in a named city, from GSA and news search summaries. Unambiguous as a place. No lat/lon supplied."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A large federal building complex exists at Battle Creek, Michigan, formerly the Battle Creek Sanitarium and then Percy Jones Army Hospital.",
+          "assessment": "Not in any doubt whatsoever. This is a named, NRHP-associated, currently occupied federal building with a GSA historic-buildings page, active 2026 news coverage of its proposed disposal, and roughly 1,400 jobs attached to it. It is the only candidate in my set whose existence is trivially public.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A, trivially)",
+          "supporting": [
+            "GSA historic federal buildings page for the Hart-Dole-Inouye Federal Center (search snippet only)",
+            "2026 Detroit News and WWMT reporting on the proposed disposition of the site and the jobs attached (search snippets only)",
+            "GlobalSecurity Battle Creek Federal Center page (search snippet only; T4, tier trap, adds nothing on its own)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Zero diagnosticity and deliberately so: nothing whatever is contested about this building's existence. Its function in the file is to anchor the other propositions, not to be established."
+        },
+        {
+          "class": "HRDN",
+          "statement": "The Battle Creek complex was hardened against attack effects.",
+          "assessment": "I assess this as FALSE and I include this candidate substantially in order to say so. Nothing in any source reaching me describes protective construction, and the building's own documented history forbids it: it is a converted early-twentieth-century sanitarium, subsequently a 1,500-bed Army general hospital, above ground, architecturally conspicuous, and now valued as a historic property. The reported $170 million repair bill is the signature of an ageing conventional building, not a protected one. A converted sanitarium is close to the least survivable structure a continuity agency could occupy.",
+          "proposed_band": "X (and I expect this to resolve as negative)",
+          "supporting": [],
+          "undercutting": [
+            "Documented construction history as a sanitarium and general hospital, with no protective works reported anywhere.",
+            "Conspicuous above-ground architecture and NRHP historic valuation.",
+            "Reported $170 million deferred-maintenance repair estimate, consistent with conventional ageing construction."
+          ],
+          "diagnosticity_note": "The point of this entry. Battle Creek is the case where CONTROL(federal) is A-grade, FUNCTION(civil defence headquarters) is A-grade, and HARDEN is negative — an unhardened national continuity headquarters. Any model that infers hardening from COG function, or that treats 'the civil defence agency was headquartered here' as evidence of a bunker, produces the wrong answer on the single best-documented civil-defence site in the country. I would use this as a negative control against the regional-centre entries in the same way the calibration set uses SubTropolis against Fairview."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The complex served as the national headquarters of the Federal Civil Defense Administration and its successors from 1954, and as a regional headquarters.",
+          "assessment": "Strongly attested and structurally corroborated: the administrative enumeration places Region 4 at Battle Creek; the relocation is reported as a 1954 GSA move at President Eisenhower's direction, explicitly motivated by the vulnerability of Washington; the civil defence staff college moved here from Olney, Maryland in the same action; and NARA's RG 397 is reported to hold records of the OCD Staff College at Battle Creek. Four threads that fit together without strain.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A)",
+          "supporting": [
+            "Reported 1954 GSA relocation of the FCDA national headquarters and the staff college to Battle Creek at Eisenhower's direction (search snippet only)",
+            "Reported NARA RG 397 holdings including OCD Staff College records at Battle Creek (search snippet only)",
+            "Administrative enumeration placing Battle Creek as OCDM/DCPA Region 4 (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Strongly discriminating for FUNCTION and, importantly, in a direction that does NOT imply hardening. A documented agency headquarters relocation establishes continuity purpose while saying nothing about protective construction, and keeping those apart is the entire point of carrying this candidate. NOT discriminating: the building's size, its federal ownership, or its communications facilities."
+        },
+        {
+          "class": "PROG",
+          "statement": "The relocation of the civil-defence headquarters out of Washington in 1954 was itself an act of continuity-of-government dispersal, distinct from any construction programme.",
+          "assessment": "Worth stating as a separate proposition because it captures something the bunker-centric literature systematically misses: the earliest and largest American COG measure was ADMINISTRATIVE DISPERSAL, not excavation. Moving an entire agency 600 miles inland is a continuity measure that leaves no hole in the ground and therefore leaves no trace that a bunker-hunting methodology will ever find. Carries no physical claim and is clamp-exempt.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A; this is exactly the kind of thing the appropriations and Federal Register record documents well)",
+          "supporting": [],
+          "undercutting": [],
+          "diagnosticity_note": "Zero physical diagnosticity by construction, which is the point. This proposition exists to record that a register organised around holes in the ground has a systematic blind spot for the continuity measures that did not involve digging."
+        },
+        {
+          "class": "STAT",
+          "statement": "The complex is currently a Defense Logistics Agency site reported as listed for accelerated disposition.",
+          "assessment": "Reported in 2026 news coverage. If a GSA disposal process is genuinely underway, that generates exactly the public real-property documentation that would settle several of the propositions above, so the disposal is an evidentiary opportunity as well as a status fact.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if a GSA disposal record resolves: A)",
+          "supporting": [
+            "2026 reporting on accelerated disposition listing and approximately 1,400 jobs at stake (search snippets only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "An active disposal process is diagnostic mainly as an evidentiary opportunity rather than as a fact about the site: GSA disposition generates public real-property documentation, and a condition assessment prepared for disposal would settle the hardening question directly and unambiguously."
+        }
+      ],
+      "mundane_alternative": "A08 — an ordinary large above-ground federal office complex in a converted historic hospital building, which is what it visibly is. For the EXIST and CONTROL propositions there is no meaningful contest and the null and the claim agree. The mundane alternative BITES only against HARDEN, where it wins outright. What would distinguish a hardening claim if anyone made one: protective specifications in the 1954 conversion records or in any later modification. What would NOT distinguish it: the building's size, its federal ownership, its civil-defence occupancy, or the presence of communications facilities.",
+      "claim_origin": "No claim to trace and no fringe origin — this is an openly documented federal relocation reported at the time and carried since in GSA historic-building material, NARA record-group guides and ordinary local journalism. I include it partly because its total absence from bunker literature is itself a finding: the national headquarters of American civil defence for a quarter-century appears in essentially no underground-facility list, because it has no underground to list.",
+      "expected_records": "Uniformly favourable, which is unusual on this beat. GSA real-property and disposal records X2 rising to X3 given an active disposition; NRHP or historic-building documentation X3; Calhoun County records X3; appropriations and Federal Register material on the 1954 relocation X3, since an agency headquarters move is administratively conspicuous; NARA RG 304 and RG 397 X1 with ARCHIVE-GAP. Note the contrast that makes this candidate useful: an UNHARDENED continuity site has a rich expected-record profile, so silence about it WOULD be informative — the opposite of the situation at every hardened site in this beat, where silence is expected and carries nothing.",
+      "lineage_note": "Several genuinely independent lineages here, which is rare in this set: GSA (custodial agency), NARA (record-group guide), Michigan local journalism (a separate newsroom with its own institutional interest), Detroit News (separate), and the historic-preservation record. These pass the BES access test — a GSA property officer and a Calhoun County reporter each observe the underlying facts for their own unrelated purposes. GlobalSecurity and Grokipedia are downstream and contribute nothing.",
+      "confidence_note": "Highest confidence and lowest drama in the set. Deliberately included as the beat's negative control: it is the case that tests whether the register can assign a high grade to CONTROL and FUNCTION while assigning a negative to HARDEN on the same entity at the same instant. If the register cannot produce that, it is measuring 'is this place governmental and interesting' rather than 'what does the record support'.",
+      "sources": [
+        {
+          "citation": "U.S. General Services Administration, 'Hart-Dole-Inouye Federal Center, Battle Creek, MI', historic buildings",
+          "url": "https://www.gsa.gov/real-estate/explore-historic-buildings/find-a-historic-federal-building/hartdoleinouye-federal-center-battle-creek-mi",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL, plus summary text on the 1942 Army acquisition, Percy Jones Army Hospital operating 1,500 beds through the Second World War and Korea, closure in 1953, and the 1954 GSA move of the FCDA national headquarters and the civil defence staff college (the latter from Olney, Maryland) into the building. GSA is the custodial agency, so this is a party with direct authority describing its own property."
+        },
+        {
+          "citation": "The Detroit News, '1,400 jobs at stake as feds move to offload historic Battle Creek site', 4 March 2026",
+          "url": "https://eu.detroitnews.com/story/news/local/michigan/2026/03/04/battle-creek-michigan-defense-logistics-agency-jobs-hart-dole-inouye-federal-center-closure/88964112007/",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: headline, date and URL. Establishes a currently live disposition process, which matters evidentially as well as descriptively: a GSA disposal generates exactly the public real-property documentation that would settle several propositions here."
+        },
+        {
+          "citation": "WWMT, reporting on accelerated disposition listing and on a $170M repair estimate for the Federal Center",
+          "url": "https://wwmt.com/news/local/battle-creek-hart-dole-inouye-federal-center-disposition-general-services-administration-washington-avenue-calhoun-county-west-michigan",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: headlines and URLs for two separate WWMT items. The $170M deferred-maintenance figure is recorded here as UNDERCUTTING the hardening reading — it is the signature of an ageing conventional building."
+        },
+        {
+          "citation": "National Archives, Guide to Federal Records RG 304 and RG 397 — reported OCD Staff College records at Battle Creek",
+          "url": "https://www.archives.gov/research/guide-fed-records/groups/304.html",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: a search summary asserting RG 397 includes records of the OCD Staff College in Battle Creek. Not opened."
+        },
+        {
+          "citation": "GlobalSecurity.org, 'Battle Creek Federal Center'",
+          "url": "https://www.globalsecurity.org/military/facility/battle-creek.htm",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. P4 tier trap; adds nothing on its own and is recorded so its non-contribution is visible."
+        }
+      ]
+    },
+    {
+      "name": "Post-Attack Command and Control System Facility, Hadley, Massachusetts ('The Notch')",
+      "aliases": [
+        "The Notch",
+        "Eighth Air Force Combat Operations Center",
+        "Westover Communications Annex",
+        "Bare Mountain bunker",
+        "Five Colleges Library Depository (current use)"
+      ],
+      "era": "SAC construction begun 1957; operational 2 June 1958 to 1970; Eighth Air Force departure to Barksdale AFB in 1970; reported Federal Reserve use thereafter; reported purchase by Amherst College in 1989 and conversion to an archival depository",
+      "jurisdiction": "Hampshire County, Massachusetts (Hadley), on and under Bare Mountain",
+      "typology": "military-hardened",
+      "location": {
+        "description": "Bare Mountain, Hadley, Massachusetts, within the Holyoke Range. Reported as two underground storeys totalling approximately 40,000 sq ft designed for 135 people.",
+        "precision": "approximate",
+        "basis": "A named mountain in a named town, with a currently operating institutional occupant. Unambiguous as a place. No lat/lon supplied because I have not receipted one."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A hardened subsurface facility of approximately 40,000 sq ft over two levels exists within Bare Mountain, Hadley, Massachusetts.",
+          "assessment": "Very strongly attested with dates precise to the day (operational 2 June 1958), a named parent command, a named parent installation (Westover AFB), a named successor location for the departing command (Barksdale AFB), and a currently operating institutional occupant with a public identity. Facilities with a live, named, non-federal occupant are the easiest class in this register to verify because the occupant publishes about itself for its own reasons. Not resolved.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A)",
+          "supporting": [
+            "Reported SAC construction from 1957, operational 2 June 1958, closed 1970 on 8th Air Force's move to Barksdale AFB (search snippets only)",
+            "Reported current use as a Five Colleges library depository following a reported 1989 purchase by Amherst College (search snippet only)",
+            "coldwar-ct.com 'The Notch - Hadley' documentation page (search snippet only; fetch blocked)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "A named parent command, a named parent installation, a date precise to the day and a named successor location for the departing command form a mutually constraining set that is hard to fabricate and easy to check against Air Force organisational records — that internal constraint is itself mildly diagnostic. The tunnel into the mountain is D0."
+        },
+        {
+          "class": "HRDN",
+          "statement": "The facility was hardened to protect against the effects of a nearby nuclear detonation.",
+          "assessment": "Reported consistently and a priori highly plausible for a 1957-58 SAC numbered-air-force combat operations centre — this is precisely the facility class for which blast hardening was standard and funded. But 'hardened to protect it from the effects of a nearby nuclear blast' is narrative phrasing with no standard, overpressure or closure specification behind it in anything reaching me. Plausibility from facility class is a base-rate argument and BES deliberately keeps base rate out of the arithmetic.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if a construction or engineering record resolves: A)",
+          "supporting": [
+            "Facility class and era (a SAC numbered air force combat operations centre, 1957-58), which is the strongest base-rate case in my set — recorded as context, explicitly not as evidence"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Note the honest asymmetry: I believe this hardening claim more than several others in this file, and I have graded it no higher, because my belief rests on the base rate for the facility class and BES 6.5 keeps the base-rate reading beside the grade rather than inside it. Discriminating evidence would be the USACE or SAC design record, or an as-built. A tunnel into a mountain is D0."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The facility served as the Eighth Air Force combat operations centre within the Post-Attack Command and Control System.",
+          "assessment": "Consistently reported with a named parent command and a coherent operational timeline tied to a documented Air Force reorganisation (8th Air Force to Barksdale in 1970). PACCS as a system is independently documented in Air Force literature. The strongest route here is AFHRA unit histories, which are indexed by IRIS number and which describe facilities directly — an unusually favourable and underused channel for this candidate.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling if an AFHRA unit history resolves: A)",
+          "supporting": [
+            "Reported designation as 8th Air Force Combat Operations Center and Westover Communications Annex (search snippets only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Strongly discriminating if resolved via AFHRA, because unit histories describe facilities directly and a numbered air force's combat operations centre is exhaustively documented. NOT discriminating: the mountain, the tunnel, the blast doors, the remoteness — a decommissioned SAC command post and the reported null are the same object, so these signals are shared and contribute nothing."
+        },
+        {
+          "class": "FUNC",
+          "statement": "SEPARATE AND MUCH WEAKER CLAIM, GRADED APART: the Federal Reserve stored a large quantity of currency at the facility for post-attack economic reconstitution.",
+          "assessment": "I have split this from the records-storage claim deliberately, because they are being carried together and they do not deserve the same treatment. The records-storage claim is unremarkable and probably true. The CURRENCY claim is hedged in the sources themselves — one states 'Allegedly they stored large sums of money there as well' — and it is a textbook transposition candidate: the documented American post-attack currency site is the Federal Reserve's Mount Pony facility at Culpeper, Virginia, which held shrink-wrapped currency for monetary reconstitution from 1969 to 1988 and is a calibration case in this project's own suite. A currency-reconstitution story attaching itself to a second, unrelated Federal Reserve-occupied bunker in the same period is exactly what transposition looks like. I am NOT asserting the transposition — I am naming it as the leading alternative and the thing to test.",
+          "proposed_band": "X (and I would expect this to resolve as unsupported or as transposed from Mount Pony)",
+          "supporting": [],
+          "undercutting": [
+            "The sources carrying the claim hedge it explicitly with 'allegedly', which is the carriers themselves declining to vouch for it.",
+            "A documented alternative referent exists for the same claim in the same period (Mount Pony, Culpeper), giving a concrete transposition pathway."
+          ],
+          "diagnosticity_note": "The discriminating record exists and is reachable in principle: FRASER, the St Louis Fed's archival platform, exposes Federal Reserve Record Group 82 including a Boston series at Box 2644, and Boston is the correct district for Hadley. A finding-aid hit naming the Notch would settle the records-storage claim and possibly the currency claim; its absence would be weakly informative, since Federal Reserve facility records are not comprehensively public. Note that the Federal Reserve is non-appropriated: no MILCON line, no FRPP entry, no FPDS record and no GSA disposal will ever exist for a Fed facility, so those four profiles are X0 and their silence carries nothing. That is the Mount Pony blind-spot lesson applying a second time."
+        },
+        {
+          "class": "STAT",
+          "statement": "The facility is currently in use as a library depository for the Five Colleges consortium.",
+          "assessment": "Reported consistently and easily checkable — a consortium library depository is an institution that publishes its own address, hours and holdings. This is the highest-probability-of-resolution proposition anywhere in my beat.",
+          "proposed_band": "X — VERIFICATION PENDING (ceiling: A)",
+          "supporting": [],
+          "undercutting": [],
+          "diagnosticity_note": "A publicly operating institutional occupant is signed evidence under the BES E/A matrix and it cuts in a specific direction: continuous documented non-federal occupancy is E0 under any 'currently active hardened federal facility' hypothesis and would be a strong UNDERCUTS row against any such claim, while being fully consistent with the site's historical military function. This is how the register should hold 'it was a real SAC bunker' and 'it is now a college book store' together without either damaging the other."
+        }
+      ],
+      "mundane_alternative": "A12 — a decommissioned Strategic Air Command command post, genuinely hardened for its original purpose, subsequently and undramatically reused first for federal records storage and then as an academic library depository, with no continuing continuity-of-government role and no currency hoard. This null is not merely available, it is documented and it is the majority reading in the sources themselves. For the historical propositions the null and the claim substantially agree; the null bites only against the currency claim and against any suggestion of continuing COG use. What would distinguish the currency claim: a Federal Reserve facility or transport record. What would NOT distinguish it: the tunnel, the blast doors, the mountain, the Federal Reserve's documented records-storage tenancy, or the site's undisputed military past.",
+      "claim_origin": "Two distinct origins requiring separate treatment. The MILITARY history is institutional and unproblematic, carried in Air Force literature and in Massachusetts Cold War documentation projects. The CURRENCY claim has no traceable origin in anything reaching me: it appears in wiki-family text and in regional enthusiast pages with an 'allegedly' attached and no named source, which is the signature of an orally transmitted local claim that has been written down rather than of a documented fact. Its origin is the thing to find, and finding it would likely resolve it either way.",
+      "expected_records": "AFHRA unit histories by IRIS number X2 and the strongest single target, since AFHRA holdings describe facilities directly and the 8th Air Force is exhaustively documented; USACE construction records for 1957-58 X1 ARCHIVE-GAP; Air Force real-property and disposal records for the 1970 closure and the eventual 1989 sale X2; Hampshire County deed for the 1989 Amherst College purchase X3 and highly favourable, since this is a non-federal transfer in a well-recorded Massachusetts county and it is the single cleanest documentary target on this candidate; Federal Reserve records X0 as an expected-record class, per the non-appropriated-entity profile. All UNSEARCHED.",
+      "lineage_note": "The wiki-family cluster (Wikipedia, Military Wiki/Fandom, WikiVisually, dbpedia, Grokipedia, advisor.travel) is ONE lineage and I saw six of its members in a single result set, which is a clean illustration of apparent breadth collapsing to a single terminus. coldwar-ct.com is a probable second lineage. onlyinyourstate is downstream aggregation and contributes nothing. The currency claim appears to ride entirely inside the wiki lineage, meaning it has ONE source at any volume.",
+      "confidence_note": "Included for two reasons. First, it is the best-attested genuinely hardened facility in my beat outside the anchors, with a favourable AFHRA and county-deed record path. Second, the currency claim is a clean, self-contained specimen of the transposition failure mode with a named documented alternative referent (Mount Pony) already sitting in this project's calibration suite — which makes it a test the register can actually run.",
+      "sources": [
+        {
+          "citation": "Wikipedia, 'Post-Attack Command and Control System Facility, Hadley', and its derivatives (Military Wiki/Fandom, WikiVisually, dbpedia, advisor.travel, Grokipedia)",
+          "url": "https://en.wikipedia.org/wiki/Post-Attack_Command_and_Control_System_Facility,_Hadley",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: the article title plus FIVE derivative mirrors in a single result set — ONE lineage presenting as six, and the cleanest measured instance of that effect in this sweep. Carries the 1957 SAC construction start, the 2 June 1958 operational date, the 1970 closure on 8th Air Force's move to Barksdale, the ~40,000 sq ft over two storeys designed for 135 people, the Westover Communications Annex alias, the Federal Reserve tenancy, and the reported 1989 Amherst College purchase. ALSO the sole carrier of the currency claim, which it hedges with 'allegedly' — so that claim has ONE source at any apparent volume."
+        },
+        {
+          "citation": "coldwar-ct.com, 'The Notch - Hadley'",
+          "url": "https://coldwar-ct.com/The_Notch_-_Hadley.html",
+          "tier": "P3",
+          "retrieval_state": "FETCH-BLOCKED",
+          "what_it_actually_shows": "FETCH ATTEMPTED AND REFUSED: EGRESS_BLOCKED. SAW: title and URL. A probable second and genuinely separate lineage."
+        },
+        {
+          "citation": "FRASER (Federal Reserve Bank of St. Louis), Records of the Federal Reserve System, Record Group 82, #1 Boston, Box 2644, Folder 1",
+          "url": "https://fraser.stlouisfed.org/archival-collection/records-federal-reserve-system-1344/1-boston-469061",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: the finding-aid title, the record group, the district (Boston — the correct district for Hadley) and the box and folder numbers, in search results. I did NOT open it and I make NO claim that it mentions the Notch. Recorded as the named discriminating test for the currency claim: a machine-resolvable archival finding aid at the issuing institution, which is exactly the R-SURROGATE path. Note also that the Federal Reserve is non-appropriated, so MILCON, FRPP, FPDS and GSA-disposal profiles are all X0 for this site and their silence carries nothing — the Mount Pony blind-spot lesson applying a second time."
+        },
+        {
+          "citation": "Only In Your State, 'Bunkers In Massachusetts: In Hadley Lies A Secret Bunker'",
+          "url": "https://www.onlyinyourstate.com/nature/massachusetts/underground-bunker-ma",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: headline and URL. Downstream content aggregation; contributes nothing and is recorded as inert."
+        }
+      ]
+    },
+    {
+      "name": "Raven Rock Mountain Complex (Site R) — carried as the beat's calibration anchor",
+      "aliases": [
+        "Site R",
+        "Alternate Joint Communications Center (AJCC)",
+        "Alternate National Military Command Center (ANMCC)",
+        "Raven Rock",
+        "Fountaindale / Blue Ridge Summit facility"
+      ],
+      "era": "Land acquisition reported from 1950; construction from 1951; opened 1953 with buildings A, B and C; buildings D and E reported added about ten years later; under Fort Detrick command from 1 October 1997; active",
+      "jurisdiction": "Adams County, Pennsylvania, near Blue Ridge Summit and Fountaindale, with associated works in Maryland",
+      "typology": "COG-COOP",
+      "location": {
+        "description": "Inside Raven Rock Mountain, Adams County, Pennsylvania, reported as about 14 km east of Waynesboro, Pennsylvania and about 10 km north-northeast of Camp David.",
+        "precision": "regional",
+        "basis": "Named mountain, county and bearings-and-distances from two named public landmarks, from search summaries. I hold no receipted coordinate. No lat/lon supplied, and for an active facility the register's own rule against manufacturing precise pins from imprecise evidence applies with extra force."
+      },
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A large hardened subsurface military complex exists within Raven Rock Mountain, Adams County, Pennsylvania.",
+          "assessment": "The project's own calibration suite grades this A across all seven propositions on MILCON, NEPA, GAO, AFHRA and county-deed lineages. I reproduce none of that here, and that is the entire point of including this entry: WORKING FROM SEARCH SNIPPETS ALONE, I CANNOT PUT RAVEN ROCK ABOVE X EITHER. The most thoroughly documented continuity facility in the United States and my newest, thinnest candidate receive the same band from me, because the band measures my retrieval state and not the world. If this entry appeared at A while the rest sat at X, that would be evidence the register was scoring fame.",
+          "proposed_band": "X — VERIFICATION PENDING (documented ceiling per calibration case A-02: A)",
+          "supporting": [
+            "Reported construction from 1951, opening 1953, five three-storey windowless buildings on shock-resistant foundations (search snippets only)",
+            "Reported official designation Alternate Joint Communications Center (search snippet only)",
+            "A DTIC accession string, AD1078617, appearing inside a search-result URL and titled as a Phase I archaeological survey of Raven Rock Mountain Complex Site C conducted by USACE ERDC-CERL. I SAW THE STRING IN A SEARCH RESULT; I DID NOT RESOLVE IT, apps.dtic.mil is unreachable, and I make no claim about its contents beyond its title as displayed."
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Everything place-derived at Raven Rock — the mountain, the portals, the spoil, the access roads, the guarded perimeter — is universal-D0 and contributes nothing, which the project's own calibration case A-02 states as a hard requirement: the place-derived contribution to this site's FUNCTION must be exactly ZERO and a pass showing otherwise is a failing pass. The discriminating evidence is entirely documentary and entirely unreachable from here."
+        },
+        {
+          "class": "HRDN",
+          "statement": "The complex is engineered against nuclear blast effects, including shock-isolated building foundations.",
+          "assessment": "Shock-isolated foundations for windowless internal buildings is a specific and genuinely diagnostic construction detail — it is a solution to a blast problem and to no other problem — and it recurs consistently across sources. Under my retrieval conditions it remains a reported detail.",
+          "proposed_band": "X — VERIFICATION PENDING (documented ceiling: A)",
+          "supporting": [
+            "Reported five windowless buildings set on shock-resistant foundations inside the excavated caverns (search snippet only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Shock isolation is strongly discriminating and belongs high on any diagnosticity catalogue: no mine, quarry, tunnel, storage cavern or data centre puts its structures on shock mounts. Contrast with the portals, spoil and access roads at the same site, which are universal D0 and contribute nothing however dramatic they look. The calibration suite's demand that the place-derived contribution to Raven Rock's FUNCTION be exactly zero is the same rule."
+        },
+        {
+          "class": "FUNC",
+          "statement": "The complex serves as the Alternate National Military Command Center and as a senior military relocation site.",
+          "assessment": "Officially designated and acknowledged; the calibration suite places this at A on MILCON and NEPA lineages. Unresolved by me.",
+          "proposed_band": "X — VERIFICATION PENDING (documented ceiling: A)",
+          "supporting": [],
+          "undercutting": [],
+          "diagnosticity_note": "Discriminating only through documents: a MILCON line with project number and CATCODE, or NEPA documentation specifying blast scope. Official acknowledgment is itself claim-property evidence from a party with authority over the fact, and is the route by which this site reaches A in the calibration set."
+        },
+        {
+          "class": "IDNT",
+          "statement": "'Raven Rock Mountain Complex Site C' in Maryland is a distinct installation component from the main Pennsylvania complex and must not be merged with it.",
+          "assessment": "A useful and non-obvious lead surfaced by the archaeological-survey title: the complex has named satellite components in a second state. Adjacent installations at Fort Ritchie in Cascade, Maryland supported Site R and the two are routinely conflated in popular accounts. Under BES 11.1 a merge requires an IDENTITY proposition at band C or better backed by a named verified instance-level source, and coordinate or name proximity flags rather than merges. The register should carry Site C as a flagged related entity, not as part of the parent.",
+          "proposed_band": "X",
+          "supporting": [
+            "The archaeological-survey title as displayed in a search result, naming 'Raven Rock Mountain Complex Site C, MD' (search snippet only; accession not resolved)",
+            "Reported Fort Ritchie role supporting the Raven Rock ANMCC and the 1997 transfer of Site R to Fort Detrick command (search snippets only)"
+          ],
+          "undercutting": [],
+          "diagnosticity_note": "Diagnostic about ENTITY RESOLUTION rather than about any facility. The value of the Site C lead is that it warns against a merge: proximity and shared naming are precisely the signals BES 11.1 says must FLAG and must never merge, and a merge that raised a grade would be doing evidentiary work it has not justified."
+        }
+      ],
+      "mundane_alternative": "A08 — an ordinary Army communications station, or A02 — a granite quarry, these being the two nulls the project's own calibration suite names for this site and records as EXCLUDED, on the ground that a quarry has no facility category code and no environmental impact statement specifying blast scope. Under my retrieval conditions I have verified neither the exclusion nor the nulls; I record the calibration position and my inability to reproduce it. What would distinguish: the MILCON line with its project number and CATCODE, or the NEPA documentation specifying protective engineering. What would NOT distinguish: the mountain, the portals, the spoil, the access roads, the guarded perimeter.",
+      "claim_origin": "No claim origin to trace in the folklore sense — the facility has been officially acknowledged for decades and appears in appropriations, environmental and unit-history records. Its presence in fringe literature is downstream of the official record rather than upstream of it, which is the reverse of the Mount Weather 'underground city' pattern and is worth stating because the two sites are constantly discussed together.",
+      "expected_records": "Per calibration case A-02: MILCON J-book line with project number and CATCODE X3; NEPA/EIS X2; GAO and DoD Inspector General reports X2; AFHRA unit histories by IRIS number X2; DoD Base Structure Report entry X2; Adams County deed and USACE construction records X3 for the deed, X1 with ARCHIVE-GAP for USACE. This is the most favourable expected-record profile in the entire beat, which is precisely why it functions as the calibration anchor: if a search fleet cannot find records HERE, its search is broken, and the failure is diagnostic of the instrument rather than of the site.",
+      "lineage_note": "In the material reaching me, the wiki family (Wikipedia, Grokipedia, veteran.com, theclio, bunkersapp) collapses to essentially one lineage, and the popular-history sites descend from it. The genuinely independent termini are the ones I could not reach: DTIC, NARA, GovInfo, AFHRA and the county recorder. That the reachable sources collapse to one lineage while the unreachable ones are the independent ones is a fair summary of this entire sweep.",
+      "confidence_note": "Included solely as the beat's calibration anchor and NOT as a discovery. Its function in this file is to demonstrate that my retrieval ceiling binds uniformly: the best-documented site in the beat and the thinnest both come out at X, which is the correct behaviour for an instrument that measures the record rather than the reputation. If a downstream process publishes this entry at A on the strength of my file, that process has laundered calibration knowledge into evidence and should be stopped.",
+      "sources": [
+        {
+          "citation": "Wikipedia, 'Raven Rock Mountain Complex', and its derivatives (veteran.com, theclio.com, bunkersapp.com, Grokipedia)",
+          "url": "https://en.wikipedia.org/wiki/Raven_Rock_Mountain_Complex",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: the article title plus four derivatives in one result set — ONE lineage. Carries the 1950 land acquisition, 1951 construction start, 1953 opening, the AJCC designation, the five three-storey windowless buildings on shock-resistant foundations, buildings D and E added about a decade later, and the 1 October 1997 transfer to Fort Detrick command."
+        },
+        {
+          "citation": "DTIC accession AD1078617, titled as 'Raven Rock Mountain Complex Site C, MD Archaeological [Survey]', attributed to USACE ERDC-CERL, Champaign, Illinois",
+          "url": "https://apps.dtic.mil/sti/tr/pdf/AD1078617.pdf",
+          "tier": "P1",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "READ THIS ENTRY CAREFULLY. What I SAW: this accession string and title, as displayed text inside a WebSearch result, twice, in two separate queries. What I did NOT do: resolve it. apps.dtic.mil is unreachable from here. I make NO claim whatever about the document's contents beyond the title as displayed, and I did not construct, infer or complete this identifier — it came to me as a string in a result and is recorded as such. Under BES 2.2 its receipt state is UNRESOLVED-UNREACHABLE (network failure, NOT measured fabrication), and if it later resolves at DTIC it becomes an R-SURROGATE or R-FULL row; if DTIC authoritatively returns nothing for it, that outcome should be recorded against me as confabulation telemetry. I am flagging it this explicitly because a plausible-looking accession number is exactly the failure mode this register was built to catch, and it is the only such identifier anywhere in this file."
+        },
+        {
+          "citation": "Public Intelligence, 'Raven Rock Mountain Complex (Site R)'",
+          "url": "https://publicintelligence.net/raven-rock-mountain-complex-site-r/",
+          "tier": "P3",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL. A document-hosting project; potentially a conduit to primaries under the BES 5.1.3 transparent-compiler rule, in which case the primaries rather than the compiler would be the lineages."
+        },
+        {
+          "citation": "Wikipedia, 'Fort Ritchie, Maryland'",
+          "url": "https://en.wikipedia.org/wiki/Fort_Ritchie,_Maryland",
+          "tier": "P4",
+          "retrieval_state": "SEARCH-SNIPPET-ONLY",
+          "what_it_actually_shows": "SAW: title and URL, plus summary text on Fort Ritchie's communications role supporting the Raven Rock ANMCC. Relevant to the entity-resolution warning: Fort Ritchie, Site C and Site R are routinely conflated in popular accounts and under BES 11.1 must be flagged rather than merged."
+        },
+        {
+          "citation": "This project's own docs/CALIBRATION.md, case A-02 (Raven Rock, expected A on all seven propositions)",
+          "url": "",
+          "tier": "P3",
+          "retrieval_state": "FETCHED",
+          "what_it_actually_shows": "THE ONLY ITEM IN THIS ENTIRE FILE I ACTUALLY OPENED AND READ. It is an internal project document, not evidence about the world, and it is recorded here solely to be explicit that my knowledge of Raven Rock's documentary strength comes from the register's own calibration text rather than from any record I retrieved. It must never be treated as a source for the facility, and a downstream process that grades this entry A on the strength of it has laundered calibration knowledge into evidence."
+        }
+      ]
+    }
+  ],
+  "refuted_or_hollow": [
+    {
+      "claim": "'The 170 Bunkers They Don't Want You to Know About' — a claimed enumeration of exactly 170 underground and undersea bunkers funded through government spending, some large enough to house tens of thousands indefinitely.",
+      "origin": "An article dated 29 July 2026 on theburningplatform.com, encountered while searching for the origin of the 'Federal Relocation Arc' framing. The article asserts its own basis as 'declassified U.S. government documents, testimonies from former federal employees with top-level security clearances, and investigative journalism spanning over two years'.",
+      "why_hollow": "The self-description is the entire evidentiary content, which is the self-attestation pattern BES 2.5 exists to exclude: the artifact's probative content IS the claim, so it is not a member of V and is evidence only for ORIGIN. Not one document identifier, accession number, appropriation line or facility name accompanies the count in anything reaching me — and a claim of the form 'exactly 170' is a claim that necessarily rests on an enumeration, so the absence of the enumeration is not incidental but disqualifying. The witnesses are unnamed and therefore fail the BES 5.4 resolvability gate at the first clause. The item is post-2022 with no byline reaching me, which under BES 3.3 makes it POST-2022-UNATTRIBUTED, contributing zero to every condition and counting as zero lineages by construction. Note what I am NOT saying: I am not asserting that no such document set exists. I am recording that this artifact provides no path to one.",
+      "mundane_explanation": "A traffic-driven aggregation article assembling publicly known facilities — Mount Weather, Cheyenne Mountain, the FEMA regional centres — into a round-numbered list, with the specificity of '170' supplying an authority the underlying material does not have. Every named facility I could see in it is one that appears in ordinary public sources."
+    },
+    {
+      "claim": "FEMA regional centres are 'regional nodes' of a covert deep-underground network, as presented in state-by-state 'list of DUMBs' pages.",
+      "origin": "A cluster of undated or 2026-dated pages including coreinsightsintl.com 'List of DUMBs by State', subterraneanbases.com state pages (e.g. 'Georgia Underground Bases: 2026 Intelligence & FEMA Regional Nodes', 'Washington Underground: Mel's Hole & Madigan Grey Nest Vaults'), and deepundergroundmilitarybases.com. All surfaced incidentally while searching for the legitimate Federal Regional Centers.",
+      "why_hollow": "These pages take real, named, publicly acknowledged federal facilities with published addresses — the FEMA regional operations centres at Denton, Thomasville, Bothell, Denver and Maynard — and re-present them as concealed installations, adding no identifier, record or observation to the public material they restyle. The tell is structural and checkable: the genuine content is exactly the set of facilities already documented by the Center for Land Use Interpretation and by local journalism, while the added content ('Grey Nest Vaults') attaches to nothing at all. The lineage is the Sauder/Schneider deep-underground-military-base corpus, which this project's calibration suite grades F with V empty on the ground that the originator is the claimant and the content is the claim. Titles carrying a future-dated '2026 Intelligence' framing with no byline are POST-2022-UNATTRIBUTED under BES 3.3.",
+      "mundane_explanation": "Search-engine-optimised aggregation over a fringe corpus. The FEMA regional centres are real, hardened in several cases, and entirely acknowledged — they are listed on FEMA's own site, one is on the National Register of Historic Places, and journalists have filmed inside one. Nothing is being concealed, which is why the pages can be assembled from public sources in the first place."
+    },
+    {
+      "claim": "Mount Weather contains an underground city with streets, sidewalks, a battery-powered subway, a lake fed by underground springs, hydroponic gardens and residential apartments.",
+      "origin": "Traced, and it terminates cleanly. Richard Pollock, 'The Mysterious Mountain', The Progressive, March 1976, based on Senate subcommittee material plus several off-the-record interviews with officials formerly associated with the facility. Every circulating version reaching me descends from it.",
+      "why_hollow": "Hollow as EVIDENCE, not necessarily false as fact, and the distinction matters. Pollock is a journalist reporting others' attestation rather than the claimant, so BES 2.5 does not exclude him — his report enters V at the D0 unresolvable-attestation floor. The witnesses are unnamed and fail the resolvability gate at its first clause. The result is the citogenesis pattern the model is built to name: a T3 publication resting on T5 testimony, subsequently cited as though primary across some hundreds of pages. I counted eight downstream carriers in a single result set (allconspiracy, moraloutrage, humansarefree, beforeitsnews, usahitman, conspiracybomb, a dedicated blogspot, a Goodreads thread) and every one of them is a copy: that is ONE lineage at any volume. This project's calibration suite grades the claim E with a citogenesis flag, and requires the flag to attach to the PROPOSITION rather than to the site.",
+      "mundane_explanation": "Mount Weather is a genuine, acknowledged, federally operated facility whose existence is graded A in this project's own calibration set — a 434-acre site with tunnels begun in 1954 under the Bureau of Mines and completed by the Army Corps of Engineers, with a reported 200,000 sq ft of built space. A large real facility with a sewage plant, water storage and dormitory capacity for a few hundred people is entirely sufficient to generate 'underground city' language when described second-hand by people who were inside it and are speaking without attribution. The site's A-grade existence and the claim's E-grade status belong on the same page without contradiction."
+    },
+    {
+      "claim": "There were 75 Presidential Emergency Facilities among the 90 or so Federal Relocation Arc sites.",
+      "origin": "Attributed in the material reaching me only to 'former government employees', appearing in the Federal Relocation Arc wiki article and its derivatives. I could not trace it further and I record that failure.",
+      "why_hollow": "It contradicts by a factor of roughly eight the separately circulating and better-anchored figure that in 1984 there were NINE Presidential Emergency Facilities within a 25-minute helicopter trip of Washington, and it sits uneasily beside a third framing describing 'seven locations that would become the core PEFs'. The nine-and-seven figures are reconcilable as core-versus-expanded counts; 75 is not reconcilable with either. The attribution is to unnamed persons and therefore fails the BES 5.4 resolvability gate outright, and under the attestation-custody rule the lineage terminus is the anonymous asserter, not the officials invoked. Note the specific danger: this is a number that would, if credited, silently multiply the candidate-set denominator M in the BES C1c rule and thereby change the grade of every individual arc-site candidate in the register. A single untraced number with no custody must not be allowed to do that.",
+      "mundane_explanation": "Probable conflation of two different populations that the sources do not keep apart: the small set of purpose-built PRESIDENTIAL emergency facilities in the immediate Washington region, and the much larger set of roughly 90 departmental EMERGENCY RELOCATION SITES across the 30-to-300-mile arc — of which Front Royal, in this file, is one. Those are different things with different builders, different protection levels and different orders of magnitude, and reading the second population's count into the first produces exactly this error."
+    },
+    {
+      "claim": "A hardened Federal Regional Center bunker was built at Kansas City, Missouri.",
+      "origin": "Appears in the Center for Land Use Interpretation's list of locations where regional centres were built ('Maynard MA, Denton TX, Denver CO, Olney MD, Kansas City MO, and Bothell WA'), and propagates from there.",
+      "why_hollow": "PROVISIONALLY HOLLOW AND EXPLICITLY NOT REFUTED — I am flagging a discrepancy I could not resolve, and I want the uncertainty preserved rather than converted into a finding. Kansas City does not appear in the eight-member OCDM/OCD/DCPA regional-headquarters enumeration (Harvard/Maynard, Olney, Thomasville, Battle Creek, Denton, Denver, Santa Rosa, Everett/Bothell), and targeted searching for a Kansas City federal regional bunker returned nothing describing a hardened structure — only FEMA Region 7's current office at an ordinary street address, plus two genuine but unrelated underground sites in the region (SubTropolis, a commercial limestone mine which this project's calibration suite grades R on the COG proposition, and the Atchison Storage Facility across the state line in Kansas). The most likely reading is that Kansas City entered the list as a post-1979 FEMA REGION headquarters rather than as a pre-1979 purpose-built CENTER, conflating two different things the same list mixes elsewhere. But a compiler as careful as CLUI including it is a real signal and I will not dismiss it on a failed search conducted with no working retrieval.",
+      "mundane_explanation": "FEMA Region 7's Kansas City office is an ordinary leased or owned federal office. The area's genuine large underground spaces are commercial limestone mines with documented commercial tenants — precisely the configuration this project's calibration suite uses as its negative control against real bunkers — and their presence in the same metropolitan area is an obvious route for a regional-centre claim to attach itself to the wrong kind of hole."
+    },
+    {
+      "claim": "The Federal Reserve stored large sums of currency at the Notch (Bare Mountain, Hadley, Massachusetts) to restart the economy after a nuclear war.",
+      "origin": "Untraced. Appears in wiki-family text about the PACCS facility, hedged in the sources themselves with 'allegedly', with no named source anywhere in the material reaching me.",
+      "why_hollow": "Carried entirely within a single wiki lineage whose members I saw six of in one result set, so it has ONE source at any apparent volume. Its carriers decline to vouch for it. And a documented alternative referent for the same story exists in the same period: the Federal Reserve's Mount Pony facility at Culpeper, Virginia genuinely held shrink-wrapped currency for post-attack monetary reconstitution from 1969 to 1988, and is a calibration case in this project's own suite. A currency-reconstitution narrative attaching to a second, unrelated Federal Reserve-occupied bunker is the standard shape of a transposition. Recorded as a live transposition hypothesis with a named discriminating test — the FRASER finding aid for Federal Reserve Record Group 82, Boston, Box 2644 — not as an established refutation. The separate and much duller claim that the Fed stored RECORDS there is unremarkable and I have no reason to doubt it.",
+      "mundane_explanation": "The Federal Reserve Bank of Boston used a decommissioned and genuinely hardened SAC command post for records storage, which is exactly what surplus hardened federal space gets used for. 'The Fed kept records in the bunker' becomes 'the Fed kept money in the bunker' in retelling without anyone intending to deceive, especially once the Culpeper story enters general circulation and supplies a template."
+    },
+    {
+      "claim": "GENERAL FINDING, recorded as hollow because it is a claim about the RECORD rather than about any site: that the apparent breadth of online sourcing on Federal Relocation Arc facilities constitutes corroboration.",
+      "origin": "Not a claim anyone makes explicitly; it is the implicit premise of every aggregated bunker list, and it is the failure mode this register was built against, so I record it as a finding of the sweep.",
+      "why_hollow": "Measured directly and repeatedly across this beat. On Warrenton Training Center, six of nine results were Wikipedia derivatives (Military Wiki/Fandom, HandWiki, dbpedia, Grokipedia, plus mirrors) — one lineage presenting as six. On the Notch, six wiki-family members appeared in a single result set. On the Mount Weather 'underground city' claim, eight downstream carriers all descend from Pollock 1976. On the FEMA regional centres, one CLUI sentence about the class ('close to a dozen sophisticated regional centers... several hundred people for 30 days or more') appears verbatim in results for Maynard, Denton and Thomasville alike, and is being read at each as instance evidence when it is CLASS scope and excluded from V under BES 2.4. Under the BES 5.1.7 access test the picture is consistent: the sources that could have observed the underlying facts independently — county recorders, contracting officers, GSA property officers, the Keeper of the National Register, AFHRA, NARA — are almost exactly the set I could not reach, while the sources I could reach are almost exactly the set that copies from one another.",
+      "mundane_explanation": "A small number of genuine compilers did real work — the Center for Land Use Interpretation, civildefensemuseum.com, coldwar-c4i.net, a handful of state Cold War documentation projects, and NARA's own record-group guides — and the visible remainder of the web is derivative of them. The correct reading is that this beat has perhaps five to eight genuine secondary termini and a very large number of copies, and that real corroboration on it lives exclusively in institutional records none of which were reachable in this cycle."
+    }
+  ],
+  "coverage_gaps": "WHAT I DID NOT COVER, AND WHY. (1) The Greenbrier / Project Greek Island is absent from the candidate list although I searched it and confirmed the anchor facts (Ted Gup, Washington Post, 31 May 1992; construction 1959-62 alongside the West Virginia Wing; the Forsythe Associates cover). It is calibration case B-05/A-05 and I could add nothing to it under snippet-only retrieval. Same for Mount Weather as an entity, though its 'underground city' claim is worked in refuted_or_hollow, and same for Cheyenne Mountain. (2) The remaining PEF sites — Cartwheel at Fort Reno Park in the District of Columbia, Cannonball at Cross Mountain near Mercersburg Pennsylvania, Cowpuncher at Martinsburg West Virginia, Cadre/Creed near Site R, Cactus, and Crystal at Mount Weather — are each identified with a location and a site number but I worked up only Corkscrew. Cartwheel is the most interesting omission because it is calibration case B-03, sits under a public city park, and turns on whether White House Army Signal Agency records name Fort Reno at instance or only at class level. (3) The eight-region enumeration's own source. I saw the list; I never reached the NARA Guide pages for RG 304, 396, 397 or 311 that appear to carry it. Everything structural in this file rests on that unverified list and a downstream process should treat it as a single unresolved lineage, not as a finding aid. (4) Departmental emergency relocation sites beyond Front Royal. If roughly 90 arc sites existed, I have touched one, and the college-campus sites mentioned in passing by the arc literature are entirely unexamined. This is the largest recall gap in the beat and probably the richest remaining seam. (5) State-level emergency operating centres, which are numerous, frequently hardened, and documented in state rather than federal records — an entirely unworked corpus that is also unusually reachable, since state archives and state emergency-management agencies publish. (6) Post-1980s and post-9/11 continuity architecture. I touched Peters Mountain, Albemarle County Virginia — an AT&T troposcatter and long-lines site reported as nuclear-hardened, reported to house several hundred people, and reported to have had a renovation exceeding $61 million since 2007 — but did not develop it, and it is the strongest live COG candidate I did not work up. It also sits at the intersection of this beat and the AT&T Long Lines beat and should be coordinated rather than duplicated. (7) The Federal Preparedness Agency inheritance within GSA (NARA RG 269) was named in my brief and I did not reach it at all. (8) HERT, the Headquarters Emergency Relocation Team, surfaced as a SAC continuity unit at Offutt AFB with a dispersal location at the Cornhusker Army Ammunition Plant, Grand Island, Nebraska, superseded circa 1982 by the Enduring Battle Management Support Center. I excluded it because it is a UNIT rather than a structure and carries no hardened-facility claim, but the dispersal locations it used are unexamined and are exactly the sort of unglamorous COG geography this beat is supposed to find. (9) MOST IMPORTANTLY: no canonical corpus was searched in the BES 7.1 sense. Zero queries against CREST, DTIC, NARA Catalog, GovInfo, the Federal Register, FRUS, GAO, MILCON J-books, NEPA repositories, FRPP, the DoD Base Structure Report, USAspending/FPDS, county recorders or the USGS historical topographic stack. SCI is therefore approximately zero across this entire beat and no negative finding anywhere in this file is a NEGATIVE — every one of them is UNSEARCHED. Nothing here should be read as evidence of absence, and the several places where I say 'I searched for undercutting evidence and found none' should be read as statements about my reach, not about the world."
+}

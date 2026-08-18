@@ -1,0 +1,979 @@
+{
+  "beat": "Missile fields, silos, and their afterlives — Atlas D/E/F, Titan I/II, Nike Ajax/Hercules, Minuteman, Safeguard. First discovery sweep. US-only. Emphasis on the divergence between EXIST (near-trivially documented for this class) and STAT/CTRL/FUNC (the live propositions once a site leaves federal hands).",
+  "method_notes": "RETRIEVAL STATE, STATED FIRST BECAUSE IT GOVERNS EVERYTHING BELOW. WebFetch is non-functional in this environment. I attempted it four times against four different classes of host — a state agency (cdphe.colorado.gov), a veterans' association site (556sms.com), Wikipedia (en.wikipedia.org) and an enthusiast register (themilitarystandard.com) — and every one returned EGRESS_BLOCKED. That is not a .gov/.mil-specific block; it is total. I therefore opened ZERO documents. Every source below is recorded from a WebSearch result block: a title, a URL, and a summary produced by the search tool. In BES terms every observation I could offer is receipt_state = UNRESOLVED-UNREACHABLE, receipt_class = R-NONE, membership = V0, arithmetically inert. V is empty for every proposition on every candidate.\n\nWHAT THAT MEANS FOR THE GRADES. Two rules interact. CAP-5 (V = empty) caps everything at F. But §9.4 step 2 returns X when SCI < 0.5 and the provisional grade would be D/E/F/R — and my search completeness against the canonical set for this beat is close to zero: I could not reach the NARA catalog, DTIC, GSA disposal records, FUDS, county recorders, NRHP/NPGallery, USGS HTMC, MILCON J-books, or any state environmental repository. So the correct BES answer for essentially every proposition here is X — NOT ASSESSED, specifically §10.5's 'X — VERIFICATION PENDING'. I have written X as the proposed_band throughout and appended, as an explicitly labelled analyst projection, the band I expect the proposition to reach once the named receipts resolve. The projection is my judgement and is not a grade.\n\nI want to be blunt about one thing: when a search snippet summarises the Colorado Department of Public Health and Environment's Titan I page, I have evidence that a CDPHE page about Titan I complexes exists and that a summarising model read something on it. I do not have evidence of what the page says. The distinction is recorded per source in what_it_actually_shows and I have tried not to let it slip anywhere.\n\nWHY THIS BEAT IS DIFFERENT FROM THE REST OF THE REGISTER — the finding I most want carried forward. For Atlas, Titan, Nike, Minuteman and Safeguard, §6.1's 'absence of a record is not evidence of absence' largely INVERTS. These were unclassified-existence programs, congressionally appropriated, built by the Corps of Engineers, disposed of through GSA, recorded in county deed books, and in many cases surveyed to HAER/NRHP standard. The expected-record profile is dense and public: county deed X3, GSA disposal X2, MILCON line 1950-90 unclassified X3, USGS HTMC quad X3, FUDS listing X2, USACE construction records X1 (RG 77 archive gap). For this class, a missing deed IS surprising. The register should not extend to a decommissioned Atlas F the epistemic charity it correctly extends to Greenbrier-in-1991. Conversely: the class-level record is so good that instance-level EXIST/LOCT/CTRL should be cheap to push to A once egress works, and the register's effort should go almost entirely to STAT and current CTRL, exactly as GRADING.md §4.3's SILO/LAUNCH-FACILITY catalog says.\n\nWHAT WORKED. Backward tracing worked even without fetch. Three of the four hollow claims below were caught by noticing that a numeric detail travels intact through a dozen unrelated outlets while an independent technical source gives a different number — the distinctive-error test of §5.1.7 operating on shared FACTS rather than shared wording, which is what makes it survive paraphrase and machine regeneration. The 'epoxy-resin concrete, walls almost ten feet thick' formulation is the clearest specimen I found on this beat.\n\nWHAT I COULD NOT ESTABLISH. (1) Not one coordinate. Where I give one it is a number I saw inside a search snippet, flagged claimed-only, never derived. (2) Not one site designation confirmed against an Air Force list — I have deliberately left several as 'designation unconfirmed' rather than guess, because a wrong site number is exactly the confabulation this register exists to catch and Atlas/Titan designations (556-5, 579-1, 724-C, Complex 2B/2C) are format-regular and therefore cheap to hallucinate. (3) No parcel, deed, or GSA disposal record for any candidate. (4) No verification that any 'currently operating' claim is currently true — several rest solely on a press release or an operator's own website.\n\nAGENT INDEPENDENCE. Nothing in this file corroborates anything else in this file. If another agent on another beat returns the same claim, that is the same indexed web surfaced twice, not two witnesses (§5.0).",
+  "candidates": [
+    {
+      "name": "Stanley R. Mickelsen Safeguard Complex — Missile Site Radar building (\"the Nekoma pyramid\")",
+      "aliases": ["SRMSC MSR", "Nekoma Pyramid", "Mickelsen Safeguard Complex", "the Pyramid, Nekoma ND"],
+      "era": "Constructed c. 1970–1975; declared operational October 1975; deactivated February–April 1976; surplused and sold 2012; resold 2020; under a data-centre redevelopment agreement from 2022",
+      "jurisdiction": "Cavalier County, North Dakota",
+      "typology": "military-hardened",
+      "location": {
+        "precision": "regional",
+        "description": "Near Nekoma, Cavalier County, North Dakota. Town-level only.",
+        "basis": "Town name appears consistently across every search snippet. I have no coordinate from any source I saw and did not derive one. No parcel identifier retrieved."
+      },
+      "claim_origin": "The facility's existence was never concealed — it was a treaty-limited ABM site built under public appropriation and reported contemporaneously. The claim lineage that matters here is not EXIST but the modern ownership-and-function story, and it is traceable to specific dated acts: (a) a 2012 GSA-adjacent surplus sale to the Spring Creek Hutterite Colony of Forbes ND for $530,000, reported in ND regional press and repeated everywhere since; (b) a 2020 resale of portions including the pyramid to the Cavalier County Job Development Authority for $462,900; (c) a 26 July 2022 announcement from the office of Gov. Doug Burgum that Bitzero Blockchain Inc. had signed a binding agreement to acquire the pyramid and invest ~$500M converting it to a data centre. Every 'Nekoma is now a crypto HQ' item I found descends from (c). The $530,000 and $462,900 figures propagate as fixed constants across outlets, which is a single-lineage signature, not corroboration.",
+      "lineage_note": "Three genuinely distinct origins are visible: the historical/military record (many independent institutional roots), the county property transactions (would be independent if the recorder's index were reachable — two bureaucracies recording the same event for unrelated purposes, §5.1.7's access test), and the 2022 corporate announcement (ONE origin, the governor's press office relaying a company's statement, replicated into dozens of trade and listicle outlets). Bleeding Heartland's Feb 2024 and Nov 2024 reporting is the only item I found that is plausibly independent of (c), because it reports on the ABSENCE of the thing (c) predicted — it could have been written without (c) existing only in the trivial sense that it is about (c). I count it as a distinct lineage for the UNDERCUTS direction.",
+      "mundane_alternative": "For EXIST/HRDN there is no mundane alternative worth naming — this is A01/A12 territory and both fail immediately; the structure is a photographed landmark. The live nulls are on the modern propositions. For FUNC(operating data centre): A07, 'an announced but substantially unbuilt commercial data-centre project, with a small pilot deployment used to keep an incentive package and a purchase option alive.' What would distinguish it: an interconnection agreement or a filed load study with the serving cooperative showing contracted MW at the site; a county building permit with a valuation; property-tax assessment change reflecting installed equipment; an FCC/state utility filing; PeeringDB or IP-transit route announcements originating at the site. What will NOT distinguish it: the company's own press release, the governor's press release, a photograph of the exterior, or the number '$500 million'. For CTRL(Bitzero): A09/A11-adjacent — 'a signed agreement that has not closed, or has closed only in part' — distinguished by the Cavalier County recorder's deed index and nothing else.",
+      "expected_records": "For a 1970s Army ABM complex the expected-record set is dense and mostly public: MILCON appropriations lines and Senate/House hearing testimony (X3 — Safeguard was one of the most publicly debated construction programs of its decade); Corps of Engineers construction records in RG 77 (X1, archive-gap flag, ~96% undigitised); ABM Treaty and SALT compliance documentation (X3); GSA/Army surplus disposal records for the 2012 sale (X2); Cavalier County recorder deed index for 2012, 2020 and any 2022+ conveyance (X3 — the universal floor, and its absence WOULD be surprising); USGS HTMC quadrangle depiction (X3); environmental records for a site with 1970s-era fuels and solvents (X2). Their absence would be surprising in every case. This is the opposite of a COG-facility silence profile, and the register should say so on the entry page.",
+      "confidence_note": "EXIST is about as close to unarguable as anything on this beat and would go to A in one afternoon of working receipts. Everything about the last four years is genuinely uncertain and rests on announcements. I have deliberately graded the 2025 'operating with 2.5MW available' claim harshly because its only source is the company's own newswire release, which is textbook §2.5 self-attestation: the author is the claimant and the probative content is the claim.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A large truncated-pyramidal reinforced-concrete radar structure with substantial subsurface levels exists near Nekoma, Cavalier County, North Dakota.",
+          "assessment": "Uncontested across every source class I saw, including sources hostile to each other. But I resolved no receipt, so V is empty and search completeness against the canonical set is ~0.",
+          "diagnosticity_note": "Fully diagnostic if any receipt resolved — a photographed, mapped, appropriated, treaty-declared landmark cannot be produced by any null in the enumerated set. The problem here is retrieval, not diagnosticity.",
+          "proposed_band": "X — VERIFICATION PENDING · analyst projection A on resolution of any one of: the Cavalier County deed index, a MILCON/appropriations line, or the USGS HTMC sheet",
+          "supporting": ["CLUI Land Use Database entry", "Wikipedia article (fetch blocked)", "Task & Purpose feature", "Cold War Tourist photo essay", "USSF/spaceforce.mil fact sheet describing the wider complex"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "As of 2026 the MSR structure is decommissioned as a military facility and is in non-federal ownership.",
+          "assessment": "Multiple independent-seeming reports of the 1976 deactivation and of two subsequent private/quasi-public sales. The 1976 deactivation is the historically settled part; the ownership chain is the part I cannot verify at all.",
+          "diagnosticity_note": "A recorded deed would be dispositive and is the single highest-value unretrieved document for this candidate. Press reports of a sale price are consistent with both a completed sale and an announced-but-unclosed one, so they do not discriminate.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A for 'decommissioned', B for the ownership chain, contingent on the Cavalier County recorder",
+          "supporting": ["ND governor's office release (2022)", "regional press reporting the 2012 and 2020 sales", "USSF fact sheet stating all Safeguard components except PARCS were deactivated Feb 1976"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "Bitzero Blockchain Inc. owns or controls the MSR structure.",
+          "assessment": "An agreement to acquire was announced 26 July 2022 by the state governor's office. I found nothing that establishes the conveyance closed, and I found reporting (Bleeding Heartland) raising ownership and management questions in Feb 2024 and reporting little evidence of progress as of Nov 2024. This is an announcement, not a title record.",
+          "diagnosticity_note": "The announcement is equally consistent with a closed sale and with an option or unclosed agreement — it does not discriminate. Only the recorder's index does. This is the ADJACENT/announcement trap in a commercial costume.",
+          "proposed_band": "X — VERIFICATION PENDING · projection C at best absent a deed; a resolving deed would take it to A",
+          "supporting": ["governor.nd.gov release", "Grand Forks Herald", "DataCenterDynamics"],
+          "undercutting": ["Bleeding Heartland, Feb 2024 — management and ownership questions raised", "Bleeding Heartland/ND media, Nov 2024 — little evidence of progress; state funds promised for the site reported unused"]
+        },
+        {
+          "class": "FUNC",
+          "statement": "The MSR structure currently operates as a commercial high-performance-computing / data-centre facility.",
+          "assessment": "The ONLY source I saw asserting present operation is a June 2025 PR Newswire release issued by Bitzero itself, stating 2.5MW available at the Nekoma site with 30MW prepped and up to 300MW total capacity. Under §2.5 that artifact is authored by the claimant and its probative content is the claim; it is not a member of V and belongs to ORIGIN. Against it: reporting that as of Nov 2024 there was very little evidence of progress. Separately, DataCenterDynamics reports that at least two earlier efforts to adopt Atlas silos as secure data centres or document storage in New Mexico never got off the ground — a base-rate observation for this whole conversion typology.",
+          "diagnosticity_note": "Nothing I have discriminates 'operating data centre' from 'announced project with a token pilot'. Utility load, permits and assessed value would; press releases and renderings never do. Under the E/A matrix a company press release is E3/A3 → D0.",
+          "proposed_band": "X — VERIFICATION PENDING · projection E, via CAP-2b: no verified instance-scope CLAIM-PROPERTY observation exists, only the claimant's own artifact",
+          "supporting": [],
+          "undercutting": ["Bleeding Heartland / ND media Nov 2024 — no visible progress, promised state funds unused", "DataCenterDynamics — prior Atlas-silo data-centre and records-storage ventures in New Mexico failed to launch (base-rate, scope CLASS)"]
+        },
+        {
+          "class": "HRDN",
+          "statement": "The MSR structure is engineered against nuclear blast and radiation beyond ordinary construction for its class.",
+          "assessment": "Universally asserted in secondary coverage and inherently plausible for a hardened ABM control node, but I retrieved no design document, no specification, and no engineering record. Everything I saw is descriptive prose about thick concrete.",
+          "diagnosticity_note": "'Thick concrete on a Cold War military building' is close to the universal-D0 list. What would discriminate: a design criteria document, a UFC/AFWL-lineage hardening specification naming the project, or a Corps of Engineers as-built. Those exist somewhere in RG 77 / DTIC and I could reach neither.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A if an AFWL/Corps design record resolves; B otherwise",
+          "supporting": [],
+          "undercutting": []
+        },
+        {
+          "class": "ORIG",
+          "statement": "The 'Nekoma pyramid is now a cryptocurrency headquarters' claim first enters wide circulation from the 26 July 2022 announcement by the office of the Governor of North Dakota, and every consumer-facing version I found descends from it.",
+          "assessment": "Consistent with everything I saw: the trade press (DCD), local press (Grand Forks Herald, KNOX, Valley News Live, CSi, Walsh County Record) and the listicle tier (lovemoney/loveproperty, Yahoo syndication) all date to or after that announcement and reproduce its figures. I did NOT run the negative receipt an ORIGIN grade requires — no Wayback CDX sweep, no dated corpus search for an earlier appearance — so this is an origin hypothesis, not an ORIGIN grade.",
+          "diagnosticity_note": "Discriminating here means showing no earlier independent appearance exists, which requires the negative receipt. Without it the claim is untested in the direction that matters.",
+          "proposed_band": "X — the negative receipt required by the ORIGIN definition was not executed",
+          "supporting": ["governor.nd.gov, 26 July 2022", "downstream cluster dated 25–27 July 2022 and later"],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "Center for Land Use Interpretation, Land Use Database — 'Nekoma Safeguard Missile Defense Complex, North Dakota'", "url": "https://clui.org/ludb/site/nekoma-safeguard-missile-defense-complex", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: the title and URL in a result block. INFER: CLUI maintains a database entry for this site with a site description and photographs. I have not read a word of it."},
+        {"citation": "Office of the Governor of North Dakota — 'Burgum: Bitzero signs agreement to acquire Nekoma pyramid, develop it into highly secure data center', 26 July 2022", "url": "https://www.governor.nd.gov/news/burgum-bitzero-signs-agreement-acquire-nekoma-pyramid-develop-it-highly-secure-data-center", "tier": "P1", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and a summary stating a binding agreement with the Cavalier County Job Development Authority, ~$500M expected investment, waste-heat greenhouse, 35–50 jobs. NOTE ON TIER: the HOST is a state governor's office (T1 for the fact that the state made this announcement on that date), but the CONTENT about the company's plans is the company's assertion relayed by a press office. It is T1 for ORIG and no better than T4 for FUNC."},
+        {"citation": "Bleeding Heartland — 'North Dakota Bitzero project raises management, ownership questions', 26 Feb 2024", "url": "https://www.bleedingheartland.com/2024/02/26/north-dakota-bitzero-project-raises-management-ownership-questions/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and a search summary reporting that as of Nov 2024 there was very little evidence Bitzero had made progress at the site and that state officials said promised state funds had not been used. The Nov 2024 detail may come from a later update or a different item in the same result set — I could not separate them without fetching. Flagged as uncertain attribution."},
+        {"citation": "PR Newswire — 'Bitzero Announces Expansion of Global Data Center Network…' (company release, June 2025)", "url": "https://www.prnewswire.com/news-releases/bitzero-announces-expansion-of-global-data-center-network-delivering-clean-power-at-scale-for-the-next-era-of-high-performance-computing-302468827.html", "tier": "P5", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and a summary reporting 2.5MW available at the Nekoma site, 30MW prepped, up to 300MW total. SELF-ATTESTING under §2.5 — author is the claimant, probative content is the claim. Excluded from V; routed to ORIGIN."},
+        {"citation": "DataCenterDynamics — 'Bitzero to acquire former missile base in North Dakota, convert it into cryptomine'", "url": "https://www.datacenterdynamics.com/en/news/bitzero-to-acquire-former-missile-base-in-north-dakota-convert-it-into-cryptomine/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL only. Trade press reporting the 2022 announcement; descends from the governor's release."},
+        {"citation": "DataCenterDynamics — 'Children of the Cold War'", "url": "https://www.datacenterdynamics.com/en/analysis/children-of-the-cold-war/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: a summary line stating at least two efforts to adopt Atlas silos as secure data centres or document storage in New Mexico never got off the ground. Scope is CLASS, not INSTANCE — useful as a base rate for the conversion typology, excluded from V for any individual site."},
+        {"citation": "Task & Purpose — 'The Army built a giant concrete pyramid in North Dakota and only used it for six months'", "url": "https://taskandpurpose.com/culture/nekoma-pyramid-north-dakota/", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and a summary carrying the $140M construction figure and the Oct 1975 operational / Apr 1976 shutdown dates. Popular-history synthesis; no primaries exposed in what I saw."},
+        {"citation": "loveproperty.com / lovemoney.com — 'Mysterious abandoned missile base in North Dakota now a crypto HQ'", "url": "https://www.loveproperty.com/gallerylist/160463/mysterious-abandoned-missile-base-in-north-dakota-now-a-crypto-hq", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. The headline asserts present-tense operation as a crypto HQ. This is the consumer terminus of the 2022 announcement lineage and the reason the hollow claim below is worth recording."},
+        {"citation": "Grokipedia — 'Cavalier Space Force Station'", "url": "https://grokipedia.com/page/Cavalier_Space_Force_Station", "tier": "P5", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL appearing in a result block. Recorded solely to note that it was returned and is EXCLUDED by construction: T5 + POST-2022-UNATTRIBUTED per GRADING.md §3.3's versioned blocklist. Zero lineages. Retained and displayed as required."}
+      ]
+    },
+    {
+      "name": "Cavalier Space Force Station — Perimeter Acquisition Radar Attack Characterization System (PARCS)",
+      "aliases": ["PAR", "PARCS", "Cavalier Air Force Station", "Concrete ND radar", "10th Space Warning Squadron site"],
+      "era": "Built as the Safeguard Perimeter Acquisition Radar c. 1970–1974; the one Safeguard element never deactivated in 1976; continuously operational to the present",
+      "jurisdiction": "Pembina County, North Dakota (near Cavalier / Concrete)",
+      "typology": "military-hardened",
+      "location": {
+        "precision": "regional",
+        "description": "Near Cavalier and the hamlet of Concrete, Pembina County, North Dakota.",
+        "basis": "Place names appear in search snippets (spaceforce.mil fact sheet, Cold War Tourist page title 'Cavalier Air Force Station, Concrete, ND'). No coordinate retrieved; none derived."
+      },
+      "claim_origin": "No fringe lineage. This is a publicly acknowledged, currently operating US Space Force installation described on the service's own fact-sheet pages. The origin of the public description is the agency itself. Included in this beat precisely BECAUSE it is the negative-space control for the Nekoma entry: the same 1970s program, the same county pair, and a STATUS that diverges completely.",
+      "lineage_note": "The USSF fact sheet (agency describing its own facility) and the senatorial press release about upgrade work are separate bureaucratic acts and would be independent lineages if either resolved. Wikipedia and the Fandom military wiki descend from the fact sheet and count as zero. Grokipedia was returned and is excluded by construction.",
+      "mundane_alternative": "A08 — 'an ordinary above-ground government radar installation with no hardening beyond weather and physical-security requirements.' Distinguished by: the original Safeguard hardening design criteria (a Corps of Engineers or Army Safeguard System Command design record), an EMP-hardening specification in the MIL-STD-188-125 lineage cited in any modernisation procurement, or a DD Form 1391 with hardening scope for the upgrade work. Photographs of a large concrete building do not distinguish it — that is squarely on the universal-D0 list.",
+      "expected_records": "For an ACKNOWLEDGED, currently operating installation the expected-record profile is unusually rich: agency fact sheets (X3), DoD Base Structure Report entry (X2), FRPP entry (X2), MILCON/O&M appropriations and modernisation line items (X3), FPDS/USAspending awards for the sustainment contract (X1 — descriptions sanitised, place of performance often the contracting office), NEPA documentation for major upgrades (X2), congressional delegation press releases (not a record class, but reliably present for ND). Absence of ANY of these would be genuinely surprising. Hardening specifics are the exception: those are X0 and their absence carries no information.",
+      "confidence_note": "The single most confidently-held item in this file, and still X, because I opened nothing. That is the point of the register's standard and I am not going to make an exception for a claim I happen to be sure about.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A large phased-array radar facility exists at Cavalier Space Force Station, Pembina County, North Dakota.",
+          "assessment": "Asserted by the operating service on its own public fact sheets, per search summaries. No receipt resolved.",
+          "diagnosticity_note": "An agency describing its own facility satisfies §3.4(e) — authority over the fact — and would be D4 the moment the bytes resolve. No null in the enumerated set can produce a Space Force fact sheet about a facility that does not exist.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A immediately on resolution of the USSF fact sheet",
+          "supporting": ["spaceforce.mil fact sheet (multiple mirrors within the service's own domains)"],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "PARCS performs missile warning/attack characterization and space surveillance, tracking a large share of earth-orbiting objects, operated by the 10th Space Warning Squadron.",
+          "assessment": "This is stated on its face by the service that operates it, per the search summary. That is the §3.4 gate's shape exactly: T1 origin, instance scope, function named on its face, issuing body with authority over the fact.",
+          "diagnosticity_note": "Maximally diagnostic — an agency's own mission statement about its own site. The only failure mode available is retrieval failure, which is the one I have.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["spaceforce.mil / ussf-cfc.spaceforce.mil fact sheets"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "As of 2026 the facility is operational and federally controlled — the sole Safeguard component not deactivated in February 1976.",
+          "assessment": "Reported by the service and echoed in a contractor-award trade item and a senatorial release about completed upgrades. The STAT divergence from the Nekoma MSR (same program, deactivated within months of activation) is the reason this entry earns its place.",
+          "diagnosticity_note": "A live sustainment contract award and appropriations activity would discriminate 'operational' from 'caretaker' — the mundane failure mode for old radars. I have neither.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["spaceforce.mil fact sheet", "Military & Aerospace Electronics on the InDyne sustainment award", "hoeven.senate.gov release on completed upgrades"],
+          "undercutting": []
+        },
+        {
+          "class": "HRDN",
+          "statement": "The PARCS building is hardened against nuclear effects beyond ordinary construction for its class.",
+          "assessment": "Inherited by assumption from the Safeguard program's design intent. I found no design record, no specification, and no procurement document naming a hardening standard. Nothing in what I saw asserts this at instance level.",
+          "diagnosticity_note": "Program-level hardening intent is scope=CLASS and excluded from V for the instance (§2.4). This is the same structural trap as the Federal Relocation Arc case: the program record cannot certify the building.",
+          "proposed_band": "X — VERIFICATION PENDING · projection B–C; C1c candidate-set logic is NOT available here because the set has one member",
+          "supporting": [],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "United States Space Force — 'Perimeter Acquisition Radar Attack Characterization System' fact sheet", "url": "https://www.spaceforce.mil/About-Us/Fact-Sheets/Article/2197729/perimeter-acquisition-radar-attack-characterization-system/", "tier": "P1", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL and a summary describing a single-faced multi-function UHF phased-array radar at Cavalier SFS, the 1976 Safeguard deactivation with PARCS excepted, and missile-warning plus space-surveillance missions. INFER: the page states this. Not fetched — .mil egress is blocked. This is the single highest-value unretrieved receipt in this entry."},
+        {"citation": "USSF Combat Forces Command — PARCS fact sheet (second service-domain instance)", "url": "https://www.ussf-cfc.spaceforce.mil/About-Us/Fact-Sheets/Display/Article/2381658/perimeter-acquisition-radar-attack-characterization-system", "tier": "P1", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. NOTE: this is the SAME issuer as the item above and collapses into one lineage under §5.1.1. Recorded so that a later scorer does not count it twice."},
+        {"citation": "Military & Aerospace Electronics — 'U.S. Space Force chooses InDyne to maintain and upgrade early warning radar for ballistic missile defense'", "url": "https://www.militaryaerospace.com/sensors/article/14289000/radar-early-warning-ballistic-missile-defense", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. Trade press reporting a contract award. The UNDERLYING FPDS award record would be the real evidence and is the acquisition task this row generates."},
+        {"citation": "Office of Sen. John Hoeven — 'Hoeven reviews completed upgrades, work in progress at Cavalier Air Station'", "url": "https://www.hoeven.senate.gov/news/news-releases/hoeven-reviews-completed-upgrades-work-in-progress-at-cavalier-air-station", "tier": "P2", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL only. A senator's office is not the issuing authority over the facility; useful for dating activity, not for FUNC or HRDN."},
+        {"citation": "Cold War Tourist — 'Perimeter Acquisition Radar - PARCS - Cavalier Air Force Station, Concrete, ND'", "url": "https://www.coldwartourist.com/par", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. Enthusiast photo-essay; the value is the place-name 'Concrete, ND' appearing in the title, which is a locatable hamlet."}
+      ]
+    },
+    {
+      "name": "Safeguard Remote Sprint Launch Site 3 (RSL-3), Cavalier County, North Dakota",
+      "aliases": ["RSL-3", "Remote Sprint Launcher #3", "rsl3.com tour site"],
+      "era": "Built c. 1970–1974 as one of four RSL sites supporting the Mickelsen complex; deactivated 1976; GSA auction 2013; privately owned and publicly toured since",
+      "jurisdiction": "Cavalier County, North Dakota",
+      "typology": "missile-silo",
+      "location": {
+        "precision": "regional",
+        "description": "Cavalier County, North Dakota, one of four dispersed RSL sites around the Mickelsen complex.",
+        "basis": "County-level from search snippets only. No coordinate retrieved. Atlas Obscura and a tour operator's own site both exist for this location and either would give a coordinate if fetchable."
+      },
+      "claim_origin": "The disposal story traces to a documented 2013 GSA auction of the four RSL sites. Specific figures propagate: RSL-1 at 41 acres for $64,111; RSL-2 at 36 acres to named buyers Anna and Jim Cleveland for $85,000; RSL-3 to Mel Sann in 2013. Those precise, odd numbers ($64,111) are exactly the kind of detail that indicates a single documentary origin — most likely the GSA auction results themselves, relayed through one or two ND press items and then replicated. I could not identify the first publication. Treat the four-site figure set as ONE lineage until the GSA record resolves.",
+      "lineage_note": "Everything I saw about RSL ownership is consistent with a single origin in the GSA sale record plus one regional feature article (the oscarzero.wordpress.com 'Blazing Skies' post reads like the compiler). The tour operator's own site (rsl3.com) is self-published and its probative content about ownership IS the claim — but a person conducting paid public tours of a property they claim to own is making a checkable assertion against the county recorder, which is what makes this candidate worth working rather than dismissing.",
+      "mundane_alternative": "For EXIST: A01 fails outright — there are photographs and a ticketed tour. The interesting null is on HRDN/EXTN: A05, 'a hardened-looking but shallow launcher and equipment vault, whose depth and blast rating are described from memory and marketing rather than from drawings.' Distinguished by: the Safeguard RSL as-built drawings (Corps of Engineers / Army Safeguard System Command), or the GSA disposal description, which for surplus federal property routinely recites structures and dimensions because a buyer needs them. That GSA description is the cheapest high-value document on this candidate.",
+      "expected_records": "GSA surplus real-property disposal record for the 2013 auction, including the sale notice and the conveyance (X2 — and for an auctioned site the notice is normally public, so absence would be mildly surprising); Cavalier County recorder deed, 2013 and any subsequent transfer (X3, universal floor); MILCON/appropriations under the Safeguard program (X3 at program level, X1 at individual-RSL level); Corps of Engineers construction records RG 77 (X1, archive-gap); environmental/asbestos survey preceding disposal (X2 — federal disposals normally carry one); USGS HTMC depiction (X3).",
+      "confidence_note": "This is the kind of entry I think the register most needs: entirely real, entirely boring, extensively surveyed at class level, and with a live private-ownership question that a single county-recorder query would settle. It is the B-04 shape (ordinary and well-attested at class level, thin at instance level) but with a tour operator making instance-level assertions that are checkable.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A former Safeguard Remote Sprint Launch site with subsurface launcher cells and a support structure exists in Cavalier County, North Dakota, and is designated RSL-3.",
+          "assessment": "Multiple independent-looking sources (Atlas Obscura, a Wikipedia article specifically titled RSL-3, a regional history blog, a tour operator) place it. None retrieved.",
+          "diagnosticity_note": "Fully diagnostic if a receipt resolved. A ticketed public tour is, notably, a −D3 UNDERCUTS row for a HARDENED-FEDERAL hypothesis (per the published anchors) but is strong support for EXIST — the two directions do not conflict because they are different propositions. This is a clean illustration of why the register grades propositions rather than places.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A; A1-alt is reachable here since resolvable named persons have lawful physical access",
+          "supporting": ["Atlas Obscura entry", "Wikipedia 'RSL-3'", "oscarzero.wordpress.com 'Blazing Skies'", "rsl3.com"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "RSL-3 has been in private ownership since a 2013 GSA auction, purchased by Mel Sann.",
+          "assessment": "Named individual, named year, named mechanism — an unusually checkable ownership claim by this beat's standards. But my only sources are a feature blog and the operator's own site. The deed is unretrieved.",
+          "diagnosticity_note": "The named-buyer detail discriminates a completed conveyance from a lease or caretaker arrangement ONLY if it comes from the recorder. From a blog it is consistent with both.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the Cavalier County deed; C without it",
+          "supporting": ["oscarzero.wordpress.com", "rsl3.com (self-published — claimant's own assertion)"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "As of 2026 RSL-3 is decommissioned, privately owned, and open for seasonal public tours.",
+          "assessment": "Asserted by the tour operator and by an Atlas Obscura entry. Ticketed public access is itself an unusually strong and unusually cheap-to-verify status signal.",
+          "diagnosticity_note": "Operator-run public ticketed tours are a published −D3 anchor AGAINST a hardened-federal-facility hypothesis. Here they are direct support for STAT(converted/private). Same fact, opposite signs on different propositions — recorded deliberately.",
+          "proposed_band": "X — VERIFICATION PENDING · projection B; A1-alt reachable with two resolvable visitor observations plus a T1 parcel record",
+          "supporting": ["rsl3.com", "Atlas Obscura", "Mechtraveller feature (2018) reporting public opening"],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "RSL-3 functioned as a Remote Sprint Launch site — dispersed Sprint interceptor cells operating under the Mickelsen complex's Missile Site Radar — during the brief Safeguard operational period of 1975–76, and functions today as a privately operated seasonal tour attraction.",
+          "assessment": "Two functions, decades apart, and I am recording them in one row because they attach to the same subject and I want the divergence visible rather than split into a historical entry and a tourism entry. The military function rests on the Safeguard program record, which is public and extensively debated; the present function rests on the operator's own site and a 2018 feature reporting public opening. Neither retrieved.",
+          "diagnosticity_note": "The military function is diagnostic and cheap once any Safeguard program document naming the RSL sites resolves — but note the trap: a PROGRAM-level Safeguard record is scope=CLASS and cannot certify THIS launcher (§2.4). Only a site-specific record or the GSA disposal description binds at INSTANCE. The present tour function is directly observable by any visitor, which makes it unusually cheap to verify and unusually perishable.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A for the historical function on an instance-level Army record; B for the present function",
+          "supporting": ["Safeguard program literature", "rsl3.com", "Mechtraveller (2018)"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "RSL-1 is abandoned and its post-2013 owner is unidentified.",
+          "assessment": "One source reports the 41-acre RSL-1 sold for $64,111 with the buyer undisclosed and the site possibly abandoned. 'Possibly abandoned' is a hedge in the source, and I am carrying the hedge rather than flattening it.",
+          "diagnosticity_note": "A GSA auction result that withholds a buyer name is routine and carries essentially no information about the site's fate. This is a D0 observation dressed as a finding.",
+          "proposed_band": "X — insufficient; would remain D even fully verified, on this evidence",
+          "supporting": ["oscarzero.wordpress.com / loveproperty relay"],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "'Blazing Skies: The RSLs and North Dakota's ongoing Anti-Ballistic Missile story', oscarzero.wordpress.com, 22 July 2020", "url": "https://oscarzero.wordpress.com/2020/07/22/blazing-skies-the-rsls-and-north-dakotas-ongoing-anti-ballistic-missile-story/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and summary content covering the 2013 GSA auction and per-site outcomes. Appears to be the compiler for the RSL disposal figures. Whether it exposes its primaries — which would make it a transparent compiler under §5.1.3 and pass the lineage through to the GSA record — is exactly what I could not check."},
+        {"citation": "Atlas Obscura — 'Remote Sprint Launcher #3 Missile Site'", "url": "https://www.atlasobscura.com/places/remote-sprint-launcher-3-missile-site", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. Crowd-contributed travel database; a lead, and would carry a coordinate."},
+        {"citation": "RSL3 Missile Site Tours — operator site", "url": "https://rsl3.com/about-us.html", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. SELF-PUBLISHED by the party asserting ownership. Under §2.5 its probative content on CTRL is the claim itself; it is nevertheless a checkable assertion because it names a person against a public recorder's index."},
+        {"citation": "Mechtraveller — 'A Cold War Missile Site in North Dakota is Now Open to the Public' (2018)", "url": "https://mechtraveller.com/2018/12/a-cold-war-missile-site-in-north-dakota-is-now-open-to-the-public/", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. Dates the public-tour operation to 2018 or earlier."},
+        {"citation": "Wikipedia — 'RSL-3'", "url": "https://en.wikipedia.org/wiki/RSL-3", "tier": "P4", "retrieval_state": "FETCH-BLOCKED", "what_it_actually_shows": "SAW: title and URL in results. Wikipedia domain confirmed EGRESS_BLOCKED by direct attempt on a sibling article. CROWD-EDITED — a lead, never evidence."}
+      ]
+    },
+    {
+      "name": "Atlas F launch site 556-5, Lewis, Essex County, New York (private residence)",
+      "aliases": ["Boquett site", "Bouquet 556-5", "Lewis Missile Base", "Site 5", "the Adirondack silo home"],
+      "era": "Constructed 1961–62; operational 1 October 1961 to 25 June 1965 under the 556th Strategic Missile Squadron, Plattsburgh AFB; sold into private hands; purchased 1996 by the current owner and converted to a residence",
+      "jurisdiction": "Town of Lewis, Essex County, New York",
+      "typology": "missile-silo",
+      "location": {
+        "precision": "regional",
+        "description": "Town of Lewis, Essex County, New York — one of twelve Atlas F sites ringing the former Plattsburgh AFB, seven of them inside the Adirondack Park Blue Line.",
+        "basis": "Town and county from search snippets (Adirondack Explorer, themilitarystandard site page title, Adirondack Architectural Heritage tour listing). No coordinate retrieved. Wikimapia carries one and is CROWD-EDITED — a lead only, per P-04."
+      },
+      "claim_origin": "The military record is institutional and uncontested. The conversion story has a datable public origin in Adirondack regional media and in an Adirondack Architectural Heritage award to the owner for the renovation, plus a documented 2014 reunion of former 556th SMS members hosted at the site. The presence of unit veterans physically at the site, hosted by the owner, is unusually good raw material: those are resolvable named persons with a position-to-know, whose attestation about the original configuration is not derived from the conversion story.",
+      "lineage_note": "Two clearly separable origins: (1) the 556th SMS institutional/veteran record (556sms.com, atlasmissilesilo.com, AAFM newsletters), which would exist if the conversion had never happened; (2) the Adirondack regional press and preservation-society coverage of the conversion, which would exist if the veteran record had never been compiled. These pass the §5.1.7 counterfactual in both directions and are genuinely two lineages. The land.com / saratogaliving / listicle tier descends from (2) and counts as zero.",
+      "mundane_alternative": "For EXIST/CTRL there is no serious null. The null that matters is on the FEAT/FUNC(cosmic-ray laboratory) proposition: A06 — 'an underground space used for ordinary storage or residence, to which a research use has been retrospectively or loosely attached, or which was attached to a DIFFERENT silo in the same ring.' This is the live risk: my only source for the cosmic-ray use is a single Adirondack Explorer feature, and the search summary itself wavered between attributing it to Site 5 (Lewis) and to the Au Sable Forks site 556-6. Distinguished by: a published physics paper or technical report naming the site as its counting location, an SUNY Plattsburgh institutional record, or an equipment-siting document. A magazine sentence does not distinguish it and I am not going to pretend otherwise.",
+      "expected_records": "Air Force real-property and site disposal record for a 1965-deactivated Atlas F (X2); GSA disposal / surplus sale record (X2); Essex County recorder deed chain including the 1996 purchase (X3 — universal floor, and New York county records are generally reachable, so absence would be surprising); Corps of Engineers construction records, Atlas F program, RG 77 (X1, archive-gap flag); USGS HTMC quadrangle depiction and the temporal stack across editions (X3 — 186,061 sheets, so an absence in the stack would itself be informative); NRHP — X0, no listing expected or found; local building permits for the conversion (X2 for a private New York residence).",
+      "confidence_note": "EXIST, LOCT and CTRL here are as strong as anything on this beat and should be cheap to establish. The cosmic-ray claim is the weakest thing in this file that I have still chosen to record, and I have recorded it specifically because tracing WHICH silo it attaches to is the sort of unglamorous entity-resolution work the register exists to do. If it turns out to attach to 556-6 rather than 556-5, that is a correction and a finding, not an embarrassment.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "An Atlas F launch and control structure — silo approximately 174 ft deep and 52 ft in diameter with an adjoining launch control centre — exists at Lewis, Essex County, New York.",
+          "assessment": "Consistently reported across a veterans' site, an enthusiast register, regional press and a preservation society. Nothing retrieved.",
+          "diagnosticity_note": "For the silo/launch-facility typology GRADING.md §4.3 states EXIST/CTRL/LOCT are near-trivially D4 on Air Force site lists, disposal records and recorded deeds. The diagnosticity is not in question; the receipts are.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["556sms.com locations page (fetch blocked)", "themilitarystandard.com site 556-5 page (fetch blocked)", "Adirondack Architectural Heritage tour listing", "Adirondack Explorer feature"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "The site has been in private ownership since before 1996 and was purchased by Alexander Michael in 1996.",
+          "assessment": "A named person, a named year. Reported in Adirondack regional media and implied by a preservation-society award for a renovation described as running more than fifteen years. The Essex County deed is the obvious and unretrieved settling document.",
+          "diagnosticity_note": "The preservation award is genuinely diagnostic in a way press profiles are not: a preservation society giving an award for a renovation is an institutional act by a third party with no stake in the ownership claim, created for its own purposes. That is the §5.1.7 access test passing.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the Essex County deed; B on the award plus press without it",
+          "supporting": ["Adirondack Architectural Heritage", "Adirondack Explorer", "Adirondack Life"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "As of 2026 the site is a converted private residence, not a military facility, with occasional invited public and veteran access.",
+          "assessment": "Reported consistently; a documented 2014 reunion of 556th SMS veterans hosted at the site is a dated, specific event with named participants.",
+          "diagnosticity_note": "A veterans' reunion held at the site is a strong discriminator against 'still in federal use' and against 'derelict and flooded' — the two nulls that actually compete for a decommissioned Atlas F. Most Adirondack Atlas F sites ARE flooded, which is what makes a habitable one notable.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A (A1-alt is available: resolvable named veterans with lawful access, plus a parcel record)",
+          "supporting": ["reported 2014 556th SMS reunion at the site", "AARCH tour listing"],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "The site functioned as an operational Atlas F ICBM launch facility under the 556th Strategic Missile Squadron from 1 October 1961 to 25 June 1965, and functions today as a private residence.",
+          "assessment": "The military function and its precise activation and deactivation dates are reported by a squadron veterans' site and an enthusiast register — the kind of dating that comes from Air Force records rather than from memory. The residential function is reported by regional press and a preservation society. Neither retrieved.",
+          "diagnosticity_note": "Precise activation/deactivation dates to the day are a documentary signature: nobody remembers 25 June 1965, so the figure descends from a record. Which record, and whether it resolves, is what I cannot check. The residential function is directly observable and is attested by veterans who were physically hosted there in 2014.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A for both functions; the 556th SMS site list settles the first and the parcel record plus direct observation settles the second",
+          "supporting": ["556sms.com locations page (fetch blocked)", "themilitarystandard 556-5 page (fetch blocked)", "AARCH", "Adirondack Explorer"],
+          "undercutting": []
+        },
+        {
+          "class": "FEAT",
+          "statement": "The underground space at this site has been used as a low-background / cosmic-ray detection facility by researchers associated with SUNY Plattsburgh.",
+          "assessment": "ONE source, an Adirondack Explorer feature, and my search summary was internally inconsistent about whether the cosmic-ray use attaches to this site (Lewis, 556-5) or to the Au Sable Forks site (556-6). I did not resolve the ambiguity and I am not going to assert either. A targeted search for a physics publication naming an Adirondack silo as a counting location returned only unrelated European and Argonne facilities.",
+          "diagnosticity_note": "Zero diagnosticity as it stands. A magazine sentence is consistent with a serious installed detector, a student project, a proposal that never happened, and a misattribution to the neighbouring site. What would discriminate: a paper or technical report naming the location, or an institutional equipment record.",
+          "proposed_band": "X — and would remain no better than E even if verified as written, because no instance-scope CLAIM-PROPERTY observation exists",
+          "supporting": [],
+          "undercutting": ["My own failed search for any physics literature naming an Adirondack missile silo as a counting site — an incomplete negative, logged as UNSEARCHED rather than NEGATIVE because I could not reach the relevant corpora"]
+        },
+        {
+          "class": "IDNT",
+          "statement": "The Lewis NY residence, 'Site 5', and Atlas F launch site 556-5 are the same object.",
+          "assessment": "Every source treats these as identical and the enthusiast register's own page title asserts it. But I have not verified the designation against an Air Force site list, and Atlas designations are format-regular strings — precisely the shape that is cheap to hallucinate and expensive to check.",
+          "diagnosticity_note": "This is an entity-resolution proposition and it gates whether veteran testimony about '556-5' may be bound to the residence at Lewis. Under §11.1 the merge needs an IDENTITY at C+ backed by a named verified instance-level source. I have none.",
+          "proposed_band": "X — VERIFICATION PENDING · projection B; the Air Force site list or the disposal record would settle it",
+          "supporting": [],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "556th Strategic Missile Squadron veterans' site — Missile Locations", "url": "https://www.556sms.com/locations.htm", "tier": "P3", "retrieval_state": "FETCH-BLOCKED", "what_it_actually_shows": "ATTEMPTED AND BLOCKED: WebFetch returned EGRESS_BLOCKED for www.556sms.com. SAW ONLY: the title 'Missile Locations' and the URL in a result block. INFER: a squadron veterans' association page listing the twelve 556th SMS Atlas F site locations. This would be the single cheapest way to confirm the 556-5 designation and I could not open it."},
+        {"citation": "The Military Standard — 'Atlas F Site 556-5 Missile Silo, Lewis New York'", "url": "https://www.themilitarystandard.com/missile/atlas/silo/556-5/", "tier": "P4", "retrieval_state": "FETCH-BLOCKED", "what_it_actually_shows": "ATTEMPTED AND BLOCKED: EGRESS_BLOCKED for www.themilitarystandard.com. SAW ONLY: the page title, which itself asserts the 556-5 ↔ Lewis NY binding. A title is not a receipt."},
+        {"citation": "Adirondack Explorer — 'Disco, Stout and Cosmic Rays: Missile silo sites in the Adirondacks'", "url": "https://www.adirondackexplorer.org/communities/history/disco-stout-and-cosmic-rays-missile-silos/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and summary content stating seven of twelve Plattsburgh-ring sites lie inside the Blue Line, silos 174 ft deep and 54 ft diameter (note: another source in the same sweep says 52 ft — a live discrepancy I have not resolved), and that a site served as a cosmic-ray detector for Plattsburgh State researchers, with the site attribution ambiguous between Lewis and Au Sable Forks in the summary I received."},
+        {"citation": "Adirondack Architectural Heritage — 'Cold War Missile Silo' tour listing", "url": "https://aarch.org/tour/missile-silo/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. A regional preservation society's tour programme. Its AWARD to the owner — reported elsewhere in the sweep — is the third-party institutional act that matters, not the tour listing itself."},
+        {"citation": "Adirondack Life — 'Cold War Hot Spots: Missile Silos in the Adirondacks' (16 Jan 2024) and 'DEFCON 2 in the Adirondacks' (22 Oct 2012)", "url": "https://www.adirondacklife.com/2024/01/16/cold-war-hot-spots-missile-silos-in-the-adirondacks/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: titles and URLs. Two dated regional-magazine features twelve years apart; the 2012 one predates most of the listicle tier and is a candidate earliest-public-appearance anchor for the conversion story."},
+        {"citation": "Wikimapia — 'Atlas F Missile Silo (former) site 5'", "url": "http://wikimapia.org/1904564/Atlas-F-Missile-Silo-former-site-5", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. CROWD-EDITED per §2.4 — a LEAD, never evidence, and specifically the P-04 calibration case. Recorded so it is visible as excluded rather than silently dropped."}
+      ]
+    },
+    {
+      "name": "Survival Condo (\"Raven Ridge\"), Atlas F launch site, Cloud County, Kansas",
+      "aliases": ["Survival Condo Project", "Raven Ridge 11", "the Kansas luxury silo bunker"],
+      "era": "Atlas F silo constructed c. 1960–61 (Schilling AFB missile ring); deactivated 1965; purchased 2008 by Laurence 'Larry' A. Hall Jr. for a reported $300,000; converted to a multi-unit private shelter/condominium",
+      "jurisdiction": "Cloud County, Kansas (near Concordia)",
+      "typology": "private-shelter",
+      "location": {
+        "lat": 39.4119444,
+        "lon": -97.6805556,
+        "precision": "claimed-only",
+        "description": "Near Concordia, Cloud County, Kansas.",
+        "basis": "The coordinate pair appeared inside a search-result summary that was itself summarising what is almost certainly a Wikipedia infobox. I did not fetch the page, did not verify it against a parcel, and have not checked it against the county boundary. It is recorded as claimed-only and MUST NOT be rendered as a pin. Anyone using it should treat it as a lead."
+      },
+      "claim_origin": "The public claim originates with the developer and propagates through a large, well-dated press corpus: VOA (2015), Amusing Planet (2014), NPR (2017 transcript), designboom (2020), and a long tail of lifestyle coverage. Every technical figure in circulation — '15 stories', 'built to withstand X', the amenity list — traces to the developer or to site tours he conducted. This is a §2.5 pattern with a commercial motive attached: the author of the primary description is the seller of the units. The 2008 purchase price of $300,000 and the site name 'Raven Ridge' propagate as fixed constants.",
+      "lineage_note": "For practical purposes ONE lineage, the developer, refracted through many outlets. NPR, VOA and designboom are separate newsrooms but all are reporting what the developer showed and told them on site — under the §5.1.7 counterfactual, none of them would have produced these claims had the developer's account not existed, so they collapse to SAME. The only potentially independent lineages available are institutional: the Cloud County deed, the county assessor's valuation, building permits, and any Kansas Department of Health and Environment record — none of which I could reach.",
+      "mundane_alternative": "A06/A10 — 'a converted Atlas F silo fitted out to a high domestic standard and marketed as a survival shelter, whose protective performance is asserted by the seller and has not been certified against any published standard.' This is not a hostile framing; it may well be an excellent building. What would distinguish the marketing claim from an engineering fact: a filed structural or blast analysis, a permit valuation with engineered scope, an EMP-shielding test report in the MIL-STD-188-125 lineage, or a third-party engineer's report. What would NOT distinguish it: photographs, floor counts, amenity lists, the original 1961 Air Force design hardness (which describes the ORIGINAL structure in its ORIGINAL condition, not a building modified over fifteen years), or press coverage of any volume.",
+      "expected_records": "Cloud County recorder deed for the 2008 purchase (X3, universal floor — a $300,000 conveyance in a Kansas county in 2008 is squarely inside the digitisation window and its absence would be surprising); Cloud County assessor parcel record and valuation history (X3, and a valuation trajectory is an independent read on how much building actually happened); county or state building permits for a multi-unit residential conversion (X2 — Kansas rural counties vary, so mildly less than certain); GSA/Air Force disposal record for the original 1960s conveyance out of federal hands (X2); Kansas Corporation Commission / utility interconnection for a facility of this claimed electrical load (X1); condominium declaration or covenants filed with the register of deeds if units were genuinely sold as real property rather than as memberships (X2 — and this one is diagnostically excellent, because a recorded condominium declaration is a legal instrument that says what was actually built and sold).",
+      "confidence_note": "EXIST is safe. Everything about hardness, depth, floor count and capacity is seller-sourced and should be graded accordingly no matter how many magazines repeat it. I have flagged the condominium declaration as the highest-value unretrieved document because it is the one record where the developer had to be legally precise.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A converted Atlas F launch facility operating as a private multi-unit shelter exists near Concordia, Cloud County, Kansas.",
+          "assessment": "Not seriously in doubt across a decade of on-site press visits including NPR and VOA. Nothing retrieved.",
+          "diagnosticity_note": "Diagnostic. Journalists physically descending into a structure and photographing it is close to A1-alt material if any of them are treated as resolvable named observers with lawful access.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["NPR (2017)", "VOA Learning English (2015)", "designboom (2020)", "Amusing Planet (2014)"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "Laurence A. Hall Jr. purchased the site in 2008 for approximately $300,000 and controls it.",
+          "assessment": "Consistently reported; the figure propagates unchanged. Unverified against the Cloud County recorder.",
+          "diagnosticity_note": "A specific price and year is the sort of detail that either came from a deed or was supplied by the buyer. Which of those it is determines whether this is D4 or D0, and I cannot tell from a snippet.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the deed",
+          "supporting": ["multiple press reports carrying the same figure"],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "The facility operates as a private multi-unit survival shelter and residence, with units sold or offered to private buyers; it formerly functioned as an Atlas F ICBM launch facility in the Schilling AFB ring.",
+          "assessment": "The present commercial function is not in doubt — a decade of press has been shown around it and units are marketed. The historical Atlas F function is the standard class record and is unverified here at instance level, since I never established which Schilling-ring site this is.",
+          "diagnosticity_note": "Public marketing of units to private buyers is affirmatively diagnostic of the private-shelter function and simultaneously a −D3 anchor against any federal or continuity reading. The recorded condominium declaration — if units were conveyed as real property rather than as memberships — is the document that would state on its face what was built and sold, and it is the highest-value unretrieved item for this candidate.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A for the present commercial function; B for the Atlas F identification pending a site designation",
+          "supporting": ["NPR", "VOA", "designboom", "the marketed unit sales themselves"],
+          "undercutting": []
+        },
+        {
+          "class": "EXTN",
+          "statement": "The converted facility comprises approximately fifteen habitable levels within the former silo.",
+          "assessment": "The '15-story' figure is everywhere and traces to the developer. An Atlas F silo is reported elsewhere in this sweep as ~174 ft deep, which is dimensionally consistent with roughly fifteen 11-ft levels — so the claim is not absurd. Consistency with a plausible geometry is not evidence that it was built.",
+          "diagnosticity_note": "This is precisely the EXTENT-vs-EXIST split the calibration set uses for KUMMSC (B-02: EXIST A, EXTENT D). Seller-stated internal geometry is D0–D1. A recorded condominium declaration or a permitted floor plan would be D3–D4.",
+          "proposed_band": "X — VERIFICATION PENDING · projection D, matching the KUMMSC EXTENT pattern",
+          "supporting": [],
+          "undercutting": []
+        },
+        {
+          "class": "HRDN",
+          "statement": "The converted facility as it stands today provides blast, EMP and CBR protection beyond ordinary construction.",
+          "assessment": "Asserted by the developer and reproduced widely. I found no engineering document, no certification, and no third-party assessment. Note the specific trap: the ORIGINAL Atlas F structure was designed to a stated overpressure figure (100 psi is the number circulating, itself unverified here). The converted building is not the original structure — fifteen years of penetrations, fit-out and services intervene. Inheriting the 1961 rating is an unjustified transfer.",
+          "diagnosticity_note": "Not diagnostic at all. Everything offered is either a place-property of a 1961 government structure or a seller's assertion. Under CAP-2b, a HARDEN claim with no verified instance-scope CLAIM-PROPERTY observation cannot exceed E, and that is the correct outcome here even at full verification of what currently exists.",
+          "proposed_band": "X — projection E under CAP-2b",
+          "supporting": [],
+          "undercutting": ["The published anchor treating an operator's commercial marketing as −D3 against a hardened-facility hypothesis applies in spirit: the seller's incentive runs one direction and the register should price that."]
+        },
+        {
+          "class": "TYPO",
+          "statement": "The site is a private commercial shelter, not a government or continuity facility.",
+          "assessment": "Unambiguous in every source. Recorded explicitly because converted silos are a standing magnet for reattachment to COG narratives, and stating the typology plainly with a grade is the countermeasure.",
+          "diagnosticity_note": "Marketing to private buyers, public tours and press access are all −D3 anchors against a hardened-federal reading. They are affirmative support for the private-shelter typology.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["the entire press corpus, which describes unit sales to private buyers"],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "NPR — transcript 512268749 (2017), on missile-silo survival condos", "url": "https://www.npr.org/transcripts/512268749", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: URL only in a result block. INFER: a broadcast transcript involving the facility. A transcript is a custody-bearing artifact for attestation (§5.4) and is worth acquiring for exactly that reason."},
+        {"citation": "VOA Learning English — 'Missile Silos Turned into Survival Condos' (2015)", "url": "https://learningenglish.voanews.com/a/missile-silos-turned-into-survival-condos/2940961.html", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. Dated 2015 coverage; useful as an early anchor in the press lineage."},
+        {"citation": "designboom — 'inside a former missile silo in kansas turned into a luxurious survival condo' (14 July 2020)", "url": "https://www.designboom.com/architecture/survival-condo-former-missile-silo-kansas-07-14-2020/", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. Design-press coverage; descends from developer-supplied material."},
+        {"citation": "Wikipedia — 'Survival Condo'", "url": "https://en.wikipedia.org/wiki/Survival_Condo", "tier": "P4", "retrieval_state": "FETCH-BLOCKED", "what_it_actually_shows": "Domain confirmed EGRESS_BLOCKED. SAW: a search summary reporting 'Raven Ridge near Concordia, Kansas', a coordinate pair, a 2008 purchase at $300,000, and '15-story'. The coordinate in this candidate's location block comes from that summary and nowhere else. CROWD-EDITED — lead, not evidence."},
+        {"citation": "Grokipedia — 'Survival Condo'", "url": "https://grokipedia.com/page/Survival_Condo", "tier": "P5", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL in a result block. EXCLUDED by construction (T5 + POST-2022-UNATTRIBUTED). Recorded as returned-and-excluded, not used."}
+      ]
+    },
+    {
+      "name": "Subterra Castle, Atlas E launch site, Shawnee County, Kansas",
+      "aliases": ["Subterra", "the Peden silo", "Dover KS missile silo home", "Keene KS silo"],
+      "era": "Atlas E launch site of the 548th Strategic Missile Squadron ring around Forbes AFB, Topeka; missile on site reportedly 1961–1964; purchased and occupied from 1994 by Ed and Dianna Peden",
+      "jurisdiction": "Shawnee County, Kansas (variously given as Dover or Keene, ~25 miles west of Topeka)",
+      "typology": "private-shelter",
+      "location": {
+        "precision": "regional",
+        "description": "Near Dover / Keene, Shawnee County, Kansas, roughly 25 miles west of Topeka.",
+        "basis": "Place names from search snippets, which disagree between 'Dover' and 'Keene' — two nearby localities. RoadsideAmerica indexes it under Shawnee County. No coordinate retrieved; none derived. The Dover/Keene split is itself a small entity-resolution problem worth recording rather than smoothing over."
+      },
+      "claim_origin": "This site is the ORIGIN POINT for a substantial part of the entire American silo-conversion discourse, which is why it belongs in this register out of proportion to its size. Ed Peden founded 20th Century Castles / missilebases.com, the brokerage that has sold dozens of former missile sites since the 1990s, and the framing of decommissioned silos as 'the 20th century's counterpart of the fortified castles of past centuries' is his. Much of the descriptive vocabulary that later appears in unrelated listings, tourism copy and listicles — including the epoxy-resin concrete formulation recorded in refuted_or_hollow below — is plausibly downstream of this one commercial compiler. I could not establish that with a dated negative receipt and state it as a hypothesis.",
+      "lineage_note": "Watch for a distinctive-error marker: the owner's wife is given as 'Donna' in one source in my sweep and 'Dianna'/'Diana' in others. A shared idiosyncratic error is the strongest available positive evidence of derivation under §5.1.7, and a systematic pass over which outlets carry which spelling would map this lineage cheaply. I flag it as a method opportunity, not a finding — I have four snippets, not a corpus. The institutional lineage (Shawnee County deed, Air Force disposal record, 548th SMS records) is entirely separate and entirely unretrieved.",
+      "mundane_alternative": "There is no interesting null for EXIST — it is a photographed, toured, reviewed private residence. The null that matters is on ORIG: A11-adjacent, 'the technical descriptors attached to this site and propagated by the associated brokerage are marketing language rather than engineering fact.' Distinguished by comparing the brokerage's descriptive claims against Corps of Engineers Atlas E design records or against an independent technical source such as the FAS Atlas silo description. I made a first pass at exactly that and it produced the wall-thickness finding below.",
+      "expected_records": "Shawnee County recorder deed for the acquisition, reported at $40,000 (X3 universal floor; a 1990s Kansas conveyance is right at the edge of the county digitisation window, so a gap here would be routine rather than surprising); Shawnee County assessor parcel record (X3); GSA/Air Force disposal record for the original conveyance out of federal hands (X2); 548th SMS / Forbes AFB Atlas E site list, which would settle the site designation I have deliberately left blank (X2); Corps of Engineers construction records RG 77 (X1, archive-gap); USGS HTMC quadrangle temporal stack (X3).",
+      "confidence_note": "I have not asserted a site designation for this candidate. Atlas E sites in the Forbes ring carry designations in a 548-n form and I could construct a plausible-looking one in two seconds, which is exactly why I have not. A fabricated site number is the highest-consequence error available on this beat.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A former Atlas E launch facility converted to a private residence with roughly 6,500 sq ft of underground living space exists near Dover/Keene, Shawnee County, Kansas.",
+          "assessment": "Attested by CLUI, RoadsideAmerica, city-data, NPR (2012), Pacific Standard, TripAdvisor reviewer accounts and the owners themselves. The 6,500 sq ft figure is owner-sourced.",
+          "diagnosticity_note": "EXIST is diagnostic and cheap. The square-footage figure is EXTENT, is owner-sourced, and should not ride on EXIST's grade — that laundering is the exact v0.1 unit error §1.1 was written to stop.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A for EXIST",
+          "supporting": ["CLUI Land Use Database", "RoadsideAmerica", "NPR (2012)", "Pacific Standard"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "Ed and Dianna Peden have owned and occupied the site since 1994, acquired for a reported $40,000.",
+          "assessment": "Widely reported, owner-sourced, unverified against the recorder. The reported price of $40,000 against a stated original construction cost of '$4 million' is a rhetorical pairing that appears intact across sources — a propagation marker.",
+          "diagnosticity_note": "The $4M-to-$40k framing is a narrative device, not a measurement, and contributes nothing. The deed contributes everything.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the Shawnee County deed",
+          "supporting": ["multiple press profiles"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "As of 2026 the site is a private residence; its former public-tour operation may have ceased.",
+          "assessment": "RoadsideAmerica's index entry appears to carry a '(Closed)' marker in its title, while TripAdvisor carries a 2026-dated attraction page. These conflict and I did not resolve them. Given the owners have lived there since 1994, succession is a live question and this proposition should be revisited on a schedule.",
+          "diagnosticity_note": "A '(Closed)' marker on a roadside-attraction index is weak — such indexes lag reality in both directions. Neither source discriminates 'tours ended' from 'listing stale'.",
+          "proposed_band": "X — genuinely unknown, and this is the X-02 shape: not searched, not knowable from what I reached",
+          "supporting": [],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "The site functioned as an Atlas E ICBM launch facility in the 548th SMS ring around Forbes AFB, reportedly housing a missile from 1961 to 1964, and functions today as a private residence and occasional visitor attraction.",
+          "assessment": "The Atlas E function is the class record and is uncontested; the 1961–1964 window is reported in secondary coverage without a cited source. The residential function since 1994 is directly observed by many visitors and reviewers. Neither retrieved.",
+          "diagnosticity_note": "Note the warhead detail circulating with this site — 'a 4 megaton warhead'. That is a WEAPON-SYSTEM property, true of the Atlas E class, not an observation about this parcel; importing it as site-specific colour is a small instance of class evidence being credited to an instance. The function itself is diagnostic and would resolve on the 548th SMS site list.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A for both functions once a site designation is established",
+          "supporting": ["CLUI", "city-data", "press profiles", "visitor accounts"],
+          "undercutting": []
+        },
+        {
+          "class": "ORIG",
+          "statement": "The commercial framing of decommissioned missile silos as habitable 'castles', and the associated descriptive vocabulary reproduced across the silo-real-estate and travel corpus, originates with Ed Peden / 20th Century Castles from the mid-1990s.",
+          "assessment": "Strongly suggested by the sources I saw — the brokerage predates almost all the downstream corpus and the 'fortified castles of past centuries' formulation is attributed directly to the Pedens. I did NOT run the dated negative receipt an ORIGIN grade requires (no Wayback CDX sweep of missilebases.com, no pre-1995 corpus search), so this is an origin HYPOTHESIS.",
+          "diagnosticity_note": "The claim is about priority, so only a dated negative receipt over the canonical ORIGIN set discriminates it. Everything I have is consistent with the Pedens originating it AND with them popularising something older.",
+          "proposed_band": "X — the ORIGIN negative receipt was not executed; this is a lead for a targeted Wayback CDX sweep of missilebases.com",
+          "supporting": ["Pacific Standard — 'At Home With the Couple That Launched the Doomsday Bunker Industry'", "NPR 2012", "Inman (2011)"],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "Center for Land Use Interpretation — 'Subterra Castle, Kansas'", "url": "https://clui.org/ludb/site/subterra-castle", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. CLUI is a disciplined survey organisation and its entry would carry a location and a site description. Unread."},
+        {"citation": "Pacific Standard — 'At Home With the Couple That Launched the Doomsday Bunker Industry'", "url": "https://psmag.com/news/at-home-with-the-couple-that-launched-the-doomsday-bunker-industry/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. The headline itself is the origin claim I am recording as a hypothesis — a magazine asserting these people started the industry. That is an assertion, not a dated negative receipt."},
+        {"citation": "NPR — 'Underground Cold War Relics As Doomsday Castles' (2 March 2012)", "url": "https://www.npr.org/2012/03/02/147653075/underground-cold-war-relics-as-doomsday-castles", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL and date. A dated 2012 broadcast item; useful as a lineage anchor."},
+        {"citation": "RoadsideAmerica — 'Subterra Castle: Missile Silo Home (Closed), Shawnee County, Kansas'", "url": "https://www.roadsideamerica.com/story/16730", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: the title, which contains '(Closed)' and 'Shawnee County'. That parenthetical is my only signal for the STATUS proposition above and it is weak."},
+        {"citation": "missilebases.com / 20th Century Castles — brokerage site", "url": "https://www.missilebases.com/", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: the domain in result blocks (including a /nike/ and an /atlas-f/ path). The SOURCE-REGISTRY classes this as a P4 source holding genuinely primary data, because a broker with lawful physical access must document a property to sell it. The high-value move — a Wayback CDX sweep of missilebases.com/* to recover delisted sold-property listings with their as-built drawings and disposal narratives — is unavailable to me and should be queued."},
+        {"citation": "Inman — 'An underground real estate niche: missile silos' (20 Dec 2011)", "url": "https://www.inman.com/2011/12/20/an-underground-real-estate-niche-missile-silos/", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, date. Trade real-estate press; a dated anchor predating most of the listicle tier."}
+      ]
+    },
+    {
+      "name": "Titan I Complex 2C (near Elizabeth, Elbert County, Colorado) and Complex 2B (near Deer Trail)",
+      "aliases": ["Titan 1 missile complexes, Colorado", "724th SMS complexes", "Deer Trail missile silo", "Elizabeth silo", "Lowry Titan I sites"],
+      "era": "Constructed c. 1959–61 under the 724th Strategic Missile Squadron, Lowry AFB; operational to 1965; disposed to public and private owners; under CDPHE/USACE environmental oversight in the present day",
+      "jurisdiction": "Elbert County (Complex 2C, south of Elizabeth) and Arapahoe County (Complex 2B, north of Deer Trail), Colorado",
+      "typology": "missile-silo",
+      "location": {
+        "precision": "regional",
+        "description": "Six former Titan I complexes remain in Colorado: four on the former Lowry Bombing and Gunnery Range east of Aurora, one north of Deer Trail, one south of Elizabeth.",
+        "basis": "Distribution taken from a search summary of the CDPHE Titan 1 page and an enthusiast site. No coordinates retrieved. NOTE A DESIGNATION CONFLICT I DID NOT RESOLVE: the state agency material is summarised using 'Complex 2B / 2C' while enthusiast and forum sources use Air Force-style '724-A' through '724-F'. Two designation systems for the same six objects is a live IDENTITY problem and I have not mapped them."
+      },
+      "claim_origin": "Unusually for this beat, the present-day claim origin is a state regulator rather than an enthusiast or a broker: CDPHE maintains a public page on the Titan 1 complexes and works with the US Army Corps of Engineers on evaluation and cleanup of chlorinated-solvent contamination. Contamination is the reason a 1965-dead facility still generates institutional records in 2026 — and those records are the register's way in. Separately, a 2024 Denver Gazette feature on an Arapahoe County rescue operation at a silo ('Death around every corner') is a dated, independent, incident-driven record of physical conditions at one of these complexes.",
+      "lineage_note": "Three genuinely independent lineages are visible and this is the strongest independence structure in this file: (1) CDPHE/USACE environmental oversight — an agency documenting a plume for its own regulatory purposes, which passes the §5.1.7 access test decisively; (2) a county emergency-services rescue incident reported by a metro daily, generated by an event with no relationship to anyone's claim about the site; (3) the enthusiast/military-history compilation tier. (1) and (2) could each exist if the other never had. That is what real corroboration looks like and it is rare on this beat.",
+      "mundane_alternative": "For EXIST: none survives — these are mapped, regulated, physically entered structures. The live null is on STAT and FEAT: A12, 'a decommissioned facility of an already-known typology, largely flooded, partially collapsed, and hazardous, whose interior condition is described from irregular urban-exploration visits rather than from survey.' What would distinguish a documented condition from an anecdotal one: the CDPHE/USACE site assessment reports and monitoring-well data, which by their nature describe access, structural condition and water levels; a county coroner's or fire department's incident report; an engineering condition survey. Photographs from a trespass visit do not distinguish it. Note that this null is not really a competitor — it is close to the truth — which is why the interesting propositions here are about condition, contamination and status rather than existence.",
+      "expected_records": "CDPHE site records, assessment reports and monitoring data (X2 — a state regulator with an active in-situ treatability study generates a lot of paper and much of it is public); USACE Formerly Used Defense Sites (FUDS) property records, which for Nike/Titan/Atlas properties are the best single geospatial source for decommissioned hardened infrastructure (X2); Arapahoe and Elbert County deed and assessor records (X3, universal floor); Lowry Bombing and Gunnery Range environmental documentation (X2); Air Force / GSA disposal records for the 1960s conveyances (X2); Corps of Engineers construction records RG 77 (X1, archive-gap); USGS HTMC temporal stack (X3). For this class the silence profile is INFORMATIVE, not uninformative — if a Colorado county has no deed for a former Titan I parcel, something is genuinely odd.",
+      "confidence_note": "This is the candidate in my set with the best available path to a real grade, because a state environmental regulator is producing documents about it right now, for its own reasons, in the present tense. Everything I have about it is still a search snippet.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "Six former Titan I launch complexes, each comprising three silos with connected underground control and equipment structures, remain physically present in Colorado at the locations described.",
+          "assessment": "Asserted by a state agency page and by multiple secondary compilations. Nothing retrieved.",
+          "diagnosticity_note": "A state health department documenting groundwater contamination AT a facility is an institutional act that presupposes the facility — highly diagnostic, and from a body with authority over the environmental fact if not over the military one. §3.4(e) would give it D4 for contamination and something lower for structural description.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["CDPHE Titan 1 missile complexes page (fetch blocked)", "People's Atlas of Nuclear Colorado", "openroadcolorado", "Denver7 and 9News video features"],
+          "undercutting": []
+        },
+        {
+          "class": "FEAT",
+          "statement": "Chlorinated solvents — PCE and TCE — are present in groundwater above basic Colorado groundwater standards at two monitoring wells at Complex 2C near Elizabeth, and CDPHE reports an in-situ treatability study underway.",
+          "assessment": "This is the single most specific, most checkable, most institutionally-grounded assertion in my entire candidate set: a named regulator, a named analyte pair, a named site, a stated exceedance, a named remedial activity. And I still have it only as a summary of a page I could not open.",
+          "diagnosticity_note": "Highly diagnostic for FUNCTION-adjacent history: PCE/TCE at a 1960s launch complex is a signature of missile and ground-equipment degreasing operations, which no competing null for a rural Colorado parcel produces. Contamination chemistry is one of the few things about a dead facility that cannot be marketed, misremembered, or copied from another site's brochure.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the CDPHE record; this is the highest-value single unretrieved document in this file",
+          "supporting": ["CDPHE Titan 1 missile complexes page", "ToxicDocs mirror of a 'Titan I Missile Silos in Colorado' fact sheet"],
+          "undercutting": ["A summary line stating no contamination above drinking-water standards has been found in nearby domestic wells — a genuine limiting datum I am carrying rather than dropping, because it constrains the plume's significance without contradicting its existence"]
+        },
+        {
+          "class": "FUNC",
+          "statement": "The complexes functioned as Titan I ICBM launch complexes under the 724th Strategic Missile Squadron, Lowry AFB, until operations ceased in 1965.",
+          "assessment": "Uncontested across state-agency, academic-mapping and enthusiast sources. Nothing retrieved. The 1965 cessation date is consistent across sources and consistent with the Titan I program's overall termination in 1965.",
+          "diagnosticity_note": "The chlorinated-solvent signature graded under FEAT above is a strong INDEPENDENT corroborator of this function: degreasing solvents at three-silo complexes in eastern Colorado are what missile ground operations leave behind, and a state regulator documented them for its own purposes decades later. That is function evidence arriving through an environmental record rather than a military one, which is exactly the kind of orthogonal lineage the register should prize.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["CDPHE page (which documents the sites as former missile complexes)", "People's Atlas of Nuclear Colorado", "enthusiast compilations"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "The complexes passed into a mix of public and private ownership after federal disposal and are not federally controlled today.",
+          "assessment": "Reported by the state agency summary ('Public and private owners later acquired the complexes') and by secondary sources describing reversion to original landowners or sale at surplus auction in 1968–69.",
+          "diagnosticity_note": "CDPHE stating that private parties own the complexes is a regulator describing the parties it must deal with — created for an unrelated purpose, and therefore independent of any enthusiast claim.",
+          "proposed_band": "X — VERIFICATION PENDING · projection B; A per-complex on county deeds",
+          "supporting": ["CDPHE page summary", "openroadcolorado"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "As of 2026 the complexes are decommissioned, variously flooded, sealed or abandoned, and physically hazardous.",
+          "assessment": "Supported by a 2024 Denver Gazette account of an Arapahoe County rescue operation inside a silo — an incident-generated record, independent of anyone's narrative about the sites.",
+          "diagnosticity_note": "A county rescue operation is about as independent as evidence gets on this beat: no one was making a claim about the silo when it happened. It discriminates 'hazardous and enterable' from both 'sealed' and 'redeveloped'.",
+          "proposed_band": "X — VERIFICATION PENDING · projection B",
+          "supporting": ["Denver Gazette 2024 rescue feature", "CDPHE"],
+          "undercutting": []
+        },
+        {
+          "class": "IDNT",
+          "statement": "CDPHE's 'Complex 2B' and 'Complex 2C' correspond to specific Air Force-designated 724th SMS complexes (724-A through 724-F).",
+          "assessment": "UNMAPPED. I saw both designation systems in the same sweep and did not resolve the correspondence. One forum thread referenced '724-C' selling at auction. I am not going to guess a mapping.",
+          "diagnosticity_note": "Until this IDENTITY clears C, testimony and records keyed to one designation system may NOT be bound to a subject named in the other (§11.1 / §2.3 subject binding). This is a hard blocker on merging the environmental record with the military record, and stating it is more useful than papering over it.",
+          "proposed_band": "X — explicitly unresolved; flagged, not merged",
+          "supporting": [],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "Colorado Department of Public Health and Environment — 'Titan 1 missile complexes'", "url": "https://cdphe.colorado.gov/hm/titan-1-missile-complexes", "tier": "P1", "retrieval_state": "FETCH-BLOCKED", "what_it_actually_shows": "ATTEMPTED AND BLOCKED: WebFetch returned EGRESS_BLOCKED for cdphe.colorado.gov. SAW ONLY a search summary reporting six complexes and their distribution, PCE/TCE above basic groundwater standards at two monitoring wells at Complex 2C, no domestic-well exceedances above drinking-water standards, CDPHE working with USACE, public and private ownership, and an in-situ treatability study underway. I have NOT read this page. Every figure above is a summarising model's report of it and must be re-derived from bytes before any of it is graded."},
+        {"citation": "ToxicDocs — 'Titan I Missile Silos in Colorado Fact Sheet'", "url": "https://www.toxicdocs.org/d/gDVGL9xYrJzQbMQMmJ6kBwJ4e", "tier": "P2", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. INFER: an archive mirror of what is probably the CDPHE fact sheet. If cdphe.colorado.gov stays unreachable this is the designated-faithful-mirror route — which under §2.6 and CAP-6 would cap any resulting grade at B until the issuing authority resolves."},
+        {"citation": "Denver Gazette — ''Death around every corner': Inside Arapahoe County's missile silo rescue mission' (2024)", "url": "https://denvergazette.com/news/arapahoe-county-inside-silo-rescue-mission/article_d5ab8376-0bf6-11ef-a98f-8bd703006672.html", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL only — I have not read one sentence of it. The TITLE alone establishes that a county rescue operation at a missile silo was reported by a metro daily in 2024. Even the title is an incident-generated, claim-independent signal, which is why I have kept it."},
+        {"citation": "People's Atlas of Nuclear Colorado — Titan deployment brief", "url": "https://www.coloradonuclearatlas.org/brief/titan/deployment", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. An academic/public-humanities mapping project; likely a transparent compiler exposing primaries, which would make it a conduit rather than a terminus under §5.1.3."},
+        {"citation": "openroadcolorado.com — 'Titan 1 Missile Silos in Colorado'", "url": "https://openroadcolorado.com/titan-1-missile/", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and a summary line asserting some complexes have been 'sold or adapted for alternate use like data storage or private tours'. That unattributed 'data storage' assertion is recorded in refuted_or_hollow below — it names no operator, no site and no source."},
+        {"citation": "Rising Sun 4WD Club forum — 'Deer Trail Missile Silo' thread", "url": "https://risingsun4x4club.org/xf/threads/deer-trail-missile-silo.19536/page-2", "tier": "P5", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: thread title and a summary noting a comment that '724-C finally sold at auction'. FORUM POST — T5, uncorroborated, ADVERSARY-WRITABLE-adjacent. Recorded ONLY because it is where the '724-C' designation entered my sweep, which matters for the unresolved IDENTITY proposition. It is a lead and nothing else."}
+      ]
+    },
+    {
+      "name": "Titan II ICBM Launch Complex 374-7, Southside, Van Buren County, Arkansas",
+      "aliases": ["Damascus silo", "374-7", "the 1980 Damascus Titan II accident site"],
+      "era": "Constructed early 1960s under the 374th Strategic Missile Squadron, Little Rock AFB; destroyed by a propellant explosion on 19 September 1980; never repaired; sealed with soil, gravel and concrete debris; listed on the National Register of Historic Places 18 February 2000; privately owned",
+      "jurisdiction": "Van Buren County, Arkansas (Southside, just north of Damascus, which straddles Van Buren and Faulkner counties)",
+      "typology": "missile-silo",
+      "location": {
+        "precision": "regional",
+        "description": "Southside, Van Buren County, Arkansas, north of Damascus, off US-65. Reported as behind a barn on private land with a locked gate.",
+        "basis": "Place description assembled from search snippets (Encyclopedia of Arkansas, a visitor blog, a Waze POI title). No coordinate retrieved and none derived. A Waze POI exists, which is crowd-sourced — a lead only."
+      },
+      "claim_origin": "There is no fringe lineage here worth tracing; the event was public, fatal, congressionally examined and extensively documented at the time and since. The origin of the DETAILED public account most people now hold is Eric Schlosser's 'Command and Control' (2013) and the subsequent documentary, but the underlying record — Air Force accident investigation, contemporaneous press, the NRHP nomination prepared for the Arkansas Historic Preservation Program — predates and is independent of it. The claim I am actually testing is a present-tense one: that the complex is buried, sealed and on private land today.",
+      "lineage_note": "At least three independent roots: the 1980 accident investigation and contemporaneous news record; the NRHP nomination prepared c. 1999–2000 by or for the Arkansas Historic Preservation Program (a documentary act by a state agency for a federal program, with its own survey and description); and Schlosser's book-length reconstruction. The NRHP nomination is the one I most want and is exactly the class SOURCE-REGISTRY flags as high-yield — Cold War nomination forms routinely carry construction dates, contractor names, blast-door thicknesses and floor plans obtainable no other way outside FOIA.",
+      "mundane_alternative": "For EXIST there is a real and interesting null here, which is rare: A01 — 'no substantial enclosed structure remains; the launch duct was collapsed and backfilled and what survives is a filled void and surface pads, not a structure.' This matters because it forces EXIST and STAT apart in a way the register should want demonstrated. What would distinguish them: the Air Force disposal and site-closure documentation describing what was actually done to the duct; the NRHP nomination, which had to describe the extant resource to justify listing; a geophysical survey. Aerial imagery showing pads does not distinguish them.",
+      "expected_records": "Air Force accident investigation report (X3 — a fatal Class A mishap with a nuclear weapon involved generates a large record, much of it eventually public); congressional inquiry material (X2); NRHP nomination form and the Arkansas AHPP survey file (X3 — it is listed, so the nomination MUST exist and its absence would be flatly surprising); Air Force / GSA property disposal record (X2); Van Buren County recorder deed for the conveyance to private ownership (X3, universal floor); Corps of Engineers construction records RG 77 (X1, archive-gap); environmental records for propellant (Aerozine 50 / nitrogen tetroxide) contamination (X2). The silence profile here is INFORMATIVE almost throughout — this is a well-documented public disaster, not a covert facility.",
+      "confidence_note": "The strongest documentary path in my set: an NRHP listing means a nomination form exists at a known repository with a known identifier, and I even saw what appears to be a state-hosted PDF of it in a result URL. I have not opened it and I will not infer its contents. Note carefully what I am NOT asserting: I have no NRHP reference number. The URL path contains a token that looks like an Arkansas survey number, and I am recording the URL as seen without decoding it into an identifier, because inventing or mis-transcribing an identifier is the precise failure mode this register measures.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "The subsurface remains of Titan II Launch Complex 374-7, including the backfilled launch duct and surface pads, are physically present at the site.",
+          "assessment": "Consistently reported: debris removed from the surrounding ~400 acres, the site sealed with soil, gravel and small concrete debris, cement pads and a back-filled silo remaining. NRHP listing implies an evaluator found extant historic fabric. Nothing retrieved.",
+          "diagnosticity_note": "NRHP listing is highly diagnostic for EXIST because listing requires a described, extant resource — a state and federal preservation bureaucracy had to agree something is there. No null produces a National Register listing for an empty field.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the nomination form",
+          "supporting": ["Encyclopedia of Arkansas entry", "Arkansas Heritage-hosted NRHP nomination PDF (URL seen, not opened)", "visitor account describing pads and back-filled silo behind a barn"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "As of 2026 the complex is destroyed, sealed and abandoned as a facility — it was never repaired after 19 September 1980.",
+          "assessment": "Uniformly reported across state-encyclopaedia, general-reference and visitor sources. This is the STAT/EXIST divergence the beat brief asked for, in its cleanest available form: the structure exists and the facility does not.",
+          "diagnosticity_note": "'Never repaired' is a negative about an organisation's own conduct and is asserted by sources with access to the Air Force record. The competing null — quiet repair and reuse — is excluded by the program's own termination and by the NRHP listing of the site as a historic ruin.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["Encyclopedia of Arkansas", "NRHP listing dated 18 Feb 2000 (date from a search summary)"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "The land is in private ownership and access is controlled by a locked gate.",
+          "assessment": "Reported by a visitor account and a general-reference summary. Unverified against the Van Buren County recorder.",
+          "diagnosticity_note": "A visitor finding a locked gate is a direct observation but a weak one — it distinguishes nothing about title. The deed does all the work.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the county deed",
+          "supporting": ["Overland Trains visit account", "general-reference summaries"],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "The complex served as an operational Titan II ICBM launch facility under the 374th Strategic Missile Squadron until September 1980.",
+          "assessment": "Not in dispute anywhere; the whole significance of the site rests on it. Nothing retrieved.",
+          "diagnosticity_note": "For the silo typology FUNCTION is documented at D4 by Air Force site lists and unit records as a matter of course. This is the beat's baseline, and the register should be able to reach it mechanically once index enumeration works.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["Encyclopedia of Arkansas", "374th SMS unit references"],
+          "undercutting": []
+        },
+        {
+          "class": "FEAT",
+          "statement": "The 1980 destruction was initiated when a dropped socket punctured a stage-one fuel tank, leading to a propellant explosion that ejected the launch duct closure and killed one airman.",
+          "assessment": "The canonical account, consistent across a state encyclopaedia, general reference, a documentary project and news retrospectives. Recorded as a FEATURE proposition rather than folded into STATUS because it is a separable factual assertion with its own evidence.",
+          "diagnosticity_note": "The mechanism detail traces to the Air Force accident investigation. Its wide repetition is NOT corroboration — it is one investigative record propagating. Counting the outlets would be the §5.0 error.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the accident report; B on secondary reconstruction alone",
+          "supporting": ["Encyclopedia of Arkansas", "USC Scalar 'Broken Arrow Project'", "KUAF 45th-anniversary retrospective (2025)"],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "Encyclopedia of Arkansas — 'Titan II Missile Explosion (1980)'", "url": "https://encyclopediaofarkansas.net/entries/titan-ii-missile-explosion-2543/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and summary content placing the complex at Southside, Van Buren County, north of Damascus, and describing the 19 Sept 1980 explosion, one fatality, and the complex's destruction. A peer-edited state encyclopaedia; a good secondary but not a primary."},
+        {"citation": "Arkansas Heritage (AHPP) — National Register nomination PDF for 'Titan II ICBM Launch Complex 374-7 Site'", "url": "https://www.arkansasheritage.com/docs/default-source/national-registry/vb0050-pdf.pdf", "tier": "P1", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: this URL and the document title 'Titan II ICBM Launch Complex 374-7 Site Name of Property' in a search result block. NOT OPENED. I am recording the URL exactly as it appeared and am deliberately NOT converting the 'vb0050' path token into an asserted survey or reference number — I do not know what it denotes. This is the single highest-value acquirable document for this candidate: NRHP nominations for Cold War properties routinely carry construction dates, contractor names, structural descriptions and floor plans."},
+        {"citation": "USC Scalar — 'The Broken Arrow Project: September 19, 1980 - Damascus, Arkansas'", "url": "https://scalar.usc.edu/works/brokenarrowproject/1980---damascus-arkansas", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. An academic digital-scholarship project; likely a transparent compiler exposing primaries."},
+        {"citation": "Overland Trains — 'Visiting Damascus Titan II Missile Silo: Part I'", "url": "https://overlandtrains.com/updates/visiting-damascus-titan-ii-missile-silo-part-i/", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL, plus a summary describing remaining cement pads and a back-filled silo behind a tan barn with the access gate locked. A single visitor's direct observation — for the register's purposes this is a named-account lead requiring §5.4 resolvability work, not evidence yet."},
+        {"citation": "KUAF (Ozarks at Large) — 'Revisiting the 1980 Damascus Titan II Missile Disaster 45 years later' (15 Sept 2025)", "url": "https://www.kuaf.com/show/ozarks-at-large/2025-09-15/revisiting-the-1980-damascus-titan-ii-missile-disaster-45-years-later", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, date. Public-radio retrospective; a recency anchor showing the site remained newsworthy in 2025."}
+      ]
+    },
+    {
+      "name": "Nike missile site BA-79, Granite, Baltimore County, Maryland (Maryland Wing Civil Air Patrol)",
+      "aliases": ["BA-79", "Granite Nike site", "Maryland Wing CAP headquarters", "Nike Missile Restoration Project"],
+      "era": "Construction from 1954; Nike Ajax from 1956; Nike Hercules subsequently; deactivated 1974; state-owned; leased to the Civil Air Patrol from 2014; magazines partially restored and publicly toured",
+      "jurisdiction": "Baltimore County, Maryland (Granite), ~30 miles northwest of Baltimore",
+      "typology": "military-hardened",
+      "location": {
+        "precision": "regional",
+        "description": "Granite, Baltimore County, Maryland.",
+        "basis": "Place name from multiple search snippets. No coordinate retrieved. Ed Thelen's Nike register carries site coordinates for the full population and is the obvious source; I could not reach it."
+      },
+      "claim_origin": "No contested lineage. The site's identity as BA-79 in the Baltimore defense area comes from the Army's own published Nike site lists, replicated in Ed Thelen's register — which SOURCE-REGISTRY treats as the de facto authoritative public register of US Nike sites, and specifically as a P3 tabulation with P1 scanned Army documents alongside it. The present-day claims (CAP tenancy from 2014, six magazines pumped dry, two restored, monthly free tours) originate with the Civil Air Patrol units themselves and are echoed by Baltimore-area press.",
+      "lineage_note": "Two lineages that pass the counterfactual cleanly: the Army site-list / Thelen register lineage, which would exist if CAP had never taken the lease; and the CAP tenancy record plus Maryland state property administration, which would exist if no enthusiast had ever compiled a Nike list. A third — the Baltimore Sun and Baltimore Banner coverage — descends from the second. Note that cap.gov pages are self-published by the occupying organisation: for CTRL(occupancy) they are the claimant, and the state lease is the record that matters.",
+      "mundane_alternative": "For EXIST/TYPO: A12 — 'a decommissioned facility of a different, already-known typology', specifically an ordinary former Army administrative post whose 'magazines' are surface storage buildings rather than subsurface missile magazines. This sounds pedantic and is not: the distinguishing feature of a Nike LAUNCH site is the underground magazine with its missile elevator, and many former Nike parcels retain only the control-site buildings while the launch area was filled or sold separately. What would distinguish it: the Army site list's launch/control site split for BA-79; the state property record's description; HAER documentation, since many Nike sites were HAER-recorded with measured drawings deposited at the Library of Congress; or a photograph of an elevator in a magazine. Reports of tours 'inside cavernous magazines with metal elevators' are direct-observation support and are the strongest thing I have.",
+      "expected_records": "Army Nike site list for the Baltimore defense area (X3 — published, and its absence would be surprising); Army real-property disposal / transfer record to the State of Maryland (X2); Maryland Department of General Services property record and the CAP lease (X2 — a state lease to a congressionally chartered auxiliary is an ordinary public document); HAER documentation (X1 — many but not all Nike sites were recorded); NRHP (X1 — some Nike sites are listed, most are not, so absence is uninformative); Baltimore County land records (X3, universal floor); environmental records for a former Nike launch area, which routinely carry fuel and solvent issues (X2); USGS HTMC temporal stack (X3).",
+      "confidence_note": "A boring, real, publicly accessible site with an unusually clean documentary path and no controversy attached. It is here partly as a control: if the register's machinery cannot cheaply reach A on BA-79's EXIST and TYPO, the machinery is broken, because this is about as easy as a hardened subsurface structure gets.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "Subsurface Nike missile magazines with missile elevators exist at the former BA-79 launch area, Granite, Baltimore County, Maryland.",
+          "assessment": "Reported by the occupying organisation, by Baltimore-area press describing public tours inside the magazines, and by enthusiast registers. Nothing retrieved.",
+          "diagnosticity_note": "Public tours physically inside a subsurface magazine are strong for EXIST and are simultaneously a −D3 anchor against any hardened-federal-facility reading — again the same fact carrying opposite signs on different propositions, which is the register's core design working as intended.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A; A1-alt plausibly reachable given monthly public access",
+          "supporting": ["Baltimore Banner feature on public access", "Baltimore Sun 'Off Limits' piece", "granite.cap.gov and mdwg.cap.gov restoration pages"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "The Civil Air Patrol has leased the property from the State of Maryland since 2014 and the Maryland Wing headquarters occupies buildings on the site.",
+          "assessment": "Reported with a specific year and a specific arrangement (leasing from the state, occupying two administrative buildings). The lease document itself is unretrieved.",
+          "diagnosticity_note": "A dated state lease is a record created by two parties for their own administrative purposes and would be dispositive. CAP's own web pages asserting their occupancy are self-published and weaker, though not implausible.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the state lease; C on the organisation's own pages alone",
+          "supporting": ["Baltimore Banner", "cap.gov unit pages"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "As of 2026 BA-79 is decommissioned as a military site, partially restored, and open to the public on a monthly free-tour schedule; six magazines were pumped dry and two restored for public viewing, with stabilisation work continuing as of 2023.",
+          "assessment": "Specific, dated, operationally detailed — and sourced to the restoring organisation itself plus local press. The '2023' currency marker means this proposition needs a scheduled revalidation, not a permanent grade.",
+          "diagnosticity_note": "Restoration progress reported by the restorers is self-attesting for the restoration claim but is directly checkable by any visitor, which is an unusual and favourable property. Tour schedules are perishable facts and should be re-fetched, per §2.7 cache-and-revalidate.",
+          "proposed_band": "X — VERIFICATION PENDING · projection B",
+          "supporting": ["mdwg.cap.gov / granite.cap.gov", "Baltimore Banner", "MidAtlantic Daytrips (2024)"],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "BA-79 functioned as a Nike Ajax and subsequently Nike Hercules air-defense launch site in the Baltimore defense area from 1956 until deactivation in 1974.",
+          "assessment": "The standard account, resting ultimately on Army site lists. Not retrieved.",
+          "diagnosticity_note": "Army site lists are the issuing authority for this fact and would satisfy §3.4 immediately. Everything downstream is replication.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["Ed Thelen Nike register (via the BA-79L article hosted there)", "themilitarystandard BA-79 page", "CAP historical pages"],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "Civil Air Patrol Maryland Wing — 'Nike Missile Restoration Project'", "url": "https://mdwg.cap.gov/nike-missile-restoration-project", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. SELF-PUBLISHED by the occupying organisation. For the restoration and occupancy claims the author is the claimant; for the site's Nike history it is a secondary retelling."},
+        {"citation": "Granite Cadet Squadron (CAP) — 'Nike Missile Site Restoration'", "url": "https://granite.cap.gov/nike-missile-site", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL, plus summary content on six magazines pumped dry, two restored, and 2023 stabilisation priorities. Same organisation as the item above — ONE lineage under §5.1.1, not two."},
+        {"citation": "The Baltimore Banner — 'Baltimore County nukes: A Cold War Nike missile site is open to the public'", "url": "https://www.thebanner.com/community/local-news/cold-war-nuclear-missiles-nike-baltimore-county-HYLAEIWUDRGI5EYUX255XAJPAQ/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and summary content describing visitors exploring magazines, missile elevators and command rooms, and CAP leasing from the state since 2014. Journalism with physical access — the closest thing to a direct observation I have for this site."},
+        {"citation": "Baltimore Sun — 'Off Limits: Exploring a long-abandoned Nike Missile Site in Annapolis' (11 June 2018)", "url": "https://www.baltimoresun.com/2018/06/11/off-limits-exploring-a-long-abandoned-nike-missile-site-in-annapolis/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, date. NOTE: this piece is about the ANNAPOLIS-area site (W-25 Davidsonville), not BA-79. Recorded here because it surfaced in the same sweep and because conflating the two Maryland sites is an easy and consequential error. Kept as a cross-reference, not as support for BA-79."},
+        {"citation": "Merle T. Cole, 'W-25: The Davidsonville Site and Maryland Air Defense, 1950–1974', hosted at ed-thelen.org", "url": "https://ed-thelen.org/W-25MerleColeDavidsonvilleMarylandAirDefense.pdf", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: URL and title. A named scholarly article on Maryland Nike air defense, hosted on the Thelen register. It concerns W-25, not BA-79, but is the best-quality secondary in the Maryland Nike cluster and is a transparent-compiler candidate. SOURCE-REGISTRY flags acute succession risk on ed-thelen.org — Ed Thelen died in 2024 — and recommends mirroring now. Endorsed."},
+        {"citation": "Maryland Department of the Environment — 'Davidsonville Nike Launch and Control' (Voluntary Cleanup Program document, Jan 2018)", "url": "https://mde.maryland.gov/programs/land/marylandbrownfieldvcp/documents/davidsonville%20nike%20launch%20and%20control.pdf", "tier": "P1", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: URL and document title in a result block. A state environmental regulator's brownfields/VCP document for the W-25 Davidsonville Nike launch and control site — again W-25, not BA-79. Recorded because it demonstrates the record class that exists for this whole population and is reachable in principle: state VCP files describe former launch areas in physical detail, for the regulator's own purposes, entirely independently of any enthusiast compilation."}
+      ]
+    },
+    {
+      "name": "Oscar-Zero Missile Alert Facility and November-33 Launch Facility, Griggs County, North Dakota",
+      "aliases": ["Ronald Reagan Minuteman Missile State Historic Site", "O-0", "N-33", "Cooperstown missile site"],
+      "era": "Completed 1965; Minuteman II, later Minuteman III, under the 321st Strategic Missile Wing / 321st Missile Group, Grand Forks AFB; deactivated in the late-1990s START I drawdown; transferred to the State Historical Society of North Dakota; opened as a state historic site",
+      "jurisdiction": "Griggs County, North Dakota (near Cooperstown)",
+      "typology": "missile-silo",
+      "location": {
+        "precision": "regional",
+        "description": "Near Cooperstown, Griggs County, North Dakota. Two separate parcels: the Oscar-Zero missile alert facility and the November-33 launch facility.",
+        "basis": "Place names from the State Historical Society of North Dakota's own site pages and a SAH Archipedia entry, both via search snippets. No coordinate retrieved."
+      },
+      "claim_origin": "Institutional throughout. The State Historical Society of North Dakota operates the site and publishes its history; SAH Archipedia (Society of Architectural Historians) carries a scholarly architectural entry keyed ND-01-GG3. The claim I most want to pin is the START-related one: that the November-33 launch facility was NOT destroyed in the general silo demolition but was preserved — filled with gravel, blast door closed and welded or fixed in the closed position — under an arrangement permitting museum retention. That is a treaty-compliance fact with a documentary home in START implementation records, and it is the interesting part of this entry.",
+      "lineage_note": "Three separable roots: the State Historical Society (a state agency describing property it owns and operates — authority over its own facility); SAH Archipedia (an independent scholarly architectural survey with its own fieldwork and citation apparatus); and the START implementation record (a bilateral treaty regime with its own inspection and notification documentation). The last of these is the one nobody in the popular corpus consults and the one that would actually settle the preservation-exemption question.",
+      "mundane_alternative": "For EXIST/STAT the live null is A12/A10 — 'a launch facility that was destroyed by the standard START method and subsequently reconstructed or re-presented as intact for interpretive purposes, i.e. a museum reconstruction rather than a preserved original.' This is not a cynical hypothesis: it is exactly what happened at many sites, where a surface presentation sits over a destroyed duct. What would distinguish them: the START elimination notifications and the US inventory of eliminated launchers, which enumerate WHICH launchers were destroyed; the transfer instrument from the Air Force to the state; a structural condition survey. An intact-looking blast door at ground level does NOT distinguish them — a closed door over a gravel-filled duct is precisely what the null predicts, and my own sources describe the duct as filled.",
+      "expected_records": "START I elimination and notification records, and the US declared inventory (X3 — a treaty with a verification regime generates enumerated, exchanged documents; the absence of a launcher from an elimination list is a meaningful, checkable absence); Air Force real-property transfer instrument to the State Historical Society (X2); Griggs County land records (X3, universal floor); NRHP nomination — likely, given a state historic site of this significance (X2, and I did not confirm a listing either way); Minuteman deactivation environmental documentation (X2); 321st SMW/MG unit histories with AFHRA IRIS numbers (X2); MILCON records for 1960s Wing VI construction (X3).",
+      "confidence_note": "Included partly as the calibration counterweight to the demolished-silo case: within one wing, at the same moment, one launch facility was preserved for interpretation and 149 were blown up and left open for 90 days for satellite verification. Same program, same treaty, opposite STATUS — and the register should be able to say so on one page without strain.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "The Oscar-Zero missile alert facility, including its subsurface launch control centre capsule, and the November-33 launch facility exist near Cooperstown, Griggs County, North Dakota.",
+          "assessment": "Operated as a public state historic site with staffed tours into the underground capsule. Nothing retrieved.",
+          "diagnosticity_note": "A state historical agency operating a facility it owns is the issuing authority for its existence and condition. Fully diagnostic once resolved.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["State Historical Society of North Dakota site pages", "SAH Archipedia entry ND-01-GG3"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "November-33's missile was removed and its launch duct filled with gravel and sealed under START I, but the launch facility was preserved rather than destroyed, with the above-ground blast door remaining in place and closed.",
+          "assessment": "Reported by the operating state agency and by SAH Archipedia. Note the internal tension in my own sources, which I am keeping visible: 'the silo was sealed / filled with gravel' and 'preserved to look as it did during normal operations' are both reported, and together they describe a preserved SURFACE over a filled DUCT. That is a materially different claim from 'an intact silo', and the popular framing tends to collapse them.",
+          "diagnosticity_note": "The discriminating document is the START elimination record, not the historic site's interpretive copy. A gravel-filled duct with a preserved door is consistent with both 'exempted from destruction' and 'destroyed by an alternative agreed method and then presented'. I cannot tell which from what I have, and saying so is the finding.",
+          "proposed_band": "X — VERIFICATION PENDING · projection B; A only on a START implementation record",
+          "supporting": ["history.nd.gov site pages", "SAH Archipedia"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "The State Historical Society of North Dakota owns and operates both parcels as a state historic site.",
+          "assessment": "Asserted by the agency itself on its own site pages. The transfer instrument is unretrieved.",
+          "diagnosticity_note": "A state agency describing property it operates has authority over the fact. Strong once resolved.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["history.nd.gov"],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "Oscar-Zero functioned as a Minuteman missile alert facility controlling a flight of ten launch facilities under the 321st Strategic Missile Wing, Grand Forks AFB, from 1965 until deactivation.",
+          "assessment": "Standard and uncontested. The '15 MAFs each controlling 10 missiles' structure for the 321st is consistently reported.",
+          "diagnosticity_note": "Unit records and Air Force site lists are the authority; secondary repetition adds nothing.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["history.nd.gov", "minutemanmissile.com Wing VI page", "Association of Air Force Missileers 321 MG page"],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "State Historical Society of North Dakota — Ronald Reagan Minuteman Missile State Historic Site (history and FAQ pages)", "url": "https://www.history.nd.gov/historicsites/minutemanmissile/oscarzerohistory.html", "tier": "P1", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: titles, URLs and summary content on 1965 completion, Minuteman II installation, START removal and silo filling, and preservation of the above-ground blast door. A state agency describing property it owns — the issuing authority for STATUS and CONTROL. Not fetched."},
+        {"citation": "SAH ARCHIPEDIA — 'Oscar-Zero Missile Alert Facility (MAF) and November-33 Launch Facility, Ronald Reagan Minuteman Missile State Historic Site', entry ND-01-GG3", "url": "https://sah-archipedia.org/buildings/ND-01-GG3", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL and the entry identifier ND-01-GG3 as it appeared in the result URL. A Society of Architectural Historians scholarly survey entry. Recording the identifier as seen in the URL; I have not verified it resolves to this content."},
+        {"citation": "oscarzero.wordpress.com — 'The Historic Site'", "url": "https://oscarzero.wordpress.com/thehistoricsite/", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. Same compiler as the RSL entry above — SAME LINEAGE for anything it asserts across both candidates, and must not be counted twice."},
+        {"citation": "minutemanmissile.com — 'Wing VI - Grand Forks Air Force Base'", "url": "https://minutemanmissile.com/afbwing6.html", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. Enthusiast compilation of Minuteman wing organisation."},
+        {"citation": "Association of Air Force Missileers — 321 MG page", "url": "https://www.afmissileers.org/321-MG", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. SOURCE-REGISTRY rates the AAFM newsletter archive CRITICAL and P3: free, bulk-downloadable, published by the veterans' own association, with unit-to-site mappings and the 'Taps for Missileers' column giving squadrons and duty locations. It is the preferred route for missile-personnel attestation and I could not reach it."}
+      ]
+    },
+    {
+      "name": "321st Missile Wing Minuteman III launch facilities, Grand Forks AFB, North Dakota — the destroyed population",
+      "aliases": ["Wing VI", "321st Missile Group", "Grand Forks missile field", "India-Zero and the other MAFs"],
+      "era": "Constructed mid-1960s; 150 launch facilities and 15 missile alert facilities; missiles removed by June 1998; silos eliminated under START I with the last Minuteman III silo destroyed 24 August 2001; parcels sold at GSA auction",
+      "jurisdiction": "Northeastern North Dakota — Grand Forks, Walsh, Nelson, Cavalier and adjoining counties",
+      "typology": "missile-silo",
+      "location": {
+        "precision": "regional",
+        "description": "A dispersed field of 150 launch facilities and 15 missile alert facilities across northeastern North Dakota. This is a POPULATION, not a point, and must never be rendered as a pin.",
+        "basis": "Regional description from search snippets. No individual site coordinates retrieved. §10.3 applies: a precise pin manufactured from imprecise evidence would be the register performing citogenesis at the interface layer."
+      },
+      "claim_origin": "Entirely institutional and, unusually, bilateral. The destruction is a treaty-verified fact: START I required elimination by controlled explosive demolition, and the resulting excavation had to remain open for ninety days so that the other party's national technical means could confirm it. Arms Control Today reported the first of 150 Minuteman III silo destructions in 1999 and the last on 24 August 2001. The subsequent disposal claims — GSA auctions with winning bids reported from around $6,000 up to $17,800 for a launch control facility — trace to Grand Forks Herald reporting on the auctions.",
+      "lineage_note": "Genuinely multi-rooted, and the best independence structure of any candidate here: (a) the START verification regime, which produced exchanged data between two adversary governments — about as independent as two sources can be, since neither would accept the other's word; (b) the BRAC 1995 decision record; (c) GSA disposal and auction records; (d) county deed indices for 150+ separate parcels, each recorded by a county for its own purposes; (e) Air Force unit histories. Any two of these pass the §5.1.7 access test against each other without strain.",
+      "mundane_alternative": "For STAT(destroyed) the named null is A11-adjacent and is worth stating because it is a live folk belief rather than a straw man: 'the silos were not really destroyed; missiles remain emplaced or the facilities were quietly retained.' What would distinguish it: the START elimination notifications and the ninety-day open-excavation verification regime itself, which was DESIGNED as the discriminator — the whole point of leaving a hole open for three months is that a concealed retention is not possible under overhead observation; plus GSA conveyances and county deeds transferring the parcels to private persons who now farm them. What would NOT distinguish it: aerial imagery of a fenced square in a field, which is equally consistent with a demolished site, a retained site and a private buyer's fence.",
+      "expected_records": "START I elimination notifications and the exchanged declared-data inventories (X3); BRAC 1995 Commission record (X3); Air Force deactivation environmental documentation and the site-restoration record (X2); GSA disposal records and auction results for 150+ parcels (X2, and a systematic sweep of these is the single highest-yield unexecuted task on this beat); county recorder deeds across five-plus North Dakota counties (X3 universal floor, and the enumeration of these deeds would produce an instance-level register of the entire population); AFHRA unit histories by IRIS number (X2); MILCON records for the 1960s Wing VI construction program (X3). For this population, silence is INFORMATIVE nearly everywhere.",
+      "confidence_note": "I am entering this as a POPULATION candidate rather than as 150 thin instance entries, deliberately. Under the candidate-set rule the honest move is to publish the set as a set with its denominator, not to manufacture 150 map pins from a program record — the class-evidence-credited-to-every-instance error the register explicitly closes. The right next step is index enumeration (GSA disposal, county recorders), which is model-prior-independent by construction and would convert this single entry into 150 properly-evidenced instance entries.",
+      "propositions": [
+        {
+          "class": "PROG",
+          "statement": "The 321st Strategic Missile Wing / Missile Group operated 150 Minuteman launch facilities and 15 missile alert facilities in northeastern North Dakota, and this population was eliminated under START I between 1998 and 24 August 2001.",
+          "assessment": "Reported by Arms Control Today with specific dates and by NPS interpretive material on START. PROGRAM carries no physical claim about any individual site, which is exactly why it is the right class for this.",
+          "diagnosticity_note": "Treaty-verified elimination is close to maximally diagnostic — a bilateral verification regime exists precisely to make this proposition checkable by a hostile party. PROGRAM is also clamp-exempt, so it can be graded on its own record without dragging or being dragged.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on the START record or the Arms Control Today reporting",
+          "supporting": ["Arms Control Association, 'First of 150 Minuteman III Missile Silos Destroyed' (Nov 1999)", "Arms Control Association, 'Last Minuteman III Missile Silo Destroyed' (Sept 2001)", "NPS 'Ending the Arms Race With a START'"],
+          "undercutting": []
+        },
+        {
+          "class": "STAT",
+          "statement": "The launch facilities were physically destroyed by controlled explosive demolition, with the resulting excavation left open for ninety days for verification by national technical means.",
+          "assessment": "The method and the ninety-day rule are consistently reported, including a specific figure of roughly 800 pounds of explosives per silo and a requirement that the door be displaced only a short distance. That last detail — a controlled ejection rather than a general blast — is the sort of specific operational constraint that comes from a treaty text or an implementing procedure, not from folklore.",
+          "diagnosticity_note": "The ninety-day open-hole requirement IS the discriminator, by design. This is a rare case where the verification mechanism was engineered by adversaries specifically to exclude the null, and the register should say so explicitly rather than treating it as one more reported fact.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["NPS START article", "themilitarystandard Minuteman destruction page", "Arms Control Today"],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "The population functioned as operational Minuteman ICBM launch facilities and missile alert facilities, holding missiles on alert until the last was removed in June 1998.",
+          "assessment": "Uncontested; the function is the reason the treaty regime applied to them. The June 1998 last-removal date is reported specifically and is the kind of date that comes from a deactivation record.",
+          "diagnosticity_note": "Function here is established by an adversarial verification regime rather than by assertion: the counterparty had to be satisfied these were launchers in order for their elimination to count. It is difficult to construct a more diagnostic arrangement — a hostile government's acceptance is a stronger warrant than any single agency's statement about itself.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["Arms Control Association reporting", "NPS START material", "AAFM 321 MG page"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "The former launch-facility and missile-alert-facility parcels passed into private ownership via GSA auction, with reported winning bids from about $6,000 to $17,800 for a launch control facility.",
+          "assessment": "Reported by the Grand Forks Herald. The specific figures suggest a documentary source in the auction results. Unverified.",
+          "diagnosticity_note": "Auction results plus county deeds would be dispositive per parcel and are enumerable — this is the index-enumeration path §5.8(a) recommends over query-based search, and it is model-prior-independent.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A per parcel on deeds; B at population level",
+          "supporting": ["Grand Forks Herald, 'Missile sites up for sale'"],
+          "undercutting": []
+        },
+        {
+          "class": "EXIST",
+          "statement": "Substantial hardened subsurface structures remain at the individual former launch facility parcels today.",
+          "assessment": "PROBABLY FALSE FOR MOST, and I want that recorded rather than left implicit. The elimination method destroyed the launcher; what remains at a typical parcel is a filled excavation and surface remnants. Where support equipment buildings and the missile alert facilities survive, they are different structures with different STATUS. Treating 'a 321st SMW launch facility' as a live hardened structure would be the beat's characteristic error.",
+          "diagnosticity_note": "This is the EXIST/STATUS divergence in its sharpest form and it runs the OPPOSITE way from the register's usual case. The usual pattern is 'the hole is certain, the function is not'. Here the program is certain, the function is certain, the destruction is certain — and the hole is gone.",
+          "proposed_band": "X — and the projection is toward R (refuted) for individual launch facilities on the START elimination record, not toward A",
+          "supporting": [],
+          "undercutting": ["The START elimination regime itself, which is affirmative documentation that these structures were destroyed — a signed negative of unusual strength, since it was produced adversarially"]
+        }
+      ],
+      "sources": [
+        {"citation": "Arms Control Association, Arms Control Today — 'Last Minuteman III Missile Silo Destroyed' (September 2001)", "url": "https://www.armscontrol.org/act/2001-09/last-minuteman-iii-missile-silo-destroyed", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and a summary stating the last Minuteman III silo slated for dismantlement under START I, at Grand Forks AFB, was destroyed on 24 August 2001. Specialist arms-control journalism with direct access to treaty data exchanges."},
+        {"citation": "Arms Control Association — 'First of 150 Minuteman III Missile Silos Destroyed' (November 1999)", "url": "https://www.armscontrol.org/act/1999-11/first-150-minuteman-iii-missile-silos-destroyed", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. Gives the population figure of 150 and the 1999 start of destruction."},
+        {"citation": "National Park Service — 'Ending The Arms Race With A START'", "url": "https://www.nps.gov/articles/endingthearmsrace-start.htm", "tier": "P1", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL and summary content on the destruction method, the 20-foot excavation, the observation cone and the 90-day verification period. NPS interprets the Minuteman Missile National Historic Site and is a federal agency, though not the issuing authority for treaty implementation. Not fetched — .gov egress blocked."},
+        {"citation": "FAS mirror of START treaty conversion/elimination text", "url": "https://nuke.fas.org/control/start2/text/convers.htm", "tier": "P2", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. INFER: a hosted copy of treaty text governing conversion and elimination procedures. This is a MIRROR of a treaty instrument, and under §2.6/CAP-6 a grade resting on a mirror-only receipt caps at B until the issuing authority resolves."},
+        {"citation": "Grand Forks Herald — 'Missile sites up for sale'", "url": "https://grandforksherald.com/news/2083942-missile-sites-sale", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and summary content reporting GSA auctions with bids above $6,000 and a high of $17,800 for a launch control facility, and naming 'India-Zero' as one of 15 MAFs. Local journalism on a public auction; the auction record itself is the acquisition target."},
+        {"citation": "The Military Standard — 'Minuteman Missile Silo Destruction'", "url": "http://www.themilitarystandard.com/missile/minuteman/destruction.php", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and summary content on ~800 lb explosive charges and the controlled two-metre door displacement. Domain confirmed EGRESS_BLOCKED on a sibling page. Unsourced enthusiast compilation — the operational detail is plausible and needs an independent primary."}
+      ]
+    },
+    {
+      "name": "Atlas F launch site converted to short-term lodging, 579th Strategic Missile Squadron ring, Chaves County, New Mexico",
+      "aliases": ["the Roswell silo Airbnb", "Walker AFB Atlas F site", "579th SMS silo"],
+      "era": "Twelve Atlas F sites built in a ring around Roswell for the 579th SMS, Walker AFB, operational 1962–1965; two sites reportedly purchased c. 2000 for $55,000 each by the present owner; one converted to a residence and subsequently operated as short-term lodging",
+      "jurisdiction": "Chaves County, New Mexico (and adjoining counties — the 579th ring extends beyond a single county)",
+      "typology": "private-shelter",
+      "location": {
+        "precision": "claimed-only",
+        "description": "One of twelve 579th SMS Atlas F sites in a ring around Roswell, New Mexico. WHICH ONE IS UNKNOWN TO ME.",
+        "basis": "I could not determine which of the twelve site designations corresponds to the converted property. Enthusiast pages exist for 579-1 through at least 579-12, and I saw several in results, but nothing tied a designation to the owner named in the news coverage. I am recording the ambiguity rather than picking one. No coordinate."
+      },
+      "claim_origin": "The conversion story has a datable local-news origin (KRQE, Albuquerque) plus a two-part trade-magazine visitor account. The owner is named in coverage as Gary Baker, reported as having bought two silos about twenty-five years ago at $55,000 each. The '$55,000 each' and 'two silos' figures propagate together, which is a single-lineage marker. The military-history layer (579th SMS, Walker AFB, twelve sites, 1962–65) comes from an entirely separate veterans'/enthusiast lineage including atlasmissilesilo.com, which hosts scanned 579th SMS documents.",
+      "lineage_note": "atlasmissilesilo.com is potentially the most valuable source in this entry precisely because it hosts SCANNED DOCUMENTS alongside its tabulation — which makes it a transparent compiler under §5.1.3, so the underlying Air Force documents would be the lineages and the compiler would score nothing. Whether it actually exposes retrievable primaries is the check I could not run. The Walker Aviation Museum page is a third root, an institutional local museum with its own collection.",
+      "mundane_alternative": "A06 — 'a former Atlas F site converted to an ordinary residence and let as a novelty short-term rental, whose protective and dimensional claims are hospitality marketing.' What would distinguish a genuine hardened conversion: county permits with engineered scope, a structural report, or the original Corps of Engineers as-built showing what was retained. What would NOT distinguish it: listing photographs, guest reviews, or a description of the blast door — a blast door that has been welded open, propped, or bypassed by a new stair is a photograph of hardening, not hardening. This is a general point about converted silos and I would like it stated once, here, and reused: THE ARTEFACT OF HARDENING SURVIVES THE FUNCTION OF HARDENING, and the register should refuse to let a photograph of a 1961 door carry a 2026 HARDEN proposition.",
+      "expected_records": "Chaves County (and adjoining county) recorder deeds for the c. 2000 purchases (X3 universal floor, and a 2000-era New Mexico conveyance is inside the digitisation window — absence would be surprising); Air Force / GSA disposal record for the original conveyance (X2); 579th SMS site list (X2); Corps of Engineers construction records, Atlas F, RG 77 (X1 archive-gap); New Mexico Environment Department records for any propellant or solvent contamination (X1); short-term-rental registration or lodgers' tax registration with the county or state (X1 — variable by jurisdiction, so absence is weakly informative at best); USGS HTMC temporal stack (X3).",
+      "confidence_note": "Deliberately included as the LOWEST-resolution candidate in my set, to demonstrate what an honest thin entry looks like. I know a conversion exists, I know who is named in coverage, and I do not know which silo it is. Under the register's own rules that means no pin, no designation, and an explicit IDENTITY proposition sitting unresolved. Also worth pairing with the DataCenterDynamics observation recorded under the Nekoma entry: at least two attempts to make New Mexico Atlas silos into secure data centres or records storage failed. Same population, different afterlife, and the failures are as much a finding as the successes.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "A former Atlas F launch facility from the 579th SMS ring around Roswell has been converted to habitable space and is operated as short-term lodging.",
+          "assessment": "Reported by Albuquerque local television and by a two-part first-person account in a trade magazine whose author stayed overnight. Nothing retrieved.",
+          "diagnosticity_note": "A journalist's overnight stay is a direct observation by an identifiable person with lawful access — the raw material for A1-alt if it can be receipted and if a T1 parcel record is added.",
+          "proposed_band": "X — VERIFICATION PENDING · projection B, held down by the unresolved site identity",
+          "supporting": ["KRQE report", "The Fabricator, two-part overnight account"],
+          "undercutting": []
+        },
+        {
+          "class": "IDNT",
+          "statement": "The converted lodging property corresponds to a specific numbered 579th SMS Atlas F site.",
+          "assessment": "UNRESOLVED, and I am leaving it that way. I saw enthusiast pages for individual 579-n sites and coverage naming the owner, and nothing joining them. Guessing a designation would be a fabrication with a plausible shape, which is the worst available failure on this beat.",
+          "diagnosticity_note": "Until this clears C, no record keyed to a site designation may be bound to this property for subject-binding purposes (§2.3). That is a hard blocker and it is the honest state.",
+          "proposed_band": "X — explicitly unresolved",
+          "supporting": [],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "The property functions as paid short-term lodging; it formerly functioned as an Atlas F ICBM launch facility under the 579th Strategic Missile Squadron, 1962–1965.",
+          "assessment": "The lodging function is reported by local television and demonstrated by a journalist who stayed overnight and wrote it up. The historical function is the class record; the instance binding is unresolved because I do not know which of the twelve sites this is.",
+          "diagnosticity_note": "A paying guest sleeping in the structure is direct observation of the present function and needs no further discrimination. The historical function CANNOT be attached to this property until the IDENTITY proposition above clears C — this is the subject-binding rule doing real work, and it is why I have refused to write a site number.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A for the lodging function; the historical function is BLOCKED on identity, not on evidence",
+          "supporting": ["KRQE", "The Fabricator overnight account"],
+          "undercutting": []
+        },
+        {
+          "class": "CTRL",
+          "statement": "Gary Baker purchased two 579th SMS silos approximately twenty-five years ago at about $55,000 each and owns the converted property.",
+          "assessment": "Named person, approximate date, specific price, specific count. Sourced to local news coverage; unverified against any recorder.",
+          "diagnosticity_note": "Owner-supplied figures relayed by a broadcaster are D0–D1. A deed is D4. The gap between those two is the whole difference between a story and a register entry.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A on county deeds",
+          "supporting": ["KRQE"],
+          "undercutting": []
+        },
+        {
+          "class": "HRDN",
+          "statement": "The converted property today provides protection against blast or other nuclear effects.",
+          "assessment": "Not asserted by any source I saw at instance level with any specificity, and I am recording the proposition anyway BECAUSE this is the claim a reader will import unbidden from the phrase 'missile silo'. The honest state is: no evidence either way about the structure as it now stands.",
+          "diagnosticity_note": "Zero. Nothing I have discriminates a hardened conversion from a decorated one. CAP-2b applies: no verified instance-scope CLAIM-PROPERTY observation exists, so this cannot exceed E even fully verified.",
+          "proposed_band": "X — projection E under CAP-2b",
+          "supporting": [],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "KRQE (Albuquerque) — 'Cold War-era missile silo in New Mexico Transformed into Airbnb'", "url": "https://www.krqe.com/news/new-mexico/cold-war-era-missile-silo-in-new-mexico-transformed-into-air-bnb/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and summary content naming Gary Baker as owner and host, reporting two silos bought ~25 years ago at $55,000 each, and a change of plan from museum to short-term rental. Local broadcast journalism relaying the owner's account."},
+        {"citation": "The Fabricator — 'Staying overnight in a Cold War-era missile silo near Roswell', Parts 1 and 2", "url": "https://www.thefabricator.com/thefabricator/blog/shopmanagement/staying-overnight-in-a-cold-war-era-missile-silo-near-roswell-part-1-1", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: titles and URLs for a two-part first-person account by a trade-magazine writer who stayed on site. A bylined direct observation with lawful access — genuinely useful raw material for A1-alt and for §5.4 custody, since a byline in a named publication is exactly the custody path the rule requires."},
+        {"citation": "atlasmissilesilo.com — '579th SMS' index and '579th SMS Docs'", "url": "https://www.atlasmissilesilo.com/documents_atlasf_579th.htm", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: two URLs from this domain, one of them explicitly a documents index for the 579th SMS. INFER: an enthusiast register hosting SCANNED PRIMARY DOCUMENTS. If those documents are individually retrievable this is a transparent compiler and the primaries become the lineages. This is the highest-value unchecked source in this entry."},
+        {"citation": "Walker Aviation Museum — '579th Missile Squadron'", "url": "https://www.wafbmuseum.org/history-of-walker-air-force-base/579th-missile-squadron/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. A local institutional museum with a collection relating to Walker AFB — a third, independent root for the unit history."},
+        {"citation": "579th SMS veterans' site", "url": "https://www.579sms.com/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: domain in a result block. A squadron veterans' association site; the class SOURCE-REGISTRY recommends for unit-to-site mapping and for personnel attestation."}
+      ]
+    },
+    {
+      "name": "Atlas D \"coffin\" launch complexes, 564th and 565th Strategic Missile Squadrons, F.E. Warren AFB, Wyoming",
+      "aliases": ["Warren I / Warren II complexes", "Atlas D soft sites", "564th SMS", "565th SMS", "horizontal shelter launchers"],
+      "era": "First operational Atlas D deployment away from Vandenberg: 564th SMS from 15 September 1959; 3x3 configuration of three launchers per complex, three complexes per squadron; superseded within a few years by hardened Atlas E/F and Minuteman",
+      "jurisdiction": "Laramie County and adjoining counties, Wyoming (dispersed around F.E. Warren AFB, Cheyenne)",
+      "typology": "missile-silo",
+      "location": {
+        "precision": "regional",
+        "description": "Dispersed complexes around F.E. Warren AFB near Cheyenne, Wyoming. A population of nine launchers per squadron across three complexes.",
+        "basis": "Organisational description from search snippets. No coordinates, no individual complex locations retrieved. Population, not point."
+      },
+      "claim_origin": "Purely institutional; there is no contested lineage. This candidate is in the file for a methodological reason rather than a discovery one: it is the HARDENING NEGATIVE CONTROL for the whole beat. The Atlas D coffin launcher stored the missile horizontally, above ground, under a movable roof at grade. Every source I saw describes it as 'semi-hard' and as offering 'limited protection'. It is a missile launch facility that is barely hardened at all, and the register needs at least one of those on the books so that TYPOLOGY(missile-silo) cannot silently import HARDEN.",
+      "lineage_note": "Multiple institutional roots available in principle (Air Force unit histories, AAFM material, Astronautix's compiled deployment data, squadron veterans' sites). All unretrieved. The description of the coffin configuration is consistent across every source I saw, which is expected for an uncontested engineering fact and is not corroboration in the register's sense.",
+      "mundane_alternative": "Inverted here, and that is the point. The usual null for this register is 'this is not really hardened'. For Atlas D the null is essentially TRUE BY DESIGN — A05/A08, 'an above-ground equipment shelter with a movable roof, protecting against weather and providing dispersal, not against blast.' What would distinguish any genuine hardening claim: an Air Force design criteria document stating an overpressure rating for the coffin launcher. I expect such a document exists in the AFWL/AFSWC technical-report lineage and would show a low figure. Nothing I have seen asserts otherwise, and the phrase 'limited protection' recurs.",
+      "expected_records": "Air Force unit histories for the 564th and 565th SMS with AFHRA IRIS numbers (X2); Corps of Engineers construction records for the Warren I/II complexes, RG 77 (X1 archive-gap); MILCON/appropriations for the 1959–60 Atlas D deployment (X3); AFWL/AFSWC technical reports on launcher hardness — the DTIC lineage SOURCE-REGISTRY identifies as the richest single corpus for hardened-facility engineering (X2, and searching by originating lab report series rather than by topic is the recommended technique); Air Force / GSA disposal records for the sites (X2); Laramie County and adjoining county deeds (X3, universal floor); FUDS property records, since Atlas sites disproportionately land in FUDS (X2); USGS HTMC temporal stack (X3).",
+      "confidence_note": "The least 'discovered' entry here and I think one of the more useful. Its job is to sit in the register as a graded counterexample: a real ICBM launch facility whose HARDEN proposition should grade LOW on the evidence, so that the register can demonstrate it is measuring hardening rather than inferring it from the word 'missile'.",
+      "propositions": [
+        {
+          "class": "EXIST",
+          "statement": "Atlas D coffin-type launch complexes were built and operated at dispersed locations around F.E. Warren AFB from September 1959.",
+          "assessment": "Uncontested across compiled deployment references and squadron sites. Nothing retrieved.",
+          "diagnosticity_note": "Air Force site lists and unit histories are the authority and would settle it at D4. My sources are compilations of those.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["Astronautix Warren AFB deployment data", "564th/565th SMS enthusiast and veterans' pages", "AAFM Atlas D page"],
+          "undercutting": []
+        },
+        {
+          "class": "FUNC",
+          "statement": "The complexes functioned as operational Atlas D ICBM launch complexes — three launchers plus a combined guidance-control and launch facility per complex, three complexes per squadron — from September 1959 until the Atlas D phase-out in the mid-1960s.",
+          "assessment": "Consistently described, including the specific 3x3 organisational structure. The 15 September 1959 first-deployment date for the 564th SMS is reported specifically enough to have come from a record.",
+          "diagnosticity_note": "The organisational detail (three launchers plus one combined guidance-control/launch facility, three complexes per squadron) is diagnostic in an unexpected direction: it tells you the SHAPE of what remains on the ground, and therefore what a later observer at a Wyoming parcel should and should not expect to find. A single square of concrete is not a 'silo'; it is one of three horizontal shelters that shared a control facility. Getting that geometry right is what prevents a future entry from mis-describing a coffin site as a silo.",
+          "proposed_band": "X — VERIFICATION PENDING · projection A",
+          "supporting": ["Astronautix", "AAFM Atlas D page", "564th/565th SMS pages"],
+          "undercutting": []
+        },
+        {
+          "class": "HRDN",
+          "statement": "The Atlas D coffin launcher provided hardening against nuclear blast beyond ordinary construction for its class.",
+          "assessment": "The evidence I have points AGAINST this, which is why it is worth grading rather than omitting. Sources describe the missile stored above ground horizontally under a roof at grade, in 'semi-hard' facilities offering 'limited protection'. That is descriptive prose from compilations, not a design document — but it is unanimous and it points one way.",
+          "diagnosticity_note": "This is the beat's most useful diagnosticity lesson. TYPOLOGY(missile launch facility) predicts hardening under the popular reading and does NOT predict it under the actual engineering history of the Atlas D generation. Anyone reasoning 'it launched an ICBM, therefore it is a bunker' has substituted a category for an observation. What would settle it: an AFWL/AFSWC-lineage overpressure specification for the coffin launcher, retrievable from DTIC by report series.",
+          "proposed_band": "X — and the projection points toward R (refuted) or a very low band, not toward A. A design document stating a low overpressure rating would be affirmative disconfirmation.",
+          "supporting": [],
+          "undercutting": ["Consistent secondary description of the configuration as semi-hard, above ground, horizontal, with limited protection — weak individually, unanimous collectively, and pointing one direction"]
+        },
+        {
+          "class": "STAT",
+          "statement": "The Atlas D coffin complexes were deactivated in the mid-1960s and disposed of; their present condition and ownership are unknown to me.",
+          "assessment": "Deactivation is uncontested; disposition is entirely unsearched by me. This is X in the plainest sense — the X-02 shape, not searched and not knowable from what I reached.",
+          "diagnosticity_note": "Nothing to assess. FUDS property records and county deeds would populate this cheaply and neither was reachable.",
+          "proposed_band": "X — NOT ASSESSED",
+          "supporting": [],
+          "undercutting": []
+        }
+      ],
+      "sources": [
+        {"citation": "Astronautix — 'Warren AFB'", "url": "http://www.astronautix.com/w/warrenafb.html", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. A long-standing compiled encyclopaedia of launch and missile deployment data; unsourced at the point of use."},
+        {"citation": "Association of Air Force Missileers — 'Atlas D'", "url": "https://afmissileers.org/Atlas-D", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title and URL. The veterans' association's own page. SOURCE-REGISTRY rates the AAFM newsletter run CRITICAL/P3 and notes it is free, bulk-downloadable and carries first-person Atlas operational accounts — the vernacular record for exactly this question of what the coffin launchers were actually like."},
+        {"citation": "The Military Standard — 'Atlas D ICBM Missile Site Description'", "url": "https://www.themilitarystandard.com/missile/atlas/atlas-d/", "tier": "P4", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: title, URL, and summary content describing the coffin configuration, the missile stored above ground horizontally, semi-hard facilities and limited protection. Domain confirmed EGRESS_BLOCKED on a sibling page. Unsourced enthusiast compilation."},
+        {"citation": "atlasmissilesilo.com — 564th and 565th SMS pages", "url": "https://www.atlasmissilesilo.com/564SMS/index.htm", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: URLs for both squadron sections. Same domain as the 579th documents index — potentially a transparent compiler hosting scanned primaries, unchecked."},
+        {"citation": "565th Strategic Missile Squadron veterans' site", "url": "https://www.565sms.com/", "tier": "P3", "retrieval_state": "SEARCH-SNIPPET-ONLY", "what_it_actually_shows": "SAW: domain in a result block. Squadron veterans' association; the preferred route for personnel attestation per SOURCE-REGISTRY."}
+      ]
+    }
+  ],
+  "refuted_or_hollow": [
+    {
+      "claim": "Atlas F missile silos have walls almost ten feet thick, made from 'super-hardened, bomb-proof, epoxy-resin concrete', with rebar over three inches thick — making converted silos effectively nuclear-blast-proof homes.",
+      "origin": "I could not identify the first publication, and I am saying that plainly rather than naming a culprit. What I CAN establish from my sweep: the formulation appears, in near-identical wording, across the silo-real-estate and silo-tourism corpus — a Kansas state tourism blog (travelks.com), a travel blog (getlostintheusa.com), a UK property listicle (loveproperty.com), an Adirondack regional feature, and the missilebases.com/20th Century Castles brokerage material. The wording travels as a unit: 'almost 10 feet thick', 'epoxy resin', 'rebar over three inches'. The most probable origin, on the structure of the corpus and on dating, is 1990s marketing copy from the 20th Century Castles brokerage — the entity that both created this market and wrote its first descriptions — but I did not run the dated negative receipt (Wayback CDX over missilebases.com and the pre-2000 corpus) that an ORIGIN grade requires, so that remains a hypothesis and I have not graded it.",
+      "why_hollow": "It contradicts an independent technical source in the same sweep. The Federation of American Scientists' Atlas silo description gives the surrounding reinforced-concrete wall as ABOUT 2.5 FEET THICK, and separately notes concrete on the SURFACE at nine feet. The tourism/brokerage version appears to have taken the surface-slab figure and reassigned it to the walls — a transposition, not an invention, which is why it survives casual checking and why it propagates so cleanly. 'Epoxy-resin concrete' is the tell: it is a distinctive, technical-sounding, hard-to-verify detail of exactly the kind that §5.1.7's distinctive-error test identifies as near-dispositive evidence of derivation, because regenerated and paraphrased text loses wording but keeps facts INCLUDING WRONG ONES. The register should treat the presence of 'epoxy resin' in any silo description as a lineage marker rather than as information. Note also the separate 100 psi overpressure figure circulating for Atlas F: that is a plausible design figure for the ORIGINAL structure and is a completely different claim from 'this converted home is blast-proof today'. Fifty years, a sale, and a residential fit-out sit between them.",
+      "mundane_explanation": "Real hardened Cold War structures, accurately described in one respect (thick concrete somewhere) and inaccurately in another (where), by parties with a commercial interest in the impressive reading, repeated by outlets with no capacity or incentive to check. No fabrication is required at any step. This is the ordinary way a wrong number becomes universal."
+    },
+    {
+      "claim": "The Nekoma pyramid (Stanley R. Mickelsen Safeguard Complex MSR) 'is now a crypto HQ' / is an operating $500 million data centre.",
+      "origin": "Traceable to a single dated act: the 26 July 2022 announcement from the office of Governor Doug Burgum that Bitzero Blockchain Inc. had signed a binding agreement with the Cavalier County Job Development Authority to acquire the pyramid, with a stated ~$500M expected investment and 35–50 jobs. Within 48 hours the same figures appear across KFYR, Valley News Live, KNOX, Grand Forks Herald, The Center Square, CSi, Walsh County Record, EIN Presswire and DataCenterDynamics. The consumer terminus is the loveproperty/lovemoney gallery headline asserting present-tense operation, syndicated onward through Yahoo. One origin, several dozen copies.",
+      "why_hollow": "Not fabricated — hollow in the specific sense that the evidence is an ANNOUNCEMENT being reported as an ACCOMPLISHMENT. Against it: Bleeding Heartland raised management and ownership questions in February 2024, and reporting in my sweep indicates that as of November 2024, more than two years on, there was very little evidence of progress at the site and that state funds promised for it had not been used. The only source asserting present operation is a June 2025 PR Newswire release issued by the company itself, which under §2.5 is self-attesting — the author is the claimant and the probative content is the claim — and which describes 2.5MW available at a site announced for 300MW, a two-orders-of-magnitude gap that the headline framing does not survive. Nothing in the citation graph is an interconnection agreement, a permit, an assessment change, or a deed. Under CAP-2b, a FUNCTION claim with no verified instance-scope CLAIM-PROPERTY observation cannot exceed E, and that is the correct disposition. NOTE HONESTLY: this is not a refutation. It is a demonstration that the claim as circulated has no support of the kind that would settle it, and it may yet become true.",
+      "mundane_explanation": "A02/A07-adjacent: an economic-development announcement with a state political sponsor, a purchase option or staged agreement, and a small pilot deployment sufficient to keep the arrangement alive — reported by a press ecosystem that treats announcements as events. DataCenterDynamics separately reports that at least two earlier attempts to turn Atlas silos in New Mexico into secure data centres or records storage never got off the ground, which is the base rate this claim should have been read against from the start."
+    },
+    {
+      "claim": "Some Colorado Titan I complexes have been 'adapted for alternate use like data storage'.",
+      "origin": "A single unattributed clause in one enthusiast page (openroadcolorado.com, 'Titan 1 Missile Silos in Colorado'). I found no second source, no named operator, no company, no site, and no date. My targeted follow-up search for a Colorado Titan I data centre returned nothing but the same page, unrelated Titan-named companies, and a stock SEC filing for a firm called Titan Trading Analytics.",
+      "why_hollow": "It names nothing checkable. A data centre is one of the most externally visible commercial activities that can occupy a building — it needs contracted megawatts, an interconnection, a network presence, customers and usually a marketing website. The expected-record profile for an operating commercial data centre is X2–X3 across utility interconnection, county permits, assessed value and IP-transit route announcements, and NONE of it is present. Under §6.1 this is one of the cases where silence IS informative: absence of evidence for a covert federal facility carries nearly no information, but absence of evidence for a commercial data centre carries a great deal, because a commercial data centre has every incentive to be findable. This is the register's own asymmetry rule doing useful work in the direction people forget it runs.",
+      "mundane_explanation": "Almost certainly a garbled recollection of the well-documented general phenomenon of underground facilities being used for records storage and data centres — Iron Mountain at Boyers, the Kansas City limestone complexes — attached loosely to Colorado Titan I sites, which are in fact largely flooded, hazardous and under state environmental oversight for solvent contamination. The competing description in the SAME sweep — a 2024 county rescue operation inside a silo headlined 'Death around every corner' — is hard to reconcile with an operating data centre and is much better sourced."
+    },
+    {
+      "claim": "Decommissioned Atlas/Titan/Nike sites are entrances or nodes in a national network of deep underground military bases, connected by tunnels.",
+      "origin": "The DUMB corpus, whose modern American form traces to a small self-published 1990s origin set — the Sauder/Schneider '129 deep underground military bases' material, which the calibration suite carries at F-03. In my own sweep the query surfaced deepundergroundmilitarybases.com and a silo.tips PDF host of 'Secret Underground Bases', which is the same corpus recirculating. Nothing in it originates on this beat; the missile-silo attachment is an accretion onto a claim structure that predates it.",
+      "why_hollow": "Missile fields are the single worst possible substrate for this claim, and that is the interesting part. This is the most extensively surveyed, most thoroughly declassified, most completely disposed-of category of hardened American infrastructure that exists: Air Force site lists, GSA auction records, county deeds for every parcel, FUDS property records, state environmental files, NRHP nominations, HAER measured drawings, squadron veterans' associations publishing site-by-site histories, and — for the Minuteman population — a bilateral treaty verification regime under which an ADVERSARY GOVERNMENT was invited to confirm by satellite that each launcher had been destroyed and the hole left open for ninety days. The expected-record profile for a tunnel network connecting these sites would be X3 on spoil-volume accounting, X3 on construction procurement, X3 on county land records for the intervening right-of-way, and X3 on the treaty inventories. That silence is loudly informative. But §8.4 forbids R on negatives alone, and this claim earns F — SILENCE-DOMINATED, with V empty via §2.5, exactly as F-03 does. I want to be precise about the direction: the register is not saying 'no tunnels because we found nothing'. It is saying the claim has no verified support of any kind, and separately that the records which would exist do not.",
+      "mundane_explanation": "A12/A11: real, individually documented, individually disposed-of military facilities of a known typology, aggregated into an imagined system by a corpus that predates and is indifferent to their actual records. The tunnels that genuinely exist — the cableways and utility tunnels between a Titan I silo and its control dome, the tunnel junctions of a Titan II complex — are real, documented, short, and connect a site to itself."
+    },
+    {
+      "claim": "Individual former Minuteman launch facilities in the Grand Forks field survive as intact hardened structures available for purchase and conversion.",
+      "origin": "A conflation of two true things: (a) GSA did auction former 321st Missile Wing parcels to private buyers, with reported bids from about $6,000 to $17,800, reported by the Grand Forks Herald; and (b) former missile properties generally are bought and converted, which is true of Atlas and Titan sites and of Minuteman MISSILE ALERT FACILITIES. The conflation runs through the general silo-real-estate corpus rather than through any single identifiable source.",
+      "why_hollow": "The Minuteman LAUNCH FACILITIES in this population were destroyed before disposal, by treaty requirement — controlled explosive demolition with roughly 800 lb of explosives, the excavation left open for ninety days for verification. What was auctioned is in most cases the parcel and its surface remnants, not a usable subsurface structure. The two classes of property — a launch control facility with its intact underground capsule, and a launch facility with a demolished and backfilled duct — are routinely spoken of together as 'missile sites for sale' and are physically nothing alike. Recorded here because it is a live consumer-facing error rather than a fringe one: someone can lose money on it. The discriminating documents are the START elimination notifications and the GSA disposal descriptions, both enumerable.",
+      "mundane_explanation": "Two accurate facts about the same real estate market, describing two different asset classes, merged by imprecise category language. No one had to be wrong on purpose."
+    },
+    {
+      "claim": "The Adirondack Atlas F silo at Lewis, New York (556-5) houses a cosmic-ray / low-background detection facility for SUNY Plattsburgh researchers.",
+      "origin": "One Adirondack Explorer feature ('Disco, Stout and Cosmic Rays'), whose headline itself implies three separate silo afterlives across the twelve-site Plattsburgh ring. In the summary I received, the cosmic-ray use was attributed to 'Site 5 in Lewis' in one sentence while the article's broader subject includes the Au Sable Forks site 556-6.",
+      "why_hollow": "Recorded as UNRESOLVED rather than refuted, and I want the distinction preserved. The underlying activity is entirely plausible — a deep rock-cut void with low ambient background is genuinely attractive for low-background counting, and the physics literature contains many such shallow-underground facilities. What is missing is any second source: no publication, no technical report, no institutional record, no equipment-siting document names an Adirondack missile silo as a counting location. My targeted search returned only Gran Sasso, Felsenkeller, Dortmund and Argonne. Until a paper or an institutional record names the site, this is a magazine sentence, its site attribution is ambiguous between two silos twelve miles apart, and it should not be attached to either entry as a FEATURE. Flagged as a lead worth two minutes of a literature search once egress works.",
+      "mundane_explanation": "A06 — an underground space used for ordinary purposes, to which a research use is loosely or retrospectively attached; or a real but small and undocumented university project; or a correct fact attached to the wrong one of twelve nearly identical sites. All three are ordinary and none require anyone to have said anything false."
+    }
+  ],
+  "coverage_gaps": "WHAT I DID NOT COVER, ranked by how much it costs the register.\n\n1. THE ENTIRE CANONICAL SOURCE SET. Not one index was enumerated. No NARA catalog API walk of RG 77 / RG 341 / RG 342 by ancestorNaId; no DTIC search by originating lab report series (AFWL-TR, AFSWC-TR, DASA, DNA-TR, WES) which SOURCE-REGISTRY identifies as the richest corpus for hardened-structure engineering and which would settle nearly every HARDEN proposition in this file; no FUDS FeatureServer sweep filtered on Nike/Titan/Atlas/Minuteman property names, which is described as the best single geospatial source for decommissioned hardened infrastructure and which alone would produce hundreds of instance candidates with durable FUDS property-number join keys; no GSA disposal records; no county recorder queries anywhere; no NPGallery full-text search of NRHP nominations for 'blast door', 'hardened', 'shock isolation'; no USGS HTMC temporal stacks; no FCC ASR; no Chronicling America or state newspaper programs (Colorado Historic Newspapers, Wyoming, Nevada, New Mexico and Utah matter disproportionately here); no AAFM newsletter run or 'Taps for Missileers'; no Wayback CDX. Every one of these was blocked or unreachable. This is not a research plan I chose; it is the entire methodology of the register, unavailable.\n\n2. WHOLE PROGRAMS ABSENT. Titan I in Washington (568th SMS, Larson AFB — I surfaced but did not develop a complex at Royal City/Quincy reported as flooded and used for technical diving, which is a genuinely unusual afterlife worth an entry); Titan I in Idaho, California and South Dakota; the Atlas E rings at Forbes, Fairchild and Lincoln beyond the single Kansas conversion; the entire Nike population outside two Maryland sites — roughly 250 defended-area sites nationally, with Ed Thelen's register as the ready-made enumeration and an acute succession risk attached to it (he died in 2024; SOURCE-REGISTRY says mirror it now, and I endorse that as urgent); Safeguard's Missile Site Radar remote launch sites RSL-1, RSL-2 and RSL-4; the Nike Zeus and Sprint/Spartan test infrastructure at Kwajalein and White Sands; Minuteman at Whiteman, Ellsworth and Malmstrom; Peacekeeper/MX basing including the Deep Basing and Closely Spaced Basing studies, which are a PROGRAM-class opportunity of the DUCC shape — heavily documented, never built, and currently unrepresented.\n\n3. NIKE W-25, DAVIDSONVILLE, MARYLAND — deliberately left as a partial. It is now the Anne Arundel County Police Training Academy, it has a Maryland Department of the Environment Voluntary Cleanup Program document (a state regulator describing a former launch and control site for its own purposes), and it has a named scholarly monograph (Merle T. Cole's 'W-25: The Davidsonville Site and Maryland Air Defense, 1950–1974'). That combination — regulator plus scholar plus county reuse — is a stronger evidentiary structure than several candidates I did develop, and it should be first in the next cycle.\n\n4. THE CONVERSION-FAILURE POPULATION. DataCenterDynamics reports at least two failed attempts to make New Mexico Atlas silos into secure data centres or records storage. Failed conversions are systematically absent from the corpus because nobody writes about a thing that did not happen, and they are exactly what the register should collect: they establish the base rate against which every announced conversion — Nekoma included — must be read. There is no index of them. Building one is a genuine contribution and would have to be done by working GSA disposal records and county deeds forward, not by searching.\n\n5. NO SIGNED NEGATIVES. I produced no receipted negative searches. Every absence in this file is UNSEARCHED, not NEGATIVE, and per §6.2 an unsearched record class produces NO ROW — not a zero. Nothing here may be scored against any candidate as an absence.\n\n6. THE ONE THING I MOST WANT THE NEXT CYCLE TO INHERIT. For this beat the register's default epistemic posture should be INVERTED relative to the COG beats. These programs were publicly appropriated, publicly built, publicly disposed of and in the Minuteman case adversarially verified. Missing records here are surprising, and the expected-record tables should carry a silo/launch-facility profile that says so explicitly, rather than defaulting to the classified-facility charity that is correct for Greenbrier-in-1991 and wrong for an Atlas F in Cloud County."
+}
