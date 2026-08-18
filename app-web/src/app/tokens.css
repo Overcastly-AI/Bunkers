@@ -1,0 +1,132 @@
+/* ==========================================================================
+   TOKENS — DESIGN.md §2 (voices), §3 (typography), §4 (colour), §5 (spacing,
+   materials, grid), §11 (plate).
+
+   Implemented exactly as named. Nothing here is a paraphrase of the spec and
+   nothing is a value someone liked better. Where the spec gives a hex, the hex
+   is the spec's.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   §4 COLOUR — LIGHT, on bare :root.
+
+   TWO HUES, EACH WITH EXACTLY ONE MEANING. GRADE HAS NO HUE AT ALL.
+   Grade is encoded by position, letter, band word and fill state (§7). Hue is
+   reserved for the sign of an observation, plus links and hydrography.
+
+   Every token is defined here FIRST. Nothing gets its sole definition inside a
+   media query.
+   -------------------------------------------------------------------------- */
+
+:root {
+  --paper:        #FAFAF8;  /* warm near-white — paper, not screen           */
+  --paper-sunk:   #F1F0EB;  /* table header, sunken block, panel ground      */
+  --ink:          #1A1A17;  /* body, SUPPORTS ticks, grade marks    16.9:1   */
+  --ink-2:        #45433C;  /* secondary prose, editorial notes      9.7:1   */
+  --ink-3:        #6E6B62;  /* labels, meta, offsets, inert marks     5.2:1  */
+  --ink-4:        #8E8B81;  /* NON-TEXT marks only (empty flag dots)  3.4:1  */
+  --rule:         #D5D2C9;  /* DECORATIVE hairlines — may never carry info   */
+  --rule-strong:  #6E6B62;  /* INFORMATIONAL rules (rails, baselines) 5.2:1  */
+  --undercut:     #8A4B0F;  /* ochre — UNDERCUTS, corrections         6.5:1  */
+  --link:         #1A4E7A;  /* iron blue — links and hydrography ONLY 8.4:1  */
+  --screen:       rgb(26 26 23 / .10);  /* dot-screen fill, uncertainty areas */
+  --hatch:        rgb(26 26 23 / .14);  /* 45° hatch: inert, unreached span   */
+  --focus:        #1A1A17;
+
+  /* §11 — the plate's two tokens, defined on bare :root alongside the rest.
+     --field is one step warmer/darker than --paper so the plate reads as a
+     plotted sheet laid on the page rather than as a hole in it. */
+  --field:        #E9E6DC;
+  --field-ink:    #1A1A17;
+
+  /* §2 THREE VOICES.
+     mono  = this value was computed by the database
+     sans  = this sentence was written by the register
+     serif = these are the source's own words, verbatim — AND NOTHING ELSE.
+     Serif outside a quotation is a bug. It is not available for headings,
+     pull quotes, or emphasis. */
+  --font-sans:  "IBM Plex Sans", ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono:  "IBM Plex Mono", ui-monospace, "SF Mono", "Cascadia Mono", Menlo, monospace;
+  --font-serif: "IBM Plex Serif", Charter, Georgia, "Times New Roman", serif;
+
+  /* §3 TYPOGRAPHY — base 15px on a 16px root, ratio 1.2 (minor third).
+     SEVEN STEPS AND NO MORE. Nothing on the site is larger than 26px: the
+     absence of any figure big enough to be a headline is itself a design
+     statement. */
+  --t-micro: 0.6875rem;   /* 11px   · 1.36 · 600 · uppercase, .06em          */
+  --t-small: 0.78125rem;  /* 12.5px · 1.45 · 400                             */
+  --t-base:  0.9375rem;   /* 15px   · 1.55 · 400                             */
+  --t-lede:  1.0625rem;   /* 17px   · 1.50 · 400                             */
+  --t-h3:    1.0625rem;   /* 17px   · 1.35 · 600                             */
+  --t-h2:    1.3125rem;   /* 21px   · 1.30 · 600                             */
+  --t-h1:    1.625rem;    /* 26px   · 1.20 · 600                             */
+
+  /* §5 SPACING — 4 · 8 · 12 · 16 · 24 · 32 · 48 · 64. Baseline 4px. Nothing
+     larger than 64. Generous whitespace is a marketing device; an instrument
+     separates with rules and gutters. */
+  --s-1: 4px;
+  --s-2: 8px;
+  --s-3: 12px;
+  --s-4: 16px;
+  --s-5: 24px;
+  --s-6: 32px;
+  --s-7: 48px;
+  --s-8: 64px;
+
+  /* §5 THE DOCUMENT GRID */
+  --col-ref:    6rem;
+  --col-text:   46rem;
+  --col-margin: 13rem;
+  --doc-max:    72rem;
+  --measure-marginal: 13rem;
+}
+
+/* Dark REDEFINES ONLY these tokens. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:        #121210;
+    --paper-sunk:   #1B1B18;
+    --ink:          #F0EFE7;  /* 16.3:1 */
+    --ink-2:        #B8B5AA;  /* 10.0:1 */
+    --ink-3:        #85827A;  /*  5.3:1 */
+    --ink-4:        #6C6961;  /*  3.4:1 */
+    --rule:         #2E2D28;  /* solid, not alpha — dark grounds swallow 1px alpha rules */
+    --rule-strong:  #85827A;
+    --undercut:     #D9A054;  /*  8.1:1 */
+    --link:         #8CBBE0;  /*  9.1:1 */
+    --screen:       rgb(240 239 231 / .12);
+    --hatch:        rgb(240 239 231 / .16);
+    --focus:        #F0EFE7;
+    --field:        #16150F;
+    --field-ink:    #F0EFE7;
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper:        #121210;
+  --paper-sunk:   #1B1B18;
+  --ink:          #F0EFE7;
+  --ink-2:        #B8B5AA;
+  --ink-3:        #85827A;
+  --ink-4:        #6C6961;
+  --rule:         #2E2D28;
+  --rule-strong:  #85827A;
+  --undercut:     #D9A054;
+  --link:         #8CBBE0;
+  --screen:       rgb(240 239 231 / .12);
+  --hatch:        rgb(240 239 231 / .16);
+  --focus:        #F0EFE7;
+  --field:        #16150F;
+  --field-ink:    #F0EFE7;
+}
+
+/* §4 RULE DISCIPLINE, enforced in review: `--rule` may never carry information.
+   Under 1x device pixel ratio it darkens one step, because 1px hairlines vanish
+   on low-DPI panels (§21.6). */
+@media (-webkit-min-device-pixel-ratio: 1) and (max-resolution: 1dppx) {
+  :root { --rule: #C8C5BA; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --rule: #3A3934; }
+  }
+  :root[data-theme="dark"] { --rule: #3A3934; }
+}

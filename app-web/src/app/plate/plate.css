@@ -1,0 +1,306 @@
+/* ==========================================================================
+   PLATE I — the one page not on the document grid. DESIGN.md §9.7, §11, §15.
+
+   Every rule here spends a token defined in tokens.css. Nothing in this file
+   introduces a colour, a radius, a shadow or a gradient; the materials clause
+   in globals.css is global and this page is not an exception to it.
+   ========================================================================== */
+
+/* §9.7 — panel LEFT, surface RIGHT, both full-height below the running head.
+   "Never a full-bleed map with a floating sheet — the coupling is the point." */
+.plate {
+  display: grid;
+  grid-template-columns: 26rem 1fr;
+  /* Running head 36px + contents line + standing foot 24px. */
+  height: calc(100vh - 36px - 2.25rem - 24px);
+  min-height: 34rem;
+  border-top: 1px solid var(--rule);
+}
+
+.plate-panel {
+  overflow-y: auto;
+  border-inline-end: 1px solid var(--rule-strong);
+  padding: var(--s-3) var(--s-4) var(--s-6);
+  background: var(--paper);
+}
+
+/* --------------------------------------------------------------------------
+   The surface
+   -------------------------------------------------------------------------- */
+
+.plate-surface {
+  position: relative;
+  overflow: hidden;
+  /* §11 — --field is one step warmer/darker than --paper so the plate reads as
+     a plotted sheet laid on the page rather than as a hole in it. */
+  background: var(--field);
+}
+
+/*
+  The map container.
+
+  The selector is doubled deliberately. `maplibre-gl.css` ships
+  `.maplibregl-map { position: relative }`, MapLibre adds that class to this
+  very element, and the vendor sheet is bundled AFTER this one — so at equal
+  single-class specificity the vendor rule wins, the container falls back to
+  `position: relative` with no height, and it collapses to 0px. The canvas then
+  renders at the HTML default 300px and THE OVERLAY SVG IS SIZED FROM
+  `container.clientHeight`, so the graticule, the scale ticks and every
+  uncertainty mark are drawn into a zero-height viewBox and disappear.
+
+  The plate is meant to be a finished object at zero candidates — "a blank grey
+  rectangle would be the failure" — so the layout that makes the furniture
+  visible is not something a vendor sheet gets to override.
+*/
+.plate-surface .plate-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.plate-canvas-idle {
+  background: var(--field);
+}
+
+/* The overlay sits above the GL canvas and is transparent to the pointer
+   except on its own feature groups — the map must still pan under it. */
+.plate-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.plate-overlay .plate-hit {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* §16 — focus is never removed, INCLUDING ON MAP FEATURES. */
+.plate-overlay .plate-hit:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.plate-retrieving {
+  position: absolute;
+  left: var(--s-3);
+  top: var(--s-3);
+  font-size: var(--t-micro);
+  color: var(--ink-3);
+  border-top: 1px solid var(--rule);
+  padding-top: var(--s-1);
+}
+
+.plate-noscript {
+  position: absolute;
+  inset: var(--s-4);
+  font-size: var(--t-small);
+  color: var(--ink-2);
+  border: 1px solid var(--rule-strong);
+  padding: var(--s-3);
+  background: var(--paper);
+  max-width: 34rem;
+  height: fit-content;
+}
+
+/* MapLibre ships its own control chrome. None of it is used — no attribution
+   widget (the credit line is plate furniture), no navigation control, no logo.
+   These rules are belt-and-braces against a future control being added by
+   habit: the materials clause has no exceptions. */
+.maplibregl-ctrl-attrib,
+.maplibregl-ctrl-logo,
+.maplibregl-ctrl-group {
+  display: none !important;
+}
+.maplibregl-canvas:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: -2px;
+}
+
+/* --------------------------------------------------------------------------
+   Panel blocks
+   -------------------------------------------------------------------------- */
+
+.plate-head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0 var(--s-2);
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: var(--s-2);
+  margin-bottom: var(--s-3);
+}
+
+.plate-number { grid-column: 1; }
+.plate-title  { grid-column: 2; text-transform: uppercase; letter-spacing: .06em; }
+.plate-position { grid-column: 1 / -1; color: var(--ink-3); }
+
+.plate-block {
+  margin-top: var(--s-5);
+  border-top: 1px solid var(--rule);
+  padding-top: var(--s-2);
+}
+
+.plate-block-head {
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-family: var(--font-mono);
+  color: var(--ink-2);
+  margin: 0 0 var(--s-2);
+}
+
+.plate-annotation {
+  color: var(--ink-2);
+  margin-bottom: var(--s-2);
+}
+
+.plate-gate {
+  border-block: 1px solid var(--rule-strong);
+  padding-block: var(--s-2);
+  margin-block: var(--s-2);
+}
+
+.plate-margin-note,
+.plate-citation,
+.plate-credit {
+  color: var(--ink-2);
+}
+
+.plate-empty-panel {
+  color: var(--ink-3);
+}
+
+.plate-rulezero {
+  border-inline-start: 1px solid var(--rule-strong);
+  padding-inline-start: var(--s-2);
+  color: var(--ink-2);
+}
+
+/* --------------------------------------------------------------------------
+   The legend, as a table (§9.6). Same rules as every other table on the site:
+   no zebra, vertical column rules, 1px hairlines.
+   -------------------------------------------------------------------------- */
+
+.plate-legend,
+.plate-abbrev,
+.plate-notlocatable {
+  font-size: var(--t-small);
+}
+
+.plate-legend caption,
+.plate-abbrev caption {
+  caption-side: top;
+  text-align: left;
+  color: var(--ink-3);
+  padding-bottom: var(--s-1);
+}
+
+.plate-legend td,
+.plate-abbrev td,
+.plate-notlocatable td {
+  vertical-align: top;
+  padding: var(--s-1);
+  height: auto;
+}
+
+.plate-legend-symbol {
+  width: 48px;
+  padding-top: var(--s-1);
+}
+
+.plate-n {
+  text-align: right;
+  width: 2.5rem;
+}
+
+.plate-furniture {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--s-5);
+  margin-bottom: var(--s-2);
+}
+
+.plate-scale {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.plate-north {
+  display: flex;
+  align-items: center;
+  gap: var(--s-1);
+}
+
+.plate-north-note {
+  color: var(--ink-3);
+}
+
+.plate-projection {
+  color: var(--ink-2);
+  max-width: none;
+}
+
+/* A button that is a link's sibling should not look like a control panel. */
+.plate-clear {
+  font: inherit;
+  font-size: var(--t-small);
+  color: var(--link);
+  background: none;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   §15 MOBILE — "The plate is a 50/50 vertical split, map top, panel bottom,
+   panel draggable to full height." The split is CSS; the drag is the panel's
+   own scroll plus `resize`, which is a native affordance rather than a
+   bespoke gesture handler.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1023px) {
+  .plate {
+    grid-template-columns: 1fr;
+    grid-template-rows: 50% 50%;
+    height: calc(100vh - 36px - 2.25rem - 24px);
+  }
+  .plate-panel {
+    grid-row: 2;
+    border-inline-end: 0;
+    border-top: 1px solid var(--rule-strong);
+    resize: vertical;
+  }
+  .plate-surface {
+    grid-row: 1;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   §17 PRINT — "the plate renders as a static figure with its legend."
+   The GL canvas cannot be relied on to print; the panel, the legend, the
+   furniture and the projection statement all can, and they carry the
+   information. The surface prints as a ruled empty frame with a note rather
+   than as a torn bitmap.
+   -------------------------------------------------------------------------- */
+
+@media print {
+  .plate {
+    display: block;
+    height: auto;
+  }
+  .plate-panel {
+    overflow: visible;
+    border-inline-end: 0;
+    max-width: none;
+  }
+  .plate-surface {
+    height: 12cm;
+    border: 1px solid #000;
+    break-inside: avoid;
+  }
+  .plate-overlay {
+    position: absolute;
+  }
+}

@@ -1,0 +1,389 @@
+/* ==========================================================================
+   GLOBALS — the base layer. DESIGN.md §3, §5, §10, §16, §17.
+   Tokens live in tokens.css; this file spends them.
+   ========================================================================== */
+
+@import "./tokens.css";
+
+/* --------------------------------------------------------------------------
+   §5 MATERIALS — THE ANTI-SaaS CLAUSE. Global, no exceptions.
+
+   "No cards, no elevation, no rounded corners, no gradients, no glass, no
+   illustrations, no icon set beyond the nine apparatus glyphs and the five flag
+   glyphs. All separation is 1px hairlines. THIS SINGLE CONSTRAINT KILLS THE
+   DASHBOARD READ MORE EFFECTIVELY THAN ANY OTHER DECISION IN THIS DOCUMENT."
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  /* Explicitly, always: the viewer paints its own ground behind the page. */
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: var(--t-base);
+  line-height: 1.55;
+  font-weight: 400;
+  margin: 0;
+  /* §3 — tabular figures globally, INCLUDING IN SANS, so counts column-align
+     everywhere. */
+  font-variant-numeric: tabular-nums lining-nums;
+  -webkit-font-smoothing: antialiased;
+  /* §15 — the page body never scrolls horizontally. */
+  overflow-x: hidden;
+}
+
+/* §3 WEIGHTS: 400 and 600 ONLY. No 700. Emphasis is italic, uppercase-micro,
+   or a rule. */
+h1, h2, h3, h4, h5, h6, strong, b, th {
+  font-weight: 600;
+}
+
+h1 { font-size: var(--t-h1); line-height: 1.20; margin: 0 0 var(--s-4); }
+h2 { font-size: var(--t-h2); line-height: 1.30; margin: var(--s-6) 0 var(--s-3); }
+h3 { font-size: var(--t-h3); line-height: 1.35; margin: var(--s-5) 0 var(--s-2); }
+
+p { margin: 0 0 var(--s-3); max-width: var(--col-text); }
+
+a {
+  color: var(--link);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* §16 FOCUS — never removed, on every interactive element including map
+   features. */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   §2 THE THREE VOICES
+
+   mono  — this value was computed by the database
+   sans  — this sentence was written by the register
+   serif — the source's own words, verbatim, AND NOTHING ELSE ANYWHERE
+
+   `.voice-serif` has exactly one legitimate consumer: a quoted span from a
+   source document. If it appears anywhere else, that is a bug.
+   -------------------------------------------------------------------------- */
+
+.voice-mono {
+  font-family: var(--font-mono);
+  /* §3 — slashed zero. */
+  font-feature-settings: "ss02" 1;
+}
+
+.voice-sans { font-family: var(--font-sans); }
+
+.voice-serif {
+  font-family: var(--font-serif);
+  font-size: var(--t-base);
+  line-height: 1.6;
+  margin-inline-start: 16px;
+  padding-inline-start: 8px;
+  border-inline-start: 1px solid var(--rule-strong);
+}
+
+/* §3 — the micro step. Class tags, flags, units, column heads, ref codes,
+   status line. */
+.t-micro {
+  font-size: var(--t-micro);
+  line-height: 1.36;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+
+.t-small { font-size: var(--t-small); line-height: 1.45; }
+.t-lede  { font-size: var(--t-lede);  line-height: 1.50; }
+
+/* --------------------------------------------------------------------------
+   §5 THE DOCUMENT GRID
+   -------------------------------------------------------------------------- */
+
+.doc {
+  display: grid;
+  grid-template-columns:
+    [ref] var(--col-ref)
+    [text] minmax(0, var(--col-text))
+    [margin] var(--col-margin);
+  column-gap: 1.5rem;
+  max-width: var(--doc-max);
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* Wide objects — register table, plate, stave columns, telemetry tables. */
+.doc-wide { grid-column: text / -1; }
+.doc-text { grid-column: text; }
+
+/* The reference gutter. Ref codes are stable and DERIVED FROM DATA, never from
+   DOM order. */
+.doc-ref {
+  grid-column: ref;
+  justify-self: end;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  color: var(--ink-3);
+  letter-spacing: .06em;
+  padding-top: 0.35rem;
+}
+
+/* The margin column — marginal apparatus. §10.3: THERE IS NO FOOTNOTE SYSTEM
+   AND NO PAGE-BOTTOM NOTES SECTION ON THIS SITE. Every claim is adjacent to
+   its citation. */
+.doc-margin {
+  grid-column: margin;
+  font-size: var(--t-small);
+  line-height: 1.45;
+  color: var(--ink-2);
+  max-width: var(--measure-marginal);
+}
+
+@media (max-width: 1239px) { :root { --col-margin: 11rem; } }
+
+@media (max-width: 1023px) {
+  .doc { grid-template-columns: [ref] 4rem [text] minmax(0, 1fr) [margin] 0; }
+  .doc-margin {
+    grid-column: text;
+    border-inline-start: 1px solid var(--rule);
+    padding-inline-start: var(--s-3);
+    margin-block: var(--s-3);
+    max-width: var(--col-text);
+  }
+}
+
+@media (max-width: 767px) {
+  .doc { grid-template-columns: [text] minmax(0, 1fr); padding-inline: var(--s-4); }
+  .doc-wide, .doc-text, .doc-margin { grid-column: text; }
+  /* Ref codes render inline as a leading Mono span. */
+  .doc-ref {
+    grid-column: text;
+    justify-self: start;
+    text-align: left;
+    padding-top: 0;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   §5 RUNNING HEAD — not a nav bar. A book's running head, doing a book's job.
+   -------------------------------------------------------------------------- */
+
+.running-head {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  border-bottom: 2px solid var(--ink);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  padding-inline: 1.5rem;
+  max-width: var(--doc-max);
+  margin-inline: auto;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* A plain contents line. Items separated by middots. NO BUTTONS, NO CHIPS. */
+.contents-line {
+  max-width: var(--doc-max);
+  margin-inline: auto;
+  padding: var(--s-2) 1.5rem;
+  font-size: var(--t-small);
+  border-bottom: 1px solid var(--rule);
+}
+
+.contents-line a { color: var(--link); text-decoration: none; }
+.contents-line a:hover { text-decoration: underline; }
+.contents-line .sep { color: var(--ink-3); }
+
+/* Below 768px the running head keeps the name and the instrument-state field
+   and drops the descriptive tail. The head is one clipped line, so the choice
+   is which half survives the clip — and the count is the half that is
+   reporting something. */
+@media (max-width: 767px) {
+  .running-head-tail { display: none; }
+  .running-head { padding-inline: var(--s-4); }
+  .contents-line { padding-inline: var(--s-4); }
+  .standing-foot { padding-inline: var(--s-4); }
+}
+
+/* --------------------------------------------------------------------------
+   §5 STANDING FOOT — where the D-006 publication obligation is structurally
+   discharged, at the same weight and in the same voice as the table versions,
+   because that is exactly what it is: a property of the instrument's current
+   configuration.
+
+   A COLOPHON LINE, NOT A STATUS BAR. No background panel, no chrome, no
+   dismiss control. Present on every page.
+   -------------------------------------------------------------------------- */
+
+.standing-foot {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  border-top: 1px solid var(--rule);
+  background: var(--paper);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  color: var(--ink-3);
+  letter-spacing: .04em;
+  padding-inline: 1.5rem;
+  overflow-x: auto;
+  white-space: nowrap;
+  z-index: 10;
+}
+
+.standing-foot a { color: var(--ink-3); }
+
+/* --------------------------------------------------------------------------
+   §10.1 TABLES
+   -------------------------------------------------------------------------- */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: var(--t-small);
+}
+
+/* NO ZEBRA STRIPING. It is decoration and it fights the stave. Vertical column
+   rules instead — the survey-report convention. */
+th, td {
+  height: 32px;
+  padding: var(--s-1) var(--s-2);
+  text-align: left;
+  vertical-align: top;
+  border-bottom: 1px solid var(--rule);
+  border-inline-end: 1px solid var(--rule);
+}
+
+th:last-child, td:last-child { border-inline-end: 0; }
+
+thead th {
+  background: var(--paper-sunk);
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  position: sticky;
+  top: 0;
+  border-bottom: 2px solid var(--ink);
+}
+
+/* Wide tables scroll INSIDE their own region. A 1px dotted rule marks the
+   clipped edge — NO SHADOW. Native <table> semantics are never overridden. */
+.scroll-region {
+  overflow-x: auto;
+  border-inline-end: 1px dotted var(--rule);
+}
+
+/* --------------------------------------------------------------------------
+   Blocks
+   -------------------------------------------------------------------------- */
+
+/* §14.23 — the flag block: limitation / citogenesis / correction. */
+.flag-block {
+  border-inline-start: 2px solid var(--undercut);
+  padding-inline-start: var(--s-3);
+  margin-block: var(--s-4);
+  max-width: var(--col-text);
+}
+
+/* §13.1(a) — the definition line, between two rules. */
+.rule-block {
+  border-block: 1px solid var(--rule-strong);
+  padding-block: var(--s-3);
+  margin-block: var(--s-4);
+}
+
+/* §5 — section head: §n + 2px rule. */
+.section-head {
+  border-bottom: 2px solid var(--ink);
+  padding-bottom: var(--s-2);
+  margin-block: var(--s-6) var(--s-3);
+}
+
+/* §7 — descriptive list. Counts read their real value, which today is 0. */
+.dl {
+  display: grid;
+  grid-template-columns: minmax(0, 22rem) minmax(0, 1fr);
+  gap: 0;
+  margin: 0;
+  font-size: var(--t-small);
+}
+.dl dt {
+  padding: var(--s-1) var(--s-2) var(--s-1) 0;
+  border-bottom: 1px solid var(--rule);
+  color: var(--ink-2);
+}
+.dl dd {
+  margin: 0;
+  padding: var(--s-1) 0 var(--s-1) var(--s-2);
+  border-bottom: 1px solid var(--rule);
+  font-family: var(--font-mono);
+}
+
+/* §15 — the descriptive list stacks on a phone.
+
+   At 390px the two-column form (22rem term + value) leaves the value column
+   about 6px, and a value cannot render narrower than its longest word, so the
+   row pushes the document wider than the viewport and THE PAGE BODY SCROLLS
+   HORIZONTALLY — which §15 forbids outright. Stacking keeps the term/value
+   pairing, keeps the hairline between rows, and keeps native <dl> semantics. */
+@media (max-width: 767px) {
+  .dl { grid-template-columns: minmax(0, 1fr); }
+  .dl dt {
+    border-bottom: 0;
+    padding: var(--s-2) 0 0;
+  }
+  .dl dd { padding: 0 0 var(--s-2); overflow-wrap: anywhere; }
+
+  /* Same failure mode, same fix: the verdict columns keep their fixed widths
+     but the expectation text needs a floor it can actually wrap inside. */
+  .expectation { grid-template-columns: minmax(0, 1fr) 2rem 4.5rem; }
+}
+
+/* §17 MOTION — all transitions <=120ms, OPACITY ONLY. No hover animation, no
+   scroll effects, no parallax, no skeleton shimmer. */
+* { transition-duration: 120ms; transition-property: opacity; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+
+/* --------------------------------------------------------------------------
+   §17 PRINT — A FIRST-CLASS DELIVERABLE.
+   "A finding aid that cannot print is not a finding aid."
+   -------------------------------------------------------------------------- */
+
+@media print {
+  body { background: #fff; color: #000; }
+  .standing-foot { position: static; border-top: 1px solid #000; }
+  .doc { grid-template-columns: [ref] 5rem [text] 1fr; max-width: none; }
+  /* The margin column folds into the text block. */
+  .doc-margin { grid-column: text; border-inline-start: 1px solid #999; }
+  /* URLs print after links. */
+  a[href^="http"]::after { content: " <" attr(href) ">"; font-size: 90%; }
+  thead th { position: static; }
+}

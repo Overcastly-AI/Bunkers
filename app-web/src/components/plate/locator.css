@@ -1,0 +1,33 @@
+/* FIG. n — the locator figure, in the entry sheet's 13rem margin column.
+   DESIGN.md §5 (the document grid), §9, §21.7. No card, no border-radius, no
+   shadow: the figure is a ruled frame and a caption, which is what a figure in
+   a survey report is. */
+
+.locator-figure {
+  margin: 0 0 var(--s-3);
+  max-width: var(--col-margin);
+}
+
+.locator-caption {
+  display: block;
+  margin-top: var(--s-1);
+  color: var(--ink-3);
+  line-height: 1.36;
+}
+
+/* §21.7 — "The margin column is dead weight between 768 and 1024px. Tablets get
+   inline apparatus and LOSE THE LOCATOR FIGURE and the stemma. Accepted."
+   Stated in CSS as it is stated in the specification, rather than shrinking the
+   figure until its scale bar is unreadable. */
+@media (max-width: 1023px) {
+  .locator-figure {
+    display: none;
+  }
+}
+
+@media print {
+  .locator-figure {
+    display: block;
+    break-inside: avoid;
+  }
+}

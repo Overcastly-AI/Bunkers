@@ -1,0 +1,762 @@
+/* ==========================================================================
+   COMPONENTS — the register index, the entry sheet, the lineage spine and the
+   claims register. DESIGN.md §5, §6, §7, §10, §12, §13, §15, §16, §17.
+
+   `globals.css` holds the base layer and the tokens; this file spends them on
+   the components those pages are built from. Nothing here reintroduces a
+   material the anti-SaaS clause removed: no radius, no shadow, no gradient, no
+   card, no pill. All separation is 1px hairlines and gutters.
+
+   Two rules govern every declaration below and both are checkable:
+
+     GRADE HAS NO HUE. There is no `color` on any grade mark in this file. The
+     letter is `--ink`, the band word is `--ink`, the mark is `--ink`, at every
+     band. Setting `filter: grayscale(1)` on the page must change nothing that
+     carries meaning.
+
+     NOTHING FADES WITH DESCENDING GRADE. There is no rule anywhere in this
+     file keyed to a grade value, so an F row cannot be styled differently from
+     an A row — the stylesheet has no way to know which is which.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Utilities
+   -------------------------------------------------------------------------- */
+
+/* Visually hidden, still read aloud, still found by in-page search in most
+   browsers. Never used to hide something a sighted reader needs. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.stave { display: block; }
+
+/* §18.2 — the ruled block where rows would be. */
+.empty-block {
+  border-block: 1px solid var(--rule-strong);
+  padding-block: var(--s-5);
+  margin-block: var(--s-4);
+  max-width: var(--col-text);
+}
+.empty-block p { margin-bottom: var(--s-3); }
+.empty-block p:last-child { margin-bottom: 0; }
+
+/* A prose-bearing descriptive list, for definitions rather than for values. */
+.dl-prose { margin: 0 0 var(--s-5); }
+.dl-prose > div {
+  border-bottom: 1px solid var(--rule);
+  padding-block: var(--s-2);
+}
+.dl-prose dt { color: var(--ink-2); }
+.dl-prose dd { margin: var(--s-1) 0 0; max-width: var(--col-text); }
+
+/* --------------------------------------------------------------------------
+   §7 GRADE OUTSIDE THE STAVE — letter · band word · fill state · position.
+   Four redundant channels and no hue. A stave is NEVER the sole rendering of a
+   grade on a detail page: these always print adjacent.
+   -------------------------------------------------------------------------- */
+
+.grade-lw {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  white-space: nowrap;
+}
+
+.grade-letter {
+  font-size: var(--t-base);
+  font-weight: 600;
+  color: var(--ink);
+  /* Fixed advance so a column of letters aligns. */
+  font-variant-numeric: tabular-nums;
+  min-width: 1ch;
+  display: inline-block;
+}
+
+.grade-band {
+  color: var(--ink);
+}
+
+.grade-ceiling {
+  color: var(--ink-3);
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   §13.1(b) HOW TO READ A STAVE — the permanent legend. Not collapsible.
+   -------------------------------------------------------------------------- */
+
+.stave-legend {
+  border-block: 1px solid var(--rule-strong);
+  padding-block: var(--s-4);
+  margin-block: var(--s-5);
+}
+
+.stave-legend-scroll { overflow-x: auto; padding-bottom: var(--s-2); }
+.stave-legend-figure { display: block; }
+
+.legend-compartments {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+  gap: var(--s-2) var(--s-4);
+  margin: var(--s-3) 0;
+}
+.legend-compartments dt { color: var(--ink); }
+.legend-compartments dd { margin: 0; color: var(--ink-2); }
+
+.legend-note { max-width: var(--col-text); color: var(--ink-2); }
+
+.band-table td:first-child { width: 2.5rem; }
+.band-table caption { text-align: left; padding-block: var(--s-2); color: var(--ink-2); }
+
+/* --------------------------------------------------------------------------
+   §13.1(c) THE FILTER STRIP — a plain <form> GET. No chips, no pills.
+   -------------------------------------------------------------------------- */
+
+.filter-strip {
+  border-top: 1px solid var(--rule-strong);
+  margin-block: var(--s-4) 0;
+}
+
+.filter-details > summary {
+  cursor: pointer;
+  padding-block: var(--s-2);
+  color: var(--ink);
+}
+
+.facet-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+  gap: var(--s-3) var(--s-4);
+  padding-block: var(--s-3);
+  border-top: 1px solid var(--rule);
+}
+
+.facet { border: 0; margin: 0; padding: 0; min-width: 0; }
+.facet legend { color: var(--ink-3); padding: 0; }
+.facet-options { display: flex; flex-direction: column; gap: 2px; margin-top: var(--s-1); }
+.facet-option { display: flex; align-items: baseline; gap: var(--s-2); }
+.facet-option input[type="checkbox"] { margin: 0; accent-color: var(--ink); }
+.facet-option input[type="number"] { width: 5rem; }
+.facet-gloss { color: var(--ink-3); }
+
+.filter-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  padding-block: var(--s-2);
+  border-top: 1px solid var(--rule);
+}
+.filter-actions button {
+  font: inherit;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  font-weight: 600;
+  background: var(--paper-sunk);
+  color: var(--ink);
+  border: 1px solid var(--rule-strong);
+  padding: var(--s-1) var(--s-3);
+  cursor: pointer;
+}
+
+/* The status line. Present and COMPUTING at zero candidates, never printed. */
+.status-line {
+  border-block: 1px solid var(--rule-strong);
+  padding-block: var(--s-2);
+  color: var(--ink-2);
+}
+
+/* --------------------------------------------------------------------------
+   §13.1(d) THE CATALOGUE TABLE
+   -------------------------------------------------------------------------- */
+
+.marks-toggle { color: var(--ink-2); margin-block: var(--s-3) var(--s-2); }
+
+.register-table-region { max-width: 100%; }
+.register-table { min-width: 60rem; }
+.register-table caption {
+  text-align: left;
+  padding-block: var(--s-2);
+  color: var(--ink-2);
+  max-width: var(--col-text);
+}
+
+.register-table thead th a { color: var(--ink); text-decoration: none; }
+.register-table thead th a:hover { text-decoration: underline; }
+
+/* Two header rows: the second sits directly beneath the first when stuck. */
+.register-table thead tr:first-child th { top: 0; }
+.matrix-head-row th { top: 32px; }
+
+.matrix-group-head {
+  text-align: left;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  font-family: var(--font-sans);
+  font-size: var(--t-micro);
+}
+/* §21.4 — the loss is disclosed IN THE COLUMN HEADER, where a reader would
+   otherwise infer completeness. */
+.matrix-disclosure {
+  display: block;
+  font-weight: 400;
+  color: var(--ink-2);
+  text-transform: none;
+  letter-spacing: normal;
+  max-width: 34rem;
+  padding-top: 2px;
+}
+
+.matrix-col-head { width: 22px; padding-inline: 2px; }
+.matrix-col-head a { color: var(--ink); text-decoration: none; }
+
+.matrix-cell {
+  padding: var(--s-1) 2px;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+.matrix-link {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--ink);
+  margin-inline-end: 1px;
+}
+.matrix-letter {
+  display: inline-block;
+  min-width: 1ch;
+  font-weight: 600;
+  color: var(--ink);
+}
+.matrix-overflow { color: var(--ink); font-size: var(--t-micro); }
+
+/* Sticky ref + name so a wide matrix stays readable while it scrolls. */
+.register-table .col-ref,
+.claims-table .col-ref {
+  position: sticky;
+  left: 0;
+  background: var(--paper);
+  z-index: 2;
+  white-space: nowrap;
+}
+.register-table .col-name {
+  position: sticky;
+  left: 5rem;
+  background: var(--paper);
+  z-index: 1;
+  min-width: 14rem;
+}
+.aliases { color: var(--ink-3); text-transform: none; letter-spacing: normal; font-style: italic; }
+
+/* --------------------------------------------------------------------------
+   THE ENTRY SHEET
+   -------------------------------------------------------------------------- */
+
+.entity-head { border-bottom: 2px solid var(--ink); padding-bottom: var(--s-2); }
+
+/* §0 HEAD carries the entry's name at the h1 step whether it is marked up as
+   h1 or h2. The heading LEVEL is a document-outline decision — one page title
+   per page, so a nested specimen sheet drops to h2 — and it must not drag the
+   typographic step with it. Seven steps, chosen by role, not by tag. */
+.entity-title {
+  font-size: var(--t-h1);
+  line-height: 1.20;
+  font-weight: 600;
+  margin: 0 0 var(--s-4);
+}
+.entity-aliases { color: var(--ink-2); }
+.entity-suppression { color: var(--ink-2); max-width: var(--col-text); }
+
+.scope-sentence { max-width: var(--col-text); }
+
+/* §3 — the stave column. Position stability is what makes the grid comparable:
+   FUNC is always the seventh row, so an eye trained on one entry reads every
+   entry. */
+.stave-column { margin-block: var(--s-3) var(--s-5); }
+.stave-row {
+  display: grid;
+  grid-template-columns: 4.5rem 324px minmax(9rem, auto) minmax(0, 1fr);
+  align-items: center;
+  gap: var(--s-3);
+  padding-block: var(--s-1);
+  border-bottom: 1px solid var(--rule);
+  overflow-x: auto;
+}
+.stave-row-ref { color: var(--ink-3); text-decoration: none; font-size: var(--t-micro); }
+.stave-row-ref:hover { text-decoration: underline; }
+.stave-row-mark { min-width: 324px; }
+.stave-row-statement { color: var(--ink-2); }
+.stave-column-note { color: var(--ink-2); max-width: var(--col-text); margin-top: var(--s-3); }
+
+/* The labelled rule. PROGRAM and ORIGIN do not describe the structure, and the
+   rule says so rather than leaving the reader to infer it. */
+.unclamped-rule {
+  border-top: 1px solid var(--rule-strong);
+  margin-top: var(--s-4);
+  padding-top: var(--s-2);
+  color: var(--ink);
+}
+
+/* §4 — the proposition detail block. */
+.prop-block {
+  border-top: 1px solid var(--rule-strong);
+  padding-block: var(--s-4);
+  scroll-margin-top: 72px;
+}
+.prop-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--s-3);
+}
+.prop-ref { color: var(--ink-3); font-size: var(--t-micro); }
+.prop-class { font-weight: 600; }
+.prop-stave { overflow-x: auto; }
+.prop-statement { max-width: var(--col-text); margin-block: var(--s-2); }
+.prop-null,
+.prop-arithmetic,
+.prop-limiting,
+.prop-counts,
+.prop-debt,
+.prop-ceiling-reason {
+  max-width: var(--col-text);
+  margin-block: var(--s-1);
+  color: var(--ink-2);
+}
+.prop-arithmetic { color: var(--ink); overflow-wrap: anywhere; }
+.prop-caps > div { border-bottom: 1px solid var(--rule); padding-block: var(--s-1); }
+.prop-caps dt { color: var(--ink); }
+.prop-caps dd { margin: 0; color: var(--ink-2); max-width: var(--col-text); }
+
+/* §7 — the receipt list. */
+.receipt-counts { color: var(--ink-2); padding-block: var(--s-2); }
+.receipt-list { list-style: none; margin: 0; padding: 0; }
+
+.receipt {
+  border-top: 1px solid var(--rule);
+  padding-block: var(--s-2);
+}
+.receipt-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-2);
+  font-size: var(--t-small);
+}
+.receipt-key { color: var(--ink-3); min-width: 3ch; }
+/* Membership set is the FIRST TOKEN in a fixed cell, so a column of sixty rows
+   can be counted by eye. */
+.receipt-membership {
+  min-width: 3.5ch;
+  display: inline-block;
+  font-weight: 600;
+  color: var(--ink);
+}
+.receipt-weight, .receipt-d, .receipt-tier { color: var(--ink); }
+.receipt-title { flex: 1 1 16rem; min-width: 0; overflow-wrap: anywhere; }
+.receipt-state { color: var(--ink); white-space: nowrap; }
+.receipt-meta { color: var(--ink-2); padding-top: 2px; overflow-wrap: anywhere; }
+
+/* INERT and V0 render AT THE SAME SIZE AND THE SAME INK as V rows,
+   distinguished by a hatched left margin rule. They are never greyed out and
+   never collapsed by default: greying is deletion by other means. */
+.receipt-inert {
+  position: relative;
+  padding-inline-start: var(--s-3);
+}
+/* The hatch is the `#hatch45` SVG pattern, drawn as an element rather than as
+   a CSS gradient: §5 removes gradients outright, and a pattern is theme-aware,
+   prints, and survives greyscale where a background image cannot. */
+.receipt-hatch {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 6px;
+  height: 100%;
+}
+
+/* The `−` glyph and the word UNDERCUTS carry the meaning; the ochre is the
+   third, redundant encoding and never the only one. */
+.receipt-undercut .receipt-weight,
+.receipt-undercut .receipt-membership { color: var(--undercut); }
+
+.receipt-exclusion { color: var(--ink-2); max-width: var(--col-text); padding-block: var(--s-1); }
+.receipt-binding, .receipt-negative { color: var(--ink-2); max-width: var(--col-text); }
+
+/* THE QUOTED SPAN IS THE PAYLOAD and carries the most visual weight on the
+   page. Serif has exactly one job on this site and this is it. */
+.quoted {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--s-3);
+  padding-block: var(--s-2);
+}
+.quoted blockquote {
+  font-family: var(--font-serif);
+  font-size: var(--t-base);
+  line-height: 1.6;
+  margin: 0 0 0 16px;
+  padding-inline-start: 8px;
+  border-inline-start: 1px solid var(--rule-strong);
+  max-width: var(--col-text);
+  flex: 1 1 auto;
+}
+/* The offsets are the proof a deterministic, non-LLM locator found the string. */
+.quoted-offsets { color: var(--ink-3); white-space: nowrap; padding-top: 2px; }
+
+.copy-hash {
+  font: inherit;
+  font-family: var(--font-mono);
+  background: none;
+  border: 0;
+  padding: 0;
+  color: var(--ink-2);
+  cursor: pointer;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+.copy-ack { color: var(--ink-3); }
+
+.apparatus-for-prop, .lineage-for-prop, .movement-for-prop { margin-block: var(--s-5); }
+
+.silence-prose { color: var(--ink-2); margin-block: var(--s-2); padding-inline-start: var(--s-4); }
+
+.citation { max-width: var(--col-text); overflow-wrap: anywhere; }
+
+/* --------------------------------------------------------------------------
+   §12 THE LINEAGE SPINE
+   -------------------------------------------------------------------------- */
+
+.lineage { margin-block: var(--s-4); }
+.lineage-sentence { max-width: var(--col-text); }
+.lineage-delta-gloss { color: var(--ink-2); max-width: var(--col-text); }
+
+/* A HORIZONTAL RULE IS THE LINEAGE BOUNDARY. Three independent lineages =
+   three blocks. A reader counting blocks is counting L. Separate BLOCKS, never
+   separate colours. */
+.lineage-block {
+  border-top: 1px solid var(--rule-strong);
+  padding-block: var(--s-3);
+}
+
+.lineage-table { min-width: 42rem; }
+.lineage-table caption { text-align: left; padding-block: var(--s-2); color: var(--ink-3); }
+.lineage-tree { white-space: normal; }
+.lineage-connector { color: var(--ink-3); padding-inline-end: var(--s-1); }
+.lineage-indent { display: inline; }
+.lineage-date { color: var(--ink-3); }
+.lineage-siglum { color: var(--ink-3); }
+.lineage-cito, .lineage-cycle { color: var(--undercut); }
+.lineage-note-row td { color: var(--ink-2); border-bottom: 1px solid var(--rule); }
+.lineage-origin-row td { border-top: 0; }
+.lineage-collapsed-row td { border-bottom: 1px solid var(--rule-strong); }
+
+/* THE RIGHT-HAND VERDICT COLUMN is the device that makes this readable by
+   someone who has never heard of citogenesis. It is a column of one word. */
+.lineage-verdict {
+  text-align: right;
+  white-space: nowrap;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.lineage-toomany { border-top: 1px solid var(--rule-strong); padding-top: var(--s-3); }
+
+/* --------------------------------------------------------------------------
+   §10 THE STEP CHART
+   -------------------------------------------------------------------------- */
+
+.step-chart { margin-block: var(--s-3); }
+.movement-log { margin: var(--s-3) 0; padding-inline-start: var(--s-5); color: var(--ink-2); }
+.movement-log li { padding-block: 2px; }
+.drift-toggle > summary { cursor: pointer; padding-block: var(--s-2); color: var(--ink); }
+
+/* --------------------------------------------------------------------------
+   §13.3 THE CLAIMS REGISTER — styled IDENTICALLY to `/`. Not a graveyard.
+   There is no declaration in this block that a row's grade can reach.
+   -------------------------------------------------------------------------- */
+
+.claims-table { min-width: 68rem; }
+.claims-table caption {
+  text-align: left;
+  padding-block: var(--s-2);
+  color: var(--ink-2);
+  max-width: var(--col-text);
+}
+.claims-claim { min-width: 16rem; }
+.claims-grade { white-space: nowrap; }
+.claims-grade .stave-tick { display: inline-block; vertical-align: middle; margin-inline-end: var(--s-2); }
+.claims-origin-grade { display: inline-block; margin-inline-end: var(--s-2); }
+
+/* --------------------------------------------------------------------------
+   §18 SPECIMEN CONTAINMENT
+   -------------------------------------------------------------------------- */
+
+.specimen { position: relative; padding-inline-start: 14px; }
+
+/* Mechanism 4 — the full-height hatched left margin rule, running the length
+   of the page. */
+.specimen-hatch {
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: 0;
+  width: 6px;
+  height: 100%;
+}
+
+/* Mechanism 3 — the persistent header rule. Not a banner, not dismissible, not
+   styled as a warning: a statement of what the sheet is. */
+.specimen-rule {
+  border-block: 2px solid var(--ink);
+  padding-block: var(--s-2);
+  padding-inline: 1.5rem;
+  max-width: var(--doc-max);
+  margin-inline: auto;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+.specimen-residual { color: var(--ink-2); max-width: var(--col-text); }
+
+/* --------------------------------------------------------------------------
+   §15 MOBILE — the page body never scrolls horizontally; wide objects scroll
+   inside their own focusable region with a dotted rule at the clipped edge.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 1023px) {
+  .stave-row {
+    grid-template-columns: 4.5rem 324px minmax(0, 1fr);
+    row-gap: var(--s-1);
+  }
+  .stave-row-statement { grid-column: 2 / -1; }
+}
+
+@media (max-width: 767px) {
+  .stave-row {
+    display: block;
+    padding-block: var(--s-2);
+  }
+  .stave-row-mark { min-width: 0; overflow-x: auto; }
+  .register-table .col-name { position: static; }
+  .legend-compartments { grid-template-columns: 1fr 1fr; }
+  .quoted { display: block; }
+  .quoted-offsets { display: block; padding-inline-start: 24px; }
+}
+
+/* --------------------------------------------------------------------------
+   §17 PRINT — staves print as vector SVG at true size; ref codes stay in the
+   gutter; the marginal apparatus folds into the text block.
+   -------------------------------------------------------------------------- */
+
+@media print {
+  .filter-strip, .marks-toggle { display: none; }
+  .scroll-region { overflow: visible; border: 0; }
+  .register-table, .claims-table, .lineage-table { min-width: 0; }
+  .register-table .col-ref,
+  .register-table .col-name,
+  .claims-table .col-ref { position: static; }
+  .filter-details[open] > summary { display: none; }
+  .drift-toggle, .filter-details { display: block; }
+  .specimen-hatch { display: none; }
+  .specimen-rule { border-block: 2px solid #000; }
+  .prop-block { break-inside: avoid; }
+}
+
+/* --------------------------------------------------------------------------
+   §15 THE STAVE LIST — the register table transposed. `?view=list`.
+   The one element that GAINS from a narrow column, because staves stack
+   rather than tile.
+   -------------------------------------------------------------------------- */
+
+.stave-list { list-style: none; margin: 0; padding: 0; }
+
+.stave-list-entry {
+  border-top: 1px solid var(--rule-strong);
+  padding-block: var(--s-3);
+}
+.stave-list-name { font-size: var(--t-lede); }
+.stave-list-name .voice-mono { color: var(--ink-3); }
+.stave-list-meta { color: var(--ink-2); padding-block: 2px; }
+
+.stave-list-block { margin-top: var(--s-2); }
+.stave-list-line {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+  min-height: 16px;
+  border-bottom: 1px solid var(--rule);
+  padding-block: 1px;
+}
+.stave-list-tag {
+  flex: 0 0 3.4rem;
+  font-size: var(--t-micro);
+  color: var(--ink-3);
+  letter-spacing: .05em;
+}
+.stave-list-mark {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  flex: 1 1 auto;
+  min-width: 0;
+  text-decoration: none;
+  color: var(--ink);
+}
+.stave-list-mark .stave-micro { width: 100%; max-width: 212px; height: 16px; flex: 0 1 212px; }
+.stave-list-absent { color: var(--ink-3); }
+
+.view-toggle { color: var(--ink-2); margin-block: var(--s-2); }
+
+/* --------------------------------------------------------------------------
+   §5, §10.3 — THE PROSE PAGES: /method, /limits, /decisions, /corrections,
+   /sources, /telemetry, /api.
+
+   These carry no component of their own beyond the apparatus tag and the ¶
+   anchor. They are the document grid, the three voices and the rules — which is
+   the point: the methodology pages are primary content for this project, and
+   they are set in the same instrument as the data pages rather than in a
+   separate "marketing" idiom.
+   -------------------------------------------------------------------------- */
+
+/* §5 — "Hover/focus reveals a ¶ anchor linking to that block." The anchor is a
+   real <a> in the DOM at all times (§16: no hover-only content anywhere); only
+   the ¶ affordance is revealed, and the ref code itself is always readable. */
+.ref-anchor {
+  color: var(--ink-3);
+  text-decoration: none;
+}
+.ref-anchor:hover,
+.ref-anchor:focus-visible {
+  color: var(--ink);
+  text-decoration: underline;
+}
+.ref-anchor::after {
+  content: " ¶";
+  opacity: 0;
+}
+.ref-anchor:hover::after,
+.ref-anchor:focus-visible::after {
+  opacity: 1;
+}
+
+/* The 5-character apparatus tag carried by every editorial sentence. */
+.apparatus-tag {
+  font-size: var(--t-micro);
+  color: var(--ink-3);
+  letter-spacing: .04em;
+  margin-inline-end: var(--s-1);
+}
+
+/* A numbered, individually citable clause — L-1 … L-19, C-001 …, D-001 …
+   The number is Mono because it is an address, and the address is the whole
+   reason the clause is set as its own block rather than as a paragraph. */
+.clause {
+  border-top: 1px solid var(--rule);
+  padding-block: var(--s-4) var(--s-2);
+  margin: 0;
+  max-width: var(--col-text);
+}
+.clause:first-of-type { border-top: 1px solid var(--rule-strong); }
+.clause-id {
+  font-family: var(--font-mono);
+  font-size: var(--t-micro);
+  letter-spacing: .06em;
+  color: var(--ink-3);
+  display: block;
+  margin-bottom: var(--s-1);
+}
+.clause-title {
+  font-size: var(--t-h3);
+  line-height: 1.35;
+  font-weight: 600;
+  margin: 0 0 var(--s-2);
+  max-width: var(--col-text);
+}
+.clause p { margin-bottom: var(--s-2); }
+.clause p:last-child { margin-bottom: 0; }
+
+/* A definition run for the vocabulary sections on /method: term in Mono
+   because it is a value the database stores, gloss in Sans because the gloss
+   is the register talking. */
+.defn {
+  display: grid;
+  grid-template-columns: minmax(0, 11rem) minmax(0, 1fr);
+  column-gap: var(--s-4);
+  border-bottom: 1px solid var(--rule);
+  padding-block: var(--s-2);
+}
+.defn > dt {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  color: var(--ink);
+}
+.defn > dd { margin: 0; font-size: var(--t-small); color: var(--ink-2); }
+
+@media (max-width: 767px) {
+  .defn { grid-template-columns: minmax(0, 1fr); }
+  .defn > dd { margin-top: var(--s-1); }
+}
+
+/* §13.5 — an expectation printed BESIDE its observation. The pass/fail mark is
+   a glyph AND a word, never a colour: "state by word + glyph, never by
+   colour". */
+.expectation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4rem 6rem;
+  column-gap: var(--s-3);
+  align-items: baseline;
+  border-bottom: 1px solid var(--rule);
+  padding-block: var(--s-2);
+  font-size: var(--t-small);
+}
+.expectation-mark {
+  font-family: var(--font-mono);
+  text-align: center;
+}
+.expectation-word {
+  font-size: var(--t-micro);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-2);
+}
+
+/* The sigla key on /sources. A siglum is an address, so it is Mono and it is
+   the first column, exactly as in a critical edition's witness list. */
+.siglum { font-family: var(--font-mono); white-space: nowrap; }
+
+/* A flag block that is a genuine warning about the instrument rather than
+   about a datum keeps the --undercut rule but gains a heading slot. */
+.flag-block > .flag-head {
+  font-size: var(--t-micro);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--undercut);
+  margin-bottom: var(--s-2);
+  font-weight: 600;
+}
+
+/* A machine block: endpoints, shapes, curl lines. Mono throughout because
+   every line of it is a value the database computes or a string a machine
+   consumes. */
+.machine {
+  font-family: var(--font-mono);
+  font-size: var(--t-small);
+  background: var(--paper-sunk);
+  border: 1px solid var(--rule);
+  padding: var(--s-3);
+  margin-block: var(--s-3);
+  max-width: var(--col-text);
+  overflow-x: auto;
+  white-space: pre;
+}

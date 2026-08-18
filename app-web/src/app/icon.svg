@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" shape-rendering="crispEdges">
+  <!--
+    THE TAB MARK — STAVE-TICK, the index mark of DESIGN.md §6.3, at icon scale.
+
+    Not an illustration and not a logo. §5 bars "any icon outside the nine
+    apparatus glyphs and the five flag glyphs", so the tab mark is the
+    register's own atom rather than a drawing of a bunker: a rail, six ranked
+    stops, and one filled grade bar sitting at the top stop.
+
+    It carries no hue, because §7 gives grade no hue and this mark is a grade
+    mark. It inverts by theme rather than by tinting, so it survives a dark tab
+    strip and a 1-bit render alike.
+  -->
+  <style>
+    :root { color-scheme: light dark; }
+    .ink { fill: #1A1A17; }
+    .rule { fill: #6E6B62; }
+    @media (prefers-color-scheme: dark) {
+      .ink { fill: #F0EFE7; }
+      .rule { fill: #85827A; }
+    }
+  </style>
+
+  <!-- Rail: 1px informational rule, --rule-strong. -->
+  <rect class="rule" x="7" y="4" width="2" height="24" />
+
+  <!-- Six ranked stops at 4px pitch. Nothing exists below F: F is the floor. -->
+  <rect class="rule" x="9" y="5" width="3" height="1" />
+  <rect class="rule" x="9" y="9" width="3" height="1" />
+  <rect class="rule" x="9" y="13" width="3" height="1" />
+  <rect class="rule" x="9" y="17" width="3" height="1" />
+  <rect class="rule" x="9" y="21" width="3" height="1" />
+  <rect class="rule" x="9" y="25" width="3" height="1" />
+
+  <!-- The grade mark: full ink, at a stop. An F square is exactly as black. -->
+  <rect class="ink" x="11" y="11" width="14" height="5" />
+</svg>
