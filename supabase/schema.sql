@@ -146,7 +146,14 @@ create extension if not exists pg_trgm;
 create extension if not exists btree_gist;
 
 -- ---------------------------------------------------------------------
--- Schemas. PostgREST is pointed at `api` ONLY; core/ingest/registry have no
+-- Schemas. PostgREST is pointed at `api` ONLY; core/ingest/registry are not
+-- served over REST at all. That is NOT automatic and NOT a property of these
+-- CREATE SCHEMA statements -- on a stock Supabase project PostgREST defaults to
+-- exposing `public, graphql_public`, which would leave every view below
+-- unreachable while serving ~965 PostGIS functions in `public` instead. The
+-- statement that actually makes the claim above true is the
+-- `alter role authenticator set pgrst.db_schemas` in §20 at the foot of this
+-- file. Do not delete it, and do not assume a fresh project inherits it.
 create schema if not exists registry;   -- reviewed-write curated tables
 create schema if not exists core;       -- canonical evidence, grades
 create schema if not exists ingest;     -- acquisition + adjudication plumbing
@@ -3156,7 +3163,21 @@ returns table (
   uncertainty_radius_m double precision,
   claimed_place_name text,
   suppression_reason text)
-language plpgsql stable as $$
+language plpgsql stable
+-- PG17 PIN. PostgreSQL 17 runs maintenance operations (REFRESH MATERIALIZED
+-- VIEW, CREATE INDEX, REINDEX, CLUSTER, VACUUM, ANALYZE) as security-restricted
+-- operations with search_path forced to `pg_catalog, pg_temp`. This body
+-- references the PostGIS `geometry`/`geography` types and st_buffer()
+-- unqualified, and a PL/pgSQL body is parsed at EXECUTION time -- so without
+-- this pin `refresh materialized view api.map_feature` dies with
+-- `type "geometry" does not exist` and the whole map goes with it.
+-- `public` AND `extensions` are both named on purpose: PostGIS is currently
+-- installed in `public` (it is a non-relocatable extension, so
+-- `alter extension postgis set schema extensions` is refused by the server),
+-- but naming both keeps this correct if it is ever reinstalled into
+-- `extensions` on a clean apply.
+set search_path = core, registry, public, extensions
+as $$
 declare ga core.geometry_assertion; lg core.grade; aa registry.admin_area; rad double precision;
 begin
   select * into ga from core.geometry_assertion
@@ -3334,7 +3355,11 @@ create or replace function api.map_viewport(
   min_grade core.grade default 'D',
   typologies core.typology[] default null,
   countries text[] default null)
-returns jsonb language sql stable parallel safe security invoker as $$
+returns jsonb language sql stable parallel safe security invoker
+-- PG17 PIN -- see core.render_geometry above. Unqualified st_makeenvelope /
+-- st_asgeojson / st_x / st_y and the `geometry` type.
+set search_path = api, core, registry, public, extensions
+as $$
   with bbox as (select st_makeenvelope(west, south, east, north, 4326) as g)
   select case when zoom <= 9 then
     jsonb_build_object('mode','clusters','zoom',zoom,
@@ -3385,7 +3410,12 @@ $$;
 -- STORED geom_3857 so the GiST index is usable; transforming inside the
 -- predicate would force a sequential scan on every tile request.
 create or replace function api.map_tile(z integer, x integer, y integer)
-returns bytea language sql stable parallel safe security invoker as $$
+returns bytea language sql stable parallel safe security invoker
+-- PG17 PIN -- see core.render_geometry above. Unqualified st_tileenvelope /
+-- st_asmvtgeom / st_asmvt AND the PostGIS `&&` bbox-overlap operator, which is
+-- resolved through search_path exactly like a function name.
+set search_path = api, core, registry, public, extensions
+as $$
   with env as (select st_tileenvelope(z, x, y) as g),
   src as (
     select f.entity_id, f.slug, f.canonical_name, f.exist_grade, f.exist_rank,
@@ -3913,7 +3943,11 @@ grant execute on function core.evaluate_proposition(uuid),
 -- A candidate detail payload in one round trip: the proposition table, the
 -- evidence rows with receipts, the alternatives, the search receipts.
 create or replace function api.candidate_detail(p_slug text)
-returns jsonb language sql stable security invoker as $$
+returns jsonb language sql stable security invoker
+-- PG17 PIN -- see core.render_geometry above. Unqualified st_asgeojson and the
+-- `geometry` type flow in from core.render_geometry's result columns.
+set search_path = api, core, registry, public, extensions
+as $$
   select jsonb_build_object(
     'entity', jsonb_build_object(
       'entity_id', e.entity_id, 'slug', e.slug, 'name', e.canonical_name,
@@ -4131,3 +4165,38 @@ on conflict do nothing;
 
 insert into registry.scorer_model (scorer_model_id, model_family, vendor, role) values
   ('bootstrap-curator','human','n/a','CURATOR');
+
+
+-- =====================================================================
+-- §20  API EXPOSURE -- which schemas PostgREST actually serves
+-- =====================================================================
+--
+-- Everything above assumes PostgREST serves `api` and nothing else. Without
+-- the statement below that assumption is simply false: a stock Supabase
+-- project runs PostgREST with `db-schemas = public, graphql_public`, so
+--   * none of the 9 api views, 2 matviews or 3 api RPCs is reachable, and
+--   * `public` is served instead -- which, because PostGIS installs into
+--     `public` (see the `create extension` lines at the top of this file),
+--     publishes roughly 965 PostGIS functions as anonymous RPC endpoints,
+--     among them three SECURITY DEFINER overloads of st_estimatedextent, plus
+--     the RLS-disabled table `public.spatial_ref_sys`.
+--
+-- PostgREST reads its configuration from the database when db-config is on,
+-- and in-database settings take precedence over the settings file that the
+-- Supabase dashboard's "Exposed schemas" control writes. So this is settable
+-- from SQL and does not require dashboard access. Verified on this project by
+-- calling the live REST API afterwards: /rest/v1/claims_register returns 200,
+-- while /rest/v1/spatial_ref_sys and /rest/v1/rpc/st_estimatedextent return
+-- 404 PGRST205/PGRST202 naming `api` as the searched schema.
+--
+-- `graphql_public` is deliberately omitted: pg_graphql is not installed on
+-- this project, so the endpoint would serve nothing. Add it back here if the
+-- GraphQL API is ever wanted.
+--
+-- NOTE the two-step: the ALTER ROLE only changes stored config, and PostgREST
+-- keeps serving the old schema until it reloads. The NOTIFY is what makes it
+-- take effect without a restart.
+
+alter role authenticator set pgrst.db_schemas = 'api';
+notify pgrst, 'reload config';
+notify pgrst, 'reload schema';
