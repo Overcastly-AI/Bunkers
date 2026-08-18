@@ -321,3 +321,64 @@ www.ntia.gov
   circulating unchallenged.
 - `m2m.cr.usgs.gov` needs a registered EROS M2M account, and `api.govinfo.gov` / `api.sam.gov` /
   `api.congress.gov` need an `api.data.gov` key. Allowlisting is necessary but not sufficient for these.
+
+---
+
+## How to actually turn this on
+
+### Step 1 — Network access level
+
+On claude.ai/code, open the environment (cloud icon, or hover an environment and select the settings
+icon). In the dialog, change **Network access** from `Trusted` to **`Custom`**, then paste the domains
+above into **Allowed domains**, one per line.
+
+**Tick "Also include default list of common package managers."** Custom *replaces* the Trusted list
+rather than extending it. Without that box checked, npm and the package registries stop resolving and
+the application build breaks.
+
+`*.` matches every subdomain, so `*.usgs.gov` covers `ngmdb`, `mrdata` and `waterservices` in one line.
+
+### Step 2 — Start a new session
+
+Running sessions do not re-read environment configuration; each session copies it once at startup. A
+session that was already running when the policy changed stays blocked. This is not a propagation
+delay — it never picks it up.
+
+### Step 3 — API keys, which egress does not provide
+
+Several critical sources reject unauthenticated requests, so allowlisting is necessary but not
+sufficient.
+
+| Source | How | Speed |
+|---|---|---|
+| **NARA Catalog API** | Email `Catalog_API@nara.gov` with your name and the email address to associate. Returns a key for the `x-api-key` header. | Human turnaround |
+| **api.data.gov** | Self-service signup. One key covers govinfo, congress.gov and SAM. | Instant |
+| **USGS EROS M2M** | Register an EROS account, then request Machine-to-Machine access. Needed for bulk imagery. | Days |
+
+```bash
+curl -H "x-api-key: $NARA_KEY" \
+  "https://catalog.archives.gov/api/v2/records/search?q=underground+facility&limit=10"
+```
+
+Keys belong in the environment's **Environment variables** field — but note the documentation's warning
+that cloud environments have no secrets store and anyone using the environment can read those values.
+For a project whose output is public anyway, that is an acceptable trade for these particular keys, all
+of which are free and rate-limited rather than billable.
+
+### What this does NOT affect
+
+MCP connector traffic does not travel through this allowlist — it goes via Anthropic's servers instead.
+That is why the Supabase MCP tools worked throughout while `WebFetch` to `archives.gov` was refused. If
+a source is reachable only through an MCP connector, the network policy is irrelevant to it.
+
+### How to confirm it worked
+
+From a **new** session:
+
+```bash
+curl -sS -o /dev/null -w "%{http_code}\n" "https://catalog.archives.gov/api/v2/records/search?q=test&limit=1"
+```
+
+`403` means the CONNECT was refused — the policy did not take. `401`/`403` *from NARA itself* with a
+JSON body means egress works and the API key is what is missing. `200` means both are in place, and the
+verification tier can run for the first time.
