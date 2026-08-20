@@ -1,0 +1,47 @@
+name: probe
+
+# One-shot diagnostic: does the production /basemap/* rewrite honour HTTP
+# range requests? PMTiles is unusable without them — if the proxy swallows
+# the Range header, every tile request returns the whole 1.9 GB archive and
+# the browser tab dies of memory the moment the user pans. That is the
+# leading hypothesis for the client-side crash on /plate.
+#
+# Runs here because the build container cannot reach vercel.app at all.
+# Push to this file triggers it (the integration cannot dispatch workflows).
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/probe.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  range:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Range request against production and against the blob directly
+        run: |
+          set -uo pipefail
+          probe () {
+            local label="$1" url="$2"
+            # --max-filesize aborts (exit 63) if the server ignores the range
+            # and streams the whole archive, so this never downloads 1.9 GB.
+            OUT=$(curl -sS -o /tmp/p.bin -w "%{http_code} %{size_download}" \
+                  -r 0-15 --max-filesize 1048576 -m 30 "$url" 2>&1) ; EX=$?
+            echo "== $label"
+            echo "   exit=$EX  code/bytes=$OUT"
+            if [ $EX -eq 63 ]; then
+              echo "   VERDICT: range IGNORED — server streamed the full body (this kills the plate)"
+            elif echo "$OUT" | grep -q "^206 16$"; then
+              echo "   VERDICT: range honoured (206, 16 bytes) — healthy"
+            elif echo "$OUT" | grep -q "^200 16$"; then
+              echo "   VERDICT: 200 but only 16 bytes — range honoured without 206; acceptable"
+            else
+              echo "   VERDICT: unexpected — see numbers above"
+            fi
+          }
+          probe "production rewrite" "https://bunkers-liart.vercel.app/basemap/us.pmtiles"
+          probe "blob direct"        "https://e8knws9v44rcepo5.public.blob.vercel-storage.com/basemap/us.pmtiles"
