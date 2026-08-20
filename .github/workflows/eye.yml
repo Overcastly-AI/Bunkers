@@ -2,7 +2,7 @@ name: eye
 
 # Load the production /plate in a real headless Chromium ON THE RUNNER (the
 # build container cannot reach vercel.app) and report what the page actually
-# does: console errors, every /basemap/* request with its status, the panel's
+# does: console errors, every /basemap/* request with status, the panel
 # own availability text, and a screenshot as an artifact. This exists because
 # the map renders blank-with-graticule in production and the container cannot
 # see the page to say why.
@@ -68,3 +68,5 @@ jobs:
           name: plate-screenshot
           path: plate.png
           retention-days: 3
+
+# re-run: verify the range-faithful route handler fixed the blank plate
