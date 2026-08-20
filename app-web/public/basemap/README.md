@@ -1,5 +1,10 @@
 # PLATE I — THE BASEMAP ARCHIVES
 
+**Status, 2026-08-20: `us.pmtiles` is live.** Built by `.github/workflows/basemap.yml`
+(CONUS, maxzoom 12, 1.9 GB, Protomaps daily build), published to Vercel Blob, and served
+under `/basemap/*` by the rewrite in `next.config.ts` when `BASEMAP_ORIGIN` is set. The
+files are still not in this repository — that part remains by design.
+
 **None of the files described here are in this repository, and that is the documented
 state, not an oversight.** They are between 200 MB and several GB, they are rebuilt on a
 cadence rather than versioned with the source, and the environment this application was
