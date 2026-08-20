@@ -15,6 +15,15 @@ name: basemap
 # work that buys that guarantee.
 
 on:
+  # The GitHub App integration cannot dispatch workflows (API returns 403), so
+  # pushing a change to this file is the trigger — the same pattern harvest.yml
+  # uses. On push the dispatch inputs are empty and every `|| default` applies:
+  # maxzoom 12, probe for a planet build, upload enabled.
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/basemap.yml"
+
   workflow_dispatch:
     inputs:
       maxzoom:
