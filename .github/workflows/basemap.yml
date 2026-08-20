@@ -118,11 +118,25 @@ jobs:
             echo "::error::BLOB_READ_WRITE_TOKEN is not set. Create a Vercel Blob store, then add the token under Settings > Secrets > Actions."
             exit 1
           fi
-          npx --yes vercel@latest blob put us.pmtiles \
-            --pathname basemap/us.pmtiles \
-            --add-random-suffix=false \
-            --force \
-            --token "$BLOB_READ_WRITE_TOKEN" 2>&1 | tee blob-out.txt
+          # Run 2 failed on `vercel blob put --force`: that flag does not exist in
+          # CLI 59. Lesson applied: use the documented @vercel/blob SDK instead of
+          # guessed CLI flags. multipart handles the ~2 GB archive; allowOverwrite
+          # makes reruns idempotent; addRandomSuffix keeps the pathname stable so
+          # BASEMAP_ORIGIN never changes between rebuilds.
+          npm install --no-save --no-audit --no-fund @vercel/blob >/dev/null
+          cat > upload.mjs <<'EOF'
+          import { put } from '@vercel/blob';
+          import { createReadStream } from 'node:fs';
+          const blob = await put('basemap/us.pmtiles', createReadStream('us.pmtiles'), {
+            access: 'public',
+            addRandomSuffix: false,
+            allowOverwrite: true,
+            multipart: true,
+            token: process.env.BLOB_READ_WRITE_TOKEN,
+          });
+          console.log(blob.url);
+          EOF
+          node upload.mjs | tee blob-out.txt
 
           # The store's hostname is generated per store and is not knowable
           # before the first upload, so derive BASEMAP_ORIGIN from the returned
