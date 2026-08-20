@@ -18,7 +18,7 @@ on:
   # The GitHub App integration cannot dispatch workflows (API returns 403), so
   # pushing a change to this file is the trigger — the same pattern harvest.yml
   # uses. On push the dispatch inputs are empty and every `|| default` applies:
-  # maxzoom 12, probe for a planet build, upload enabled.
+  # maxzoom 12, probe for a planet build, upload enabled. (run 2: secret added)
   push:
     branches: [main]
     paths:
