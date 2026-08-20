@@ -123,7 +123,12 @@ jobs:
             echo "::warning::upload finished but no blob URL was parsed; see the log above"
             exit 0
           fi
-          ORIGIN="${BLOB_URL%/basemap/us.pmtiles}"
+          # The rewrite in next.config.ts is /basemap/:path* -> ${ORIGIN}/:path*,
+          # so :path* is the bare filename and ORIGIN must already carry the
+          # basemap/ prefix the blob was uploaded under. Strip only the
+          # filename. Stripping the prefix too yields a URL one level too high,
+          # which 404s and presents as a blank plate with no stated cause.
+          ORIGIN="${BLOB_URL%/us.pmtiles}"
 
           echo "Uploaded: $BLOB_URL"
           echo "BASEMAP_ORIGIN: $ORIGIN"
