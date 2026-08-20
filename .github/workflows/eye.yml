@@ -1,0 +1,70 @@
+name: eye
+
+# Load the production /plate in a real headless Chromium ON THE RUNNER (the
+# build container cannot reach vercel.app) and report what the page actually
+# does: console errors, every /basemap/* request with its status, the panel's
+# own availability text, and a screenshot as an artifact. This exists because
+# the map renders blank-with-graticule in production and the container cannot
+# see the page to say why.
+
+on:
+  push:
+    branches: [main]
+    paths: [".github/workflows/eye.yml"]
+
+permissions:
+  contents: read
+
+jobs:
+  look:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install playwright chromium
+        run: |
+          npm init -y >/dev/null
+          npm i --no-audit --no-fund playwright >/dev/null
+          npx playwright install --with-deps chromium 2>&1 | tail -1
+
+      - name: Load the page and report
+        run: |
+          cat > eye.mjs <<'EOF'
+          import { chromium } from 'playwright';
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage({ viewport: { width: 1400, height: 900 } });
+          const lines = [];
+          page.on('console', (m) => { if (['error','warning'].includes(m.type())) lines.push(`CONSOLE ${m.type()}: ${m.text().slice(0,300)}`); });
+          page.on('pageerror', (e) => lines.push('PAGEERROR: ' + (e.stack || e.message).slice(0, 500)));
+          page.on('response', async (r) => {
+            const u = r.url();
+            if (u.includes('/basemap/') || u.includes('/api/plate/')) {
+              const h = r.headers();
+              lines.push(`NET ${r.status()} ${u.slice(0, 130)} ct=${h['content-type'] || '?'} cr=${h['content-range'] || '-'}`);
+            }
+          });
+          page.on('requestfailed', (r) => {
+            const u = r.url();
+            if (u.includes('/basemap/')) lines.push(`NETFAIL ${u.slice(0,130)} :: ${r.failure()?.errorText}`);
+          });
+          await page.goto('https://bunkers-liart.vercel.app/plate', { waitUntil: 'domcontentloaded' });
+          await page.waitForTimeout(9000);
+          // Pan once so tile fetches fire for a second viewport.
+          await page.mouse.move(700, 450); await page.mouse.down();
+          await page.mouse.move(950, 500, { steps: 10 }); await page.mouse.up();
+          await page.waitForTimeout(5000);
+          const panel = await page.evaluate(() => document.body.innerText.slice(0, 2500));
+          await page.screenshot({ path: 'plate.png', fullPage: false });
+          console.log('==== EVENTS (' + lines.length + ') ====');
+          for (const l of lines.slice(0, 60)) console.log(l);
+          console.log('==== PAGE TEXT ====');
+          console.log(panel);
+          await browser.close();
+          EOF
+          node eye.mjs
+
+      - name: Screenshot artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: plate-screenshot
+          path: plate.png
+          retention-days: 3
