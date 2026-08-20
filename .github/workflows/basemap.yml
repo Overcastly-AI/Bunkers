@@ -113,10 +113,49 @@ jobs:
             --pathname basemap/us.pmtiles \
             --add-random-suffix=false \
             --force \
-            --token "$BLOB_READ_WRITE_TOKEN" | tee blob-out.txt
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "Published. Set **BASEMAP_ORIGIN** in the Vercel project to the blob store base URL" >> "$GITHUB_STEP_SUMMARY"
-          echo "(everything before \`/basemap/us.pmtiles\`), then redeploy." >> "$GITHUB_STEP_SUMMARY"
+            --token "$BLOB_READ_WRITE_TOKEN" 2>&1 | tee blob-out.txt
+
+          # The store's hostname is generated per store and is not knowable
+          # before the first upload, so derive BASEMAP_ORIGIN from the returned
+          # URL rather than making the operator work it out.
+          BLOB_URL=$(grep -oE 'https://[a-z0-9]+\.public\.blob\.vercel-storage\.com/[^[:space:]"]*' blob-out.txt | head -1)
+          if [ -z "$BLOB_URL" ]; then
+            echo "::warning::upload finished but no blob URL was parsed; see the log above"
+            exit 0
+          fi
+          ORIGIN="${BLOB_URL%/basemap/us.pmtiles}"
+
+          echo "Uploaded: $BLOB_URL"
+          echo "BASEMAP_ORIGIN: $ORIGIN"
+
+          # Prove the archive answers range requests, which is the only property
+          # PMTiles actually needs. A 206 with 16 bytes is the same request the
+          # PMTiles reader makes for the header.
+          CODE=$(curl -sS -o /tmp/hdr.bin -w "%{http_code}" -r 0-15 "$BLOB_URL" || echo 000)
+          SIZE=$(stat -c%s /tmp/hdr.bin 2>/dev/null || echo 0)
+
+          {
+            echo ""
+            echo "### Published"
+            echo ""
+            echo "| field | value |"
+            echo "|---|---|"
+            echo "| blob URL | \`$BLOB_URL\` |"
+            echo "| range request | HTTP \`$CODE\`, $SIZE bytes returned |"
+            echo ""
+            echo "**Set this in the Vercel project → Settings → Environment Variables, then redeploy:**"
+            echo ""
+            echo '```'
+            echo "BASEMAP_ORIGIN=$ORIGIN"
+            echo '```'
+            echo ""
+            if [ "$CODE" = "206" ]; then
+              echo "Range requests confirmed working — PMTiles will read this archive correctly."
+            else
+              echo "⚠ Expected HTTP 206 for a range request and got \`$CODE\`. PMTiles needs"
+              echo "byte-range support; investigate before relying on the plate."
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Keep the extract as an artifact when not uploading
         if: ${{ inputs.upload == 'false' }}
