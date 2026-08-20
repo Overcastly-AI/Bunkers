@@ -1,0 +1,9 @@
+# Verification screenshots — 17 MB of documentation, not application assets.
+# They belong in the repository (APP-REPORT.md cites them) but there is no
+# reason to upload them to the build on every deploy.
+screenshots/
+
+# Basemap archives are large binaries fetched separately; see
+# public/basemap/README.md for the acquisition commands. Ignored here so a
+# local copy never gets swept into a deployment by accident.
+public/basemap/*.pmtiles
