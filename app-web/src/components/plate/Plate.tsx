@@ -95,21 +95,38 @@ export function Plate({
     return () => window.removeEventListener("popstate", apply);
   }, []);
 
-  /* ---- state → URL. ---------------------------------------------------- */
+  /* ---- state → URL. ---------------------------------------------------- *
+   * DEBOUNCED, AND FOR CAUSE. This effect fires on every `view` change, and
+   * `view` changes on every animation frame of a pan. Writing
+   * history.replaceState() at that rate crashed the plate in production:
+   * Safari enforces a hard cap (SecurityError, "more than 100 calls to
+   * replaceState within 30 seconds") and a throw inside an effect unmounts
+   * the whole tree — the reader sees Next's "Application error" page the
+   * moment they drag the map. Chromium only throttles, which is why every
+   * headless repro passed while real Safari died. The URL is a convenience
+   * for sharing a view; it needs the resting position, not every frame. */
   useEffect(() => {
     if (!initialView) return;
-    const p = new URLSearchParams(window.location.search);
-    p.set(URL_KEYS.centre, `${view.centre[0].toFixed(5)},${view.centre[1].toFixed(5)}`);
-    p.set(URL_KEYS.zoom, view.zoom.toFixed(2));
-    p.set(
-      URL_KEYS.bbox,
-      [view.bounds.west, view.bounds.south, view.bounds.east, view.bounds.north]
-        .map((n) => n.toFixed(4))
-        .join(","),
-    );
-    if (selectedSlug) p.set(URL_KEYS.selection, selectedSlug);
-    else p.delete(URL_KEYS.selection);
-    window.history.replaceState(null, "", `${window.location.pathname}?${p.toString()}`);
+    const t = setTimeout(() => {
+      const p = new URLSearchParams(window.location.search);
+      p.set(URL_KEYS.centre, `${view.centre[0].toFixed(5)},${view.centre[1].toFixed(5)}`);
+      p.set(URL_KEYS.zoom, view.zoom.toFixed(2));
+      p.set(
+        URL_KEYS.bbox,
+        [view.bounds.west, view.bounds.south, view.bounds.east, view.bounds.north]
+          .map((n) => n.toFixed(4))
+          .join(","),
+      );
+      if (selectedSlug) p.set(URL_KEYS.selection, selectedSlug);
+      else p.delete(URL_KEYS.selection);
+      try {
+        window.history.replaceState(null, "", `${window.location.pathname}?${p.toString()}`);
+      } catch {
+        /* If the browser rate-limits anyway, losing one URL write is
+           acceptable; taking down the plate is not. */
+      }
+    }, 300);
+    return () => clearTimeout(t);
   }, [view, selectedSlug, initialView]);
 
   /* ---- viewport → rows. Server-side clustering, always. ---------------- */
