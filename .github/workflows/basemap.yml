@@ -1,0 +1,127 @@
+name: basemap
+
+# Builds the Protomaps CONUS extract and publishes it to Vercel Blob, from
+# which next.config.ts proxies it under /basemap/*.
+#
+# WHY HERE. The build container has no outbound egress and cannot reach
+# build.protomaps.com. GitHub runners can, and they have the disk for a
+# multi-gigabyte archive. The output never enters git: it is far past the file
+# size limit, it is rebuilt on a cadence rather than versioned with the source,
+# and PMTiles is read by HTTP range request, so nothing ever downloads it whole.
+#
+# WHY NOT A VENDOR BASEMAP. DESIGN.md §9.1 — a hosted basemap sends a third
+# party a log of which coordinates a reader of a register of federal facilities
+# panned to. assertNoVendorHost() enforces it in code. This workflow is the ops
+# work that buys that guarantee.
+
+on:
+  workflow_dispatch:
+    inputs:
+      maxzoom:
+        description: "Max zoom. DESIGN.md §9.1 specifies 14 (~1-3 GB). Lower is smaller and faster."
+        required: false
+        default: "12"
+      planet_date:
+        description: "Protomaps daily build, YYYYMMDD. Blank probes backwards from today."
+        required: false
+        default: ""
+      upload:
+        description: "Upload to Vercel Blob. Set false to size the extract without publishing."
+        required: false
+        default: "true"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install go-pmtiles
+        run: |
+          set -euo pipefail
+          VER=$(curl -sS https://api.github.com/repos/protomaps/go-pmtiles/releases/latest | jq -r .tag_name)
+          echo "go-pmtiles $VER"
+          curl -sSL -o pmtiles.tar.gz \
+            "https://github.com/protomaps/go-pmtiles/releases/download/${VER}/go-pmtiles_${VER#v}_Linux_x86_64.tar.gz"
+          tar xzf pmtiles.tar.gz pmtiles
+          chmod +x pmtiles
+          ./pmtiles version
+
+      - name: Resolve a planet build
+        id: planet
+        run: |
+          set -uo pipefail
+          GIVEN="${{ inputs.planet_date }}"
+          if [ -n "$GIVEN" ]; then
+            echo "date=$GIVEN" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          # Protomaps publishes daily but not every date resolves; probe back.
+          for i in $(seq 1 21); do
+            D=$(date -u -d "-$i day" +%Y%m%d)
+            CODE=$(curl -sS -o /dev/null -w "%{http_code}" -r 0-0 "https://build.protomaps.com/${D}.pmtiles" || echo 000)
+            echo "  $D -> $CODE"
+            if [ "$CODE" = "206" ] || [ "$CODE" = "200" ]; then
+              echo "date=$D" >> "$GITHUB_OUTPUT"; exit 0
+            fi
+          done
+          echo "::error::no Protomaps daily build resolved in the last 21 days"; exit 1
+
+      - name: Extract CONUS
+        run: |
+          set -euo pipefail
+          D="${{ steps.planet.outputs.date }}"
+          Z="${{ inputs.maxzoom || '12' }}"
+          echo "extracting CONUS from ${D}.pmtiles at maxzoom ${Z}"
+          # Range requests against the remote planet archive; the planet is
+          # never downloaded whole.
+          time ./pmtiles extract "https://build.protomaps.com/${D}.pmtiles" us.pmtiles \
+            --maxzoom="${Z}" \
+            --bbox="-125.0,24.0,-66.5,49.5"
+          ls -l us.pmtiles
+          BYTES=$(stat -c%s us.pmtiles)
+          echo "BYTES=$BYTES" >> "$GITHUB_ENV"
+          echo "### Basemap extract" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| field | value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| planet build | ${D} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| max zoom | ${Z} |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| size | $(numfmt --to=iec "$BYTES") ($BYTES bytes) |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| fits in git (<100 MB) | $([ "$BYTES" -lt 104857600 ] && echo yes || echo no) |" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify it is a readable archive
+        run: |
+          set -euo pipefail
+          ./pmtiles show us.pmtiles | head -30
+
+      - name: Publish to Vercel Blob
+        if: ${{ inputs.upload != 'false' }}
+        env:
+          BLOB_READ_WRITE_TOKEN: ${{ secrets.BLOB_READ_WRITE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${BLOB_READ_WRITE_TOKEN:-}" ]; then
+            echo "::error::BLOB_READ_WRITE_TOKEN is not set. Create a Vercel Blob store, then add the token under Settings > Secrets > Actions."
+            exit 1
+          fi
+          npx --yes vercel@latest blob put us.pmtiles \
+            --pathname basemap/us.pmtiles \
+            --add-random-suffix=false \
+            --force \
+            --token "$BLOB_READ_WRITE_TOKEN" | tee blob-out.txt
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Published. Set **BASEMAP_ORIGIN** in the Vercel project to the blob store base URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "(everything before \`/basemap/us.pmtiles\`), then redeploy." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Keep the extract as an artifact when not uploading
+        if: ${{ inputs.upload == 'false' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: us-pmtiles
+          path: us.pmtiles
+          retention-days: 5

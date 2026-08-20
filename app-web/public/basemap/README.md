@@ -123,12 +123,31 @@ tutorial is a vendor endpoint. Generate them from the IBM Plex Sans already in
 beside it.
 
 ```sh
-npx font-maker \
-  node_modules/@fontsource-variable/ibm-plex-sans/files/ibm-plex-sans-latin-wght-normal.woff2 \
-  --out public/basemap/fonts
-# expected result:
-#   public/basemap/fonts/IBM Plex Sans Regular/0-255.pbf …
-#   public/basemap/fonts/IBM Plex Sans Italic/0-255.pbf  …
+# CORRECTION, 2026-08-20: this file previously specified `npx font-maker …`.
+# No package by that name exists on npm — the command was never runnable. The
+# real tool is fontnik (0.7.7), which is what MapLibre's own glyph pipelines
+# use. It takes TTF/OTF, not the woff2 that @fontsource-variable ships, so a
+# conversion step is required.
+#
+#   1. Obtain IBM Plex Sans as TTF (the upstream IBM/plex release, or convert
+#      the woff2 in node_modules with a woff2 decoder).
+#   2. Generate the SDF ranges:
+#
+#        npm i fontnik
+#        node -e "
+#          const fontnik=require('fontnik'), fs=require('fs');
+#          const buf=fs.readFileSync('IBMPlexSans-Regular.ttf');
+#          for (let i=0;i<65536;i+=256)
+#            fontnik.range({font:buf,start:i,end:i+255},(e,d)=>{
+#              if(e) throw e;
+#              fs.mkdirSync('public/basemap/fonts/IBM Plex Sans Regular',{recursive:true});
+#              fs.writeFileSync(\`public/basemap/fonts/IBM Plex Sans Regular/\${i}-\${i+255}.pbf\`,d);
+#            });
+#        "
+#
+# Verified only that the package exists and the woff2 inputs are present; the
+# pipeline above has NOT been run end to end here. Treat it as unverified until
+# it has been.
 ```
 
 If the directory is absent the style is built **without the label layers at all** rather
