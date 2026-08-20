@@ -45,3 +45,25 @@ jobs:
           }
           probe "production rewrite" "https://bunkers-liart.vercel.app/basemap/us.pmtiles"
           probe "blob direct"        "https://e8knws9v44rcepo5.public.blob.vercel-storage.com/basemap/us.pmtiles"
+
+          # The browser's pmtiles reader throws RangeError parsing the header it
+          # fetched from production (range 0-16383 answered 206 but the bytes do
+          # not parse). Separate the two possible culprits:
+          #   corrupt upload  -> pmtiles show fails on BOTH urls
+          #   proxy mangling  -> pmtiles show fails on production, works on blob
+          body () {
+            local label="$1" url="$2"
+            N=$(curl -sS -r 0-16383 -m 30 "$url" | wc -c)
+            H8=$(curl -sS -r 0-7 -m 30 "$url" | xxd -p)
+            echo "== $label: 16K-range body bytes=$N (want 16384), first8=$H8 (PMTiles magic: 504d54696c657303)"
+          }
+          body "production rewrite" "https://bunkers-liart.vercel.app/basemap/us.pmtiles"
+          body "blob direct"        "https://e8knws9v44rcepo5.public.blob.vercel-storage.com/basemap/us.pmtiles"
+
+          VER=$(curl -sS https://api.github.com/repos/protomaps/go-pmtiles/releases/latest | jq -r .tag_name)
+          curl -sSL "https://github.com/protomaps/go-pmtiles/releases/download/${VER}/go-pmtiles_${VER#v}_Linux_x86_64.tar.gz" | tar xz pmtiles
+          chmod +x pmtiles
+          echo "== pmtiles show, production rewrite"
+          ./pmtiles show "https://bunkers-liart.vercel.app/basemap/us.pmtiles" 2>&1 | head -20 || true
+          echo "== pmtiles show, blob direct"
+          ./pmtiles show "https://e8knws9v44rcepo5.public.blob.vercel-storage.com/basemap/us.pmtiles" 2>&1 | head -20 || true
