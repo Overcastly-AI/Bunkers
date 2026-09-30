@@ -1,0 +1,21 @@
+{
+  "type": "record",
+  "name": "CdcEnvelope",
+  "namespace": "com.ibm.cdc",
+  "fields": [
+    {"name": "op", "type": "string"},
+    {"name": "before", "type": ["null", {"type": "map", "values": ["null", "string", "int", "long", "float", "double", "boolean", "bytes"]}], "default": null},
+    {"name": "after", "type": ["null", {"type": "map", "values": ["null", "string", "int", "long", "float", "double", "boolean", "bytes"]}], "default": null},
+    {"name": "source", "type": ["null", {
+      "type": "record",
+      "name": "CdcSource",
+      "fields": [
+        {"name": "schema", "type": ["null", "string"], "default": null},
+        {"name": "table", "type": ["null", "string"], "default": null},
+        {"name": "db", "type": ["null", "string"], "default": null},
+        {"name": "ts_ms", "type": ["null", "long"], "default": null}
+      ]
+    }], "default": null},
+    {"name": "ts_ms", "type": ["null", "long"], "default": null}
+  ]
+}

@@ -1,0 +1,182 @@
+package com.motion.catalogjoin.ingest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import com.motion.catalogjoin.SourceTable;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.avro.Schema;
+import org.apache.avro.generic.GenericData;
+import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.BinaryEncoder;
+import org.apache.avro.io.EncoderFactory;
+import org.junit.jupiter.api.Test;
+
+class CdcDecoderTest {
+
+  private final CdcDecoder decoder = new CdcDecoder(PayloadFormat.AVRO_OR_JSON);
+
+  private static byte[] utf8(String text) {
+    return text == null ? null : text.getBytes(StandardCharsets.UTF_8);
+  }
+
+  private Decoded json(SourceTable table, String key, String value) throws InvalidRecordException {
+    return decoder.decode(table, utf8(key), utf8(value));
+  }
+
+  // --- JSON -----------------------------------------------------------------------------------
+
+  @Test
+  void flatJsonMergesKeyFirstAndValueOverwrites() throws Exception {
+    Decoded d = json(SourceTable.ITEM_PROFILE, "{\"item_no\":\"KEY\",\"EXTRA\":\"from-key\"}", "{\"ITEM_NO\":\"123\",\"descr\":\"x\"}");
+    assertThat(d.key()).isEqualTo("{\"ITEM_NO\":\"123\"}");
+    assertThat(d.row()).containsEntry("ITEM_NO", "123").containsEntry("DESCR", "x").containsEntry("EXTRA", "from-key");
+  }
+
+  @Test
+  void jsonEnvelopeUsesAfterImage() throws Exception {
+    Decoded d = json(SourceTable.MFR_PROFILE, "{\"MFR_CTL_NO\":\"AB\"}",
+        "{\"op\":\"U\",\"before\":{\"MFR_CTL_NO\":\"AB\",\"SELLABLE\":\"Y\"},\"after\":{\"MFR_CTL_NO\":\"AB\",\"SELLABLE\":\"N\"},\"ts_ms\":1}");
+    assertThat(d.isDelete()).isFalse();
+    assertThat(d.row()).containsEntry("SELLABLE", "N").doesNotContainKeys("OP", "BEFORE", "AFTER", "TS_MS");
+  }
+
+  @Test
+  void jsonEnvelopeDeleteUsesBeforeImageForTheKey() throws Exception {
+    Decoded d = json(SourceTable.MFR_PROFILE, null, "{\"op\":\"D\",\"before\":{\"MFR_CTL_NO\":\"AB\"},\"after\":null}");
+    assertThat(d.isDelete()).isTrue();
+    assertThat(d.key()).isEqualTo("{\"MFR_CTL_NO\":\"AB\"}");
+  }
+
+  @Test
+  void avroJsonUnionWrappersAreUnwrappedRecursively() throws Exception {
+    Decoded d = json(SourceTable.ITEM_PROFILE, "{\"ITEM_NO\":{\"string\":\"1\"}}",
+        "{\"ITEM_NO\":{\"string\":\"1\"},\"QTY\":{\"long\":5},\"PRICE\":{\"double\":2.5},\"NOTE\":{\"null\":null},\"WRAPPED\":{\"STRING\":{\"string\":\"x\"}}}");
+    assertThat(d.row())
+        .containsEntry("ITEM_NO", "1")
+        .containsEntry("QTY", 5)
+        .containsEntry("NOTE", null)
+        .containsEntry("WRAPPED", "x");
+    assertThat((BigDecimal) d.row().get("PRICE")).isEqualByComparingTo("2.5");
+  }
+
+  @Test
+  void tombstoneVariantsAreDeletes() throws Exception {
+    for (String value : new String[] {null, "", "null", "  null "}) {
+      Decoded d = json(SourceTable.ITEM_PROFILE, "{\"ITEM_NO\":\"1\"}", value);
+      assertThat(d.isDelete()).as("value %s", value).isTrue();
+      assertThat(d.key()).isEqualTo("{\"ITEM_NO\":\"1\"}");
+    }
+  }
+
+  @Test
+  void tombstoneWithoutKeyIsInvalid() {
+    assertThatThrownBy(() -> json(SourceTable.ITEM_PROFILE, null, null))
+        .isInstanceOf(InvalidRecordException.class);
+    assertThatThrownBy(() -> json(SourceTable.ITEM_PROFILE, "{}", null))
+        .isInstanceOf(InvalidRecordException.class);
+  }
+
+  @Test
+  void missingKeyColumnIsInvalid() {
+    assertThatThrownBy(() -> json(SourceTable.ITEM_BALANCE, "{\"ITEM_NO\":\"1\"}", "{\"ITEM_NO\":\"1\",\"MI_LOC\":\"2\"}"))
+        .isInstanceOf(InvalidRecordException.class)
+        .hasMessageContaining("STOREROOM_NO");
+  }
+
+  @Test
+  void canonicalKeysSortColumnsAndTrimValues() throws Exception {
+    Decoded d = json(SourceTable.NON_COS_ITEM_BALANCE, "{\"MI_LOC\":\" 01 \",\"ITEM_NO\":100}", "{\"QTY\":1}");
+    assertThat(d.key()).isEqualTo("{\"ITEM_NO\":\"100\",\"MI_LOC\":\"01\"}");
+  }
+
+  @Test
+  void plainStringKeyWorksForSingleColumnTables() throws Exception {
+    Decoded d = json(SourceTable.ITEM_PROFILE, "ABC-1", null);
+    assertThat(d.key()).isEqualTo("{\"ITEM_NO\":\"ABC-1\"}");
+  }
+
+  @Test
+  void nulBytesAreStrippedAndLastEventAtIsDropped() throws Exception {
+    Decoded d = json(SourceTable.ITEM_PROFILE, null, "{\"ITEM_NO\":\"1\",\"DESCR\":\"a\\u0000b\",\"last_event_at\":\"2026-01-01\"}");
+    assertThat(d.row()).containsEntry("DESCR", "ab").doesNotContainKey("LAST_EVENT_AT");
+  }
+
+  @Test
+  void garbageIsInvalid() {
+    assertThatThrownBy(() -> json(SourceTable.ITEM_PROFILE, "{\"ITEM_NO\":\"1\"}", "<xml/>"))
+        .isInstanceOf(InvalidRecordException.class);
+    assertThatThrownBy(() -> json(SourceTable.ITEM_PROFILE, "{\"ITEM_NO\":\"1\"}", "[1,2]"))
+        .isInstanceOf(InvalidRecordException.class);
+  }
+
+  @Test
+  void jsonOnlyRejectsAvro() throws Exception {
+    CdcDecoder jsonOnly = new CdcDecoder(PayloadFormat.JSON_ONLY);
+    byte[] avro = avro("I", null, Map.of("ITEM_NO", "1"));
+    assertThatThrownBy(() -> jsonOnly.decode(SourceTable.ITEM_PROFILE, null, avro))
+        .isInstanceOf(InvalidRecordException.class);
+  }
+
+  @Test
+  void avroOnlyRejectsJson() {
+    CdcDecoder avroOnly = new CdcDecoder(PayloadFormat.AVRO_ONLY);
+    assertThatThrownBy(() -> avroOnly.decode(SourceTable.ITEM_PROFILE, null, utf8("{\"ITEM_NO\":\"1\"}")))
+        .isInstanceOf(InvalidRecordException.class);
+  }
+
+  // --- Avro -----------------------------------------------------------------------------------
+
+  @Test
+  void rawAvroInsert() throws Exception {
+    Map<String, Object> after = new HashMap<>();
+    after.put("ITEM_NO", "1");
+    after.put("qty", 3L);
+    after.put("weight", 1.25f);
+    after.put("blob", ByteBuffer.wrap(new byte[] {1, 2}));
+    after.put("gone", null);
+    Decoded d = decoder.decode(SourceTable.ITEM_PROFILE, null, avro("I", null, after));
+    assertThat(d.key()).isEqualTo("{\"ITEM_NO\":\"1\"}");
+    assertThat(d.row()).containsEntry("QTY", 3L).containsEntry("BLOB", "AQI=").containsEntry("GONE", null);
+    assertThat((BigDecimal) d.row().get("WEIGHT")).isEqualByComparingTo("1.25");
+  }
+
+  @Test
+  void confluentFramedAvroDelete() throws Exception {
+    byte[] body = avro("D", Map.of("ITEM_NO", "7"), null);
+    byte[] framed = ByteBuffer.allocate(5 + body.length).put((byte) 0).putInt(42).put(body).array();
+    Decoded d = decoder.decode(SourceTable.ITEM_PROFILE, null, framed);
+    assertThat(d.isDelete()).isTrue();
+    assertThat(d.key()).isEqualTo("{\"ITEM_NO\":\"7\"}");
+  }
+
+  @Test
+  void avroUpdateWithoutAfterIsInvalid() {
+    assertThatThrownBy(() -> decoder.decode(SourceTable.ITEM_PROFILE, utf8("{\"ITEM_NO\":\"1\"}"), avro("U", null, null)))
+        .isInstanceOf(InvalidRecordException.class);
+  }
+
+  private static byte[] avro(String op, Map<String, Object> before, Map<String, Object> after) throws IOException {
+    Schema schema;
+    try (InputStream in = CdcDecoderTest.class.getResourceAsStream("/avro/cdc-envelope.avsc")) {
+      schema = new Schema.Parser().parse(in);
+    }
+    GenericRecord record = new GenericData.Record(schema);
+    record.put("op", op);
+    record.put("before", before);
+    record.put("after", after);
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    BinaryEncoder encoder = EncoderFactory.get().binaryEncoder(out, null);
+    new GenericDatumWriter<GenericRecord>(schema).write(record, encoder);
+    encoder.flush();
+    return out.toByteArray();
+  }
+}

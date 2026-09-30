@@ -1,0 +1,142 @@
+package com.motion.catalogjoin.topology;
+
+import com.motion.catalogjoin.Keys;
+import com.motion.catalogjoin.Rows;
+import com.motion.catalogjoin.model.ClassPath;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import org.apache.kafka.streams.KeyValue;
+import org.apache.kafka.streams.processor.api.Processor;
+import org.apache.kafka.streams.processor.api.ProcessorContext;
+import org.apache.kafka.streams.processor.api.Record;
+import org.apache.kafka.streams.state.KeyValueIterator;
+import org.apache.kafka.streams.state.KeyValueStore;
+
+/**
+ * Replaces the recursive CTE. Every STEP_CLASSIFICATION change is routed to a single partition,
+ * where this processor keeps the whole (small) tree and re-emits the path of the changed node and
+ * of every node below it. Output: {@code STEP_CLASSIFICATION_ID key -> ClassPath}, or a tombstone
+ * when a classification is deleted.
+ */
+final class ClassificationPaths implements Processor<String, Map<String, Object>, String, ClassPath> {
+
+  static final String STORE = "classification-nodes";
+  static final String ID = "STEP_CLASSIFICATION_ID";
+  static final String PARENT = "PARENT_STEP_CLASSIFICATION_ID";
+
+  private final String root;
+  private ProcessorContext<String, ClassPath> context;
+  private KeyValueStore<String, Map<String, Object>> store;
+  private final Map<String, Map<String, Object>> nodes = new HashMap<>();
+  private final Map<String, Set<String>> children = new HashMap<>();
+
+  ClassificationPaths(String root) {
+    this.root = root;
+  }
+
+  @Override
+  public void init(ProcessorContext<String, ClassPath> context) {
+    this.context = context;
+    this.store = context.getStateStore(STORE);
+    try (KeyValueIterator<String, Map<String, Object>> all = store.all()) {
+      while (all.hasNext()) {
+        KeyValue<String, Map<String, Object>> entry = all.next();
+        link(entry.key, entry.value);
+      }
+    }
+  }
+
+  @Override
+  public void process(Record<String, Map<String, Object>> record) {
+    String id = Keys.parse(record.key()).get(ID);
+    if (id == null) {
+      return;
+    }
+    Map<String, Object> previous = nodes.get(id);
+    if (previous != null) {
+      unlink(id, previous);
+    }
+    Map<String, Object> row = record.value();
+    if (row == null) {
+      store.delete(id);
+      context.forward(new Record<String, ClassPath>(Keys.of(ID, id), null, record.timestamp()));
+    } else {
+      store.put(id, row);
+      link(id, row);
+    }
+    for (String affected : subtree(id)) {
+      if (nodes.containsKey(affected)) {
+        context.forward(new Record<>(Keys.of(ID, affected), path(affected), record.timestamp()));
+      }
+    }
+  }
+
+  private void link(String id, Map<String, Object> row) {
+    nodes.put(id, row);
+    String parent = Rows.str(row, PARENT);
+    if (parent != null) {
+      children.computeIfAbsent(parent, p -> new LinkedHashSet<>()).add(id);
+    }
+  }
+
+  private void unlink(String id, Map<String, Object> row) {
+    nodes.remove(id);
+    String parent = Rows.str(row, PARENT);
+    if (parent != null) {
+      Set<String> siblings = children.get(parent);
+      if (siblings != null) {
+        siblings.remove(id);
+        if (siblings.isEmpty()) {
+          children.remove(parent);
+        }
+      }
+    }
+  }
+
+  /** The node and all of its descendants, breadth first, each once (cycle safe). */
+  private List<String> subtree(String id) {
+    List<String> out = new ArrayList<>();
+    Set<String> seen = new HashSet<>();
+    Deque<String> queue = new ArrayDeque<>();
+    queue.add(id);
+    while (!queue.isEmpty()) {
+      String next = queue.poll();
+      if (seen.add(next)) {
+        out.add(next);
+        queue.addAll(children.getOrDefault(next, Set.of()));
+      }
+    }
+    return out;
+  }
+
+  private ClassPath path(String id) {
+    Deque<Map<String, Object>> path = new ArrayDeque<>();
+    Set<String> seen = new HashSet<>();
+    String current = id;
+    String topParent = null;
+    boolean cycle = false;
+    while (current != null && nodes.containsKey(current)) {
+      if (!seen.add(current)) {
+        cycle = true;
+        break;
+      }
+      Map<String, Object> row = nodes.get(current);
+      path.addFirst(row);
+      topParent = Rows.str(row, PARENT);
+      current = topParent;
+    }
+    if (cycle) {
+      topParent = null;
+    }
+    String topId = Rows.str(path.peekFirst(), ID);
+    boolean inHierarchy = !cycle && (root.equals(topParent) || root.equals(topId));
+    return new ClassPath(new ArrayList<>(path), topParent, inHierarchy);
+  }
+}
