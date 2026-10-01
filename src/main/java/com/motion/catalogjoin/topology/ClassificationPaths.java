@@ -36,6 +36,8 @@ final class ClassificationPaths implements Processor<String, Map<String, Object>
   private KeyValueStore<String, Map<String, Object>> store;
   private final Map<String, Map<String, Object>> nodes = new HashMap<>();
   private final Map<String, Set<String>> children = new HashMap<>();
+  /** Output timestamps never go backwards, so the paths table never sees an out-of-order update. */
+  private long timestamp = Long.MIN_VALUE;
 
   ClassificationPaths(String root) {
     this.root = root;
@@ -64,16 +66,17 @@ final class ClassificationPaths implements Processor<String, Map<String, Object>
       unlink(id, previous);
     }
     Map<String, Object> row = record.value();
+    timestamp = Math.max(timestamp, record.timestamp());
     if (row == null) {
       store.delete(id);
-      context.forward(new Record<String, ClassPath>(Keys.of(ID, id), null, record.timestamp()));
+      context.forward(new Record<String, ClassPath>(Keys.of(ID, id), null, timestamp));
     } else {
       store.put(id, row);
       link(id, row);
     }
     for (String affected : subtree(id)) {
       if (nodes.containsKey(affected)) {
-        context.forward(new Record<>(Keys.of(ID, affected), path(affected), record.timestamp()));
+        context.forward(new Record<>(Keys.of(ID, affected), path(affected), timestamp));
       }
     }
   }
