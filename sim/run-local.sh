@@ -13,7 +13,7 @@
 set -euo pipefail
 
 ITEMS=20000 ROUNDS=3 INSTANCES=2 THREADS=2 HEAP=1g KEEP=false DATADOG=false
-PORT=${KAFKA_PORT:-29092} HEALTH_BASE=18080
+PORT=${KAFKA_PORT:-29092} HEALTH_BASE=${HEALTH_BASE:-18080}
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --items) ITEMS=$2; shift 2 ;;
