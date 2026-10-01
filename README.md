@@ -65,6 +65,31 @@ docker build -t catalog-join .
 
 `GET :8080/health` returns 200 while running. The process exits non-zero if Kafka Streams fails.
 
+## Load simulation
+
+`com.motion.catalogjoin.sim` generates a synthetic catalog at any scale and checks the app's output
+against it exactly. Every row's state after churn round N is a pure function of (seed, items,
+round), so the checker can compute what each published document must contain without replaying
+anything. The generated traffic covers:
+
+- every message format (flat JSON, JSON envelope with/without union wrappers, raw and
+  Confluent-framed Avro);
+- DB2-style CHAR padding on keys;
+- deletes, and key-changing edits (STEP values, local costs, classification links), with the
+  delete and the insert arriving in both orders;
+- foreign keys that change, and hierarchy moves.
+
+Each item generates about 30 source records at round 0, plus about 10% per churn round.
+
+| Where | How | What it tells you |
+|---|---|---|
+| In-process, no Kafka | `mvn test -Dtest='SimulationTest#scaled' -Dsim.items=20000 -Dsim.rounds=3` | join correctness on the real topology; the test driver commits after every record, so it is slow (~300 msg/s) and says nothing about throughput |
+| Local Kafka | `KAFKA_HOME=/path/to/kafka_2.13-4.3.1 sim/run-local.sh --items 100000 --instances 2 --partitions 6` | correctness across partitions and instances, plus catch-up time, throughput and state size |
+| GKE | `deploy/sim/` (generator Job, app StatefulSet on `sim.*` topics, verify Job) | the same at production scale (`--items 1000000` ≈ 30M+ records) |
+
+`SimMain help` lists every option. The generate and verify steps must agree on `--seed`, `--items`,
+`--locations`, `--prices-per-item`, `--topic-prefix` and the last `--rounds`.
+
 ## Operating notes
 
 - **Source topics must be compacted** (or keep full history). Rebuilding state means replaying the
