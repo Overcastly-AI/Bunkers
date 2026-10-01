@@ -105,6 +105,13 @@ agent the merged `dd.*` settings, so they live in the same files as everything e
 | `Tracing`, `bin/catalog-join` | Datadog span tags; agent attach from the merged `dd.*` settings |
 | `sim/*` | load simulator: deterministic model, generator, exact verifier |
 
+## Parity with the old service
+
+[docs/SPEC-PARITY.md](docs/SPEC-PARITY.md) checks every requirement of the original Motion Catalog
+Build spec against this implementation: topics and keys, payload rules, joins, triggers and the
+old output contract. The "Migrating consumers of the old service" section of
+[docs/CONTRACTS.md](docs/CONTRACTS.md) lists what changed for downstream readers.
+
 ## Load simulation
 
 The simulator produces a synthetic catalog at any scale and checks the app's output against it
@@ -128,6 +135,22 @@ Each item generates about 30 source records at round 0, plus about 10% per churn
 
 - **Source topics must be compacted** (or keep full history): rebuilding state replays them from
   the start.
+- **All 15 source topics must exist before `run`.** A missing or misspelled topic makes the process
+  exit non-zero and restart; there is no silent "bound to zero topics" mode. Settings still set to
+  `CHANGE-ME` stop `run`, `create-topics` and `deliver` at startup.
+- **Consumer group = `application.id`** (`catalog-join`; it replaces `gmc-cdc-consumer` for lag
+  monitoring and ACLs). A new `application.id` is a new group, and it replays the sources from the
+  beginning.
+- **Failures:** undecodable input goes to the dead-letter topic (with the source topic, partition
+  and offset in headers; re-produce it to that topic to replay). Any other processing or produce
+  error, such as a record above `producer.max.request.size`, stops the instance with a non-zero
+  exit, and it restarts from its last commit. There are no in-process retries, and no data is skipped.
+- **ACLs:**
+  - source topics: READ, DESCRIBE;
+  - group `<application.id>`: READ;
+  - topic prefix `<application.id>-`: CREATE, DELETE, DESCRIBE, DESCRIBE_CONFIGS, READ, WRITE;
+  - TransactionalId prefix `<application.id>`: WRITE, DESCRIBE;
+  - output, client and dead-letter topics: WRITE, DESCRIBE (plus CREATE for `create-topics`).
 - **Internal topics** (`<application.id>-*`) are created by Kafka Streams; their names are pinned in
   `src/test/resources/topology.txt`, and `TopologySnapshotTest` fails on any change so it is always
   deliberate. Incompatible changes (renamed operators, new joins, a different `catalog.partitions`)

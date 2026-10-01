@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.motion.catalogjoin.CatalogConfig;
 import com.motion.catalogjoin.Json;
 import com.motion.catalogjoin.SourceTable;
+import com.motion.catalogjoin.Tracing;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
@@ -219,7 +220,9 @@ public final class CdcDecoder {
     if (code.equals(CdcEnvelope.DELETE)) {
       return new Change(true, before, null);
     }
-    if (code.equals(CdcEnvelope.INSERT) || code.equals(CdcEnvelope.UPDATE)) {
+    // JSON: any other op with an after image is an upsert, as in the old service (snapshot/refresh
+    // ops such as R or C included). Avro keeps the envelope's I/U/D vocabulary.
+    if (code.equals(CdcEnvelope.INSERT) || code.equals(CdcEnvelope.UPDATE) || (source.equals("JSON") && after != null)) {
       if (after == null) {
         throw new InvalidRecordException(source + " envelope op " + code + " without '" + CdcEnvelope.AFTER + "'");
       }
@@ -372,8 +375,13 @@ public final class CdcDecoder {
     return node.asText();
   }
 
+  /** Strips NUL characters, flagging the record's span so sanitized input can be found. */
   private static String stripNul(String text) {
-    return text.indexOf('\u0000') < 0 ? text : text.replace("\u0000", "");
+    if (text.indexOf('\u0000') < 0) {
+      return text;
+    }
+    Tracing.tag(Tracing.SANITIZED, true);
+    return text.replace("\u0000", "");
   }
 
   private static int firstNonWhitespace(byte[] bytes) {

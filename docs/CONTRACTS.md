@@ -254,3 +254,25 @@ Original key and value bytes of undecodable input, with the headers listed in §
   onto `catalog.item` like any other item-keyed table.
 - **STEP products whose item number matches no `ITEM_PROFILE`** are not published (the item is the
   root). They appear as soon as the item arrives.
+
+---
+
+## 6. Migrating consumers of the old service
+
+The old service published row-change events to Pub/Sub (`catalog-row-changes`,
+`catalog-reload-events`). This service publishes the current joined state to compacted Kafka
+topics. For readers of the old events:
+
+| Old | Now |
+|---|---|
+| One event per changed source row (`tableName`, `catalogTableName`, `recordKey`) | One document per item / item-location / price; the source table that changed is not identified |
+| `operation` INSERT / UPDATE / DELETE | A value is an upsert; a tombstone is a delete. Insert vs update is not distinguished (the old JSON path did not either) |
+| `columns[]` with `before` / `after` per column | The full current document; deletes carry no before-image. Consumers that need diffs keep the previous value per key |
+| `changedAt` from CDC `ts_ms` | Not carried; the Kafka record timestamp is the time the document was published. The envelope's `source` block and `ts_ms` are ignored |
+| Attributes `eventType`, `eventId`, `publishedAt`, `sourceSystem`, … (usable for subscription filters) | None. The key is the identity; identical value bytes for a key mean nothing changed (safe dedup). Use client topics (`catalog.client.<name>`) to subscribe to a subset |
+| Ordering key `tableName:sha(recordKey)` | Kafka key = canonical document key: per-document ordering |
+| `catalog-reload-events` | Read the compacted topic from offset 0 |
+| Landing tables `catalog_data.<schema>__<table>` and standalone derived tables (`step_classification__web_hierarchy`, `item_restrict_rule__summary`, `item_balance__dc_stock_summary`) | Not published on their own: their data appears inside `catalog.item` (paths, rules, DC balances). Rules, balances and STEP products of an item without `ITEM_PROFILE` are not published. `dcStock` lists balances; consumers aggregate (or a client view computes e.g. `sum(dcStock[].balance.QTY_ON_HAND)`) |
+| `last_event_at` | Never read from input (dropped) and not written |
+| Column values coerced to Postgres types | Values keep the producer's type: Avro decimals and dates stay strings, bytes become Base64, decimals in JSON are exact numbers |
+| Postgres DLT with 3 retries (1 s → 30 s) | Kafka dead-letter topic for undecodable input; see README "Failures" |

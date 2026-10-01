@@ -155,6 +155,13 @@ class CdcDecoderTest {
   }
 
   @Test
+  void jsonEnvelopeOpsOtherThanDeleteAreUpserts() throws Exception {
+    Decoded snapshot = json(SourceTable.ITEM_PROFILE, null, "{\"op\":\"R\",\"after\":{\"ITEM_NO\":\"1\"}}");
+    assertThat(snapshot.isDelete()).isFalse();
+    assertThat(snapshot.row()).containsEntry("ITEM_NO", "1");
+  }
+
+  @Test
   void envelopeFieldNamesAreCaseInsensitive() throws Exception {
     Decoded d = json(SourceTable.ITEM_PROFILE, null, "{\"OP\":\"U\",\"AFTER\":{\"ITEM_NO\":\"1\",\"DESCR\":\"x\"}}");
     assertThat(d.row()).containsOnlyKeys("ITEM_NO", "DESCR");

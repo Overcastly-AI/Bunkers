@@ -139,6 +139,9 @@ final class ClassificationPaths implements Processor<String, Map<String, Object>
         break;
       }
     }
-    return Docs.of("path", new ArrayList<>(path), "inWebHierarchy", reachedRoot && !root.equals(id));
+    if (root.equals(id)) {
+      return Docs.of("path", List.of(), "inWebHierarchy", false); // the root itself is not part of the hierarchy
+    }
+    return Docs.of("path", new ArrayList<>(path), "inWebHierarchy", reachedRoot);
   }
 }

@@ -78,9 +78,9 @@ public final class App {
     }
 
     int exit = switch (command) {
-      case "run" -> run(CatalogConfig.load(files, overrides));
+      case "run" -> run(CatalogConfig.load(files, overrides).requireNoPlaceholders());
       case "create-topics" -> {
-        Topics.createOutputs(CatalogConfig.load(files, overrides));
+        Topics.createOutputs(CatalogConfig.load(files, overrides).requireNoPlaceholders());
         yield 0;
       }
       case "tracer-config" -> writeTracerConfig(CatalogConfig.load(files, overrides), output);
@@ -92,7 +92,7 @@ public final class App {
       case "sim-verify" -> Simulation.verify(CatalogConfig.load(files, overrides));
       case "deliver" -> {
         String client = overrides.remove("client");
-        yield client == null ? usage() : HttpDelivery.run(CatalogConfig.load(files, overrides), client);
+        yield client == null ? usage() : HttpDelivery.run(CatalogConfig.load(files, overrides).requireNoPlaceholders(), client);
       }
       case "help", "--help", "-h" -> {
         System.out.print(USAGE);

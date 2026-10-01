@@ -156,6 +156,16 @@ public final class CatalogConfig {
     return Arrays.stream(get(key).split(",")).map(String::trim).filter(s -> !s.isEmpty()).toList();
   }
 
+  /** Fails when a deployment still carries a {@code CHANGE-ME} placeholder (e.g. STEP attribute ids). */
+  public CatalogConfig requireNoPlaceholders() {
+    List<String> placeholders = values.entrySet().stream()
+        .filter(e -> e.getValue().contains("CHANGE-ME")).map(Map.Entry::getKey).toList();
+    if (!placeholders.isEmpty()) {
+      throw new IllegalArgumentException("Settings still set to CHANGE-ME: " + placeholders);
+    }
+    return this;
+  }
+
   /** Every effective setting, with secrets masked; for {@code print-config}. */
   public Map<String, String> describe() {
     Map<String, String> out = new TreeMap<>();

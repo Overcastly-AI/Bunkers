@@ -17,6 +17,7 @@ public final class Tracing {
   public static final String DEAD_LETTER = "catalog.dead_letter";
   public static final String OUTPUT = "catalog.output";
   public static final String PUBLISHED = "catalog.published";
+  public static final String SANITIZED = "catalog.sanitized";
 
   private Tracing() {}
 

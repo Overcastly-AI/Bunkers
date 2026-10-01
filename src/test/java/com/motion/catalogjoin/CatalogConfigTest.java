@@ -77,6 +77,12 @@ class CatalogConfigTest {
   }
 
   @Test
+  void placeholdersMustBeReplacedBeforeRunning() {
+    CatalogConfig production = CatalogConfig.load(List.of(Path.of("deploy/production/catalog-join.properties")), Map.of());
+    assertThatThrownBy(production::requireNoPlaceholders).hasMessageContaining("catalog.step.attribute.ITEM_NUMBER");
+  }
+
+  @Test
   void secretsAreMaskedWhenDescribed() {
     Properties p = new Properties();
     p.setProperty("sasl.jaas.config", "x required password=\"p\";");
