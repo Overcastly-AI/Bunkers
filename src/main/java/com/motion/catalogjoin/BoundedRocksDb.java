@@ -7,6 +7,7 @@ import org.rocksdb.Cache;
 import org.rocksdb.CompressionType;
 import org.rocksdb.LRUCache;
 import org.rocksdb.Options;
+import org.rocksdb.RocksDB;
 import org.rocksdb.WriteBufferManager;
 
 /**
@@ -25,6 +26,7 @@ public final class BoundedRocksDb implements RocksDBConfigSetter {
     if (cache != null) {
       return;
     }
+    RocksDB.loadLibrary();
     cache = new LRUCache(memoryBytes, -1, false, 0.1);
     writeBuffers = new WriteBufferManager((long) (memoryBytes * memtableShare), cache);
   }

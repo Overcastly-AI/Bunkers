@@ -32,25 +32,46 @@ Topologies:
       <-- step_product_values-dead-letter-headers
 
   Sub-topology: 1
-    Source: step-value-unit-subscription-response-source (topics: [step-value-unit-subscription-response-topic])
-      --> step-value-unit-subscription-response-resolver
-    Processor: step-value-unit-subscription-response-resolver (stores: [step_product_values-store])
-      --> step-value-unit-result
-      <-- step-value-unit-subscription-response-source
-    Processor: step-value-unit-result (stores: [step-value-unit-store])
-      --> step-values-by-product-has-key
-      <-- step-value-unit-subscription-response-resolver
     Source: step_product_values-by-key-repartition-source (topics: [step_product_values-by-key-repartition])
       --> step_product_values-table
+    Processor: step_product_values-table (stores: [step_product_values-store])
+      --> step-value-unit-presence, step-value-unit-pair-join-this
+      <-- step_product_values-by-key-repartition-source
+    Source: step-value-unit-subscription-response-source (topics: [step-value-unit-subscription-response-topic])
+      --> step-value-unit-subscription-response-resolver
+    Processor: step-value-unit-subscription-response-resolver (stores: [step-value-unit-presence-store])
+      --> step-value-unit-result
+      <-- step-value-unit-subscription-response-source
+    Processor: step-value-unit-presence (stores: [])
+      --> step-value-unit-presence-changes
+      <-- step_product_values-table
+    Processor: step-value-unit-result (stores: [step-value-unit-store])
+      --> step-value-unit-pair-join-other
+      <-- step-value-unit-subscription-response-resolver
+    Processor: step-value-unit-pair-join-other (stores: [step_product_values-store])
+      --> step-value-unit-pair
+      <-- step-value-unit-result
+    Processor: step-value-unit-pair-join-this (stores: [step-value-unit-store])
+      --> step-value-unit-pair
+      <-- step_product_values-table
+    Processor: step-value-unit-presence-changes (stores: [])
+      --> step-value-unit-presence-transitions
+      <-- step-value-unit-presence
+    Processor: step-value-unit-pair (stores: [])
+      --> step-values-by-product-has-key
+      <-- step-value-unit-pair-join-this, step-value-unit-pair-join-other
+    Processor: step-value-unit-presence-transitions (stores: [step-value-unit-presence-published])
+      --> step-value-unit-presence-table
+      <-- step-value-unit-presence-changes
+    Processor: step-value-unit-presence-table (stores: [step-value-unit-presence-store])
+      --> step-value-unit-subscription-registration-processor
+      <-- step-value-unit-presence-transitions
     Processor: step-values-by-product-has-key (stores: [])
       --> step-values-by-product
-      <-- step-value-unit-result
-    Processor: step_product_values-table (stores: [step_product_values-store])
-      --> step-value-unit-subscription-registration-processor
-      <-- step_product_values-by-key-repartition-source
+      <-- step-value-unit-pair
     Processor: step-value-unit-subscription-registration-processor (stores: [])
       --> step-value-unit-subscription-registration-sink
-      <-- step_product_values-table
+      <-- step-value-unit-presence-table
     Processor: step-values-by-product (stores: [])
       --> step-values-by-product-aggregate-sink
       <-- step-values-by-product-has-key
@@ -184,25 +205,46 @@ Topologies:
       <-- step_product_classification-dead-letter-headers
 
   Sub-topology: 6
-    Source: step-classification-path-subscription-response-source (topics: [step-classification-path-subscription-response-topic])
-      --> step-classification-path-subscription-response-resolver
-    Processor: step-classification-path-subscription-response-resolver (stores: [step_product_classification-store])
-      --> step-classification-path-result
-      <-- step-classification-path-subscription-response-source
-    Processor: step-classification-path-result (stores: [step-classification-path-store])
-      --> step-classifications-by-product-has-key
-      <-- step-classification-path-subscription-response-resolver
     Source: step_product_classification-by-key-repartition-source (topics: [step_product_classification-by-key-repartition])
       --> step_product_classification-table
+    Processor: step_product_classification-table (stores: [step_product_classification-store])
+      --> step-classification-path-pair-join-this, step-classification-path-presence
+      <-- step_product_classification-by-key-repartition-source
+    Source: step-classification-path-subscription-response-source (topics: [step-classification-path-subscription-response-topic])
+      --> step-classification-path-subscription-response-resolver
+    Processor: step-classification-path-subscription-response-resolver (stores: [step-classification-path-presence-store])
+      --> step-classification-path-result
+      <-- step-classification-path-subscription-response-source
+    Processor: step-classification-path-presence (stores: [])
+      --> step-classification-path-presence-changes
+      <-- step_product_classification-table
+    Processor: step-classification-path-result (stores: [step-classification-path-store])
+      --> step-classification-path-pair-join-other
+      <-- step-classification-path-subscription-response-resolver
+    Processor: step-classification-path-pair-join-other (stores: [step_product_classification-store])
+      --> step-classification-path-pair
+      <-- step-classification-path-result
+    Processor: step-classification-path-pair-join-this (stores: [step-classification-path-store])
+      --> step-classification-path-pair
+      <-- step_product_classification-table
+    Processor: step-classification-path-presence-changes (stores: [])
+      --> step-classification-path-presence-transitions
+      <-- step-classification-path-presence
+    Processor: step-classification-path-pair (stores: [])
+      --> step-classifications-by-product-has-key
+      <-- step-classification-path-pair-join-this, step-classification-path-pair-join-other
+    Processor: step-classification-path-presence-transitions (stores: [step-classification-path-presence-published])
+      --> step-classification-path-presence-table
+      <-- step-classification-path-presence-changes
+    Processor: step-classification-path-presence-table (stores: [step-classification-path-presence-store])
+      --> step-classification-path-subscription-registration-processor
+      <-- step-classification-path-presence-transitions
     Processor: step-classifications-by-product-has-key (stores: [])
       --> step-classifications-by-product
-      <-- step-classification-path-result
-    Processor: step_product_classification-table (stores: [step_product_classification-store])
-      --> step-classification-path-subscription-registration-processor
-      <-- step_product_classification-by-key-repartition-source
+      <-- step-classification-path-pair
     Processor: step-classification-path-subscription-registration-processor (stores: [])
       --> step-classification-path-subscription-registration-sink
-      <-- step_product_classification-table
+      <-- step-classification-path-presence-table
     Processor: step-classifications-by-product (stores: [])
       --> step-classifications-by-product-aggregate-sink
       <-- step-classifications-by-product-has-key
@@ -421,11 +463,14 @@ Topologies:
       --> item-doc-changes
       <-- item-doc-step-products
     Processor: item-doc-changes (stores: [])
-      --> item-emit-on-change
+      --> item-consistent
       <-- item-doc-sellable
+    Processor: item-consistent (stores: [])
+      --> item-emit-on-change
+      <-- item-doc-changes
     Processor: item-emit-on-change (stores: [item-published])
       --> item-sink
-      <-- item-doc-changes
+      <-- item-consistent
     Processor: item-manufacturer-rules-subscription-registration-processor (stores: [])
       --> item-manufacturer-rules-subscription-registration-sink
       <-- item_profile-table
@@ -676,26 +721,47 @@ Topologies:
   Sub-topology: 20
     Source: item_balance-by-key-repartition-source (topics: [item_balance-by-key-repartition])
       --> item_balance-table
+    Processor: item_balance-table (stores: [item_balance-store])
+      --> balance-location-pair-join-this, balance-location-presence, balances-by-item-location-has-key
+      <-- item_balance-by-key-repartition-source
     Source: balance-location-subscription-response-source (topics: [balance-location-subscription-response-topic])
       --> balance-location-subscription-response-resolver
-    Processor: item_balance-table (stores: [item_balance-store])
-      --> balance-location-subscription-registration-processor, balances-by-item-location-has-key
-      <-- item_balance-by-key-repartition-source
-    Processor: balance-location-subscription-response-resolver (stores: [item_balance-store])
+    Processor: balance-location-subscription-response-resolver (stores: [balance-location-presence-store])
       --> balance-location-result
       <-- balance-location-subscription-response-source
+    Processor: balance-location-presence (stores: [])
+      --> balance-location-presence-changes
+      <-- item_balance-table
     Processor: balance-location-result (stores: [balance-location-store])
-      --> dc-stock-by-item-has-key
+      --> balance-location-pair-join-other
       <-- balance-location-subscription-response-resolver
+    Processor: balance-location-pair-join-other (stores: [item_balance-store])
+      --> balance-location-pair
+      <-- balance-location-result
+    Processor: balance-location-pair-join-this (stores: [balance-location-store])
+      --> balance-location-pair
+      <-- item_balance-table
+    Processor: balance-location-presence-changes (stores: [])
+      --> balance-location-presence-transitions
+      <-- balance-location-presence
+    Processor: balance-location-pair (stores: [])
+      --> dc-stock-by-item-has-key
+      <-- balance-location-pair-join-this, balance-location-pair-join-other
+    Processor: balance-location-presence-transitions (stores: [balance-location-presence-published])
+      --> balance-location-presence-table
+      <-- balance-location-presence-changes
+    Processor: balance-location-presence-table (stores: [balance-location-presence-store])
+      --> balance-location-subscription-registration-processor
+      <-- balance-location-presence-transitions
     Processor: balances-by-item-location-has-key (stores: [])
       --> balances-by-item-location
       <-- item_balance-table
     Processor: dc-stock-by-item-has-key (stores: [])
       --> dc-stock-by-item
-      <-- balance-location-result
+      <-- balance-location-pair
     Processor: balance-location-subscription-registration-processor (stores: [])
       --> balance-location-subscription-registration-sink
-      <-- item_balance-table
+      <-- balance-location-presence-table
     Processor: balances-by-item-location (stores: [])
       --> balances-by-item-location-aggregate-sink
       <-- balances-by-item-location-has-key
@@ -887,11 +953,11 @@ Topologies:
       --> item-location-local-costs
       <-- item-location-balances-non-cos
     Processor: item-location-local-costs (stores: [item-location-base-store])
-      --> item-location-doc-join-this, item-location-location-subscription-registration-processor
+      --> item-location-doc-join-this, item-location-location-presence
       <-- item-location-local-costs-join-this, item-location-local-costs-join-other
     Source: item-location-location-subscription-response-source (topics: [item-location-location-subscription-response-topic])
       --> item-location-location-subscription-response-resolver
-    Processor: item-location-location-subscription-response-resolver (stores: [item-location-base-store])
+    Processor: item-location-location-subscription-response-resolver (stores: [item-location-location-presence-store])
       --> item-location-location-result
       <-- item-location-location-subscription-response-source
     Processor: item-location-location-result (stores: [item-location-location-store])
@@ -906,18 +972,33 @@ Topologies:
     Processor: item-location-doc (stores: [])
       --> item-location-doc-keys
       <-- item-location-doc-join-this, item-location-doc-join-other
+    Processor: item-location-location-presence (stores: [])
+      --> item-location-location-presence-changes
+      <-- item-location-local-costs
     Processor: item-location-doc-keys (stores: [])
       --> item-location-doc-changes
       <-- item-location-doc
+    Processor: item-location-location-presence-changes (stores: [])
+      --> item-location-location-presence-transitions
+      <-- item-location-location-presence
     Processor: item-location-doc-changes (stores: [])
-      --> item-location-emit-on-change
+      --> item-location-consistent
       <-- item-location-doc-keys
+    Processor: item-location-location-presence-transitions (stores: [item-location-location-presence-published])
+      --> item-location-location-presence-table
+      <-- item-location-location-presence-changes
+    Processor: item-location-consistent (stores: [])
+      --> item-location-emit-on-change
+      <-- item-location-doc-changes
+    Processor: item-location-location-presence-table (stores: [item-location-location-presence-store])
+      --> item-location-location-subscription-registration-processor
+      <-- item-location-location-presence-transitions
     Processor: item-location-emit-on-change (stores: [item-location-published])
       --> item-location-sink
-      <-- item-location-doc-changes
+      <-- item-location-consistent
     Processor: item-location-location-subscription-registration-processor (stores: [])
       --> item-location-location-subscription-registration-sink
-      <-- item-location-local-costs
+      <-- item-location-location-presence-table
     Sink: item-location-location-subscription-registration-sink (topic: item-location-location-subscription-registration-topic)
       <-- item-location-location-subscription-registration-processor
     Sink: item-location-sink (topic: catalog.item-location)

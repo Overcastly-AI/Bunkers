@@ -76,6 +76,15 @@ for n in $(seq "$INSTANCES"); do
   PIDS+=($!)
 done
 
+echo "== waiting for the app instance(s) to start"
+for n in $(seq "$INSTANCES"); do
+  for _ in $(seq 120); do
+    curl -sf "localhost:$((HEALTH_BASE + n))/health/live" > /dev/null && break
+    kill -0 "${PIDS[$n]}" 2>/dev/null || { echo "app$n exited:" >&2; tail -20 "$WORK/app$n.log" >&2; exit 1; }
+    sleep 1
+  done
+done
+
 echo "== generate $ITEMS items, rounds 0..$ROUNDS"
 START=$(date +%s)
 catalog_join sim-generate "${CONFIG[@]}" "${SIZE[@]}" | tee "$WORK/generate.log"

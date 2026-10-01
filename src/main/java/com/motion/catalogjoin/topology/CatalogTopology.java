@@ -78,6 +78,9 @@ import org.apache.kafka.streams.kstream.ValueJoiner;
  */
 public final class CatalogTopology {
 
+  /** Marks a document whose lookups have not caught up with its item row; never published. */
+  private static final String PENDING = "_pending";
+
   private final StreamsBuilder builder;
   private final CatalogConfig config;
   private final Sources sources;
@@ -110,14 +113,14 @@ public final class CatalogTopology {
   private KTable<String, Group<Map<String, Object>>> stepProductsByItem() {
     // {value: STEP_PRODUCT_VALUES row, unit: STEP_UNIT row}, grouped by product
     KTable<String, Group<Map<String, Object>>> values = group(
-        fkJoin(table(STEP_PRODUCT_VALUES), table(STEP_UNIT), ref(STEP_UNIT_ID), pair("value", "unit"), "step-value-unit"),
+        withKeyedLookup(table(STEP_PRODUCT_VALUES), table(STEP_UNIT), STEP_UNIT_ID, "value", "unit", "step-value-unit"),
         "step-values-by-product", v -> Keys.ref(STEP_PRODUCT_ID, map(v.get("value")).get(STEP_PRODUCT_ID)),
         v -> config.key(STEP_PRODUCT_VALUES, map(v.get("value"))));
 
     // {link: STEP_PRODUCT_CLASSIFICATION row, classification: path}, grouped by product
     KTable<String, Group<Map<String, Object>>> links = group(
-        fkJoin(table(STEP_PRODUCT_CLASSIFICATION), classificationPaths(), ref(STEP_CLASSIFICATION_ID),
-            pair("link", "classification"), "step-classification-path"),
+        withKeyedLookup(table(STEP_PRODUCT_CLASSIFICATION), classificationPaths(), STEP_CLASSIFICATION_ID,
+            "link", "classification", "step-classification-path"),
         "step-classifications-by-product", l -> Keys.ref(STEP_PRODUCT_ID, map(l.get("link")).get(STEP_PRODUCT_ID)),
         l -> config.key(STEP_PRODUCT_CLASSIFICATION, map(l.get("link"))));
 
@@ -196,7 +199,7 @@ public final class CatalogTopology {
     Set<String> types = config.dcLocationTypes();
     Set<String> statuses = config.dcLocationStatuses();
     KTable<String, Group<Map<String, Object>>> dcStock = group(
-        fkJoin(table(ITEM_BALANCE), table(LOCATION_PROFILE), ref(MI_LOC), pair("balance", "location"), "balance-location"),
+        withKeyedLookup(table(ITEM_BALANCE), table(LOCATION_PROFILE), MI_LOC, "balance", "location", "balance-location"),
         "dc-stock-by-item",
         b -> {
           Map<String, Object> location = map(b.get("location"));
@@ -206,24 +209,24 @@ public final class CatalogTopology {
         b -> config.key(ITEM_BALANCE, map(b.get("balance"))));
 
     // Restriction rules: the three branches of the old UNION.
-    BiFunction<String, Map<String, Object>, String> productGroup =
-        (key, row) -> manufacturerProductGroup(row.get(MFR_CTL_NO), row.get(PRODUCT_GROUP_NO));
+    Function<Map<String, Object>, String> manufacturer = row -> Keys.ref(MFR_CTL_NO, row.get(MFR_CTL_NO));
+    Function<Map<String, Object>, String> productGroup = row -> manufacturerProductGroup(row.get(MFR_CTL_NO), row.get(PRODUCT_GROUP_NO));
 
     Set<String> unsellable = config.dcExcludedSellable();
     KTable<String, Map<String, Object>> docs = items
         .mapValues((key, row) -> Docs.of("itemNo", Keys.part(key, ITEM_NO), "item", row), Named.as("item-doc"))
-        .leftJoin(lookup(items, manufacturers, ref(MFR_CTL_NO), "item-manufacturer", ModelSerdes.DOC),
-            attach("manufacturer"), Named.as("item-doc-manufacturer"))
+        .leftJoin(lookup(items, manufacturers, manufacturer, "item-manufacturer"),
+            attachLookup("manufacturer", manufacturer, null), Named.as("item-doc-manufacturer"))
         .leftJoin(groupRows(rules, ITEM_RESTRICT_RULE, "rules-by-item", r -> Keys.ref(ITEM_NO, r.get(ITEM_NO))),
             attachAll("restrictions.item"), Named.as("item-doc-item-rules"))
         .leftJoin(lookup(items, groupRows(rules, ITEM_RESTRICT_RULE, "rules-by-manufacturer",
                 r -> Rows.isBlank(r, PROD_GROUP_NO) ? Keys.ref(MFR_CTL_NO, r.get(MFR_CTL_NO)) : null),
-            ref(MFR_CTL_NO), "item-manufacturer-rules", ModelSerdes.GROUP),
-            attachAll("restrictions.manufacturer"), Named.as("item-doc-manufacturer-rules"))
+            manufacturer, "item-manufacturer-rules"),
+            attachLookup("restrictions.manufacturer", manufacturer, List.of()), Named.as("item-doc-manufacturer-rules"))
         .leftJoin(lookup(items, groupRows(rules, ITEM_RESTRICT_RULE, "rules-by-manufacturer-product-group",
                 r -> manufacturerProductGroup(r.get(MFR_CTL_NO), r.get(PROD_GROUP_NO))),
-            productGroup, "item-product-group-rules", ModelSerdes.GROUP),
-            attachAll("restrictions.manufacturerProductGroup"), Named.as("item-doc-product-group-rules"))
+            productGroup, "item-product-group-rules"),
+            attachLookup("restrictions.manufacturerProductGroup", productGroup, List.of()), Named.as("item-doc-product-group-rules"))
         .leftJoin(dcStock, attachAll("dcStock"), Named.as("item-doc-dc-stock"))
         .leftJoin(groupRows(table(ITEM_COST), ITEM_COST, "costs-by-item", r -> Keys.ref(ITEM_NO, r.get(ITEM_NO))),
             attachAll("costs"), Named.as("item-doc-costs"))
@@ -261,8 +264,8 @@ public final class CatalogTopology {
                 Named.as("item-location-local-costs"), Stores.materialized("item-location-base", ModelSerdes.DOC));
 
     KTable<String, Map<String, Object>> docs = base
-        .leftJoin(lookup(base, table(LOCATION_PROFILE), (key, doc) -> Keys.ref(MI_LOC, Keys.part(key, MI_LOC)),
-            "item-location-location", ModelSerdes.DOC), attach("location"), Named.as("item-location-doc"))
+        .leftJoin(keyedLookup(base, table(LOCATION_PROFILE), MI_LOC, "item-location-location"),
+            attachLookup("location", row -> null, null), Named.as("item-location-doc"))
         .mapValues((key, doc) -> Docs.with(Docs.with(doc, "itemNo", Keys.part(key, ITEM_NO)), "miLoc", Keys.part(key, MI_LOC)),
             Named.as("item-location-doc-keys"));
 
@@ -285,9 +288,19 @@ public final class CatalogTopology {
     return (left, right) -> Docs.of(leftName, left, rightName, right);
   }
 
-  /** Sets {@code path} on the document to the right-side value (null when there is none). */
-  private static ValueJoiner<Map<String, Object>, Map<String, Object>, Map<String, Object>> attach(String path) {
-    return (doc, value) -> Docs.with(doc, path, value);
+  /**
+   * Sets {@code path} to a lookup's value ({@code none} when there is no match). When the lookup was
+   * computed for a different foreign key than the document's current item row has (its round trip
+   * is still in flight), or has not been computed yet, the document is marked pending and is not
+   * published until it is consistent again.
+   */
+  private static ValueJoiner<Map<String, Object>, Map<String, Object>, Map<String, Object>> attachLookup(
+      String path, Function<Map<String, Object>, String> foreignKey, Object none) {
+    return (doc, found) -> {
+      boolean current = found != null && Objects.equals(found.get("ref"), foreignKey.apply(map(doc.get("item"))));
+      Map<String, Object> out = Docs.with(doc, path, found == null || found.get("value") == null ? none : found.get("value"));
+      return current ? out : Docs.with(out, PENDING, true);
+    };
   }
 
   /** Sets {@code path} on the document to the aggregate's rows, in id order ([] when there are none). */
@@ -303,13 +316,47 @@ public final class CatalogTopology {
   }
 
   /**
-   * The right-side value each left row points at, keyed like the left table (deleted when there is
-   * no match). Joining that narrow table back by primary key keeps the wide document out of the
-   * foreign-key round trip.
+   * The right-side value each left row points at, keyed like the left table, as {@code {ref: the
+   * foreign key it was computed for, value: the match or null}}. Aggregates become id-ordered arrays.
+   * Joining this narrow table back by primary key keeps wide documents out of the round trip.
    */
-  private <V> KTable<String, V> lookup(KTable<String, Map<String, Object>> left, KTable<String, V> right,
-      BiFunction<String, Map<String, Object>, String> foreignKey, String name, Serde<V> values) {
-    return left.leftJoin(right, foreignKey, (row, value) -> value, TableJoined.as(name), Stores.materialized(name, values));
+  private <V> KTable<String, Map<String, Object>> lookup(KTable<String, Map<String, Object>> left, KTable<String, V> right,
+      Function<Map<String, Object>, String> foreignKey, String name) {
+    return left.leftJoin(right, (key, row) -> foreignKey.apply(row),
+        (row, value) -> Docs.of("ref", foreignKey.apply(row), "value", flatten(value)),
+        TableJoined.as(name), Stores.materialized(name, ModelSerdes.DOC));
+  }
+
+  /**
+   * {@link #lookup} for a foreign key that is one of the left table's own key columns, so it never
+   * changes for a row. Only keys appearing or disappearing go through the foreign-key round trip;
+   * updates of an existing row do not.
+   */
+  private <V> KTable<String, Map<String, Object>> keyedLookup(KTable<String, ?> left, KTable<String, V> right,
+      String column, String name) {
+    String published = name + "-presence-published";
+    builder.addStateStore(Stores.keyValueStore(published, Serdes.ByteArray()));
+    KTable<String, byte[]> present = left
+        .mapValues(value -> Boolean.TRUE, Named.as(name + "-presence"))
+        .toStream(Named.as(name + "-presence-changes"))
+        .processValues(() -> new EmitOnChange<Boolean>(published), Named.as(name + "-presence-transitions"), published)
+        .toTable(Named.as(name + "-presence-table"), Stores.materialized(name + "-presence", Serdes.ByteArray()));
+    return present.leftJoin(right, (key, marker) -> Keys.ref(column, Keys.part(key, column)),
+        (marker, value) -> Docs.of("ref", null, "value", flatten(value)),
+        TableJoined.as(name), Stores.materialized(name, ModelSerdes.DOC));
+  }
+
+  /** Each left row paired with its {@link #keyedLookup} match: {@code {leftName: row, rightName: match}}. */
+  private <V> KTable<String, Map<String, Object>> withKeyedLookup(KTable<String, Map<String, Object>> left,
+      KTable<String, V> right, String column, String leftName, String rightName, String name) {
+    return left.leftJoin(keyedLookup(left, right, column, name),
+        (row, found) -> Docs.of(leftName, row, rightName, found == null ? null : found.get("value")),
+        Named.as(name + "-pair"));
+  }
+
+  @SuppressWarnings("unchecked")
+  private static Object flatten(Object value) {
+    return value instanceof Group<?> group ? values((Group<Map<String, Object>>) group) : value;
   }
 
   /** {@link #group} for source rows, identified by their table's key. */
@@ -336,10 +383,12 @@ public final class CatalogTopology {
             Stores.materialized(name, ModelSerdes.GROUP));
   }
 
+  /** Publishes changed documents; pending (inconsistent) intermediate versions are skipped. */
   private void publish(KTable<String, Map<String, Object>> docs, String name, String topic) {
     String store = name + "-published";
     builder.addStateStore(Stores.keyValueStore(store, Serdes.ByteArray()));
     docs.toStream(Named.as(name + "-doc-changes"))
+        .filter((key, doc) -> doc == null || !Boolean.TRUE.equals(doc.get(PENDING)), Named.as(name + "-consistent"))
         .processValues(() -> new EmitOnChange<Map<String, Object>>(store), Named.as(name + "-emit-on-change"), store)
         .to(topic, Produced.with(Serdes.String(), Serdes.ByteArray()).withName(name + "-sink"));
   }

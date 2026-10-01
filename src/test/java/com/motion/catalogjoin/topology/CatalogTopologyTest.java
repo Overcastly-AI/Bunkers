@@ -86,6 +86,28 @@ class CatalogTopologyTest {
   }
 
   @Test
+  void publishedDocumentsNeverPairAnItemWithAStaleManufacturer() {
+    h.upsert(MFR_PROFILE, row("MFR_CTL_NO", "AB", "MFR_NAME_ID", "N1"));
+    h.upsert(MFR_PROFILE, row("MFR_CTL_NO", "CD", "MFR_NAME_ID", "N2"));
+    h.upsert(ITEM_RESTRICT_RULE, row("CTL_NO", "R-AB", "ITEM_NO", " ", "MFR_CTL_NO", "AB", "PROD_GROUP_NO", " "));
+    item("100", "AB", "G1");
+    item("100", "CD", "G1");
+    item("100", "AB", "G2");
+
+    List<TestRecord<String, byte[]>> published = h.newRecords(h.driver.config.itemTopic());
+    assertThat(published).isNotEmpty();
+    for (TestRecord<String, byte[]> record : published) {
+      JsonNode doc = parse(record.value());
+      String itemMfr = doc.path("item").path("MFR_CTL_NO").asText();
+      assertThat(doc.path("manufacturer").path("profile").path("MFR_CTL_NO").asText()).isEqualTo(itemMfr);
+      assertThat(texts(doc.path("restrictions").path("manufacturer"), "CTL_NO"))
+          .isEqualTo(itemMfr.equals("AB") ? List.of("R-AB") : List.of());
+      assertThat(doc.has("_pending")).isFalse();
+    }
+    assertThat(h.item("100").path("item").path("PRODUCT_GROUP_NO").asText()).isEqualTo("G2");
+  }
+
+  @Test
   void itemArrivingBeforeItsManufacturerIsCompletedLater() {
     item("100", "AB", "G1");
     assertThat(h.item("100").path("manufacturer").isNull()).isTrue();

@@ -51,13 +51,16 @@ Key and value are read as raw bytes. `catalog.payload-format` = `AVRO_OR_JSON` (
 | Flat JSON object (KCOP) | the object is the row |
 | `null`, empty, or the text `null` | delete (tombstone); the key must identify the row |
 
-- **Key**: a JSON object of the key columns (a bare JSON scalar or printable text is accepted for
-  single-column keys). It is merged into the row first; value columns overwrite it. Binary keys
-  (e.g. Avro) are ignored, so the key columns must then be present in the value.
+- **Key**: a JSON object of the key columns. For single-column keys a JSON string or integer, or
+  plain printable text, is also accepted. Anything else (binary keys such as Avro, `null`, arrays,
+  decimals) is ignored, so the key columns must then be present in the value. The key is merged
+  into the row first; value columns overwrite it.
 - **Key changes**: an update whose `before` image has a different key than its `after` image is
   applied as a delete of the old key plus an upsert of the new one.
 - **Column names** are case-insensitive (upper-cased on read).
-- **Avro-JSON union wrappers** (`{"string":"ABC"}`) are unwrapped recursively.
+- **Avro-JSON union wrappers** (`{"string":"ABC"}`, also `map`/`array`) are unwrapped recursively,
+  and a named-record wrapper around `before`/`after` (`{"com.ibm.cdc.Row": {...}}`) is removed.
+- **Rows are flat**: a column whose value is an object or array makes the record invalid.
 - **Decimals** are kept exact (`BigDecimal`); NUL characters (escaped or raw) are stripped from
   strings; the columns in `catalog.ingest.dropped-columns` (`LAST_EVENT_AT`) are dropped. All other
   columns pass through untouched.
@@ -131,6 +134,10 @@ a month later:
 - Consumers therefore see a document **converge**: a compacted topic always ends with the complete,
   latest version. A consumer that must not act on a partial document checks the parts it needs
   (e.g. `manufacturer != null`).
+- What is never published is an *inconsistent* document: when an item's `MFR_CTL_NO` or
+  `PRODUCT_GROUP_NO` changes, the manufacturer and rule lookups take a round trip to catch up, and
+  the intermediate version (new item row, old manufacturer) is held back. Only the caught-up version
+  is published.
 
 Things that were broken or slow before and are not any more:
 

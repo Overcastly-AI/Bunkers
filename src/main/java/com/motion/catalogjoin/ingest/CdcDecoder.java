@@ -1,6 +1,7 @@
 package com.motion.catalogjoin.ingest;
 
 import com.fasterxml.jackson.core.json.JsonReadFeature;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.motion.catalogjoin.CatalogConfig;
@@ -49,10 +50,12 @@ import org.apache.avro.io.DecoderFactory;
 public final class CdcDecoder {
 
   private static final Set<String> UNION_BRANCHES =
-      Set.of("NULL", "BOOLEAN", "INT", "LONG", "FLOAT", "DOUBLE", "STRING", "BYTES");
+      Set.of("NULL", "BOOLEAN", "INT", "LONG", "FLOAT", "DOUBLE", "STRING", "BYTES", "MAP", "ARRAY");
   /** Accepts raw control characters (NUL) inside strings; they are stripped afterwards. */
   private static final ObjectMapper LENIENT =
-      Json.MAPPER.copy().enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature());
+      Json.MAPPER.copy()
+          .enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature())
+          .enable(DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
 
   private final CatalogConfig config;
   private final PayloadFormat format;
@@ -67,6 +70,14 @@ public final class CdcDecoder {
 
   /** One change, or two for an update that moved the row to a new key. */
   public List<Decoded> decode(SourceTable table, byte[] rawKey, byte[] rawValue) throws InvalidRecordException {
+    try {
+      return decodeChecked(table, rawKey, rawValue);
+    } catch (NestedValueException e) {
+      throw new InvalidRecordException(e.getMessage(), e);
+    }
+  }
+
+  private List<Decoded> decodeChecked(SourceTable table, byte[] rawKey, byte[] rawValue) throws InvalidRecordException {
     Map<String, Object> keyColumns = decodeKey(table, rawKey);
 
     if (isTombstone(rawValue)) {
@@ -115,15 +126,15 @@ public final class CdcDecoder {
       if (value instanceof Map<?, ?> map) {
         return normalizeRow(map);
       }
-      if (value != null && !(value instanceof List<?>) && keyColumns.size() == 1) {
-        return Map.of(keyColumns.get(0), normalizeValue(value));
-      }
+      // A single-column key may be a JSON string or integer; null, arrays and other scalars are not keys.
+      boolean scalar = value instanceof String || (value instanceof Number && node.isIntegralNumber());
+      return scalar && keyColumns.size() == 1 ? Map.of(keyColumns.get(0), normalizeValue(value)) : Map.of();
     } catch (IOException | RuntimeException notJson) {
-      // Not a JSON key; fall through.
+      // Not JSON; fall through.
     }
     if (keyColumns.size() == 1) {
       String text = printableUtf8(rawKey);
-      if (text != null && !text.isBlank()) {
+      if (text != null && !text.isBlank() && "{[".indexOf(text.charAt(0)) < 0) {
         return Map.of(keyColumns.get(0), text);
       }
     }
@@ -270,20 +281,35 @@ public final class CdcDecoder {
     if (!(image instanceof Map<?, ?> map)) {
       throw new InvalidRecordException("JSON envelope image is not an object");
     }
+    // Avro-JSON wraps a named record type as {"full.Name": {...}}.
+    if (map.size() == 1 && map.values().iterator().next() instanceof Map<?, ?> inner) {
+      map = inner;
+    }
     return normalizeRow(map);
   }
 
   // --- normalization ---------------------------------------------------------------------------
 
+  /** Upper-cased columns, dropped columns removed; rows are flat, so nested values are rejected. */
   private Map<String, Object> normalizeRow(Map<?, ?> source) {
     Map<String, Object> row = new LinkedHashMap<>();
     for (Map.Entry<?, ?> entry : source.entrySet()) {
       String column = stripNul(String.valueOf(entry.getKey())).trim().toUpperCase(Locale.ROOT);
+      if (entry.getValue() instanceof Map<?, ?> || entry.getValue() instanceof List<?>) {
+        throw new NestedValueException(column);
+      }
       if (!droppedColumns.contains(column)) {
         row.put(column, normalizeValue(entry.getValue()));
       }
     }
     return row;
+  }
+
+  /** Unchecked so it can leave lambdas; turned into an invalid record by {@link #decode}. */
+  private static final class NestedValueException extends RuntimeException {
+    NestedValueException(String column) {
+      super("Column " + column + " holds a nested value; rows must be flat");
+    }
   }
 
   private static Object normalizeValue(Object value) {

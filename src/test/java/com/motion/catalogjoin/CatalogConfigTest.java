@@ -22,7 +22,7 @@ class CatalogConfigTest {
     assertThat(config.itemTopic()).isEqualTo("catalog.item");
     assertThat(config.classificationRoot()).isEqualTo("Motion");
     assertThat(config.dcLocationTypes()).containsExactly("W");
-    assertThat(config.partitions()).isNull();
+    assertThat(config.partitions()).isEqualTo(12);
     assertThat(config.streamsProperties()).containsEntry("processing.guarantee", "exactly_once_v2");
   }
 

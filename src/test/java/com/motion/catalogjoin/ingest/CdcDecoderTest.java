@@ -203,6 +203,27 @@ class CdcDecoderTest {
     assertThat(d.row()).containsOnlyKeys("ITEM_NO");
   }
 
+  @Test
+  void avroJsonWrappersForMapsAndNamedRecordsAreUnwrapped() throws Exception {
+    Decoded map = json(SourceTable.ITEM_PROFILE, null, "{\"op\":\"U\",\"after\":{\"map\":{\"ITEM_NO\":{\"string\":\"1\"}}}}");
+    assertThat(map.row()).containsEntry("ITEM_NO", "1");
+    Decoded named = json(SourceTable.ITEM_PROFILE, null, "{\"op\":\"U\",\"after\":{\"com.ibm.cdc.Row\":{\"ITEM_NO\":\"2\"}}}");
+    assertThat(named.row()).containsEntry("ITEM_NO", "2");
+  }
+
+  @Test
+  void nestedValuesAreRejected() {
+    assertThatThrownBy(() -> json(SourceTable.ITEM_PROFILE, null, "{\"ITEM_NO\":\"1\",\"DETAIL\":{\"a\":1,\"b\":2}}"))
+        .isInstanceOf(InvalidRecordException.class).hasMessageContaining("DETAIL");
+  }
+
+  @Test
+  void nullAndStructuredTextAreNotSingleColumnKeys() {
+    for (String key : new String[] {"null", "[1]", "true", "{broken", "1.5"}) {
+      assertThatThrownBy(() -> json(SourceTable.ITEM_PROFILE, key, null)).as(key).isInstanceOf(InvalidRecordException.class);
+    }
+  }
+
   // --- Avro -----------------------------------------------------------------------------------
 
   @Test
