@@ -3,6 +3,7 @@ package com.motion.catalogjoin.ingest;
 import com.motion.catalogjoin.CatalogConfig;
 import com.motion.catalogjoin.Keys;
 import com.motion.catalogjoin.SourceTable;
+import com.motion.catalogjoin.Tracing;
 import com.motion.catalogjoin.model.ModelSerdes;
 import com.motion.catalogjoin.topology.Stores;
 import java.nio.charset.StandardCharsets;
@@ -118,10 +119,19 @@ public final class Sources {
   }
 
   private DecodeResult decode(SourceTable table, byte[] key, byte[] value) {
+    Tracing.tag(Tracing.SOURCE_TABLE, table.slug());
     try {
-      return new DecodeResult(decoder.decode(table, key, value), value, null);
+      List<Decoded> changes = decoder.decode(table, key, value);
+      Tracing.tag(Tracing.CHANGES, changes.size());
+      if (changes.size() == 1) {
+        Tracing.tag(Tracing.KEY, changes.get(0).key());
+      }
+      return new DecodeResult(changes, value, null);
     } catch (InvalidRecordException | RuntimeException e) {
-      return new DecodeResult(List.of(), value, e.getMessage() == null ? e.toString() : e.getMessage());
+      String error = e.getMessage() == null ? e.toString() : e.getMessage();
+      Tracing.tag(Tracing.DEAD_LETTER, true);
+      Tracing.error(error);
+      return new DecodeResult(List.of(), value, error);
     }
   }
 

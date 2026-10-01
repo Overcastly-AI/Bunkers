@@ -22,6 +22,9 @@
     <logback.version>1.5.38</logback.version>
     <junit.version>6.1.3</junit.version>
     <assertj.version>3.27.7</assertj.version>
+    <opentelemetry.version>1.66.0</opentelemetry.version>
+    <!-- Shipped next to the jar (target/dd-java-agent.jar, /app in the image); see bin/catalog-join. -->
+    <dd-java-agent.version>1.66.0</dd-java-agent.version>
   </properties>
 
   <dependencies>
@@ -39,6 +42,12 @@
       <groupId>org.apache.avro</groupId>
       <artifactId>avro</artifactId>
       <version>${avro.version}</version>
+    </dependency>
+    <!-- Span tags only; a no-op unless the Datadog agent (dd.trace.otel.enabled) is attached. -->
+    <dependency>
+      <groupId>io.opentelemetry</groupId>
+      <artifactId>opentelemetry-api</artifactId>
+      <version>${opentelemetry.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -88,6 +97,29 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.4</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <version>3.8.1</version>
+        <executions>
+          <execution>
+            <id>datadog-agent</id>
+            <phase>package</phase>
+            <goals><goal>copy</goal></goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>com.datadoghq</groupId>
+                  <artifactId>dd-java-agent</artifactId>
+                  <version>${dd-java-agent.version}</version>
+                  <destFileName>dd-java-agent.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>${project.build.directory}</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

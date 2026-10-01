@@ -1,6 +1,7 @@
 package com.motion.catalogjoin.topology;
 
 import com.motion.catalogjoin.Json;
+import com.motion.catalogjoin.Tracing;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
@@ -18,11 +19,14 @@ import org.apache.kafka.streams.state.KeyValueStore;
 final class EmitOnChange<V> implements FixedKeyProcessor<String, V, byte[]> {
 
   private final String storeName;
+  private final String output;
   private FixedKeyProcessorContext<String, byte[]> context;
   private KeyValueStore<String, byte[]> published;
 
-  EmitOnChange(String storeName) {
+  /** @param output topic name for span tags, or null for an internal use that is not traced */
+  EmitOnChange(String storeName, String output) {
     this.storeName = storeName;
+    this.output = output;
   }
 
   @Override
@@ -33,17 +37,25 @@ final class EmitOnChange<V> implements FixedKeyProcessor<String, V, byte[]> {
 
   @Override
   public void process(FixedKeyRecord<String, V> record) {
+    boolean publish;
     if (record.value() == null) {
-      if (published.delete(record.key()) != null) {
+      publish = published.delete(record.key()) != null;
+      if (publish) {
         context.forward(record.withValue(null));
       }
-      return;
+    } else {
+      byte[] bytes = Json.write(record.value());
+      byte[] digest = digest(bytes);
+      publish = !Arrays.equals(digest, published.get(record.key()));
+      if (publish) {
+        published.put(record.key(), digest);
+        context.forward(record.withValue(bytes));
+      }
     }
-    byte[] bytes = Json.write(record.value());
-    byte[] digest = digest(bytes);
-    if (!Arrays.equals(digest, published.get(record.key()))) {
-      published.put(record.key(), digest);
-      context.forward(record.withValue(bytes));
+    if (output != null) {
+      Tracing.tag(Tracing.OUTPUT, output);
+      Tracing.tag(Tracing.KEY, record.key());
+      Tracing.tag(Tracing.PUBLISHED, publish);
     }
   }
 

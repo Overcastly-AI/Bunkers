@@ -13,7 +13,12 @@ spec:
     matchLabels: {app: catalog-join}
   template:
     metadata:
-      labels: {app: catalog-join}
+      labels:
+        app: catalog-join
+        # Datadog unified service tagging; overlays set env and version.
+        tags.datadoghq.com/service: catalog-join
+      annotations:
+        ad.datadoghq.com/catalog-join.logs: '[{"source": "java", "service": "catalog-join"}]'
     spec:
       # Longer than catalog.shutdown-timeout-ms so a shutdown can commit and close cleanly.
       terminationGracePeriodSeconds: 90
@@ -34,6 +39,13 @@ spec:
           args: [run]
           env:
             - {name: CATALOG_CONFIG, value: /etc/catalog-join/catalog-join.properties}
+            # Read by dd.env / dd.version / dd.agent.host in the configuration (Datadog agent DaemonSet on the node).
+            - name: DD_ENV
+              valueFrom: {fieldRef: {fieldPath: "metadata.labels['tags.datadoghq.com/env']"}}
+            - name: DD_VERSION
+              valueFrom: {fieldRef: {fieldPath: "metadata.labels['tags.datadoghq.com/version']"}}
+            - name: DD_AGENT_HOST
+              valueFrom: {fieldRef: {fieldPath: status.hostIP}}
             # Heap share of the memory limit; RocksDB (catalog.rocksdb.memory-bytes) lives off heap.
             - {name: JDK_JAVA_OPTIONS, value: "-XX:MaxRAMPercentage=40 -XX:+ExitOnOutOfMemoryError"}
           ports:

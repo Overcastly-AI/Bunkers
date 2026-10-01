@@ -34,6 +34,8 @@ public final class App {
         run             Run the joiner (default when the first argument is a file).
         create-topics   Create the output and dead-letter topics (catalog.output.*).
         print-config    Print the effective configuration (secrets masked).
+        tracer-config   Write the Datadog agent settings (dd.*) to FILE when tracing is on (used by
+                        bin/catalog-join): catalog-join tracer-config FILE [config ...]
         sim-generate    Load simulation: produce sim.* rounds to the source topics. --create-topics also
                         creates source and output topics.
         sim-verify      Load simulation: wait for the app to catch up, then check its output.
@@ -48,6 +50,7 @@ public final class App {
   public static void main(String[] argv) throws Exception {
     List<String> args = new ArrayList<>(List.of(argv));
     String command = args.isEmpty() || args.get(0).endsWith(".properties") ? "run" : args.remove(0);
+    Path output = command.equals("tracer-config") && !args.isEmpty() ? Path.of(args.remove(0)) : null;
     List<Path> files = new ArrayList<>();
     Map<String, String> overrides = new LinkedHashMap<>();
     Set<String> flags = new java.util.HashSet<>();
@@ -75,6 +78,7 @@ public final class App {
         Topics.createOutputs(CatalogConfig.load(files, overrides));
         yield 0;
       }
+      case "tracer-config" -> writeTracerConfig(CatalogConfig.load(files, overrides), output);
       case "print-config" -> {
         CatalogConfig.load(files, overrides).describe().forEach((k, v) -> System.out.println(k + "=" + v));
         yield 0;
@@ -91,6 +95,21 @@ public final class App {
       }
     };
     System.exit(exit);
+  }
+
+  /** Writes dd.* settings for the Datadog agent; leaves the file empty when tracing is off. */
+  private static int writeTracerConfig(CatalogConfig config, Path output) throws IOException {
+    if (output == null) {
+      System.err.print(USAGE);
+      return 2;
+    }
+    try (var out = java.nio.file.Files.newBufferedWriter(output)) {
+      config.tracerProperties().store(out, "Datadog agent settings from catalog-join configuration");
+    }
+    if (config.tracerProperties().isEmpty()) {
+      java.nio.file.Files.write(output, new byte[0]);
+    }
+    return 0;
   }
 
   /** Runs Kafka Streams until it stops; non-zero exit if it failed, so the orchestrator restarts it. */

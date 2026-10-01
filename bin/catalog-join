@@ -1,0 +1,25 @@
+#!/bin/sh
+# Starts catalog-join; attaches the Datadog Java agent when the merged configuration says
+# dd.trace.enabled=true, handing it the merged dd.* settings. Same arguments as the jar:
+#   bin/catalog-join [command] [config.properties ...] [--set key=value ...]
+# Layout: the jar and dd-java-agent.jar sit in the parent directory (/app in the image) unless
+# CATALOG_JOIN_JAR / DD_JAVA_AGENT_JAR say otherwise. JVM flags come from JDK_JAVA_OPTIONS.
+set -eu
+
+home=$(cd "$(dirname "$0")/.." && pwd)
+jar=${CATALOG_JOIN_JAR:-$home/catalog-join.jar}
+agent=${DD_JAVA_AGENT_JAR:-$home/dd-java-agent.jar}
+
+command=run
+case "${1:-}" in
+  run|create-topics|print-config|sim-generate|sim-verify|help) command=$1; shift ;;
+esac
+
+tracer=$(mktemp "${TMPDIR:-/tmp}/dd-tracer.XXXXXX")
+java -jar "$jar" tracer-config "$tracer" "$@"
+if [ -s "$tracer" ]; then
+  [ -f "$agent" ] || { echo "dd.trace.enabled=true but $agent is missing" >&2; exit 2; }
+  exec java -javaagent:"$agent" -Ddd.trace.config="$tracer" -jar "$jar" "$command" "$@"
+fi
+rm -f "$tracer"
+exec java -jar "$jar" "$command" "$@"

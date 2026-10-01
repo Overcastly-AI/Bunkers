@@ -57,7 +57,17 @@ class CatalogConfigTest {
   @Test
   void ownSettingsStayOutOfStreamsProperties() {
     Properties streams = CatalogConfig.of(new Properties()).streamsProperties();
-    assertThat(streams.stringPropertyNames()).noneMatch(k -> k.startsWith("catalog.") || k.startsWith("sim."));
+    assertThat(streams.stringPropertyNames()).noneMatch(k -> k.startsWith("catalog.") || k.startsWith("sim.") || k.startsWith("dd."));
+  }
+
+  @Test
+  void tracerSettingsAreHandedToTheAgentOnlyWhenTracingIsOn() {
+    assertThat(CatalogConfig.of(new Properties()).tracerProperties()).isEmpty();
+    Properties p = new Properties();
+    p.setProperty("dd.trace.enabled", "true");
+    Properties tracer = CatalogConfig.of(p).tracerProperties();
+    assertThat(tracer).containsEntry("dd.service", "catalog-join").containsEntry("dd.data.streams.enabled", "true");
+    assertThat(tracer.stringPropertyNames()).allMatch(k -> k.startsWith("dd."));
   }
 
   @Test

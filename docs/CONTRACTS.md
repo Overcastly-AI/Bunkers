@@ -158,6 +158,10 @@ the entity goes away. The app writes with exactly-once semantics; consumers shou
 re-published **only when their bytes change**; object keys are sorted and arrays are in key order,
 so the same content always serializes identically. `catalog.item-price` mirrors its source 1:1.
 
+With Datadog tracing on, records also carry the agent's headers (`x-datadog-trace-id`,
+`x-datadog-parent-id`, `x-datadog-sampling-priority`, `dd-pathway-ctx-base64`); consumers can
+ignore them, or continue the trace with their own Datadog instrumentation.
+
 Create the topics before the first start with `catalog-join create-topics <config>`:
 `cleanup.policy=compact` for the three catalog topics, `delete` for the dead-letter topic, sized by
 `catalog.output.*`.

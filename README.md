@@ -34,7 +34,7 @@ One jar; the container runs `run` by default.
 
 ```bash
 mvn verify                                   # tests (no Kafka needed)
-java -jar target/catalog-join.jar help
+bin/catalog-join help                        # = java -jar, plus the Datadog agent when enabled
 java -jar target/catalog-join.jar create-topics deploy/production/catalog-join.properties
 java -jar target/catalog-join.jar run deploy/production/catalog-join.properties
 java -jar target/catalog-join.jar print-config deploy/production/catalog-join.properties
@@ -42,6 +42,26 @@ java -jar target/catalog-join.jar print-config deploy/production/catalog-join.pr
 
 `GET :8080/health/live` returns 200 unless processing has failed. `/health/ready` returns 200 while
 running. The process exits non-zero if Kafka Streams fails, so the pod restarts.
+
+## Observability (Datadog)
+
+`bin/catalog-join` (the image entrypoint) attaches the Datadog Java agent when the merged
+configuration has `dd.trace.enabled=true` (on in the production and sim overlays). It hands the
+agent the merged `dd.*` settings, so they live in the same files as everything else.
+
+- **Traces**: the agent's Kafka Streams and Kafka client instrumentation opens a span per record
+  processed. The app tags these spans with `catalog.source.table`, `catalog.key`,
+  `catalog.dead_letter` and `error.message` for undecodable input, and with `catalog.output` and
+  `catalog.published` (`false` = unchanged document suppressed) for each output document.
+- **Data Streams Monitoring** (`dd.data.streams.enabled`): pathway context travels in record
+  headers, so DSM shows latency from the CDC topics through the internal topics to the outputs,
+  and on into the consumers.
+- **Logs** carry `dd.trace_id`/`dd.span_id` (`dd.logs.injection`), and the pod annotation tags
+  them `source:java`.
+- **GKE**: needs the Datadog Agent DaemonSet with APM on (port 8126). `DD_AGENT_HOST` is the node
+  IP; `DD_ENV`/`DD_VERSION` come from the pod's `tags.datadoghq.com/*` labels, which the overlays set.
+- **Locally**: `sim/run-local.sh --datadog` prints spans to the app logs, with no Datadog agent
+  needed.
 
 ## Code map
 
@@ -54,6 +74,7 @@ running. The process exits non-zero if Kafka Streams fails, so the pod restarts.
 | `topology/ClassificationPaths` | the hierarchy walk (replaces the recursive CTE) |
 | `topology/EmitOnChange` | suppresses unchanged documents before each output topic |
 | `BoundedRocksDb` | one off-heap memory budget for all state stores |
+| `Tracing`, `bin/catalog-join` | Datadog span tags; agent attach from the merged `dd.*` settings |
 | `sim/*` | load simulator: deterministic model, generator, exact verifier |
 
 ## Load simulation

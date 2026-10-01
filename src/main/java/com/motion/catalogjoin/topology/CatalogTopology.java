@@ -339,7 +339,7 @@ public final class CatalogTopology {
     KTable<String, byte[]> present = left
         .mapValues(value -> Boolean.TRUE, Named.as(name + "-presence"))
         .toStream(Named.as(name + "-presence-changes"))
-        .processValues(() -> new EmitOnChange<Boolean>(published), Named.as(name + "-presence-transitions"), published)
+        .processValues(() -> new EmitOnChange<Boolean>(published, null), Named.as(name + "-presence-transitions"), published)
         .toTable(Named.as(name + "-presence-table"), Stores.materialized(name + "-presence", Serdes.ByteArray()));
     return present.leftJoin(right, (key, marker) -> Keys.ref(column, Keys.part(key, column)),
         (marker, value) -> Docs.of("ref", null, "value", flatten(value)),
@@ -389,7 +389,7 @@ public final class CatalogTopology {
     builder.addStateStore(Stores.keyValueStore(store, Serdes.ByteArray()));
     docs.toStream(Named.as(name + "-doc-changes"))
         .filter((key, doc) -> doc == null || !Boolean.TRUE.equals(doc.get(PENDING)), Named.as(name + "-consistent"))
-        .processValues(() -> new EmitOnChange<Map<String, Object>>(store), Named.as(name + "-emit-on-change"), store)
+        .processValues(() -> new EmitOnChange<Map<String, Object>>(store, topic), Named.as(name + "-emit-on-change"), store)
         .to(topic, Produced.with(Serdes.String(), Serdes.ByteArray()).withName(name + "-sink"));
   }
 }

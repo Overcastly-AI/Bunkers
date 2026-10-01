@@ -12,10 +12,13 @@ spec:
       containers:
         - name: generate
           image: catalog-join
-          args: [sim-generate, --create-topics]
+          args: [sim-generate, --create-topics, --set, dd.service=catalog-join-sim-generate]
           env:
             - {name: CATALOG_CONFIG, value: /etc/catalog-join/catalog-join.properties}
             - {name: JDK_JAVA_OPTIONS, value: "-XX:MaxRAMPercentage=75"}
+            - {name: DD_ENV, value: sim}
+            - name: DD_AGENT_HOST
+              valueFrom: {fieldRef: {fieldPath: status.hostIP}}
           volumeMounts:
             - {name: config, mountPath: /etc/catalog-join}
           resources:
@@ -38,10 +41,13 @@ spec:
       containers:
         - name: verify
           image: catalog-join
-          args: [sim-verify]
+          args: [sim-verify, --set, dd.trace.enabled=false]
           env:
             - {name: CATALOG_CONFIG, value: /etc/catalog-join/catalog-join.properties}
             - {name: JDK_JAVA_OPTIONS, value: "-XX:MaxRAMPercentage=75"}
+            - {name: DD_ENV, value: sim}
+            - name: DD_AGENT_HOST
+              valueFrom: {fieldRef: {fieldPath: status.hostIP}}
           volumeMounts:
             - {name: config, mountPath: /etc/catalog-join}
           resources:

@@ -1,7 +1,8 @@
 <configuration>
   <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
     <encoder>
-      <pattern>%d{ISO8601} %-5level [%thread] %logger{36} - %msg%n</pattern>
+      <!-- dd.trace_id/dd.span_id come from the Datadog agent (dd.logs.injection) and link logs to traces. -->
+      <pattern>%d{ISO8601} %-5level [%thread] %logger{36} [dd.trace_id=%X{dd.trace_id:-0} dd.span_id=%X{dd.span_id:-0}] - %msg%n</pattern>
     </encoder>
   </appender>
   <logger name="org.apache.kafka" level="WARN"/>

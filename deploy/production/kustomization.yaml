@@ -1,6 +1,12 @@
 # kubectl apply -k deploy/production
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
+labels:
+  - pairs:
+      tags.datadoghq.com/env: production
+      tags.datadoghq.com/version: "0.1.0"
+    includeSelectors: false
+    includeTemplates: true
 resources:
   - ../base
 configMapGenerator:

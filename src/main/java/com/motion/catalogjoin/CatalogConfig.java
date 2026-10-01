@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
  * All settings, from one place. {@code catalog-join.properties} on the classpath holds every key
  * and its default; files given at startup are layered on top (later wins), then explicit
  * overrides. {@code ${ENV}} / {@code ${ENV:default}} references are resolved last. Keys under
- * {@code catalog.} and {@code sim.} configure this application; everything else is Kafka Streams
- * (and client) configuration.
+ * {@code catalog.} and {@code sim.} configure this application, {@code dd.} the Datadog agent;
+ * everything else is Kafka Streams (and client) configuration.
  */
 public final class CatalogConfig {
 
@@ -34,7 +34,8 @@ public final class CatalogConfig {
   public static final String ITEM_NUMBER_ATTRIBUTE = "ITEM_NUMBER";
 
   private static final Pattern ENV_REF = Pattern.compile("\\$\\{([A-Za-z_][A-Za-z0-9_]*)(?::([^}]*))?}");
-  private static final Set<String> OWN_PREFIXES = Set.of("catalog.", "sim.");
+  private static final String TRACER_PREFIX = "dd.";
+  private static final Set<String> OWN_PREFIXES = Set.of("catalog.", "sim.", TRACER_PREFIX);
 
   /** Settings of the load simulator ({@code sim.*}). */
   public record Sim(long seed, int items, int locations, int pricesPerItem, int rounds, int fromRound,
@@ -282,7 +283,20 @@ public final class CatalogConfig {
     return Double.parseDouble(require("catalog.rocksdb.memtable-share"));
   }
 
-  /** Everything that is not {@code catalog.*} or {@code sim.*}: Kafka Streams and client settings. */
+  /** The Datadog agent's settings ({@code dd.*}), or empty when tracing is off. */
+  public Properties tracerProperties() {
+    Properties out = new Properties();
+    if (Boolean.parseBoolean(get(TRACER_PREFIX + "trace.enabled"))) {
+      values.forEach((key, value) -> {
+        if (key.startsWith(TRACER_PREFIX)) {
+          out.setProperty(key, value);
+        }
+      });
+    }
+    return out;
+  }
+
+  /** Everything that is not {@code catalog.*}, {@code sim.*} or {@code dd.*}: Kafka Streams and client settings. */
   public Properties streamsProperties() {
     Properties out = new Properties();
     values.forEach((key, value) -> {

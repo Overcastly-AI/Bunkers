@@ -8,6 +8,12 @@ nameSuffix: -sim
 labels:
   - pairs: {variant: sim}
     includeSelectors: true
+  - pairs:
+      tags.datadoghq.com/env: sim
+      tags.datadoghq.com/service: catalog-join-sim
+      tags.datadoghq.com/version: "0.1.0"
+    includeSelectors: false
+    includeTemplates: true
 resources:
   - ../base
   - jobs.yaml
