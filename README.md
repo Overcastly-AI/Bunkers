@@ -60,7 +60,7 @@ catalog.client.qdrant.http.header.Authorization=Bearer ${QDRANT_TOKEN}
   optionally renamed with `as`. The functions `sum`, `min`, `max`, `count`, `first`, `distinct`
   and `positive` are available. The full syntax is in the "downstream clients" section of
   `catalog-join.properties`.
-- `catalog-join deliver --client <name>` POSTs the topic to `http.url`:
+- `catalog-join deliver --client <name>` POSTs the topic to `http.url` (to re-send, see Replay):
   - each POST is a JSON array of `{"key": {...}, "value": {...}}`, with `"value": null` for a delete;
   - batches carry the latest change per key;
   - 5xx, 408, 429 and connection errors are retried with backoff until they succeed;
@@ -70,6 +70,38 @@ catalog.client.qdrant.http.header.Authorization=Bearer ${QDRANT_TOKEN}
   new consumer group. Deployment: `deploy/production/deliver-qdrant.yaml`.
 - Clients that consume Kafka directly (e.g. a Kafka Connect JDBC sink into Postgres) just read
   their topic; leave `http.url` unset.
+
+## Replay
+
+| Need | How |
+|---|---|
+| A new consumer or sink needs everything | Read the compacted topic from offset 0 |
+| Re-send a few items (to every output, or one client) | `catalog-join republish --key ITEM_NO=123 [--key …] [--keys-file F] [--only qdrant]`; `--doc item-location --key ITEM_NO=123,MI_LOC=0042` for item-location documents |
+| A client lost data: re-post everything, or everything since a time | Stop its `deliver`, run `catalog-join replay-client --client qdrant --from earliest` (or `--from 2026-10-01T00:00:00Z`; `--dry-run` shows the counts), then start `deliver` again |
+| Fixed the cause of dead letters | `catalog-join dlt-replay` for source records; `catalog-join dlt-replay --client qdrant` for batches a client rejected (`--dry-run` to preview) |
+| Rebuild everything after a join fix | New `application.id` with versioned output topics, then switch consumers (see Operating notes) |
+
+**What each command guarantees:**
+
+- **`republish` goes through the running app.** It writes requests to
+  `catalog.join.republish.<doc>`, and the app looks up the current document when it processes each
+  one. So a republish can never overtake a newer update.
+  - A key with no document publishes a tombstone, so a client that missed a delete catches up.
+  - A document whose lookups are still in flight is skipped; it publishes as soon as it is consistent.
+  - `item-price` documents are a 1:1 copy of `ITEM_PRICE_CACHE`; re-produce the source row instead.
+- **`replay-client` re-sends the latest value of every key**, not each intermediate change, because
+  client topics are compacted. It refuses to run while that client's `deliver` is running.
+- **`dlt-replay` won't overwrite newer data with older data.**
+  - **Source dead letters** go back to their original topic and partition. One is skipped when the
+    same key has a newer record on that partition, or when it has no key to check; `--force` replays
+    those too. A record that still fails is dead-lettered again.
+  - **Client dead letters** are not re-posted as the stale batch. Their keys are republished, so the
+    client gets each key's current value.
+  - Progress is kept per dead-letter topic, so each letter is handled once; `--from-beginning`
+    reconsiders them all.
+- **Not available: point-in-time history.** Compacted topics keep only the latest value per key.
+
+`sim/run-local.sh --replay` exercises all of this against a real broker and a mock client endpoint.
 
 ## Observability (Datadog)
 
@@ -150,7 +182,8 @@ Each item generates about 30 source records at round 0, plus about 10% per churn
   - group `<application.id>`: READ;
   - topic prefix `<application.id>-`: CREATE, DELETE, DESCRIBE, DESCRIBE_CONFIGS, READ, WRITE;
   - TransactionalId prefix `<application.id>`: WRITE, DESCRIBE;
-  - output, client and dead-letter topics: WRITE, DESCRIBE (plus CREATE for `create-topics`).
+  - output, client and dead-letter topics: WRITE, DESCRIBE (plus CREATE for `create-topics`);
+  - `catalog.join.republish.*`: READ for the app, WRITE for whoever runs `republish` and `dlt-replay --client`.
 - **Internal topics** (`<application.id>-*`) are created by Kafka Streams; their names are pinned in
   `src/test/resources/topology.txt`, and `TopologySnapshotTest` fails on any change so it is always
   deliberate. Incompatible changes (renamed operators, new joins, a different `catalog.partitions`)

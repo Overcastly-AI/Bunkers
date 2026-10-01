@@ -1,6 +1,9 @@
 package com.motion.catalogjoin;
 
 import com.motion.catalogjoin.clients.HttpDelivery;
+import com.motion.catalogjoin.ops.DltReplay;
+import com.motion.catalogjoin.ops.ReplayClient;
+import com.motion.catalogjoin.ops.Republish;
 import com.motion.catalogjoin.sim.Simulation;
 import com.motion.catalogjoin.topology.CatalogTopology;
 import com.sun.net.httpserver.HttpServer;
@@ -43,6 +46,17 @@ public final class App {
         deliver         Post a client's topic to its HTTP endpoint: deliver [config ...] --client NAME
                         (catalog.client.NAME.*; see catalog-join.properties).
 
+      Replay (see README "Replay"):
+        republish       Publish the current document for some keys again, even if unchanged:
+                        republish [config ...] [--doc item|item-location] --key ITEM_NO=1[,MI_LOC=X] ...
+                        [--keys-file FILE] [--only item|item-location|CLIENT ...]
+        replay-client   Move a client's delivery back so deliver re-posts from there (deliver stopped):
+                        replay-client [config ...] --client NAME --from earliest|2026-10-01T00:00:00Z [--dry-run]
+        dlt-replay      Replay dead letters after fixing their cause: source dead letters go back to
+                        their topic unless a newer record for the key exists (--force replays anyway);
+                        with --client NAME, rejected batches' keys are republished with current values.
+                        dlt-replay [config ...] [--client NAME] [--force] [--from-beginning] [--dry-run]
+
       Configuration: catalog-join.properties in the jar holds every setting and its default. Files are
       layered on top in order (later wins), then --set overrides. With no files, CATALOG_CONFIG (a
       comma-separated list of files) is used when set.
@@ -57,6 +71,8 @@ public final class App {
     List<Path> files = new ArrayList<>();
     Map<String, String> overrides = new LinkedHashMap<>();
     Set<String> flags = new java.util.HashSet<>();
+    Map<String, List<String>> options = new LinkedHashMap<>();
+    Set<String> repeatable = Set.of("--doc", "--key", "--keys-file", "--only", "--from");
     for (int i = 0; i < args.size(); i++) {
       String arg = args.get(i);
       if (arg.equals("--set") && i + 1 < args.size()) {
@@ -64,6 +80,8 @@ public final class App {
         overrides.put(kv[0], kv.length > 1 ? kv[1] : "");
       } else if (arg.equals("--client") && i + 1 < args.size()) {
         overrides.put("client", args.get(++i));
+      } else if (repeatable.contains(arg) && i + 1 < args.size()) {
+        options.computeIfAbsent(arg.substring(2), k -> new ArrayList<>()).add(args.get(++i));
       } else if (arg.startsWith("--")) {
         flags.add(arg.substring(2));
       } else {
@@ -93,6 +111,22 @@ public final class App {
       case "deliver" -> {
         String client = overrides.remove("client");
         yield client == null ? usage() : HttpDelivery.run(CatalogConfig.load(files, overrides).requireNoPlaceholders(), client);
+      }
+      case "republish" -> {
+        List<String> doc = options.getOrDefault("doc", List.of("item"));
+        yield Republish.run(CatalogConfig.load(files, overrides), doc.get(doc.size() - 1),
+            options.getOrDefault("key", List.of()), options.getOrDefault("keys-file", List.of()), options.getOrDefault("only", List.of()));
+      }
+      case "replay-client" -> {
+        String client = overrides.remove("client");
+        List<String> from = options.getOrDefault("from", List.of());
+        yield client == null ? usage()
+            : ReplayClient.run(CatalogConfig.load(files, overrides), client, from.isEmpty() ? null : from.get(0), flags.contains("dry-run"));
+      }
+      case "dlt-replay" -> {
+        String client = overrides.remove("client");
+        yield DltReplay.run(CatalogConfig.load(files, overrides), client,
+            flags.contains("force"), flags.contains("from-beginning"), flags.contains("dry-run"));
       }
       case "help", "--help", "-h" -> {
         System.out.print(USAGE);

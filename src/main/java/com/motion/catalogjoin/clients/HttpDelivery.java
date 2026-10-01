@@ -61,6 +61,11 @@ public final class HttpDelivery {
     this.http = HttpClient.newBuilder().connectTimeout(client.http().timeout()).build();
   }
 
+  /** The consumer group that tracks what has been delivered to client {@code name}. */
+  public static String groupId(CatalogConfig config, String name) {
+    return config.streamsProperties().getProperty(StreamsConfig.APPLICATION_ID_CONFIG) + "-deliver-" + name;
+  }
+
   public static int run(CatalogConfig config, String name) {
     Client client = config.clients().get(name);
     if (client == null || client.http().url() == null) {
@@ -69,8 +74,7 @@ public final class HttpDelivery {
     }
     Map<String, Object> common = Topics.adminClient(config);
     Map<String, Object> consumerProps = new HashMap<>(common);
-    consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG,
-        config.streamsProperties().getProperty(StreamsConfig.APPLICATION_ID_CONFIG) + "-deliver-" + name);
+    consumerProps.put(ConsumerConfig.GROUP_ID_CONFIG, groupId(config, name));
     consumerProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
     consumerProps.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, "false");
     consumerProps.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");

@@ -20,11 +20,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.motion.catalogjoin.Json;
+import com.motion.catalogjoin.Keys;
+import com.motion.catalogjoin.ops.Republish;
 import com.motion.catalogjoin.ingest.Sources;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.kafka.streams.test.TestRecord;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -453,6 +456,40 @@ class CatalogTopologyTest {
 
       c.delete(ITEM_PROFILE, row("ITEM_NO", "100"));
       assertThat(c.newRecords(topic)).singleElement().satisfies(r -> assertThat(r.value()).isNull());
+    }
+  }
+
+  @Test
+  void republishSendsTheCurrentDocumentAgainOnlyToTheRequestedOutputs() {
+    try (Harness c = new Harness(Map.of("catalog.client.qdrant.fields", "itemNo"))) {
+      String client = c.driver.config.clients().get("qdrant").topic();
+      String item = c.driver.config.itemTopic();
+      c.upsert(ITEM_PROFILE, row("ITEM_NO", "100", "MFR_CTL_NO", "AB", "DESCR", "Bearing"));
+      c.newRecords(item);
+      c.newRecords(client);
+
+      // Unchanged documents are normally suppressed; a republish sends them anyway.
+      c.driver.republish(Keys.of("ITEM_NO", "100"), new Republish.Request("item", Set.of()));
+      assertThat(c.newRecords(item)).singleElement()
+          .satisfies(r -> assertThat(parse(r.value()).path("item").path("DESCR").asText()).isEqualTo("Bearing"));
+      assertThat(c.newRecords(client)).singleElement()
+          .satisfies(r -> assertThat(parse(r.value()).toString()).isEqualTo("{\"itemNo\":\"100\"}"));
+
+      // --only one client
+      c.driver.republish(Keys.of("ITEM_NO", "100"), new Republish.Request("item", Set.of("client-qdrant")));
+      assertThat(c.newRecords(item)).isEmpty();
+      assertThat(c.newRecords(client)).hasSize(1);
+
+      // No document: a tombstone, so a client that missed the delete catches up.
+      c.driver.republish(Keys.of("ITEM_NO", "999"), new Republish.Request("item", Set.of()));
+      assertThat(c.newRecords(item)).singleElement().satisfies(r -> assertThat(r.value()).isNull());
+
+      // Requests for item-location documents do not touch item outputs, and a normal update after a
+      // republish is still emitted only when it changes something.
+      c.driver.republish(Keys.of("ITEM_NO", "100", "MI_LOC", "DC1"), new Republish.Request("item-location", Set.of()));
+      assertThat(c.newRecords(item)).isEmpty();
+      c.upsert(ITEM_PROFILE, row("ITEM_NO", "100", "MFR_CTL_NO", "AB", "DESCR", "Bearing"));
+      assertThat(c.newRecords(item)).isEmpty();
     }
   }
 

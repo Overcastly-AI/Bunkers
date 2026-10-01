@@ -40,6 +40,7 @@ import com.motion.catalogjoin.ingest.Sources;
 import com.motion.catalogjoin.model.Docs;
 import com.motion.catalogjoin.model.Group;
 import com.motion.catalogjoin.model.ModelSerdes;
+import com.motion.catalogjoin.ops.Republish;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +54,10 @@ import org.apache.kafka.common.serialization.Serdes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
+import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.Grouped;
+import org.apache.kafka.streams.kstream.Joined;
+import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
 import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.Produced;
@@ -233,7 +237,7 @@ public final class CatalogTopology {
         .leftJoin(stepProducts, attachAll("stepProducts"), Named.as("item-doc-step-products"))
         .mapValues(doc -> excludeUnsellableDcStock(doc, unsellable), Named.as("item-doc-sellable"));
 
-    publish(docs, "item", config.itemTopic(), doc -> doc);
+    publish(docs, "item", "item", config.itemTopic(), doc -> doc);
     publishClients(docs, "item");
   }
 
@@ -270,7 +274,7 @@ public final class CatalogTopology {
         .mapValues((key, doc) -> Docs.with(Docs.with(doc, "itemNo", Keys.part(key, ITEM_NO)), "miLoc", Keys.part(key, MI_LOC)),
             Named.as("item-location-doc-keys"));
 
-    publish(docs, "item-location", config.itemLocationTopic(), doc -> doc);
+    publish(docs, "item-location", "item-location", config.itemLocationTopic(), doc -> doc);
     publishClients(docs, "item-location");
   }
 
@@ -390,7 +394,7 @@ public final class CatalogTopology {
    * versions are skipped. A view that is unchanged by an update (e.g. a client's fields when only
    * other parts moved) publishes nothing.
    */
-  private void publish(KTable<String, Map<String, Object>> docs, String name, String topic,
+  private void publish(KTable<String, Map<String, Object>> docs, String source, String name, String topic,
       Function<Map<String, Object>, Map<String, Object>> view) {
     String store = name + "-published";
     builder.addStateStore(Stores.keyValueStore(store, Serdes.ByteArray()));
@@ -399,13 +403,42 @@ public final class CatalogTopology {
         .mapValues(doc -> doc == null ? null : view.apply(doc), Named.as(name + "-view"))
         .processValues(() -> new EmitOnChange<Map<String, Object>>(store, topic), Named.as(name + "-emit-on-change"), store)
         .to(topic, Produced.with(Serdes.String(), Serdes.ByteArray()).withName(name + "-sink"));
+
+    // `catalog-join republish`: the current document for the requested keys, published even when
+    // unchanged (a tombstone when there is none). A pending document is skipped: it publishes as
+    // soon as it is consistent anyway.
+    republishRequests(source)
+        .filter((key, request) -> request.wants(source, name), Named.as(name + "-republish-requested"))
+        .leftJoin(docs, (request, doc) -> doc == null ? NO_DOCUMENT : doc,
+            Joined.<String, Republish.Request, Map<String, Object>>as(name + "-republish-lookup")
+                .withKeySerde(Serdes.String()).withValueSerde(REQUEST_SERDE))
+        .filter((key, doc) -> !Boolean.TRUE.equals(doc.get(PENDING)), Named.as(name + "-republish-consistent"))
+        .mapValues(doc -> doc == NO_DOCUMENT ? null : view.apply(doc), Named.as(name + "-republish-view"))
+        .processValues(() -> new EmitOnChange<Map<String, Object>>(store, topic, true), Named.as(name + "-republish-emit"), store)
+        .to(topic, Produced.with(Serdes.String(), Serdes.ByteArray()).withName(name + "-republish-sink"));
+  }
+
+  /** Stands in for "no document" between the lookup and the view (stream values cannot be null there). */
+  private static final Map<String, Object> NO_DOCUMENT = Map.of();
+
+  private static final Serde<Republish.Request> REQUEST_SERDE = Serdes.serdeFrom(
+      (topic, request) -> request == null ? null : Republish.encode(request).getBytes(java.nio.charset.StandardCharsets.UTF_8),
+      (topic, bytes) -> bytes == null ? null : Republish.decode(new String(bytes, java.nio.charset.StandardCharsets.UTF_8)));
+
+  private final Map<String, KStream<String, Republish.Request>> republishRequests = new TreeMap<>();
+
+  /** Requests from {@code catalog-join republish} for {@code source} documents; malformed ones are dropped. */
+  private KStream<String, Republish.Request> republishRequests(String source) {
+    return republishRequests.computeIfAbsent(source, doc -> builder.stream(config.republishTopic(doc),
+            Consumed.with(Serdes.String(), REQUEST_SERDE).withName(doc + "-republish-source"))
+        .filter((key, request) -> key != null && request != null, Named.as(doc + "-republish-valid")));
   }
 
   /** Each client's selected fields of {@code source} documents, on the client's own topic. */
   private void publishClients(KTable<String, Map<String, Object>> docs, String source) {
     config.clients().values().stream()
         .filter(client -> client.source().equals(source))
-        .forEach(client -> publish(docs, "client-" + client.name(), client.topic(), client.fields()::apply));
+        .forEach(client -> publish(docs, source, "client-" + client.name(), client.topic(), client.fields()::apply));
   }
 
 }

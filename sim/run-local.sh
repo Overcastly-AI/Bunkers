@@ -5,6 +5,9 @@
 #
 #   KAFKA_HOME=/path/to/kafka_2.13-4.x sim/run-local.sh --items 100000 --rounds 3 --instances 2
 #
+# --replay then exercises republish, deliver, replay-client and dlt-replay (sim/replay-check.sh)
+# against a local mock client endpoint.
+#
 # --datadog attaches the Datadog agent to the app instances with spans printed to their logs (no
 # Datadog agent needed) and reports how many were traced.
 #
@@ -12,7 +15,7 @@
 # removed afterwards unless --keep is given.
 set -euo pipefail
 
-ITEMS=20000 ROUNDS=3 INSTANCES=2 THREADS=2 HEAP=1g KEEP=false DATADOG=false
+ITEMS=20000 ROUNDS=3 INSTANCES=2 THREADS=2 HEAP=1g KEEP=false DATADOG=false REPLAY=false
 PORT=${KAFKA_PORT:-29092} HEALTH_BASE=${HEALTH_BASE:-18080}
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -22,6 +25,7 @@ while [[ $# -gt 0 ]]; do
     --threads) THREADS=$2; shift 2 ;;
     --heap) HEAP=$2; shift 2 ;;
     --keep) KEEP=true; shift ;;
+    --replay) REPLAY=true; shift ;;
     --datadog) DATADOG=true; shift ;;
     *) echo "unknown option $1" >&2; exit 2 ;;
   esac
@@ -31,6 +35,12 @@ ROOT=$(cd "$(dirname "$0")/.." && pwd)
 JAR=$ROOT/target/catalog-join.jar
 CONFIG=("$ROOT/deploy/sim/catalog-join.properties" "$ROOT/deploy/local/catalog-join.properties")
 SIZE=(--set "sim.items=$ITEMS" --set "sim.rounds=$ROUNDS")
+MOCK_PORT=$((PORT + 7))
+if [[ $REPLAY == true ]]; then
+  # A client for the replay checks (sim/replay-check.sh), posting to a local mock endpoint.
+  CONFIG+=(--set "catalog.client.sim.fields=itemNo, positive(sum(dcStock[].balance.QTY_ON_HAND)) as inStock"
+    --set "catalog.client.sim.http.url=http://localhost:$MOCK_PORT/stock" --set catalog.client.sim.http.max-backoff-ms=1000)
+fi
 : "${KAFKA_HOME:?set KAFKA_HOME to an unpacked Kafka 4.x}"
 [[ -f $JAR ]] || { echo "build first: mvn -DskipTests package" >&2; exit 2; }
 
@@ -105,6 +115,9 @@ catalog_join sim-verify "${CONFIG[@]}" "${SIZE[@]}" | tee "$WORK/verify.log"
 STATUS=${PIPESTATUS[0]}
 set -e
 END=$(date +%s)
+if [[ $REPLAY == true && $STATUS == 0 ]]; then
+  source "$ROOT/sim/replay-check.sh"
+fi
 
 echo "== summary"
 echo "end-to-end (generate + process + verify): $((END - START))s"

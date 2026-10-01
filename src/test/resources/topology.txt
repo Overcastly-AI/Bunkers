@@ -456,18 +456,35 @@ Topologies:
     Processor: item-doc-step-products-join-this (stores: [step-products-by-item-store])
       --> item-doc-step-products
       <-- item-doc-costs
+    Source: item-republish-source (topics: [catalog.join.republish.item])
+      --> item-republish-valid
     Processor: item-doc-step-products (stores: [])
       --> item-doc-sellable
       <-- item-doc-step-products-join-this, item-doc-step-products-join-other
+    Processor: item-republish-valid (stores: [])
+      --> item-republish-requested
+      <-- item-republish-source
     Processor: item-doc-sellable (stores: [])
       --> item-doc-changes
       <-- item-doc-step-products
+    Processor: item-republish-requested (stores: [])
+      --> item-republish-lookup
+      <-- item-republish-valid
     Processor: item-doc-changes (stores: [])
       --> item-consistent
       <-- item-doc-sellable
+    Processor: item-republish-lookup (stores: [rules-by-item-store, item-manufacturer-store, costs-by-item-store, item-manufacturer-rules-store, step-products-by-item-store, item_profile-store, dc-stock-by-item-store, item-product-group-rules-store])
+      --> item-republish-consistent
+      <-- item-republish-requested
     Processor: item-consistent (stores: [])
       --> item-view
       <-- item-doc-changes
+    Processor: item-republish-consistent (stores: [])
+      --> item-republish-view
+      <-- item-republish-lookup
+    Processor: item-republish-view (stores: [])
+      --> item-republish-emit
+      <-- item-republish-consistent
     Processor: item-view (stores: [])
       --> item-emit-on-change
       <-- item-consistent
@@ -483,12 +500,17 @@ Topologies:
     Processor: item-product-group-rules-subscription-registration-processor (stores: [])
       --> item-product-group-rules-subscription-registration-sink
       <-- item_profile-table
+    Processor: item-republish-emit (stores: [item-published])
+      --> item-republish-sink
+      <-- item-republish-view
     Sink: item-manufacturer-rules-subscription-registration-sink (topic: item-manufacturer-rules-subscription-registration-topic)
       <-- item-manufacturer-rules-subscription-registration-processor
     Sink: item-manufacturer-subscription-registration-sink (topic: item-manufacturer-subscription-registration-topic)
       <-- item-manufacturer-subscription-registration-processor
     Sink: item-product-group-rules-subscription-registration-sink (topic: item-product-group-rules-subscription-registration-topic)
       <-- item-product-group-rules-subscription-registration-processor
+    Sink: item-republish-sink (topic: catalog.item)
+      <-- item-republish-emit
     Sink: item-sink (topic: catalog.item)
       <-- item-emit-on-change
 
@@ -972,30 +994,47 @@ Topologies:
     Processor: item-location-doc-join-this (stores: [item-location-location-store])
       --> item-location-doc
       <-- item-location-local-costs
+    Source: item-location-republish-source (topics: [catalog.join.republish.item-location])
+      --> item-location-republish-valid
     Processor: item-location-doc (stores: [])
       --> item-location-doc-keys
       <-- item-location-doc-join-this, item-location-doc-join-other
+    Processor: item-location-republish-valid (stores: [])
+      --> item-location-republish-requested
+      <-- item-location-republish-source
     Processor: item-location-doc-keys (stores: [])
       --> item-location-doc-changes
       <-- item-location-doc
     Processor: item-location-location-presence (stores: [])
       --> item-location-location-presence-changes
       <-- item-location-local-costs
+    Processor: item-location-republish-requested (stores: [])
+      --> item-location-republish-lookup
+      <-- item-location-republish-valid
     Processor: item-location-doc-changes (stores: [])
       --> item-location-consistent
       <-- item-location-doc-keys
     Processor: item-location-location-presence-changes (stores: [])
       --> item-location-location-presence-transitions
       <-- item-location-location-presence
+    Processor: item-location-republish-lookup (stores: [item-location-location-store, item-location-base-store])
+      --> item-location-republish-consistent
+      <-- item-location-republish-requested
     Processor: item-location-consistent (stores: [])
       --> item-location-view
       <-- item-location-doc-changes
     Processor: item-location-location-presence-transitions (stores: [item-location-location-presence-published])
       --> item-location-location-presence-table
       <-- item-location-location-presence-changes
+    Processor: item-location-republish-consistent (stores: [])
+      --> item-location-republish-view
+      <-- item-location-republish-lookup
     Processor: item-location-location-presence-table (stores: [item-location-location-presence-store])
       --> item-location-location-subscription-registration-processor
       <-- item-location-location-presence-transitions
+    Processor: item-location-republish-view (stores: [])
+      --> item-location-republish-emit
+      <-- item-location-republish-consistent
     Processor: item-location-view (stores: [])
       --> item-location-emit-on-change
       <-- item-location-consistent
@@ -1005,8 +1044,13 @@ Topologies:
     Processor: item-location-location-subscription-registration-processor (stores: [])
       --> item-location-location-subscription-registration-sink
       <-- item-location-location-presence-table
+    Processor: item-location-republish-emit (stores: [item-location-published])
+      --> item-location-republish-sink
+      <-- item-location-republish-view
     Sink: item-location-location-subscription-registration-sink (topic: item-location-location-subscription-registration-topic)
       <-- item-location-location-subscription-registration-processor
+    Sink: item-location-republish-sink (topic: catalog.item-location)
+      <-- item-location-republish-emit
     Sink: item-location-sink (topic: catalog.item-location)
       <-- item-location-emit-on-change
 

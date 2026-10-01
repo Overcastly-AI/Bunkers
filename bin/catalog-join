@@ -12,7 +12,7 @@ agent=${DD_JAVA_AGENT_JAR:-$home/dd-java-agent.jar}
 
 command=run
 case "${1:-}" in
-  run|create-topics|print-config|sim-generate|sim-verify|deliver|help) command=$1; shift ;;
+  run|create-topics|print-config|sim-generate|sim-verify|deliver|republish|replay-client|dlt-replay|help) command=$1; shift ;;
 esac
 
 tracer=$(mktemp "${TMPDIR:-/tmp}/dd-tracer.XXXXXX")

@@ -208,6 +208,23 @@ public final class CatalogConfig {
     return output("dead-letter");
   }
 
+  /**
+   * Control topic for {@code catalog-join republish} requests for {@code doc} documents; one per
+   * document type, so each is read only by the part of the app that builds those documents.
+   */
+  public String republishTopic(String doc) {
+    return output("republish") + "." + doc;
+  }
+
+  /** Partitions of the republish topic: it is joined with documents, so it matches catalog.partitions. */
+  public int republishPartitions() {
+    Integer partitions = partitions();
+    if (partitions == null) {
+      throw new IllegalArgumentException("catalog.partitions must be set: the republish topic needs the same partition count");
+    }
+    return partitions;
+  }
+
   /** Downstream clients ({@code catalog.client.<name>.*}), by name. */
   public Map<String, Client> clients() {
     Map<String, Client> clients = new TreeMap<>();

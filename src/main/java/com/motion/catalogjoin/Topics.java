@@ -40,6 +40,11 @@ public final class Topics {
     }
     topics.add(new NewTopic(config.deadLetterTopic(), config.outputPartitions(), config.outputReplication())
         .configs(Map.of("cleanup.policy", "delete", "retention.ms", Long.toString(config.deadLetterRetentionMs()))));
+    // Requests are short-lived; the key is the document key, so the topic is co-partitioned with documents.
+    for (String doc : com.motion.catalogjoin.clients.Client.SOURCES.keySet()) {
+      topics.add(new NewTopic(config.republishTopic(doc), config.republishPartitions(), config.outputReplication())
+          .configs(Map.of("cleanup.policy", "delete", "retention.ms", Long.toString(java.time.Duration.ofDays(1).toMillis()))));
+    }
     create(config, topics);
   }
 

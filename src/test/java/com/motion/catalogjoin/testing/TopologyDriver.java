@@ -61,6 +61,13 @@ public final class TopologyDriver implements AutoCloseable {
     }
   }
 
+  /** A {@code catalog-join republish} request, as the command produces it. */
+  public void republish(String key, com.motion.catalogjoin.ops.Republish.Request request) {
+    driver.createInputTopic(config.republishTopic(request.doc()), new org.apache.kafka.common.serialization.StringSerializer(),
+            new org.apache.kafka.common.serialization.StringSerializer())
+        .pipeInput(key, com.motion.catalogjoin.ops.Republish.encode(request));
+  }
+
   public void pipe(String topic, byte[] key, byte[] value) {
     inputs.get(topic).pipeInput(key, value);
   }

@@ -20,13 +20,20 @@ final class EmitOnChange<V> implements FixedKeyProcessor<String, V, byte[]> {
 
   private final String storeName;
   private final String output;
+  private final boolean force;
   private FixedKeyProcessorContext<String, byte[]> context;
   private KeyValueStore<String, byte[]> published;
 
   /** @param output topic name for span tags, or null for an internal use that is not traced */
   EmitOnChange(String storeName, String output) {
+    this(storeName, output, false);
+  }
+
+  /** @param force publish even when unchanged (a {@code republish} request) */
+  EmitOnChange(String storeName, String output, boolean force) {
     this.storeName = storeName;
     this.output = output;
+    this.force = force;
   }
 
   @Override
@@ -39,14 +46,14 @@ final class EmitOnChange<V> implements FixedKeyProcessor<String, V, byte[]> {
   public void process(FixedKeyRecord<String, V> record) {
     boolean publish;
     if (record.value() == null) {
-      publish = published.delete(record.key()) != null;
+      publish = published.delete(record.key()) != null || force;
       if (publish) {
         context.forward(record.withValue(null));
       }
     } else {
       byte[] bytes = Json.write(record.value());
       byte[] digest = digest(bytes);
-      publish = !Arrays.equals(digest, published.get(record.key()));
+      publish = force || !Arrays.equals(digest, published.get(record.key()));
       if (publish) {
         published.put(record.key(), digest);
         context.forward(record.withValue(bytes));
