@@ -33,6 +33,11 @@ public final class Topics {
     for (String topic : config.outputTopics()) {
       topics.add(new NewTopic(topic, config.outputPartitions(), config.outputReplication()).configs(compacted));
     }
+    for (var client : config.clients().values()) {
+      topics.add(new NewTopic(client.topic(), config.outputPartitions(), config.outputReplication()).configs(compacted));
+      topics.add(new NewTopic(client.deadLetterTopic(), 1, config.outputReplication())
+          .configs(Map.of("cleanup.policy", "delete", "retention.ms", Long.toString(config.deadLetterRetentionMs()))));
+    }
     topics.add(new NewTopic(config.deadLetterTopic(), config.outputPartitions(), config.outputReplication())
         .configs(Map.of("cleanup.policy", "delete", "retention.ms", Long.toString(config.deadLetterRetentionMs()))));
     create(config, topics);

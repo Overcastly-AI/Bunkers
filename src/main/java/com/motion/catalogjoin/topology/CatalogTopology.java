@@ -233,7 +233,8 @@ public final class CatalogTopology {
         .leftJoin(stepProducts, attachAll("stepProducts"), Named.as("item-doc-step-products"))
         .mapValues(doc -> excludeUnsellableDcStock(doc, unsellable), Named.as("item-doc-sellable"));
 
-    publish(docs, "item", config.itemTopic());
+    publish(docs, "item", config.itemTopic(), doc -> doc);
+    publishClients(docs, "item");
   }
 
   /** The old dc_stock_summary anti-join: no DC stock for items of an excluded SELLABLE value. */
@@ -269,7 +270,8 @@ public final class CatalogTopology {
         .mapValues((key, doc) -> Docs.with(Docs.with(doc, "itemNo", Keys.part(key, ITEM_NO)), "miLoc", Keys.part(key, MI_LOC)),
             Named.as("item-location-doc-keys"));
 
-    publish(docs, "item-location", config.itemLocationTopic());
+    publish(docs, "item-location", config.itemLocationTopic(), doc -> doc);
+    publishClients(docs, "item-location");
   }
 
   // --- building blocks -----------------------------------------------------------------------------
@@ -383,13 +385,27 @@ public final class CatalogTopology {
             Stores.materialized(name, ModelSerdes.GROUP));
   }
 
-  /** Publishes changed documents; pending (inconsistent) intermediate versions are skipped. */
-  private void publish(KTable<String, Map<String, Object>> docs, String name, String topic) {
+  /**
+   * Publishes {@code view} of each document when it changes; pending (inconsistent) intermediate
+   * versions are skipped. A view that is unchanged by an update (e.g. a client's fields when only
+   * other parts moved) publishes nothing.
+   */
+  private void publish(KTable<String, Map<String, Object>> docs, String name, String topic,
+      Function<Map<String, Object>, Map<String, Object>> view) {
     String store = name + "-published";
     builder.addStateStore(Stores.keyValueStore(store, Serdes.ByteArray()));
     docs.toStream(Named.as(name + "-doc-changes"))
         .filter((key, doc) -> doc == null || !Boolean.TRUE.equals(doc.get(PENDING)), Named.as(name + "-consistent"))
+        .mapValues(doc -> doc == null ? null : view.apply(doc), Named.as(name + "-view"))
         .processValues(() -> new EmitOnChange<Map<String, Object>>(store, topic), Named.as(name + "-emit-on-change"), store)
         .to(topic, Produced.with(Serdes.String(), Serdes.ByteArray()).withName(name + "-sink"));
   }
+
+  /** Each client's selected fields of {@code source} documents, on the client's own topic. */
+  private void publishClients(KTable<String, Map<String, Object>> docs, String source) {
+    config.clients().values().stream()
+        .filter(client -> client.source().equals(source))
+        .forEach(client -> publish(docs, "client-" + client.name(), client.topic(), client.fields()::apply));
+  }
+
 }

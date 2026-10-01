@@ -43,6 +43,34 @@ java -jar target/catalog-join.jar print-config deploy/production/catalog-join.pr
 `GET :8080/health/live` returns 200 unless processing has failed. `/health/ready` returns 200 while
 running. The process exits non-zero if Kafka Streams fails, so the pod restarts.
 
+## Downstream clients
+
+Each client (Qdrant, a Postgres team, ...) selects only the fields it wants, in configuration:
+
+```properties
+catalog.client.qdrant.fields=itemNo, positive(sum(dcStock[].balance.QTY_ON_HAND)) as inStock
+catalog.client.qdrant.http.url=https://qdrant-team/api/stock
+catalog.client.qdrant.http.header.Authorization=Bearer ${QDRANT_TOKEN}
+```
+
+- The app publishes that view to `catalog.client.<name>`, a compacted topic keyed like the
+  source document. It publishes **only when one of the selected fields changes**, so a stock
+  quantity moving from 40 to 39 sends nothing to a client that only selects `inStock`.
+- Fields are paths into the published document (`item.DESCR`, `dcStock[].balance.MI_LOC`),
+  optionally renamed with `as`. The functions `sum`, `min`, `max`, `count`, `first`, `distinct`
+  and `positive` are available. The full syntax is in the "downstream clients" section of
+  `catalog-join.properties`.
+- `catalog-join deliver --client <name>` POSTs the topic to `http.url`:
+  - each POST is a JSON array of `{"key": {...}, "value": {...}}`, with `"value": null` for a delete;
+  - batches carry the latest change per key;
+  - 5xx, 408, 429 and connection errors are retried with backoff until they succeed;
+  - other 4xx go to `catalog.client.<name>.dlt`.
+  
+  Offsets are committed only after the endpoint accepts a batch. To resend everything, run with a
+  new consumer group. Deployment: `deploy/production/deliver-qdrant.yaml`.
+- Clients that consume Kafka directly (e.g. a Kafka Connect JDBC sink into Postgres) just read
+  their topic; leave `http.url` unset.
+
 ## Observability (Datadog)
 
 `bin/catalog-join` (the image entrypoint) attaches the Datadog Java agent when the merged

@@ -1,5 +1,7 @@
 package com.motion.catalogjoin;
 
+import com.motion.catalogjoin.clients.Client;
+import com.motion.catalogjoin.clients.Projection;
 import com.motion.catalogjoin.ingest.PayloadFormat;
 import java.io.IOException;
 import java.io.InputStream;
@@ -35,6 +37,7 @@ public final class CatalogConfig {
 
   private static final Pattern ENV_REF = Pattern.compile("\\$\\{([A-Za-z_][A-Za-z0-9_]*)(?::([^}]*))?}");
   private static final String TRACER_PREFIX = "dd.";
+  private static final String CLIENT = "catalog.client.";
   private static final Set<String> OWN_PREFIXES = Set.of("catalog.", "sim.", TRACER_PREFIX);
 
   /** Settings of the load simulator ({@code sim.*}). */
@@ -193,6 +196,39 @@ public final class CatalogConfig {
 
   public String deadLetterTopic() {
     return output("dead-letter");
+  }
+
+  /** Downstream clients ({@code catalog.client.<name>.*}), by name. */
+  public Map<String, Client> clients() {
+    Map<String, Client> clients = new TreeMap<>();
+    Set<String> names = new java.util.TreeSet<>();
+    values.keySet().stream().filter(k -> k.startsWith(CLIENT)).forEach(k -> names.add(k.substring(CLIENT.length()).split("\\.")[0]));
+    for (String name : names) {
+      String base = CLIENT + name + ".";
+      String source = get(base + "source").isEmpty() ? "item" : get(base + "source");
+      if (!Client.SOURCES.containsKey(source)) {
+        throw new IllegalArgumentException(base + "source must be one of " + Client.SOURCES.keySet() + ", not " + source);
+      }
+      String topic = get("catalog.topic-prefix") + (get(base + "topic").isEmpty() ? "catalog.client." + name : get(base + "topic"));
+      Map<String, String> headers = new TreeMap<>();
+      values.forEach((key, value) -> {
+        if (key.startsWith(base + "http.header.")) {
+          headers.put(key.substring((base + "http.header.").length()), value);
+        }
+      });
+      String url = get(base + "http.url");
+      clients.put(name, new Client(name, source, Projection.parse(require(base + "fields")), topic, topic + ".dlt",
+          new Client.Http(url.isEmpty() ? null : url, headers,
+              Integer.parseInt(orDefault(base + "http.batch-size", "500")),
+              java.time.Duration.ofMillis(Long.parseLong(orDefault(base + "http.timeout-ms", "10000"))),
+              java.time.Duration.ofMillis(Long.parseLong(orDefault(base + "http.max-backoff-ms", "60000"))))));
+    }
+    return clients;
+  }
+
+  private String orDefault(String key, String fallback) {
+    String value = get(key);
+    return value.isEmpty() ? fallback : value;
   }
 
   public List<String> outputTopics() {

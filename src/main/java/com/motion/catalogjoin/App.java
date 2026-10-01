@@ -1,5 +1,6 @@
 package com.motion.catalogjoin;
 
+import com.motion.catalogjoin.clients.HttpDelivery;
 import com.motion.catalogjoin.sim.Simulation;
 import com.motion.catalogjoin.topology.CatalogTopology;
 import com.sun.net.httpserver.HttpServer;
@@ -39,6 +40,8 @@ public final class App {
         sim-generate    Load simulation: produce sim.* rounds to the source topics. --create-topics also
                         creates source and output topics.
         sim-verify      Load simulation: wait for the app to catch up, then check its output.
+        deliver         Post a client's topic to its HTTP endpoint: deliver [config ...] --client NAME
+                        (catalog.client.NAME.*; see catalog-join.properties).
 
       Configuration: catalog-join.properties in the jar holds every setting and its default. Files are
       layered on top in order (later wins), then --set overrides. With no files, CATALOG_CONFIG (a
@@ -59,6 +62,8 @@ public final class App {
       if (arg.equals("--set") && i + 1 < args.size()) {
         String[] kv = args.get(++i).split("=", 2);
         overrides.put(kv[0], kv.length > 1 ? kv[1] : "");
+      } else if (arg.equals("--client") && i + 1 < args.size()) {
+        overrides.put("client", args.get(++i));
       } else if (arg.startsWith("--")) {
         flags.add(arg.substring(2));
       } else {
@@ -85,6 +90,10 @@ public final class App {
       }
       case "sim-generate" -> Simulation.generate(CatalogConfig.load(files, overrides), flags.contains("create-topics"));
       case "sim-verify" -> Simulation.verify(CatalogConfig.load(files, overrides));
+      case "deliver" -> {
+        String client = overrides.remove("client");
+        yield client == null ? usage() : HttpDelivery.run(CatalogConfig.load(files, overrides), client);
+      }
       case "help", "--help", "-h" -> {
         System.out.print(USAGE);
         yield 0;
@@ -95,6 +104,11 @@ public final class App {
       }
     };
     System.exit(exit);
+  }
+
+  private static int usage() {
+    System.err.print(USAGE);
+    return 2;
   }
 
   /** Writes dd.* settings for the Datadog agent; leaves the file empty when tracing is off. */

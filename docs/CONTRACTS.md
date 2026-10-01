@@ -234,7 +234,14 @@ The `ITEM_PRICE_CACHE` row, normalized (upper-case columns, unwrapped unions, ex
 output record per input record; tombstone on delete. Kept separate because customer-level prices
 are too many per item to embed.
 
-### 4.4 `catalog.join.dlt`
+### 4.4 `catalog.client.<name>` — per-client views
+
+Key: as the source document (`catalog.item` or `catalog.item-location`). Value: only the fields
+configured in `catalog.client.<name>.fields`, published only when one of them changes; a tombstone
+when the source document goes away. `catalog-join deliver` POSTs it as
+`[{"key": {...}, "value": {...} | null}, ...]`.
+
+### 4.5 `catalog.join.dlt`
 
 Original key and value bytes of undecodable input, with the headers listed in §1.1.
 

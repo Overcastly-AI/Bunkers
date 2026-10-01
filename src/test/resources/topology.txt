@@ -466,11 +466,14 @@ Topologies:
       --> item-consistent
       <-- item-doc-sellable
     Processor: item-consistent (stores: [])
-      --> item-emit-on-change
+      --> item-view
       <-- item-doc-changes
+    Processor: item-view (stores: [])
+      --> item-emit-on-change
+      <-- item-consistent
     Processor: item-emit-on-change (stores: [item-published])
       --> item-sink
-      <-- item-consistent
+      <-- item-view
     Processor: item-manufacturer-rules-subscription-registration-processor (stores: [])
       --> item-manufacturer-rules-subscription-registration-sink
       <-- item_profile-table
@@ -972,30 +975,33 @@ Topologies:
     Processor: item-location-doc (stores: [])
       --> item-location-doc-keys
       <-- item-location-doc-join-this, item-location-doc-join-other
-    Processor: item-location-location-presence (stores: [])
-      --> item-location-location-presence-changes
-      <-- item-location-local-costs
     Processor: item-location-doc-keys (stores: [])
       --> item-location-doc-changes
       <-- item-location-doc
-    Processor: item-location-location-presence-changes (stores: [])
-      --> item-location-location-presence-transitions
-      <-- item-location-location-presence
+    Processor: item-location-location-presence (stores: [])
+      --> item-location-location-presence-changes
+      <-- item-location-local-costs
     Processor: item-location-doc-changes (stores: [])
       --> item-location-consistent
       <-- item-location-doc-keys
+    Processor: item-location-location-presence-changes (stores: [])
+      --> item-location-location-presence-transitions
+      <-- item-location-location-presence
+    Processor: item-location-consistent (stores: [])
+      --> item-location-view
+      <-- item-location-doc-changes
     Processor: item-location-location-presence-transitions (stores: [item-location-location-presence-published])
       --> item-location-location-presence-table
       <-- item-location-location-presence-changes
-    Processor: item-location-consistent (stores: [])
-      --> item-location-emit-on-change
-      <-- item-location-doc-changes
     Processor: item-location-location-presence-table (stores: [item-location-location-presence-store])
       --> item-location-location-subscription-registration-processor
       <-- item-location-location-presence-transitions
+    Processor: item-location-view (stores: [])
+      --> item-location-emit-on-change
+      <-- item-location-consistent
     Processor: item-location-emit-on-change (stores: [item-location-published])
       --> item-location-sink
-      <-- item-location-consistent
+      <-- item-location-view
     Processor: item-location-location-subscription-registration-processor (stores: [])
       --> item-location-location-subscription-registration-sink
       <-- item-location-location-presence-table

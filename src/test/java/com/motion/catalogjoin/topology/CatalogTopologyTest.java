@@ -430,6 +430,33 @@ class CatalogTopologyTest {
   }
 
   @Test
+  void clientTopicsCarryOnlyTheirFieldsAndPublishOnlyWhenThoseChange() {
+    try (Harness c = new Harness(Map.of(
+        "catalog.client.qdrant.fields", "itemNo, positive(sum(dcStock[].balance.QTY_ON_HAND)) as inStock"))) {
+      String topic = c.driver.config.clients().get("qdrant").topic();
+      assertThat(topic).isEqualTo("catalog.client.qdrant");
+      c.upsert(ITEM_PROFILE, row("ITEM_NO", "100", "MFR_CTL_NO", "AB"));
+      c.upsert(LOCATION_PROFILE, row("MI_LOC", "DC1", "LOCATION_TYPE", "W", "OPEN_CLOSED", "O"));
+      c.upsert(ITEM_BALANCE, row("ITEM_NO", "100", "MI_LOC", "DC1", "STOREROOM_NO", "1", "QTY_ON_HAND", 5));
+      List<TestRecord<String, byte[]>> first = c.newRecords(topic);
+      assertThat(parse(first.get(first.size() - 1).value()).toString()).isEqualTo("{\"inStock\":true,\"itemNo\":\"100\"}");
+
+      // Quantity moves and the description changes, but the client's fields do not: nothing published.
+      c.upsert(ITEM_BALANCE, row("ITEM_NO", "100", "MI_LOC", "DC1", "STOREROOM_NO", "1", "QTY_ON_HAND", 4));
+      c.upsert(ITEM_PROFILE, row("ITEM_NO", "100", "MFR_CTL_NO", "AB", "DESCR", "new text"));
+      assertThat(c.newRecords(topic)).isEmpty();
+      assertThat(c.newRecords(c.driver.config.itemTopic())).isNotEmpty();
+
+      c.upsert(ITEM_BALANCE, row("ITEM_NO", "100", "MI_LOC", "DC1", "STOREROOM_NO", "1", "QTY_ON_HAND", 0));
+      assertThat(c.newRecords(topic)).singleElement()
+          .satisfies(r -> assertThat(parse(r.value()).path("inStock").asBoolean()).isFalse());
+
+      c.delete(ITEM_PROFILE, row("ITEM_NO", "100"));
+      assertThat(c.newRecords(topic)).singleElement().satisfies(r -> assertThat(r.value()).isNull());
+    }
+  }
+
+  @Test
   void publishedDocumentsHaveTheDocumentedTopLevelShape() {
     item("100", "AB", "G1");
     JsonNode doc = h.item("100");

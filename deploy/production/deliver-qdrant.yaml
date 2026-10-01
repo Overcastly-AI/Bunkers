@@ -1,0 +1,40 @@
+# Posts catalog.client.qdrant to the Qdrant team's API (catalog.client.qdrant.* in catalog-join.properties).
+# One Deployment per HTTP client; add it to kustomization.yaml resources to enable. Safe to run more
+# than one replica: they share the consumer group, and each item stays on one partition (in order).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: catalog-join-deliver-qdrant
+spec:
+  replicas: 1
+  selector:
+    matchLabels: {app: catalog-join-deliver-qdrant}
+  template:
+    metadata:
+      labels:
+        app: catalog-join-deliver-qdrant
+        tags.datadoghq.com/service: catalog-join-deliver-qdrant
+    spec:
+      securityContext: {runAsNonRoot: true, runAsUser: 10001}
+      containers:
+        - name: deliver
+          image: catalog-join
+          args: [deliver, --client, qdrant, --set, dd.service=catalog-join-deliver-qdrant]
+          env:
+            - {name: CATALOG_CONFIG, value: /etc/catalog-join/catalog-join.properties}
+            - name: DD_ENV
+              valueFrom: {fieldRef: {fieldPath: "metadata.labels['tags.datadoghq.com/env']"}}
+            - name: DD_VERSION
+              valueFrom: {fieldRef: {fieldPath: "metadata.labels['tags.datadoghq.com/version']"}}
+            - name: DD_AGENT_HOST
+              valueFrom: {fieldRef: {fieldPath: status.hostIP}}
+            - name: QDRANT_TOKEN
+              valueFrom: {secretKeyRef: {name: catalog-join-qdrant, key: token}}
+          volumeMounts:
+            - {name: config, mountPath: /etc/catalog-join}
+          resources:
+            requests: {cpu: 250m, memory: 512Mi}
+            limits: {memory: 512Mi}
+      volumes:
+        - name: config
+          configMap: {name: catalog-join-config}

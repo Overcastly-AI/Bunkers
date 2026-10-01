@@ -51,6 +51,15 @@ public final class Json {
     }
   }
 
+  /** A JSON object as a map (insertion order kept). */
+  public static java.util.Map<String, Object> read(String json) {
+    try {
+      return MAPPER.readValue(json, new TypeReference<java.util.LinkedHashMap<String, Object>>() {});
+    } catch (IOException e) {
+      throw new UncheckedIOException(e);
+    }
+  }
+
   public static <T> Serde<T> serde(Class<T> type) {
     return serde(MAPPER.constructType(type));
   }

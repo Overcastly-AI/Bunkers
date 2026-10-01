@@ -54,7 +54,9 @@ public final class TopologyDriver implements AutoCloseable {
     for (SourceTable table : SourceTable.values()) {
       inputs.put(config.topic(table), driver.createInputTopic(config.topic(table), new ByteArraySerializer(), new ByteArraySerializer()));
     }
-    for (String topic : config.outputTopics()) {
+    List<String> published = new ArrayList<>(config.outputTopics());
+    config.clients().values().forEach(client -> published.add(client.topic()));
+    for (String topic : published) {
       outputs.put(topic, driver.createOutputTopic(topic, new StringDeserializer(), new ByteArrayDeserializer()));
     }
   }
