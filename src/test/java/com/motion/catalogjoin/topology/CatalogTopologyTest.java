@@ -108,6 +108,21 @@ class CatalogTopologyTest {
   }
 
   @Test
+  void aNewItemIsNeverPublishedWithoutItsRestrictions() {
+    h.upsert(MFR_PROFILE, row("MFR_CTL_NO", "AB", "MFR_NAME_ID", "N1"));
+    h.upsert(ITEM_RESTRICT_RULE, row("CTL_NO", "R2", "ITEM_NO", " ", "MFR_CTL_NO", "AB", "PROD_GROUP_NO", " "));
+    h.upsert(ITEM_RESTRICT_RULE, row("CTL_NO", "R3", "ITEM_NO", " ", "MFR_CTL_NO", "AB", "PROD_GROUP_NO", "G1"));
+    h.newRecords(h.driver.config.itemTopic());
+    item("100", "AB", "G1");
+    List<TestRecord<String, byte[]>> published = h.newRecords(h.driver.config.itemTopic());
+    assertThat(published).hasSize(1);
+    JsonNode doc = parse(published.get(0).value());
+    assertThat(doc.path("manufacturer").path("profile").path("MFR_CTL_NO").asText()).isEqualTo("AB");
+    assertThat(texts(doc.path("restrictions").path("manufacturer"), "CTL_NO")).containsExactly("R2");
+    assertThat(texts(doc.path("restrictions").path("manufacturerProductGroup"), "CTL_NO")).containsExactly("R3");
+  }
+
+  @Test
   void itemArrivingBeforeItsManufacturerIsCompletedLater() {
     item("100", "AB", "G1");
     assertThat(h.item("100").path("manufacturer").isNull()).isTrue();
