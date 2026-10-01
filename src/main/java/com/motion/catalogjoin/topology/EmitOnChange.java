@@ -53,9 +53,7 @@ final class EmitOnChange<V> implements FixedKeyProcessor<String, V, byte[]> {
       }
     }
     if (output != null) {
-      Tracing.tag(Tracing.OUTPUT, output);
-      Tracing.tag(Tracing.KEY, record.key());
-      Tracing.tag(Tracing.PUBLISHED, publish);
+      Tracing.publish(output, record.key(), publish);
     }
   }
 

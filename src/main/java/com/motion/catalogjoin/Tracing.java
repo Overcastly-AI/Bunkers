@@ -1,5 +1,6 @@
 package com.motion.catalogjoin;
 
+import io.opentelemetry.api.GlobalOpenTelemetry;
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.StatusCode;
 
@@ -29,6 +30,18 @@ public final class Tracing {
 
   public static void tag(String name, boolean value) {
     Span.current().setAttribute(name, value);
+  }
+
+  /**
+   * Output documents are emitted when Kafka Streams flushes its caches at commit, outside any
+   * record's span, so each publish decision gets its own short span.
+   */
+  public static void publish(String output, String key, boolean published) {
+    Span span = GlobalOpenTelemetry.getTracer("catalog-join").spanBuilder("catalog.publish").startSpan();
+    span.setAttribute(OUTPUT, output);
+    span.setAttribute(KEY, key);
+    span.setAttribute(PUBLISHED, published);
+    span.end();
   }
 
   /** Marks the current record's span as failed. */
