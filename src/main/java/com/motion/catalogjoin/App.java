@@ -95,7 +95,21 @@ public final class App {
       }
     }
 
-    int exit = switch (command) {
+    int exit;
+    try {
+      exit = dispatch(command, files, overrides, flags, options, output);
+    } catch (Exception | Error e) {
+      // Kafka clients start non-daemon threads; without an explicit exit a failed startup (bad
+      // config, port in use, ...) would leave a live process that does nothing.
+      LOG.error("{} failed", command, e);
+      exit = 1;
+    }
+    System.exit(exit);
+  }
+
+  private static int dispatch(String command, List<Path> files, Map<String, String> overrides, Set<String> flags,
+      Map<String, List<String>> options, Path output) throws Exception {
+    return switch (command) {
       case "run" -> run(CatalogConfig.load(files, overrides).requireNoPlaceholders());
       case "create-topics" -> {
         Topics.createOutputs(CatalogConfig.load(files, overrides).requireNoPlaceholders());
@@ -137,7 +151,6 @@ public final class App {
         yield 2;
       }
     };
-    System.exit(exit);
   }
 
   private static int usage() {

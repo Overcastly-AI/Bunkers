@@ -89,6 +89,11 @@ fi
 echo "== topics"
 catalog_join sim-generate "${CONFIG[@]}" "${SIZE[@]}" --create-topics --set sim.from-round=1 --set sim.rounds=0 > "$WORK/topics.log"
 
+for n in $(seq "$INSTANCES"); do
+  if curl -s "localhost:$((HEALTH_BASE + n))/health/live" > /dev/null; then
+    echo "port $((HEALTH_BASE + n)) is already in use (a previous run still stopping?); set HEALTH_BASE" >&2; exit 1
+  fi
+done
 echo "== $INSTANCES app instance(s)"
 for n in $(seq "$INSTANCES"); do
   catalog_join run "${CONFIG[@]}" ${TRACING[@]+"${TRACING[@]}"} --set "state.dir=$WORK/state$n" \
