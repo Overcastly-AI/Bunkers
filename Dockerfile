@@ -5,11 +5,14 @@ RUN mvn -B -q dependency:go-offline
 COPY src ./src
 RUN mvn -B -q package -DskipTests
 
+# Settings live in the jar (catalog-join.properties) and in the mounted overlay (CATALOG_CONFIG);
+# JVM flags in JDK_JAVA_OPTIONS. Commands: run (default), create-topics, print-config, sim-*.
 FROM eclipse-temurin:21-jre
-RUN useradd --system --uid 10001 app && mkdir -p /var/lib/catalog-join && chown app /var/lib/catalog-join
+ARG UID=10001
+RUN useradd --system --uid ${UID} app && mkdir -p /var/lib/catalog-join && chown app /var/lib/catalog-join
 COPY --from=build /src/target/catalog-join.jar /app/catalog-join.jar
-COPY deploy/application.properties /etc/catalog-join/application.properties
-USER app
-ENV CATALOG_CONFIG=/etc/catalog-join/application.properties
+USER ${UID}
+ENV JDK_JAVA_OPTIONS="-XX:MaxRAMPercentage=40 -XX:+ExitOnOutOfMemoryError"
 EXPOSE 8080
-ENTRYPOINT ["java", "-XX:MaxRAMPercentage=50", "-jar", "/app/catalog-join.jar"]
+ENTRYPOINT ["java", "-jar", "/app/catalog-join.jar"]
+CMD ["run"]

@@ -1,43 +1,44 @@
 package com.motion.catalogjoin.sim;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import static com.motion.catalogjoin.model.Docs.list;
+import static com.motion.catalogjoin.model.Docs.map;
+
+import com.motion.catalogjoin.CatalogConfig;
 import com.motion.catalogjoin.Json;
 import com.motion.catalogjoin.Keys;
 import com.motion.catalogjoin.Rows;
 import com.motion.catalogjoin.SourceTable;
+import com.motion.catalogjoin.model.Docs;
 import com.motion.catalogjoin.sim.SimModel.Slot;
 import com.motion.catalogjoin.sim.SimModel.TableRow;
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
- * Computes what the published documents must contain after the given round, straight from the
- * model (no replay), and compares that with what the app actually published. Both sides are
- * reduced to the same summary (trimmed strings, normalized numbers, sorted lists) so the check is
- * about content, not formatting.
+ * Checks published documents against the model. Two independent extractors feed the same summary
+ * builders: one reads the model's rows after the final round (no replay), the other reads what the
+ * app published. Summaries keep only content (trimmed strings, normalized numbers, sorted lists).
  */
 public final class Verifier {
 
-  /** Published documents keyed by their Kafka key; only sampled items need to be present. */
-  public record Published(Map<String, JsonNode> items, Map<String, JsonNode> itemLocations, Map<String, JsonNode> prices) {}
-
   public record Mismatch(String kind, String key, String expected, String actual) {}
 
-  public record Report(int itemsChecked, int itemsPresent, int itemLocationsChecked, int pricesChecked, List<Mismatch> mismatches, long mismatchCount) {
+  public record Report(int itemsChecked, int itemsPresent, int itemLocationsChecked, int pricesChecked,
+      List<Mismatch> mismatches, long mismatchCount) {
+
     public boolean passed() {
       return mismatchCount == 0;
     }
 
     public String describe() {
-      StringBuilder out = new StringBuilder();
-      out.append(String.format(
+      StringBuilder out = new StringBuilder(String.format(
           "checked %,d items (%,d published), %,d item-location docs, %,d prices: %s%n",
           itemsChecked, itemsPresent, itemLocationsChecked, pricesChecked,
           passed() ? "ALL MATCH" : mismatchCount + " MISMATCHES"));
@@ -50,39 +51,39 @@ public final class Verifier {
 
   private static final int MAX_REPORTED = 10;
 
+  private final CatalogConfig config;
   private final SimModel model;
   private final int round;
   private final int sampleEvery;
-  private final Map<String, List<String>> attributeNames = new HashMap<>();
 
-  public Verifier(SimModel model, int round, int sampleEvery) {
-    this.model = model;
-    this.round = round;
-    this.sampleEvery = sampleEvery;
-    SimModel.CONFIGURED_ATTRIBUTES.forEach((name, id) -> attributeNames.computeIfAbsent(id, k -> new ArrayList<>()).add(name));
+  public Verifier(CatalogConfig config) {
+    this.config = config;
+    this.model = new SimModel(config);
+    this.round = config.sim().rounds();
+    this.sampleEvery = config.sim().sampleEvery();
   }
 
-  /** Whether a published key belongs to a sampled item (so readers can skip everything else). */
+  /** Whether a published key belongs to a sampled item, so readers can skip everything else. */
   public boolean isSampled(String key) {
-    String itemNo = Keys.parse(key).get("ITEM_NO");
-    if (itemNo == null) {
-      return false;
-    }
+    Integer item = itemIndex(key);
+    return item != null && model.sampled(item, sampleEvery);
+  }
+
+  private Integer itemIndex(String key) {
     try {
-      int item = Integer.parseInt(itemNo.trim());
-      return item >= 0 && item < model.items() && model.sampled(item, sampleEvery);
-    } catch (NumberFormatException e) {
-      return false;
+      int item = Integer.parseInt(Keys.part(key, "ITEM_NO"));
+      return item >= 0 && item < model.items() ? item : null;
+    } catch (RuntimeException e) {
+      return null;
     }
   }
 
-  public Report verify(Published published) {
+  public Report verify(Outputs published) {
     List<Mismatch> reported = new ArrayList<>();
     long[] mismatches = {0};
     int items = 0, present = 0, locationDocs = 0, prices = 0;
-
-    Map<Integer, Map<String, JsonNode>> locationDocsByItem = byItem(published.itemLocations());
-    Map<Integer, Map<String, JsonNode>> pricesByItem = byItem(published.prices());
+    Map<Integer, Map<String, Object>> locationsByItem = byItem(published.latest(config.itemLocationTopic()), Verifier::actualLocation);
+    Map<Integer, Map<String, Object>> pricesByItem = byItem(published.latest(config.itemPriceTopic()), row -> num(row.get("PRICE")));
 
     for (int i = 0; i < model.items(); i++) {
       if (!model.sampled(i, sampleEvery)) {
@@ -90,21 +91,18 @@ public final class Verifier {
       }
       items++;
       String key = Keys.of("ITEM_NO", SimModel.itemNo(i));
-      JsonNode doc = published.items().get(key);
-      if (doc != null) {
-        present++;
-      }
+      Map<String, Object> doc = published.latest(config.itemTopic()).get(key);
+      present += doc == null ? 0 : 1;
       compare("item", key, expectedItem(i), doc == null ? null : actualItem(doc), reported, mismatches);
 
-      Map<String, Object> expectedLocations = expectedItemLocations(i);
-      Map<String, Object> actualLocations = new TreeMap<>();
-      locationDocsByItem.getOrDefault(i, Map.of()).forEach((k, v) -> actualLocations.put(k, actualItemLocation(v)));
+      Map<String, Object> expectedLocations = expectedLocations(i);
+      Map<String, Object> actualLocations = locationsByItem.getOrDefault(i, Map.of());
       locationDocs += Math.max(expectedLocations.size(), actualLocations.size());
       compare("item-location", key, expectedLocations, actualLocations, reported, mismatches);
 
-      Map<String, Object> expectedPrices = expectedPrices(i);
-      Map<String, Object> actualPrices = new TreeMap<>();
-      pricesByItem.getOrDefault(i, Map.of()).forEach((k, v) -> actualPrices.put(k, num(v.path("PRICE"))));
+      Map<String, Object> expectedPrices = new TreeMap<>();
+      rows(Slot.PRICES, i).forEach(r -> expectedPrices.put(config.key(SourceTable.ITEM_PRICE_CACHE, r.row()), num(r.row().get("PRICE"))));
+      Map<String, Object> actualPrices = pricesByItem.getOrDefault(i, Map.of());
       prices += Math.max(expectedPrices.size(), actualPrices.size());
       compare("item-price", key, expectedPrices, actualPrices, reported, mismatches);
     }
@@ -122,24 +120,108 @@ public final class Verifier {
     }
   }
 
-  private Map<Integer, Map<String, JsonNode>> byItem(Map<String, JsonNode> docs) {
-    Map<Integer, Map<String, JsonNode>> out = new HashMap<>();
+  private Map<Integer, Map<String, Object>> byItem(Map<String, Map<String, Object>> docs,
+      java.util.function.Function<Map<String, Object>, Object> summary) {
+    Map<Integer, Map<String, Object>> out = new HashMap<>();
     docs.forEach((key, doc) -> {
-      if (doc != null && isSampled(key)) {
-        int item = Integer.parseInt(Keys.parse(key).get("ITEM_NO"));
-        out.computeIfAbsent(item, k -> new TreeMap<>()).put(key, doc);
+      Integer item = itemIndex(key);
+      if (item != null && model.sampled(item, sampleEvery)) {
+        out.computeIfAbsent(item, k -> new TreeMap<>()).put(key, summary.apply(doc));
       }
     });
     return out;
   }
 
-  // --- expected, from the model ------------------------------------------------------------------
+  // --- summaries, shared by both sides ------------------------------------------------------------
+
+  private static Map<String, Object> itemSummary(Map<String, Object> item, Map<String, Object> profile,
+      Map<String, Object> name, List<String> itemRules, List<String> mfrRules, List<String> groupRules,
+      List<Map<String, Object>> dcBalances, List<Map<String, Object>> costs, List<Map<String, Object>> products) {
+    Map<String, Object> out = new TreeMap<>();
+    out.put("descr", str(item.get("DESCR")));
+    out.put("mfrCtlNo", str(item.get("MFR_CTL_NO")));
+    out.put("group", str(item.get("PRODUCT_GROUP_NO")));
+    out.put("listPrice", num(item.get("LIST_PRICE")));
+    out.put("manufacturer", profile == null ? null
+        : Docs.of("sellable", str(profile.get("SELLABLE")), "name", name == null ? null : str(name.get("MFR_NAME"))));
+    out.put("rules", Map.of("item", sorted(itemRules), "mfr", sorted(mfrRules), "group", sorted(groupRules)));
+    out.put("dcStock", sorted(dcBalances.stream()
+        .map(b -> str(b.get("MI_LOC")) + "/" + str(b.get("STOREROOM_NO")) + "=" + num(b.get("QTY_ON_HAND"))).toList()));
+    out.put("costs", sorted(costs.stream().map(c -> str(c.get("CORP_MI_LOC")) + "=" + num(c.get("COST"))).toList()));
+    List<Map<String, Object>> sortedProducts = new ArrayList<>(products);
+    sortedProducts.sort(Comparator.comparing(p -> (String) p.get("id")));
+    out.put("stepProducts", sortedProducts);
+    return out;
+  }
+
+  /** attributes: name -> [(value, unit row)]; classes: [(id, inWebHierarchy, path rows)]. */
+  private static Map<String, Object> productSummary(String id, Map<String, Object> product,
+      Map<String, List<Object[]>> attributes, List<Object[]> classes) {
+    Map<String, Object> out = new TreeMap<>();
+    out.put("id", id);
+    out.put("name", product == null ? null : str(product.get("PRODUCT_NAME")));
+    Map<String, List<String>> named = new TreeMap<>();
+    attributes.forEach((name, entries) -> named.put(name, sorted(entries.stream()
+        .map(e -> str(e[0]) + "@" + (e[1] == null ? "-" : str(map(e[1]).get("UNIT_NAME")))).toList())));
+    out.put("attributes", named);
+    List<String> summaries = new ArrayList<>();
+    for (Object[] c : classes) {
+      List<String> names = list(c[2]).stream().map(r -> str(r.get("CLASSIFICATION_NAME"))).toList();
+      summaries.add(c[0] + (Boolean.TRUE.equals(c[1]) ? " web " : " other ") + names);
+    }
+    out.put("classes", sorted(summaries));
+    return out;
+  }
+
+  private static Map<String, Object> locationSummary(Map<String, Object> location, List<Map<String, Object>> balances,
+      Map<String, Object> nonCos, List<Map<String, Object>> localCosts) {
+    Map<String, Object> out = new TreeMap<>();
+    out.put("location", location == null ? null : str(location.get("OPEN_CLOSED")));
+    out.put("balances", sorted(balances.stream().map(b -> str(b.get("STOREROOM_NO")) + "=" + num(b.get("QTY_ON_HAND"))).toList()));
+    out.put("nonCos", nonCos == null ? null : num(nonCos.get("QTY")));
+    out.put("localCosts", sorted(localCosts.stream()
+        .map(c -> str(c.get("EFFECTIVE_DATE")) + "|" + str(c.get("EXPIRATION_DATE")) + "=" + num(c.get("COST"))).toList()));
+    return out;
+  }
+
+  // --- actual: what the app published --------------------------------------------------------------
+
+  private static Map<String, Object> actualItem(Map<String, Object> doc) {
+    Map<String, Object> manufacturer = map(doc.get("manufacturer"));
+    Map<String, Object> restrictions = map(doc.get("restrictions"));
+    List<Map<String, Object>> products = new ArrayList<>();
+    for (Map<String, Object> p : list(doc.get("stepProducts"))) {
+      Map<String, List<Object[]>> attributes = new TreeMap<>();
+      map(p.get("attributes")).forEach((name, entries) -> attributes.put(name,
+          list(entries).stream().map(e -> new Object[] {e.get("value"), e.get("unit")}).toList()));
+      List<Object[]> classes = list(p.get("classifications")).stream()
+          .map(c -> new Object[] {str(c.get("stepClassificationId")), c.get("inWebHierarchy"), c.get("path")}).toList();
+      products.add(productSummary(str(p.get("stepProductId")), map(p.get("product")), attributes, classes));
+    }
+    return itemSummary(map(doc.get("item")),
+        manufacturer == null ? null : map(manufacturer.get("profile")),
+        manufacturer == null ? null : map(manufacturer.get("name")),
+        ids(restrictions.get("item")), ids(restrictions.get("manufacturer")), ids(restrictions.get("manufacturerProductGroup")),
+        list(doc.get("dcStock")).stream().map(e -> map(e.get("balance"))).toList(),
+        list(doc.get("costs")), products);
+  }
+
+  private static Map<String, Object> actualLocation(Map<String, Object> doc) {
+    return locationSummary(map(doc.get("location")), list(doc.get("balances")), map(doc.get("nonCosBalance")), list(doc.get("localCosts")));
+  }
+
+  private static List<String> ids(Object rules) {
+    return list(rules).stream().map(r -> str(r.get("CTL_NO"))).toList();
+  }
+
+  // --- expected: straight from the model ------------------------------------------------------------
 
   private List<TableRow> rows(Slot slot, int id) {
     return model.rows(slot, id, model.version(slot, id, round));
   }
 
-  private static Map<String, Object> single(List<TableRow> rows) {
+  private Map<String, Object> single(Slot slot, int id) {
+    List<TableRow> rows = rows(slot, id);
     return rows.isEmpty() ? null : rows.get(0).row();
   }
 
@@ -147,289 +229,111 @@ public final class Verifier {
     return Integer.parseInt(id.substring(1));
   }
 
-  Map<String, Object> expectedItem(int i) {
-    Map<String, Object> item = single(rows(Slot.ITEM, i));
+  private Map<String, Object> expectedItem(int i) {
+    Map<String, Object> item = single(Slot.ITEM, i);
     if (item == null) {
       return null;
     }
-    Map<String, Object> out = new TreeMap<>();
-    out.put("descr", str(item.get("DESCR")));
-    String mfr = str(item.get("MFR_CTL_NO"));
+    int m = index(str(item.get("MFR_CTL_NO")));
     String group = str(item.get("PRODUCT_GROUP_NO"));
-    out.put("mfrCtlNo", mfr);
-    out.put("group", group);
-    out.put("listPrice", num(item.get("LIST_PRICE")));
+    Map<String, Object> profile = single(Slot.MFR, m);
+    Map<String, Object> name = profile == null ? null : single(Slot.MFR_NAME, index(str(profile.get("MFR_NAME_ID"))));
+    List<Map<String, Object>> mfrRules = rows(Slot.MFR_RULES, m).stream().map(TableRow::row).toList();
 
-    int m = index(mfr);
-    Map<String, Object> profile = single(rows(Slot.MFR, m));
-    if (profile == null) {
-      out.put("manufacturer", null);
-    } else {
-      Map<String, Object> manufacturer = new TreeMap<>();
-      manufacturer.put("sellable", str(profile.get("SELLABLE")));
-      Map<String, Object> name = single(rows(Slot.MFR_NAME, index(str(profile.get("MFR_NAME_ID")))));
-      manufacturer.put("name", name == null ? null : str(name.get("MFR_NAME")));
-      out.put("manufacturer", manufacturer);
-    }
-
-    Map<String, Object> rules = new TreeMap<>();
-    rules.put("item", sorted(rows(Slot.ITEM_RULES, i).stream().map(r -> str(r.row().get("CTL_NO"))).toList()));
-    List<TableRow> mfrRules = rows(Slot.MFR_RULES, m);
-    rules.put("mfr", sorted(mfrRules.stream().filter(r -> Rows.isBlank(r.row(), "PROD_GROUP_NO"))
-        .map(r -> str(r.row().get("CTL_NO"))).toList()));
-    rules.put("group", sorted(mfrRules.stream().filter(r -> group.equals(Rows.str(r.row(), "PROD_GROUP_NO")))
-        .map(r -> str(r.row().get("CTL_NO"))).toList()));
-    out.put("rules", rules);
-
-    List<String> dcStock = new ArrayList<>();
-    for (TableRow balance : rows(Slot.BALANCES, i)) {
-      String miLoc = str(balance.row().get("MI_LOC"));
-      Map<String, Object> location = single(rows(Slot.LOCATION, Integer.parseInt(miLoc)));
-      if (location != null && "W".equals(location.get("LOCATION_TYPE")) && "O".equals(location.get("OPEN_CLOSED"))) {
-        dcStock.add(miLoc + "/" + str(balance.row().get("STOREROOM_NO")) + "=" + num(balance.row().get("QTY_ON_HAND")));
-      }
-    }
-    out.put("dcStock", sorted(dcStock));
-    out.put("costs", sorted(rows(Slot.ITEM_COST, i).stream()
-        .map(r -> str(r.row().get("CORP_MI_LOC")) + "=" + num(r.row().get("COST"))).toList()));
+    boolean excluded = profile != null && Rows.in(profile, "SELLABLE", config.dcExcludedSellable());
+    List<Map<String, Object>> dcBalances = excluded ? List.of() : rows(Slot.BALANCES, i).stream().map(TableRow::row)
+        .filter(b -> {
+          Map<String, Object> location = single(Slot.LOCATION, Integer.parseInt(str(b.get("MI_LOC"))));
+          return Rows.in(location, "LOCATION_TYPE", config.dcLocationTypes()) && Rows.in(location, "OPEN_CLOSED", config.dcLocationStatuses());
+        }).toList();
 
     List<Map<String, Object>> products = new ArrayList<>();
-    Set<Integer> candidates = new LinkedHashSet<>(List.of(i, i ^ 1));
-    for (int p : candidates) {
-      if (p >= model.items()) {
-        continue;
-      }
-      List<TableRow> productRows = rows(Slot.PRODUCT, p);
-      boolean bridged = productRows.stream().anyMatch(r -> r.table() == SourceTable.STEP_PRODUCT_VALUES
-          && SimModel.ATTR_ITEM.equals(r.row().get("STEP_ATTRIBUTE_ID"))
-          && SimModel.itemNo(i).equals(str(r.row().get("VALUE"))));
-      if (bridged) {
-        products.add(expectedProduct(p, productRows));
+    for (int p : new LinkedHashSet<>(List.of(i, i ^ 1))) {
+      if (p < model.items()) {
+        List<TableRow> productRows = rows(Slot.PRODUCT, p);
+        String bridgeId = config.itemNumberAttribute();
+        boolean bridged = productRows.stream().anyMatch(r -> r.table() == SourceTable.STEP_PRODUCT_VALUES
+            && bridgeId.equals(r.row().get("STEP_ATTRIBUTE_ID")) && SimModel.itemNo(i).equals(str(r.row().get("VALUE"))));
+        if (bridged) {
+          products.add(expectedProduct(p, productRows));
+        }
       }
     }
-    products.sort((a, b) -> ((String) a.get("id")).compareTo((String) b.get("id")));
-    out.put("stepProducts", products);
-    return out;
+    return itemSummary(item, profile, name,
+        rows(Slot.ITEM_RULES, i).stream().map(r -> str(r.row().get("CTL_NO"))).toList(),
+        mfrRules.stream().filter(r -> Rows.isBlank(r, "PROD_GROUP_NO")).map(r -> str(r.get("CTL_NO"))).toList(),
+        mfrRules.stream().filter(r -> group.equals(Rows.str(r, "PROD_GROUP_NO"))).map(r -> str(r.get("CTL_NO"))).toList(),
+        dcBalances, rows(Slot.ITEM_COST, i).stream().map(TableRow::row).toList(), products);
   }
 
   private Map<String, Object> expectedProduct(int p, List<TableRow> rows) {
-    Map<String, Object> out = new TreeMap<>();
-    out.put("id", SimModel.productId(p));
-    Map<String, List<String>> attributes = new TreeMap<>();
-    List<String> weightUnits = new ArrayList<>();
-    List<Map<String, Object>> classes = new ArrayList<>();
+    Map<String, Object> product = null;
+    Map<String, List<Object[]>> attributes = new TreeMap<>();
+    List<Object[]> classes = new ArrayList<>();
     for (TableRow row : rows) {
+      Map<String, Object> r = row.row();
       switch (row.table()) {
-        case STEP_PRODUCT -> out.put("name", str(row.row().get("PRODUCT_NAME")));
-        case STEP_PRODUCT_VALUES -> {
-          String attribute = (String) row.row().get("STEP_ATTRIBUTE_ID");
-          for (String name : attributeNames.getOrDefault(attribute, List.of())) {
-            attributes.computeIfAbsent(name, k -> new ArrayList<>()).add(str(row.row().get("VALUE")));
-            if (name.equals("SHIPPING_WEIGHT")) {
-              Map<String, Object> unit = single(rows(Slot.UNIT, index(str(row.row().get("STEP_UNIT_ID")))));
-              weightUnits.add(unit == null ? null : str(unit.get("UNIT_NAME")));
-            }
+        case STEP_PRODUCT -> product = r;
+        case STEP_PRODUCT_VALUES -> config.stepAttributes().forEach((name, id) -> {
+          if (id.equals(r.get("STEP_ATTRIBUTE_ID"))) {
+            String unitId = Rows.str(r, "STEP_UNIT_ID");
+            attributes.computeIfAbsent(name, k -> new ArrayList<>())
+                .add(new Object[] {r.get("VALUE"), unitId == null ? null : single(Slot.UNIT, index(unitId))});
           }
-        }
-        case STEP_PRODUCT_CLASSIFICATION -> classes.add(expectedClass(str(row.row().get("STEP_CLASSIFICATION_ID"))));
+        });
+        case STEP_PRODUCT_CLASSIFICATION -> classes.add(expectedClass(str(r.get("STEP_CLASSIFICATION_ID"))));
         default -> {}
       }
     }
-    out.putIfAbsent("name", null);
-    attributes.values().forEach(v -> v.sort(null));
-    out.put("attributes", attributes);
-    out.put("weightUnits", sorted(weightUnits));
-    classes.sort((a, b) -> ((String) a.get("id")).compareTo((String) b.get("id")));
-    out.put("classes", classes);
-    return out;
+    return productSummary(SimModel.productId(p), product, attributes, classes);
   }
 
-  private Map<String, Object> expectedClass(String classId) {
-    List<String> path = new ArrayList<>();
+  private Object[] expectedClass(String classId) {
+    List<Map<String, Object>> path = new ArrayList<>();
     String current = classId;
-    String top = null;
-    while (current.startsWith("C")) {
-      Map<String, Object> row = single(rows(Slot.CLASS, index(current)));
-      if (row == null) {
-        break;
-      }
-      path.add(0, str(row.get("CLASSIFICATION_NAME")));
-      top = str(row.get("PARENT_STEP_CLASSIFICATION_ID"));
-      current = top;
+    while (current.matches("C\\d+")) {
+      Map<String, Object> row = single(Slot.CLASS, index(current));
+      path.add(0, row);
+      current = str(row.get("PARENT_STEP_CLASSIFICATION_ID"));
     }
-    Map<String, Object> out = new TreeMap<>();
-    out.put("id", classId);
-    out.put("inWeb", SimModel.ROOT.equals(top));
-    out.put("path", path);
-    return out;
+    return new Object[] {classId, model.root().equals(current), path};
   }
 
-  Map<String, Object> expectedItemLocations(int i) {
-    Map<String, Object> out = new TreeMap<>();
-    Map<String, List<String>> balances = new TreeMap<>();
-    Map<String, Object> nonCos = new TreeMap<>();
-    Map<String, List<String>> localCosts = new TreeMap<>();
-    for (TableRow r : rows(Slot.BALANCES, i)) {
-      balances.computeIfAbsent(str(r.row().get("MI_LOC")), k -> new ArrayList<>())
-          .add(str(r.row().get("STOREROOM_NO")) + "=" + num(r.row().get("QTY_ON_HAND")));
-    }
-    for (TableRow r : rows(Slot.NON_COS, i)) {
-      nonCos.put(str(r.row().get("MI_LOC")), num(r.row().get("QTY")));
-    }
-    for (TableRow r : rows(Slot.LOCAL_COSTS, i)) {
-      localCosts.computeIfAbsent(str(r.row().get("MI_LOC")), k -> new ArrayList<>())
-          .add(str(r.row().get("EFFECTIVE_DATE")) + "|" + str(r.row().get("EXPIRATION_DATE")) + "=" + num(r.row().get("COST")));
-    }
-    Set<String> locs = new java.util.TreeSet<>();
-    locs.addAll(balances.keySet());
+  private Map<String, Object> expectedLocations(int i) {
+    Map<String, List<Map<String, Object>>> balances = new TreeMap<>();
+    Map<String, Map<String, Object>> nonCos = new TreeMap<>();
+    Map<String, List<Map<String, Object>>> localCosts = new TreeMap<>();
+    rows(Slot.BALANCES, i).forEach(r -> balances.computeIfAbsent(str(r.row().get("MI_LOC")), k -> new ArrayList<>()).add(r.row()));
+    rows(Slot.NON_COS, i).forEach(r -> nonCos.put(str(r.row().get("MI_LOC")), r.row()));
+    rows(Slot.LOCAL_COSTS, i).forEach(r -> localCosts.computeIfAbsent(str(r.row().get("MI_LOC")), k -> new ArrayList<>()).add(r.row()));
+    Set<String> locs = new TreeSet<>(balances.keySet());
     locs.addAll(nonCos.keySet());
     locs.addAll(localCosts.keySet());
+    Map<String, Object> out = new TreeMap<>();
     for (String loc : locs) {
-      Map<String, Object> doc = new TreeMap<>();
-      Map<String, Object> location = single(rows(Slot.LOCATION, Integer.parseInt(loc)));
-      doc.put("location", location == null ? null : str(location.get("OPEN_CLOSED")));
-      doc.put("balances", sorted(balances.getOrDefault(loc, List.of())));
-      doc.put("nonCos", nonCos.get(loc));
-      doc.put("localCosts", sorted(localCosts.getOrDefault(loc, List.of())));
-      out.put(Keys.of("ITEM_NO", SimModel.itemNo(i), "MI_LOC", loc), doc);
+      out.put(Keys.of("ITEM_NO", SimModel.itemNo(i), "MI_LOC", loc), locationSummary(single(Slot.LOCATION, Integer.parseInt(loc)),
+          balances.getOrDefault(loc, List.of()), nonCos.get(loc), localCosts.getOrDefault(loc, List.of())));
     }
-    return out;
-  }
-
-  Map<String, Object> expectedPrices(int i) {
-    Map<String, Object> out = new TreeMap<>();
-    for (TableRow r : rows(Slot.PRICES, i)) {
-      out.put(Keys.of(r.row(), SourceTable.ITEM_PRICE_CACHE.keyColumns()), num(r.row().get("PRICE")));
-    }
-    return out;
-  }
-
-  // --- actual, from published JSON -----------------------------------------------------------------
-
-  static Map<String, Object> actualItem(JsonNode doc) {
-    Map<String, Object> out = new TreeMap<>();
-    JsonNode item = doc.path("item");
-    out.put("descr", str(item.path("DESCR")));
-    out.put("mfrCtlNo", str(item.path("MFR_CTL_NO")));
-    out.put("group", str(item.path("PRODUCT_GROUP_NO")));
-    out.put("listPrice", num(item.path("LIST_PRICE")));
-
-    JsonNode manufacturer = doc.path("manufacturer");
-    if (manufacturer.isNull() || manufacturer.isMissingNode()) {
-      out.put("manufacturer", null);
-    } else {
-      Map<String, Object> m = new TreeMap<>();
-      m.put("sellable", str(manufacturer.path("profile").path("SELLABLE")));
-      JsonNode name = manufacturer.path("name");
-      m.put("name", name.isNull() || name.isMissingNode() ? null : str(name.path("MFR_NAME")));
-      out.put("manufacturer", m);
-    }
-
-    Map<String, Object> rules = new TreeMap<>();
-    rules.put("item", texts(doc.path("restrictions").path("item"), "CTL_NO"));
-    rules.put("mfr", texts(doc.path("restrictions").path("manufacturer"), "CTL_NO"));
-    rules.put("group", texts(doc.path("restrictions").path("manufacturerProductGroup"), "CTL_NO"));
-    out.put("rules", rules);
-
-    List<String> dcStock = new ArrayList<>();
-    doc.path("dcStock").forEach(entry -> {
-      JsonNode balance = entry.path("balance");
-      dcStock.add(str(balance.path("MI_LOC")) + "/" + str(balance.path("STOREROOM_NO")) + "=" + num(balance.path("QTY_ON_HAND")));
-    });
-    out.put("dcStock", sorted(dcStock));
-    List<String> costs = new ArrayList<>();
-    doc.path("costs").forEach(c -> costs.add(str(c.path("CORP_MI_LOC")) + "=" + num(c.path("COST"))));
-    out.put("costs", sorted(costs));
-
-    List<Map<String, Object>> products = new ArrayList<>();
-    doc.path("stepProducts").forEach(p -> {
-      Map<String, Object> product = new TreeMap<>();
-      product.put("id", str(p.path("stepProductId")));
-      JsonNode row = p.path("product");
-      product.put("name", row.isNull() || row.isMissingNode() ? null : str(row.path("PRODUCT_NAME")));
-      Map<String, List<String>> attributes = new TreeMap<>();
-      List<String> weightUnits = new ArrayList<>();
-      p.path("attributes").fields().forEachRemaining(field -> {
-        List<String> values = new ArrayList<>();
-        field.getValue().forEach(v -> {
-          values.add(str(v.path("value")));
-          if (field.getKey().equals("SHIPPING_WEIGHT")) {
-            JsonNode unit = v.path("unit");
-            weightUnits.add(unit.isNull() || unit.isMissingNode() ? null : str(unit.path("UNIT_NAME")));
-          }
-        });
-        values.sort(null);
-        attributes.put(field.getKey(), values);
-      });
-      product.put("attributes", attributes);
-      product.put("weightUnits", sorted(weightUnits));
-      List<Map<String, Object>> classes = new ArrayList<>();
-      p.path("classifications").forEach(c -> {
-        Map<String, Object> cls = new TreeMap<>();
-        cls.put("id", str(c.path("stepClassificationId")));
-        cls.put("inWeb", c.path("inWebHierarchy").asBoolean());
-        List<String> path = new ArrayList<>();
-        c.path("path").forEach(node -> path.add(str(node.path("CLASSIFICATION_NAME"))));
-        cls.put("path", path);
-        classes.add(cls);
-      });
-      classes.sort((a, b) -> ((String) a.get("id")).compareTo((String) b.get("id")));
-      product.put("classes", classes);
-      products.add(product);
-    });
-    products.sort((a, b) -> ((String) a.get("id")).compareTo((String) b.get("id")));
-    out.put("stepProducts", products);
-    return out;
-  }
-
-  static Map<String, Object> actualItemLocation(JsonNode doc) {
-    Map<String, Object> out = new TreeMap<>();
-    JsonNode location = doc.path("location");
-    out.put("location", location.isNull() || location.isMissingNode() ? null : str(location.path("OPEN_CLOSED")));
-    List<String> balances = new ArrayList<>();
-    doc.path("balances").forEach(b -> balances.add(str(b.path("STOREROOM_NO")) + "=" + num(b.path("QTY_ON_HAND"))));
-    out.put("balances", sorted(balances));
-    JsonNode nonCos = doc.path("nonCosBalance");
-    out.put("nonCos", nonCos.isNull() || nonCos.isMissingNode() ? null : num(nonCos.path("QTY")));
-    List<String> localCosts = new ArrayList<>();
-    doc.path("localCosts").forEach(c -> localCosts.add(
-        str(c.path("EFFECTIVE_DATE")) + "|" + str(c.path("EXPIRATION_DATE")) + "=" + num(c.path("COST"))));
-    out.put("localCosts", sorted(localCosts));
     return out;
   }
 
   // --- normalization -------------------------------------------------------------------------------
 
-  private static List<String> texts(JsonNode array, String field) {
-    List<String> out = new ArrayList<>();
-    array.forEach(node -> out.add(str(node.path(field))));
-    return sorted(out);
-  }
-
   private static List<String> sorted(List<String> values) {
     List<String> copy = new ArrayList<>(values);
-    copy.sort((a, b) -> Objects.compare(a, b, (x, y) -> x.compareTo(y)));
+    copy.sort(Comparator.nullsFirst(Comparator.naturalOrder()));
     return copy;
   }
 
   private static String str(Object value) {
-    if (value == null) {
-      return null;
-    }
-    if (value instanceof JsonNode node) {
-      return node.isNull() || node.isMissingNode() ? null : node.asText().trim();
-    }
-    return value.toString().trim();
+    return value == null ? null : Rows.text(value).trim();
   }
 
+  /** Numbers compare by value whether they arrived as JSON numbers or as Avro strings. */
   private static String num(Object value) {
     String text = str(value);
-    if (text == null || text.isEmpty()) {
-      return text;
-    }
     try {
-      BigDecimal decimal = new BigDecimal(text);
-      return decimal.signum() == 0 ? "0" : decimal.stripTrailingZeros().toPlainString();
+      return text == null || text.isEmpty() ? text : Rows.text(new java.math.BigDecimal(text));
     } catch (NumberFormatException e) {
       return text;
     }

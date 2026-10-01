@@ -3,6 +3,7 @@ package com.motion.catalogjoin.sim;
 import static com.motion.catalogjoin.sim.Mix.frac;
 import static com.motion.catalogjoin.sim.Mix.mod;
 
+import com.motion.catalogjoin.CatalogConfig;
 import com.motion.catalogjoin.SourceTable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -12,6 +13,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * A synthetic catalog whose entire history is a pure function of (seed, scale, round).
@@ -51,16 +54,7 @@ public final class SimModel {
   /** One source row. */
   public record TableRow(SourceTable table, Map<String, Object> row) {}
 
-  // STEP attribute ids used by the simulation; the app must be configured with the same ids.
-  public static final String ATTR_ITEM = "SIM_ITEM";
-  public static final Map<String, String> CONFIGURED_ATTRIBUTES =
-      Map.of(
-          "ITEM_NUMBER", ATTR_ITEM,
-          "MANUFACTURER_PART_NO", "SIM_MPN",
-          "SHORT_DESC", "SIM_DESC",
-          "PRIMARY_IMAGE", "SIM_IMG",
-          "UPC_NO", "SIM_UPC",
-          "SHIPPING_WEIGHT", "SIM_WEIGHT");
+  /** Attributes the app does not project; the generator sends them anyway to exercise the filter. */
   static final int UNCONFIGURED_ATTRIBUTES = 10;
 
   static final int GROUPS = 20;
@@ -69,8 +63,6 @@ public final class SimModel {
   static final int L2 = 200;
   static final int L3 = 2000;
   static final int CLASSES = L1 + L2 + L3;
-  static final String ROOT = "Motion";
-  static final String OTHER_ROOT = "Legacy";
 
   // Hash purposes.
   private static final long CHURN = 1, ITEM_DEL = 2, ITEM_MFR = 3, ITEM_MFR_CH = 4, ITEM_MFR2 = 5, ITEM_GRP = 6,
@@ -87,21 +79,57 @@ public final class SimModel {
   private final int locations;
   private final int warehouses;
   private final int pricesPerItem;
+  // Codes and ids come from the app's configuration, so the simulation always matches it.
+  private final Map<String, String> attributes;
+  private final String root;
+  private final String otherRoot;
+  private final String warehouseType;
+  private final String branchType;
+  private final String open;
+  private final String closed;
+  private final String unsellable;
 
-  public SimModel(long seed, int items, int locations, int pricesPerItem) {
-    if (items < 2) {
-      throw new IllegalArgumentException("items must be >= 2");
+  public SimModel(CatalogConfig config) {
+    CatalogConfig.Sim sim = config.sim();
+    if (sim.items() < 2) {
+      throw new IllegalArgumentException("sim.items must be >= 2");
     }
-    this.seed = seed;
-    this.items = items;
+    this.seed = sim.seed();
+    this.items = sim.items();
     this.mfrs = Math.max(20, items / 200);
-    this.locations = Math.max(10, locations);
+    this.locations = Math.max(10, sim.locations());
     this.warehouses = Math.max(1, this.locations / 15);
-    this.pricesPerItem = pricesPerItem;
+    this.pricesPerItem = sim.pricesPerItem();
+    this.attributes = new TreeMap<>(config.stepAttributes());
+    config.itemNumberAttribute();
+    this.root = config.classificationRoot();
+    this.otherRoot = root + "-OTHER";
+    this.warehouseType = first(config.dcLocationTypes());
+    this.branchType = outside(config.dcLocationTypes());
+    this.open = first(config.dcLocationStatuses());
+    this.closed = outside(config.dcLocationStatuses());
+    this.unsellable = config.dcExcludedSellable().isEmpty() ? "N" : first(config.dcExcludedSellable());
+  }
+
+  private static String first(Set<String> codes) {
+    return new TreeSet<>(codes).first();
+  }
+
+  /** A code that is not in the set. */
+  private static String outside(Set<String> codes) {
+    String code = "X";
+    while (codes.contains(code)) {
+      code += "X";
+    }
+    return code;
   }
 
   public int items() {
     return items;
+  }
+
+  String root() {
+    return root;
   }
 
   public int count(Slot slot) {
@@ -215,7 +243,7 @@ public final class SimModel {
     return one(SourceTable.MFR_PROFILE, row(
         "MFR_CTL_NO", mfrNo(m),
         "MFR_NAME_ID", nameId(n),
-        "SELLABLE", frac(h(SELL, m, v)) < 0.9 ? "Y" : "N"));
+        "SELLABLE", frac(h(SELL, m, v)) < 0.9 ? "Y" : unsellable));
   }
 
   private List<TableRow> manufacturerName(int n, int v) {
@@ -225,8 +253,8 @@ public final class SimModel {
   private List<TableRow> location(int l, int v) {
     return one(SourceTable.LOCATION_PROFILE, row(
         "MI_LOC", loc(l),
-        "LOCATION_TYPE", l < warehouses ? "W" : "B",
-        "OPEN_CLOSED", v > 0 && frac(h(LOC_CLOSED, l, v)) < 0.25 ? "C" : "O",
+        "LOCATION_TYPE", l < warehouses ? warehouseType : branchType,
+        "OPEN_CLOSED", v > 0 && frac(h(LOC_CLOSED, l, v)) < 0.25 ? closed : open,
         "LOCATION_NAME", "Location " + l));
   }
 
@@ -338,14 +366,20 @@ public final class SimModel {
     String id = productId(p);
     List<TableRow> out = new ArrayList<>();
     out.add(new TableRow(SourceTable.STEP_PRODUCT, row("STEP_PRODUCT_ID", id, "PRODUCT_NAME", "Product " + p + " rev " + v)));
-    out.add(value(id, ATTR_ITEM, " ", itemNo(bridgeTarget(p, v))));
-    out.add(value(id, "SIM_MPN", " ", "MPN-" + p));
-    out.add(value(id, "SIM_DESC", " ", "Desc " + p + " rev " + v));
-    out.add(value(id, "SIM_IMG", " ", "img/" + p + ".jpg"));
-    out.add(value(id, "SIM_UPC", " ", String.format("%012d", Math.floorMod(h(UPC, p), 1_000_000_000_000L))));
-    out.add(value(id, "SIM_WEIGHT", unit(mod(h(WEIGHT_UNIT, p, v), UNITS)), money(h(WEIGHT, p, v)).toPlainString()));
+    int a = 0;
+    for (Map.Entry<String, String> attribute : attributes.entrySet()) {
+      a++;
+      boolean bridge = attribute.getKey().equals(CatalogConfig.ITEM_NUMBER_ATTRIBUTE);
+      String value = bridge ? itemNo(bridgeTarget(p, v)) : attribute.getKey() + " " + p + " rev " + v;
+      // Every attribute but the bridge carries a unit, so unit changes reach every attribute.
+      String unit = bridge ? " " : unit(mod(h(WEIGHT_UNIT, p, a, v), UNITS));
+      out.add(value(id, attribute.getValue(), unit, value));
+    }
     for (int x = 1; x <= UNCONFIGURED_ATTRIBUTES; x++) {
-      out.add(value(id, String.format("SIM_X%02d", x), " ", "x" + x + "-" + p + "-" + v));
+      String attributeId = String.format("SIM_X%02d", x);
+      if (!attributes.containsValue(attributeId)) {
+        out.add(value(id, attributeId, " ", "x" + x + "-" + p + "-" + v));
+      }
     }
     int linkVersion = 0;
     for (int k = 1; k <= v; k++) {
@@ -373,12 +407,12 @@ public final class SimModel {
   private List<TableRow> classification(int c, int v) {
     String parent;
     if (c < L1) {
-      parent = ROOT;
+      parent = root;
     } else if (c < L1 + L2) {
       parent = classId((c - L1) / 10);
       if (v > 0 && frac(h(CLASS_CH, c, v)) < 0.3) {
         int alt = mod(h(CLASS_PARENT, c, v), L1 + 1);
-        parent = alt == L1 ? OTHER_ROOT : classId(alt);
+        parent = alt == L1 ? otherRoot : classId(alt);
       }
     } else {
       parent = classId(L1 + (c - L1 - L2) / 10);

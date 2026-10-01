@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -37,11 +38,22 @@ public final class Keys {
 
   /** Canonical key built from the given columns of a row. */
   public static String of(Map<String, Object> row, Iterable<String> columns) {
+    return of(row, columns, Set.of());
+  }
+
+  /** As {@link #of(Map, Iterable)}, but {@code exact} columns keep their surrounding whitespace. */
+  public static String of(Map<String, Object> row, Iterable<String> columns, Set<String> exact) {
     TreeMap<String, String> key = new TreeMap<>();
     for (String column : columns) {
-      key.put(column, render(row.get(column)));
+      Object value = row.get(column);
+      key.put(column, exact.contains(column) && value != null ? Rows.text(value) : render(value));
     }
     return Json.writeString(key);
+  }
+
+  /** One column's value from a canonical key. */
+  public static String part(String key, String column) {
+    return parse(key).get(column);
   }
 
   /**

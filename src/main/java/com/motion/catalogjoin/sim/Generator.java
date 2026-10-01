@@ -1,6 +1,6 @@
 package com.motion.catalogjoin.sim;
 
-import com.motion.catalogjoin.Keys;
+import com.motion.catalogjoin.CatalogConfig;
 import com.motion.catalogjoin.SourceTable;
 import com.motion.catalogjoin.sim.SimModel.Slot;
 import com.motion.catalogjoin.sim.SimModel.TableRow;
@@ -26,22 +26,23 @@ final class Generator {
 
   private static final long ORDER = 201;
 
+  private final CatalogConfig config;
   private final SimModel model;
   private final Encoder encoder;
   private final Sink sink;
   private final long seed;
   private final Map<SourceTable, long[]> counts = new EnumMap<>(SourceTable.class);
 
-  Generator(SimModel model, Encoder encoder, Sink sink, long seed) {
-    this.model = model;
-    this.encoder = encoder;
+  Generator(CatalogConfig config, Sink sink) {
+    this.config = config;
+    this.model = new SimModel(config);
+    this.encoder = new Encoder(config);
     this.sink = sink;
-    this.seed = seed;
+    this.seed = config.sim().seed();
   }
 
-  /** Emits rounds {@code from..to} inclusive; returns messages sent. */
-  long run(int from, int to, java.util.function.IntConsumer onRoundDone) {
-    long before = total();
+  /** Emits rounds {@code from..to} inclusive. */
+  void run(int from, int to, java.util.function.IntConsumer onRoundDone) {
     for (int round = from; round <= to; round++) {
       for (Slot slot : Slot.values()) {
         int n = model.count(slot);
@@ -60,15 +61,10 @@ final class Generator {
         onRoundDone.accept(round);
       }
     }
-    return total() - before;
   }
 
   Map<SourceTable, long[]> counts() {
     return counts;
-  }
-
-  long total() {
-    return counts.values().stream().mapToLong(c -> c[0]).sum();
   }
 
   private void emit(List<TableRow> previous, List<TableRow> current, boolean deletesFirst) {
@@ -105,10 +101,10 @@ final class Generator {
     counts.computeIfAbsent(row.table(), t -> new long[1])[0]++;
   }
 
-  private static Map<String, TableRow> index(List<TableRow> rows) {
+  private Map<String, TableRow> index(List<TableRow> rows) {
     Map<String, TableRow> out = new LinkedHashMap<>();
     for (TableRow row : rows) {
-      out.put(row.table().name() + "|" + Keys.of(row.row(), row.table().keyColumns()), row);
+      out.put(row.table().name() + "|" + config.key(row.table(), row.row()), row);
     }
     return out;
   }

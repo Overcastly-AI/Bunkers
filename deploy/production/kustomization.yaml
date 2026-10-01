@@ -1,0 +1,12 @@
+# kubectl apply -k deploy/production
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../base
+configMapGenerator:
+  - name: catalog-join-config
+    files: [catalog-join.properties]
+images:
+  - name: catalog-join
+    newName: REGION-docker.pkg.dev/PROJECT/REPOSITORY/catalog-join
+    newTag: "0.1.0"

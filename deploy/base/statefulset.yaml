@@ -1,0 +1,65 @@
+# One pod per instance; each keeps its RocksDB state on its own SSD volume so a restart resumes
+# instead of rebuilding from the changelog topics. All application settings come from the
+# catalog-join-config ConfigMap (the overlay's catalog-join.properties layered on the jar defaults).
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: catalog-join
+spec:
+  serviceName: catalog-join
+  replicas: 3
+  podManagementPolicy: Parallel
+  selector:
+    matchLabels: {app: catalog-join}
+  template:
+    metadata:
+      labels: {app: catalog-join}
+    spec:
+      # Longer than catalog.shutdown-timeout-ms so a shutdown can commit and close cleanly.
+      terminationGracePeriodSeconds: 90
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+      topologySpreadConstraints:
+        - maxSkew: 1
+          topologyKey: topology.kubernetes.io/zone
+          whenUnsatisfiable: ScheduleAnyway
+          labelSelector:
+            matchLabels: {app: catalog-join}
+      containers:
+        - name: catalog-join
+          image: catalog-join
+          args: [run]
+          env:
+            - {name: CATALOG_CONFIG, value: /etc/catalog-join/catalog-join.properties}
+            # Heap share of the memory limit; RocksDB (catalog.rocksdb.memory-bytes) lives off heap.
+            - {name: JDK_JAVA_OPTIONS, value: "-XX:MaxRAMPercentage=40 -XX:+ExitOnOutOfMemoryError"}
+          ports:
+            - {name: health, containerPort: 8080}
+          volumeMounts:
+            - {name: config, mountPath: /etc/catalog-join}
+            - {name: state, mountPath: /var/lib/catalog-join}
+          readinessProbe:
+            httpGet: {path: /health/ready, port: health}
+            periodSeconds: 10
+          livenessProbe:
+            httpGet: {path: /health/live, port: health}
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            failureThreshold: 6
+          resources:
+            requests: {cpu: "2", memory: 6Gi}
+            limits: {memory: 6Gi}
+      volumes:
+        - name: config
+          configMap: {name: catalog-join-config}
+  volumeClaimTemplates:
+    - metadata:
+        name: state
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: premium-rwo
+        resources:
+          requests: {storage: 100Gi}

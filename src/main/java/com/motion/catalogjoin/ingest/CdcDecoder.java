@@ -1,11 +1,12 @@
 package com.motion.catalogjoin.ingest;
 
+import com.fasterxml.jackson.core.json.JsonReadFeature;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.motion.catalogjoin.CatalogConfig;
 import com.motion.catalogjoin.Json;
-import com.motion.catalogjoin.Keys;
 import com.motion.catalogjoin.SourceTable;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
@@ -20,63 +21,85 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericDatumReader;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.avro.io.BinaryDecoder;
 import org.apache.avro.io.DecoderFactory;
 
 /**
- * Turns a raw CDC message (key bytes, value bytes) into a {@link Decoded} row with a canonical key.
+ * Turns a raw CDC message (key bytes, value bytes) into rows with canonical keys.
  *
  * <p>Accepted value shapes:
  *
  * <ul>
- *   <li>Avro IBM CDC envelope ({@code cdc-envelope.avsc}), raw or Confluent wire format.
- *   <li>JSON IBM CDC envelope: an object with a string {@code op} and an object {@code after} (or,
- *       for {@code op = "D"}, an object {@code before}).
+ *   <li>Avro IBM CDC envelope ({@link CdcEnvelope#SCHEMA}), raw or Confluent wire format.
+ *   <li>JSON IBM CDC envelope: an object with a string {@code op} and an {@code after} and/or
+ *       {@code before} field (field names in any case). {@code op = "D"} is a delete.
  *   <li>Flat JSON (KCOP): the value object is the row.
  *   <li>Tombstone: null, empty, or the literal text {@code null}. The key identifies the row.
  * </ul>
  *
  * <p>The key, when it is a JSON object, is merged into the row first and value columns overwrite it.
- * Column names are upper-cased, Avro-JSON union wrappers ({@code {"string":"ABC"}}) are unwrapped,
- * NUL characters are stripped, decimals become {@link BigDecimal}, and the service-managed {@code
- * LAST_EVENT_AT} column is dropped.
+ * A single-column key may also be a JSON scalar or printable text; binary keys are ignored. Column
+ * names are upper-cased, Avro-JSON union wrappers ({@code {"string":"ABC"}}) are unwrapped, NUL
+ * characters are stripped, decimals become {@link BigDecimal}, and the configured dropped columns
+ * are removed. An update whose before image has a different key than its after image becomes a
+ * delete of the old key plus an upsert of the new one.
  */
 public final class CdcDecoder {
 
-  private static final Schema ENVELOPE_SCHEMA = loadSchema();
   private static final Set<String> UNION_BRANCHES =
       Set.of("NULL", "BOOLEAN", "INT", "LONG", "FLOAT", "DOUBLE", "STRING", "BYTES");
-  private static final String DROPPED_COLUMN = "LAST_EVENT_AT";
+  /** Accepts raw control characters (NUL) inside strings; they are stripped afterwards. */
+  private static final ObjectMapper LENIENT =
+      Json.MAPPER.copy().enable(JsonReadFeature.ALLOW_UNESCAPED_CONTROL_CHARS.mappedFeature());
 
+  private final CatalogConfig config;
   private final PayloadFormat format;
-  private final GenericDatumReader<GenericRecord> avroReader =
-      new GenericDatumReader<>(ENVELOPE_SCHEMA);
+  private final Set<String> droppedColumns;
+  private final GenericDatumReader<GenericRecord> avroReader = new GenericDatumReader<>(CdcEnvelope.SCHEMA);
 
-  public CdcDecoder(PayloadFormat format) {
-    this.format = format;
+  public CdcDecoder(CatalogConfig config) {
+    this.config = config;
+    this.format = config.payloadFormat();
+    this.droppedColumns = config.droppedColumns();
   }
 
-  public Decoded decode(SourceTable table, byte[] rawKey, byte[] rawValue)
-      throws InvalidRecordException {
+  /** One change, or two for an update that moved the row to a new key. */
+  public List<Decoded> decode(SourceTable table, byte[] rawKey, byte[] rawValue) throws InvalidRecordException {
     Map<String, Object> keyColumns = decodeKey(table, rawKey);
 
     if (isTombstone(rawValue)) {
       if (keyColumns.isEmpty()) {
         throw new InvalidRecordException("Tombstone without a usable key");
       }
-      return new Decoded(canonicalKey(table, keyColumns), null);
+      return List.of(new Decoded(canonicalKey(table, keyColumns), null));
     }
 
     Change change = decodeValue(rawValue);
-    Map<String, Object> merged = new LinkedHashMap<>(keyColumns);
-    if (change.row() != null) {
-      merged.putAll(change.row());
+    if (change.delete()) {
+      return List.of(new Decoded(canonicalKey(table, merge(keyColumns, change.before())), null));
     }
-    String key = canonicalKey(table, merged);
-    return new Decoded(key, change.delete() ? null : merged);
+    Map<String, Object> row = merge(keyColumns, change.after());
+    String key = canonicalKey(table, row);
+    if (change.before() != null) {
+      Map<String, Object> before = merge(keyColumns, change.before());
+      if (hasKey(table, before)) {
+        String oldKey = canonicalKey(table, before);
+        if (!oldKey.equals(key)) {
+          return List.of(new Decoded(oldKey, null), new Decoded(key, row));
+        }
+      }
+    }
+    return List.of(new Decoded(key, row));
+  }
+
+  private static Map<String, Object> merge(Map<String, Object> keyColumns, Map<String, Object> image) {
+    Map<String, Object> merged = new LinkedHashMap<>(keyColumns);
+    if (image != null) {
+      merged.putAll(image);
+    }
+    return merged;
   }
 
   // --- key -------------------------------------------------------------------------------------
@@ -85,41 +108,46 @@ public final class CdcDecoder {
     if (rawKey == null || rawKey.length == 0) {
       return Map.of();
     }
+    List<String> keyColumns = config.keyColumns(table);
     try {
-      JsonNode node = Json.MAPPER.readTree(rawKey);
+      JsonNode node = LENIENT.readTree(rawKey);
       Object value = node == null ? null : toJava(node);
       if (value instanceof Map<?, ?> map) {
         return normalizeRow(map);
       }
-      if (value != null && !(value instanceof List<?>) && table.keyColumns().size() == 1) {
-        return Map.of(table.keyColumns().get(0), value);
+      if (value != null && !(value instanceof List<?>) && keyColumns.size() == 1) {
+        return Map.of(keyColumns.get(0), normalizeValue(value));
       }
     } catch (IOException | RuntimeException notJson) {
       // Not a JSON key; fall through.
     }
-    if (table.keyColumns().size() == 1) {
-      String text = utf8(rawKey);
+    if (keyColumns.size() == 1) {
+      String text = printableUtf8(rawKey);
       if (text != null && !text.isBlank()) {
-        return Map.of(table.keyColumns().get(0), stripNul(text));
+        return Map.of(keyColumns.get(0), text);
       }
     }
     // Binary (e.g. Avro) keys are not decoded; the key columns must then come from the value.
     return Map.of();
   }
 
-  private static String canonicalKey(SourceTable table, Map<String, Object> columns)
-      throws InvalidRecordException {
-    for (String column : table.keyColumns()) {
+  private boolean hasKey(SourceTable table, Map<String, Object> columns) {
+    return config.keyColumns(table).stream().allMatch(c -> columns.get(c) != null);
+  }
+
+  private String canonicalKey(SourceTable table, Map<String, Object> columns) throws InvalidRecordException {
+    for (String column : config.keyColumns(table)) {
       if (columns.get(column) == null) {
         throw new InvalidRecordException("Missing key column " + column);
       }
     }
-    return Keys.of(columns, table.keyColumns());
+    return config.key(table, columns);
   }
 
   // --- value -----------------------------------------------------------------------------------
 
-  private record Change(boolean delete, Map<String, Object> row) {}
+  /** A decoded value: an upsert (after, optionally before) or a delete (before, possibly null). */
+  private record Change(boolean delete, Map<String, Object> before, Map<String, Object> after) {}
 
   private static boolean isTombstone(byte[] value) {
     if (value == null || value.length == 0) {
@@ -157,13 +185,12 @@ public final class CdcDecoder {
 
   private Change decodeAvro(byte[] value) throws InvalidRecordException {
     int offset = 0;
-    if (value.length > 5 && value[0] == 0) {
-      offset = 5; // Confluent wire format: magic byte 0x00 + 4-byte schema id.
+    if (value.length > CdcEnvelope.CONFLUENT_HEADER_BYTES && value[0] == CdcEnvelope.CONFLUENT_MAGIC) {
+      offset = CdcEnvelope.CONFLUENT_HEADER_BYTES;
     }
     GenericRecord envelope;
     try {
-      BinaryDecoder decoder =
-          DecoderFactory.get().binaryDecoder(value, offset, value.length - offset, null);
+      BinaryDecoder decoder = DecoderFactory.get().binaryDecoder(value, offset, value.length - offset, null);
       envelope = avroReader.read(null, decoder);
       if (!decoder.isEnd()) {
         throw new InvalidRecordException("Trailing bytes after Avro envelope");
@@ -171,22 +198,26 @@ public final class CdcDecoder {
     } catch (IOException | RuntimeException e) {
       throw new InvalidRecordException("Not an Avro CDC envelope: " + e.getMessage(), e);
     }
-    String op = String.valueOf(envelope.get("op")).trim().toUpperCase(Locale.ROOT);
-    Map<String, Object> before = avroMap(envelope.get("before"));
-    Map<String, Object> after = avroMap(envelope.get("after"));
-    return switch (op) {
-      case "D" -> new Change(true, before);
-      case "I", "U" -> {
-        if (after == null) {
-          throw new InvalidRecordException("Avro envelope op " + op + " without 'after'");
-        }
-        yield new Change(false, after);
-      }
-      default -> throw new InvalidRecordException("Unknown Avro envelope op '" + op + "'");
-    };
+    return change(String.valueOf(envelope.get(CdcEnvelope.OP)),
+        avroMap(envelope.get(CdcEnvelope.BEFORE)), avroMap(envelope.get(CdcEnvelope.AFTER)), "Avro");
   }
 
-  private static Map<String, Object> avroMap(Object value) {
+  private static Change change(String op, Map<String, Object> before, Map<String, Object> after, String source)
+      throws InvalidRecordException {
+    String code = op.trim().toUpperCase(Locale.ROOT);
+    if (code.equals(CdcEnvelope.DELETE)) {
+      return new Change(true, before, null);
+    }
+    if (code.equals(CdcEnvelope.INSERT) || code.equals(CdcEnvelope.UPDATE)) {
+      if (after == null) {
+        throw new InvalidRecordException(source + " envelope op " + code + " without '" + CdcEnvelope.AFTER + "'");
+      }
+      return new Change(false, before, after);
+    }
+    throw new InvalidRecordException("Unknown " + source + " envelope op '" + op + "'");
+  }
+
+  private Map<String, Object> avroMap(Object value) {
     if (!(value instanceof Map<?, ?> map)) {
       return null;
     }
@@ -213,7 +244,7 @@ public final class CdcDecoder {
   private Change decodeJson(byte[] value) throws InvalidRecordException {
     JsonNode node;
     try {
-      node = Json.MAPPER.readTree(value);
+      node = LENIENT.readTree(value);
     } catch (IOException e) {
       throw new InvalidRecordException("Value is neither Avro nor JSON: " + e.getMessage(), e);
     }
@@ -221,32 +252,36 @@ public final class CdcDecoder {
     if (!(parsed instanceof Map<?, ?> object)) {
       throw new InvalidRecordException("JSON value is not an object");
     }
-    Object op = object.get("op");
-    Object after = object.get("after");
-    Object before = object.get("before");
-    if (op instanceof String opText) {
-      boolean delete = opText.trim().equalsIgnoreCase("D");
-      if (after instanceof Map<?, ?> afterRow && !delete) {
-        return new Change(false, normalizeRow(afterRow));
-      }
-      if (delete && (before instanceof Map<?, ?> || after instanceof Map<?, ?>)) {
-        Map<?, ?> image = before instanceof Map<?, ?> b ? b : (Map<?, ?>) after;
-        return new Change(true, normalizeRow(image));
-      }
+    Map<String, Object> fields = new LinkedHashMap<>();
+    object.forEach((k, v) -> fields.put(String.valueOf(k).toLowerCase(Locale.ROOT), v));
+    boolean envelope = fields.get(CdcEnvelope.OP) instanceof String
+        && (fields.containsKey(CdcEnvelope.AFTER) || fields.containsKey(CdcEnvelope.BEFORE));
+    if (!envelope) {
+      return new Change(false, null, normalizeRow(object));
     }
-    return new Change(false, normalizeRow(object));
+    return change((String) fields.get(CdcEnvelope.OP), jsonImage(fields.get(CdcEnvelope.BEFORE)),
+        jsonImage(fields.get(CdcEnvelope.AFTER)), "JSON");
+  }
+
+  private Map<String, Object> jsonImage(Object image) throws InvalidRecordException {
+    if (image == null) {
+      return null;
+    }
+    if (!(image instanceof Map<?, ?> map)) {
+      throw new InvalidRecordException("JSON envelope image is not an object");
+    }
+    return normalizeRow(map);
   }
 
   // --- normalization ---------------------------------------------------------------------------
 
-  private static Map<String, Object> normalizeRow(Map<?, ?> source) {
+  private Map<String, Object> normalizeRow(Map<?, ?> source) {
     Map<String, Object> row = new LinkedHashMap<>();
     for (Map.Entry<?, ?> entry : source.entrySet()) {
-      String column = String.valueOf(entry.getKey()).trim().toUpperCase(Locale.ROOT);
-      if (column.equals(DROPPED_COLUMN)) {
-        continue;
+      String column = stripNul(String.valueOf(entry.getKey())).trim().toUpperCase(Locale.ROOT);
+      if (!droppedColumns.contains(column)) {
+        row.put(column, normalizeValue(entry.getValue()));
       }
-      row.put(column, normalizeValue(entry.getValue()));
     }
     return row;
   }
@@ -324,10 +359,11 @@ public final class CdcDecoder {
     return -1;
   }
 
-  private static String utf8(byte[] bytes) {
+  /** UTF-8 text without control characters, or null (binary keys such as Avro start with one). */
+  private static String printableUtf8(byte[] bytes) {
+    String text;
     try {
-      return StandardCharsets.UTF_8
-          .newDecoder()
+      text = StandardCharsets.UTF_8.newDecoder()
           .onMalformedInput(CodingErrorAction.REPORT)
           .onUnmappableCharacter(CodingErrorAction.REPORT)
           .decode(ByteBuffer.wrap(bytes))
@@ -335,16 +371,6 @@ public final class CdcDecoder {
     } catch (CharacterCodingException e) {
       return null;
     }
-  }
-
-  private static Schema loadSchema() {
-    try (InputStream in = CdcDecoder.class.getResourceAsStream("/avro/cdc-envelope.avsc")) {
-      if (in == null) {
-        throw new IllegalStateException("avro/cdc-envelope.avsc not on classpath");
-      }
-      return new Schema.Parser().parse(in);
-    } catch (IOException e) {
-      throw new UncheckedIOException(e);
-    }
+    return text.chars().anyMatch(Character::isISOControl) ? null : text;
   }
 }

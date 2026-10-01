@@ -415,17 +415,17 @@ Topologies:
       --> item-doc-step-products
       <-- item-doc-costs
     Processor: item-doc-step-products (stores: [])
-      --> item-doc-changes
+      --> item-doc-sellable
       <-- item-doc-step-products-join-this, item-doc-step-products-join-other
-    Processor: item-doc-changes (stores: [])
-      --> item-doc-view
+    Processor: item-doc-sellable (stores: [])
+      --> item-doc-changes
       <-- item-doc-step-products
-    Processor: item-doc-view (stores: [])
+    Processor: item-doc-changes (stores: [])
       --> item-emit-on-change
-      <-- item-doc-changes
+      <-- item-doc-sellable
     Processor: item-emit-on-change (stores: [item-published])
       --> item-sink
-      <-- item-doc-view
+      <-- item-doc-changes
     Processor: item-manufacturer-rules-subscription-registration-processor (stores: [])
       --> item-manufacturer-rules-subscription-registration-sink
       <-- item_profile-table
@@ -474,66 +474,64 @@ Topologies:
       <-- item_profile-dead-letter-headers
 
   Sub-topology: 13
-    Source: location_profile-source (topics: [topic.brop.location_profile-json])
-      --> location_profile-decode
-    Processor: location_profile-decode (stores: [])
-      --> location_profile-
-      <-- location_profile-source
-    Processor: location_profile- (stores: [])
-      --> location_profile-valid, location_profile-invalid
-      <-- location_profile-decode
-    Processor: location_profile-valid (stores: [])
-      --> location_profile-rekey
-      <-- location_profile-
-    Processor: location_profile-invalid (stores: [])
-      --> location_profile-dead-letter-headers
-      <-- location_profile-
-    Processor: location_profile-rekey (stores: [])
-      --> location_profile-by-key-repartition-filter
-      <-- location_profile-valid
-    Processor: location_profile-by-key-repartition-filter (stores: [])
-      --> location_profile-by-key-repartition-sink
-      <-- location_profile-rekey
-    Processor: location_profile-dead-letter-headers (stores: [])
-      --> location_profile-dead-letter
-      <-- location_profile-invalid
-    Sink: location_profile-by-key-repartition-sink (topic: location_profile-by-key-repartition)
-      <-- location_profile-by-key-repartition-filter
-    Sink: location_profile-dead-letter (topic: catalog.join.dlt)
-      <-- location_profile-dead-letter-headers
+    Source: item_restrict_rule-source (topics: [topic.branch.item_restrict_rule-json])
+      --> item_restrict_rule-decode
+    Processor: item_restrict_rule-decode (stores: [])
+      --> item_restrict_rule-
+      <-- item_restrict_rule-source
+    Processor: item_restrict_rule- (stores: [])
+      --> item_restrict_rule-valid, item_restrict_rule-invalid
+      <-- item_restrict_rule-decode
+    Processor: item_restrict_rule-valid (stores: [])
+      --> item_restrict_rule-rekey
+      <-- item_restrict_rule-
+    Processor: item_restrict_rule-invalid (stores: [])
+      --> item_restrict_rule-dead-letter-headers
+      <-- item_restrict_rule-
+    Processor: item_restrict_rule-rekey (stores: [])
+      --> item_restrict_rule-by-key-repartition-filter
+      <-- item_restrict_rule-valid
+    Processor: item_restrict_rule-by-key-repartition-filter (stores: [])
+      --> item_restrict_rule-by-key-repartition-sink
+      <-- item_restrict_rule-rekey
+    Processor: item_restrict_rule-dead-letter-headers (stores: [])
+      --> item_restrict_rule-dead-letter
+      <-- item_restrict_rule-invalid
+    Sink: item_restrict_rule-by-key-repartition-sink (topic: item_restrict_rule-by-key-repartition)
+      <-- item_restrict_rule-by-key-repartition-filter
+    Sink: item_restrict_rule-dead-letter (topic: catalog.join.dlt)
+      <-- item_restrict_rule-dead-letter-headers
 
   Sub-topology: 14
-    Source: location_profile-by-key-repartition-source (topics: [location_profile-by-key-repartition])
-      --> location_profile-table
-    Processor: location_profile-table (stores: [location_profile-store])
-      --> item-location-location-foreign-join-subscription, balance-location-foreign-join-subscription
-      <-- location_profile-by-key-repartition-source
-    Source: balance-location-subscription-registration-source (topics: [balance-location-subscription-registration-topic])
-      --> balance-location-subscription-receive
-    Source: item-location-location-subscription-registration-source (topics: [item-location-location-subscription-registration-topic])
-      --> item-location-location-subscription-receive
-    Processor: balance-location-subscription-receive (stores: [balance-location-subscription-store])
-      --> balance-location-subscription-join-foreign
-      <-- balance-location-subscription-registration-source
-    Processor: item-location-location-subscription-receive (stores: [item-location-location-subscription-store])
-      --> item-location-location-subscription-join-foreign
-      <-- item-location-location-subscription-registration-source
-    Processor: balance-location-foreign-join-subscription (stores: [balance-location-subscription-store])
-      --> balance-location-subscription-response-sink
-      <-- location_profile-table
-    Processor: balance-location-subscription-join-foreign (stores: [location_profile-store])
-      --> balance-location-subscription-response-sink
-      <-- balance-location-subscription-receive
-    Processor: item-location-location-foreign-join-subscription (stores: [item-location-location-subscription-store])
-      --> item-location-location-subscription-response-sink
-      <-- location_profile-table
-    Processor: item-location-location-subscription-join-foreign (stores: [location_profile-store])
-      --> item-location-location-subscription-response-sink
-      <-- item-location-location-subscription-receive
-    Sink: balance-location-subscription-response-sink (topic: balance-location-subscription-response-topic)
-      <-- balance-location-subscription-join-foreign, balance-location-foreign-join-subscription
-    Sink: item-location-location-subscription-response-sink (topic: item-location-location-subscription-response-topic)
-      <-- item-location-location-subscription-join-foreign, item-location-location-foreign-join-subscription
+    Source: item_restrict_rule-by-key-repartition-source (topics: [item_restrict_rule-by-key-repartition])
+      --> item_restrict_rule-table
+    Processor: item_restrict_rule-table (stores: [item_restrict_rule-store])
+      --> rules-by-item-has-key, rules-by-manufacturer-has-key, rules-by-manufacturer-product-group-has-key
+      <-- item_restrict_rule-by-key-repartition-source
+    Processor: rules-by-item-has-key (stores: [])
+      --> rules-by-item
+      <-- item_restrict_rule-table
+    Processor: rules-by-manufacturer-has-key (stores: [])
+      --> rules-by-manufacturer
+      <-- item_restrict_rule-table
+    Processor: rules-by-manufacturer-product-group-has-key (stores: [])
+      --> rules-by-manufacturer-product-group
+      <-- item_restrict_rule-table
+    Processor: rules-by-item (stores: [])
+      --> rules-by-item-aggregate-sink
+      <-- rules-by-item-has-key
+    Processor: rules-by-manufacturer (stores: [])
+      --> rules-by-manufacturer-aggregate-sink
+      <-- rules-by-manufacturer-has-key
+    Processor: rules-by-manufacturer-product-group (stores: [])
+      --> rules-by-manufacturer-product-group-aggregate-sink
+      <-- rules-by-manufacturer-product-group-has-key
+    Sink: rules-by-item-aggregate-sink (topic: rules-by-item-repartition)
+      <-- rules-by-item
+    Sink: rules-by-manufacturer-aggregate-sink (topic: rules-by-manufacturer-repartition)
+      <-- rules-by-manufacturer
+    Sink: rules-by-manufacturer-product-group-aggregate-sink (topic: rules-by-manufacturer-product-group-repartition)
+      <-- rules-by-manufacturer-product-group
 
   Sub-topology: 15
     Source: mfr_profile-source (topics: [topic.brop.mfr_profile-json])
@@ -577,7 +575,7 @@ Topologies:
     Processor: item-manufacturer-subscription-receive (stores: [item-manufacturer-subscription-store])
       --> item-manufacturer-subscription-join-foreign
       <-- item-manufacturer-subscription-registration-source
-    Processor: manufacturer-name-result (stores: [manufacturer-store])
+    Processor: manufacturer-name-result (stores: [manufacturer-name-store])
       --> item-manufacturer-foreign-join-subscription
       <-- manufacturer-name-subscription-response-resolver
     Processor: mfr_profile-table (stores: [mfr_profile-store])
@@ -586,7 +584,7 @@ Topologies:
     Processor: item-manufacturer-foreign-join-subscription (stores: [item-manufacturer-subscription-store])
       --> item-manufacturer-subscription-response-sink
       <-- manufacturer-name-result
-    Processor: item-manufacturer-subscription-join-foreign (stores: [manufacturer-store])
+    Processor: item-manufacturer-subscription-join-foreign (stores: [manufacturer-name-store])
       --> item-manufacturer-subscription-response-sink
       <-- item-manufacturer-subscription-receive
     Processor: manufacturer-name-subscription-registration-processor (stores: [])
@@ -647,106 +645,6 @@ Topologies:
       <-- manufacturer-name-subscription-join-foreign, manufacturer-name-foreign-join-subscription
 
   Sub-topology: 19
-    Source: item_restrict_rule-source (topics: [topic.branch.item_restrict_rule-json])
-      --> item_restrict_rule-decode
-    Processor: item_restrict_rule-decode (stores: [])
-      --> item_restrict_rule-
-      <-- item_restrict_rule-source
-    Processor: item_restrict_rule- (stores: [])
-      --> item_restrict_rule-valid, item_restrict_rule-invalid
-      <-- item_restrict_rule-decode
-    Processor: item_restrict_rule-valid (stores: [])
-      --> item_restrict_rule-rekey
-      <-- item_restrict_rule-
-    Processor: item_restrict_rule-invalid (stores: [])
-      --> item_restrict_rule-dead-letter-headers
-      <-- item_restrict_rule-
-    Processor: item_restrict_rule-rekey (stores: [])
-      --> item_restrict_rule-by-key-repartition-filter
-      <-- item_restrict_rule-valid
-    Processor: item_restrict_rule-by-key-repartition-filter (stores: [])
-      --> item_restrict_rule-by-key-repartition-sink
-      <-- item_restrict_rule-rekey
-    Processor: item_restrict_rule-dead-letter-headers (stores: [])
-      --> item_restrict_rule-dead-letter
-      <-- item_restrict_rule-invalid
-    Sink: item_restrict_rule-by-key-repartition-sink (topic: item_restrict_rule-by-key-repartition)
-      <-- item_restrict_rule-by-key-repartition-filter
-    Sink: item_restrict_rule-dead-letter (topic: catalog.join.dlt)
-      <-- item_restrict_rule-dead-letter-headers
-
-  Sub-topology: 20
-    Source: item_restrict_rule-by-key-repartition-source (topics: [item_restrict_rule-by-key-repartition])
-      --> item_restrict_rule-table
-    Processor: item_restrict_rule-table (stores: [item_restrict_rule-store])
-      --> rules-by-item-has-key, rules-by-manufacturer-has-key, rules-by-manufacturer-product-group-has-key
-      <-- item_restrict_rule-by-key-repartition-source
-    Processor: rules-by-item-has-key (stores: [])
-      --> rules-by-item
-      <-- item_restrict_rule-table
-    Processor: rules-by-manufacturer-has-key (stores: [])
-      --> rules-by-manufacturer
-      <-- item_restrict_rule-table
-    Processor: rules-by-manufacturer-product-group-has-key (stores: [])
-      --> rules-by-manufacturer-product-group
-      <-- item_restrict_rule-table
-    Processor: rules-by-item (stores: [])
-      --> rules-by-item-aggregate-sink
-      <-- rules-by-item-has-key
-    Processor: rules-by-manufacturer (stores: [])
-      --> rules-by-manufacturer-aggregate-sink
-      <-- rules-by-manufacturer-has-key
-    Processor: rules-by-manufacturer-product-group (stores: [])
-      --> rules-by-manufacturer-product-group-aggregate-sink
-      <-- rules-by-manufacturer-product-group-has-key
-    Sink: rules-by-item-aggregate-sink (topic: rules-by-item-repartition)
-      <-- rules-by-item
-    Sink: rules-by-manufacturer-aggregate-sink (topic: rules-by-manufacturer-repartition)
-      <-- rules-by-manufacturer
-    Sink: rules-by-manufacturer-product-group-aggregate-sink (topic: rules-by-manufacturer-product-group-repartition)
-      <-- rules-by-manufacturer-product-group
-
-  Sub-topology: 21
-    Source: item-manufacturer-rules-subscription-registration-source (topics: [item-manufacturer-rules-subscription-registration-topic])
-      --> item-manufacturer-rules-subscription-receive
-    Source: rules-by-manufacturer-aggregate-source (topics: [rules-by-manufacturer-repartition])
-      --> rules-by-manufacturer-aggregate
-    Processor: item-manufacturer-rules-subscription-receive (stores: [item-manufacturer-rules-subscription-store])
-      --> item-manufacturer-rules-subscription-join-foreign
-      <-- item-manufacturer-rules-subscription-registration-source
-    Processor: rules-by-manufacturer-aggregate (stores: [rules-by-manufacturer-store])
-      --> item-manufacturer-rules-foreign-join-subscription
-      <-- rules-by-manufacturer-aggregate-source
-    Processor: item-manufacturer-rules-foreign-join-subscription (stores: [item-manufacturer-rules-subscription-store])
-      --> item-manufacturer-rules-subscription-response-sink
-      <-- rules-by-manufacturer-aggregate
-    Processor: item-manufacturer-rules-subscription-join-foreign (stores: [rules-by-manufacturer-store])
-      --> item-manufacturer-rules-subscription-response-sink
-      <-- item-manufacturer-rules-subscription-receive
-    Sink: item-manufacturer-rules-subscription-response-sink (topic: item-manufacturer-rules-subscription-response-topic)
-      <-- item-manufacturer-rules-subscription-join-foreign, item-manufacturer-rules-foreign-join-subscription
-
-  Sub-topology: 22
-    Source: item-product-group-rules-subscription-registration-source (topics: [item-product-group-rules-subscription-registration-topic])
-      --> item-product-group-rules-subscription-receive
-    Source: rules-by-manufacturer-product-group-aggregate-source (topics: [rules-by-manufacturer-product-group-repartition])
-      --> rules-by-manufacturer-product-group-aggregate
-    Processor: item-product-group-rules-subscription-receive (stores: [item-product-group-rules-subscription-store])
-      --> item-product-group-rules-subscription-join-foreign
-      <-- item-product-group-rules-subscription-registration-source
-    Processor: rules-by-manufacturer-product-group-aggregate (stores: [rules-by-manufacturer-product-group-store])
-      --> item-product-group-rules-foreign-join-subscription
-      <-- rules-by-manufacturer-product-group-aggregate-source
-    Processor: item-product-group-rules-foreign-join-subscription (stores: [item-product-group-rules-subscription-store])
-      --> item-product-group-rules-subscription-response-sink
-      <-- rules-by-manufacturer-product-group-aggregate
-    Processor: item-product-group-rules-subscription-join-foreign (stores: [rules-by-manufacturer-product-group-store])
-      --> item-product-group-rules-subscription-response-sink
-      <-- item-product-group-rules-subscription-receive
-    Sink: item-product-group-rules-subscription-response-sink (topic: item-product-group-rules-subscription-response-topic)
-      <-- item-product-group-rules-subscription-join-foreign, item-product-group-rules-foreign-join-subscription
-
-  Sub-topology: 23
     Source: item_balance-source (topics: [topic.brop.item_balance-json])
       --> item_balance-decode
     Processor: item_balance-decode (stores: [])
@@ -775,7 +673,7 @@ Topologies:
     Sink: item_balance-dead-letter (topic: catalog.join.dlt)
       <-- item_balance-dead-letter-headers
 
-  Sub-topology: 24
+  Sub-topology: 20
     Source: item_balance-by-key-repartition-source (topics: [item_balance-by-key-repartition])
       --> item_balance-table
     Source: balance-location-subscription-response-source (topics: [balance-location-subscription-response-topic])
@@ -810,6 +708,108 @@ Topologies:
       <-- balances-by-item-location
     Sink: dc-stock-by-item-aggregate-sink (topic: dc-stock-by-item-repartition)
       <-- dc-stock-by-item
+
+  Sub-topology: 21
+    Source: location_profile-source (topics: [topic.brop.location_profile-json])
+      --> location_profile-decode
+    Processor: location_profile-decode (stores: [])
+      --> location_profile-
+      <-- location_profile-source
+    Processor: location_profile- (stores: [])
+      --> location_profile-valid, location_profile-invalid
+      <-- location_profile-decode
+    Processor: location_profile-valid (stores: [])
+      --> location_profile-rekey
+      <-- location_profile-
+    Processor: location_profile-invalid (stores: [])
+      --> location_profile-dead-letter-headers
+      <-- location_profile-
+    Processor: location_profile-rekey (stores: [])
+      --> location_profile-by-key-repartition-filter
+      <-- location_profile-valid
+    Processor: location_profile-by-key-repartition-filter (stores: [])
+      --> location_profile-by-key-repartition-sink
+      <-- location_profile-rekey
+    Processor: location_profile-dead-letter-headers (stores: [])
+      --> location_profile-dead-letter
+      <-- location_profile-invalid
+    Sink: location_profile-by-key-repartition-sink (topic: location_profile-by-key-repartition)
+      <-- location_profile-by-key-repartition-filter
+    Sink: location_profile-dead-letter (topic: catalog.join.dlt)
+      <-- location_profile-dead-letter-headers
+
+  Sub-topology: 22
+    Source: location_profile-by-key-repartition-source (topics: [location_profile-by-key-repartition])
+      --> location_profile-table
+    Processor: location_profile-table (stores: [location_profile-store])
+      --> item-location-location-foreign-join-subscription, balance-location-foreign-join-subscription
+      <-- location_profile-by-key-repartition-source
+    Source: balance-location-subscription-registration-source (topics: [balance-location-subscription-registration-topic])
+      --> balance-location-subscription-receive
+    Source: item-location-location-subscription-registration-source (topics: [item-location-location-subscription-registration-topic])
+      --> item-location-location-subscription-receive
+    Processor: balance-location-subscription-receive (stores: [balance-location-subscription-store])
+      --> balance-location-subscription-join-foreign
+      <-- balance-location-subscription-registration-source
+    Processor: item-location-location-subscription-receive (stores: [item-location-location-subscription-store])
+      --> item-location-location-subscription-join-foreign
+      <-- item-location-location-subscription-registration-source
+    Processor: balance-location-foreign-join-subscription (stores: [balance-location-subscription-store])
+      --> balance-location-subscription-response-sink
+      <-- location_profile-table
+    Processor: balance-location-subscription-join-foreign (stores: [location_profile-store])
+      --> balance-location-subscription-response-sink
+      <-- balance-location-subscription-receive
+    Processor: item-location-location-foreign-join-subscription (stores: [item-location-location-subscription-store])
+      --> item-location-location-subscription-response-sink
+      <-- location_profile-table
+    Processor: item-location-location-subscription-join-foreign (stores: [location_profile-store])
+      --> item-location-location-subscription-response-sink
+      <-- item-location-location-subscription-receive
+    Sink: balance-location-subscription-response-sink (topic: balance-location-subscription-response-topic)
+      <-- balance-location-subscription-join-foreign, balance-location-foreign-join-subscription
+    Sink: item-location-location-subscription-response-sink (topic: item-location-location-subscription-response-topic)
+      <-- item-location-location-subscription-join-foreign, item-location-location-foreign-join-subscription
+
+  Sub-topology: 23
+    Source: item-manufacturer-rules-subscription-registration-source (topics: [item-manufacturer-rules-subscription-registration-topic])
+      --> item-manufacturer-rules-subscription-receive
+    Source: rules-by-manufacturer-aggregate-source (topics: [rules-by-manufacturer-repartition])
+      --> rules-by-manufacturer-aggregate
+    Processor: item-manufacturer-rules-subscription-receive (stores: [item-manufacturer-rules-subscription-store])
+      --> item-manufacturer-rules-subscription-join-foreign
+      <-- item-manufacturer-rules-subscription-registration-source
+    Processor: rules-by-manufacturer-aggregate (stores: [rules-by-manufacturer-store])
+      --> item-manufacturer-rules-foreign-join-subscription
+      <-- rules-by-manufacturer-aggregate-source
+    Processor: item-manufacturer-rules-foreign-join-subscription (stores: [item-manufacturer-rules-subscription-store])
+      --> item-manufacturer-rules-subscription-response-sink
+      <-- rules-by-manufacturer-aggregate
+    Processor: item-manufacturer-rules-subscription-join-foreign (stores: [rules-by-manufacturer-store])
+      --> item-manufacturer-rules-subscription-response-sink
+      <-- item-manufacturer-rules-subscription-receive
+    Sink: item-manufacturer-rules-subscription-response-sink (topic: item-manufacturer-rules-subscription-response-topic)
+      <-- item-manufacturer-rules-subscription-join-foreign, item-manufacturer-rules-foreign-join-subscription
+
+  Sub-topology: 24
+    Source: item-product-group-rules-subscription-registration-source (topics: [item-product-group-rules-subscription-registration-topic])
+      --> item-product-group-rules-subscription-receive
+    Source: rules-by-manufacturer-product-group-aggregate-source (topics: [rules-by-manufacturer-product-group-repartition])
+      --> rules-by-manufacturer-product-group-aggregate
+    Processor: item-product-group-rules-subscription-receive (stores: [item-product-group-rules-subscription-store])
+      --> item-product-group-rules-subscription-join-foreign
+      <-- item-product-group-rules-subscription-registration-source
+    Processor: rules-by-manufacturer-product-group-aggregate (stores: [rules-by-manufacturer-product-group-store])
+      --> item-product-group-rules-foreign-join-subscription
+      <-- rules-by-manufacturer-product-group-aggregate-source
+    Processor: item-product-group-rules-foreign-join-subscription (stores: [item-product-group-rules-subscription-store])
+      --> item-product-group-rules-subscription-response-sink
+      <-- rules-by-manufacturer-product-group-aggregate
+    Processor: item-product-group-rules-subscription-join-foreign (stores: [rules-by-manufacturer-product-group-store])
+      --> item-product-group-rules-subscription-response-sink
+      <-- item-product-group-rules-subscription-receive
+    Sink: item-product-group-rules-subscription-response-sink (topic: item-product-group-rules-subscription-response-topic)
+      <-- item-product-group-rules-subscription-join-foreign, item-product-group-rules-foreign-join-subscription
 
   Sub-topology: 25
     Source: item_cost-source (topics: [topic.brop.item_cost-json])
@@ -904,17 +904,17 @@ Topologies:
       --> item-location-doc
       <-- item-location-local-costs
     Processor: item-location-doc (stores: [])
-      --> item-location-doc-changes
+      --> item-location-doc-keys
       <-- item-location-doc-join-this, item-location-doc-join-other
-    Processor: item-location-doc-changes (stores: [])
-      --> item-location-doc-view
+    Processor: item-location-doc-keys (stores: [])
+      --> item-location-doc-changes
       <-- item-location-doc
-    Processor: item-location-doc-view (stores: [])
+    Processor: item-location-doc-changes (stores: [])
       --> item-location-emit-on-change
-      <-- item-location-doc-changes
+      <-- item-location-doc-keys
     Processor: item-location-emit-on-change (stores: [item-location-published])
       --> item-location-sink
-      <-- item-location-doc-view
+      <-- item-location-doc-changes
     Processor: item-location-location-subscription-registration-processor (stores: [])
       --> item-location-location-subscription-registration-sink
       <-- item-location-local-costs
@@ -924,6 +924,35 @@ Topologies:
       <-- item-location-emit-on-change
 
   Sub-topology: 28
+    Source: non_cos_item_balance-source (topics: [topic.brop.non_cos_item_balance-json])
+      --> non_cos_item_balance-decode
+    Processor: non_cos_item_balance-decode (stores: [])
+      --> non_cos_item_balance-
+      <-- non_cos_item_balance-source
+    Processor: non_cos_item_balance- (stores: [])
+      --> non_cos_item_balance-valid, non_cos_item_balance-invalid
+      <-- non_cos_item_balance-decode
+    Processor: non_cos_item_balance-valid (stores: [])
+      --> non_cos_item_balance-rekey
+      <-- non_cos_item_balance-
+    Processor: non_cos_item_balance-invalid (stores: [])
+      --> non_cos_item_balance-dead-letter-headers
+      <-- non_cos_item_balance-
+    Processor: non_cos_item_balance-rekey (stores: [])
+      --> non_cos_item_balance-by-key-repartition-filter
+      <-- non_cos_item_balance-valid
+    Processor: non_cos_item_balance-by-key-repartition-filter (stores: [])
+      --> non_cos_item_balance-by-key-repartition-sink
+      <-- non_cos_item_balance-rekey
+    Processor: non_cos_item_balance-dead-letter-headers (stores: [])
+      --> non_cos_item_balance-dead-letter
+      <-- non_cos_item_balance-invalid
+    Sink: non_cos_item_balance-by-key-repartition-sink (topic: non_cos_item_balance-by-key-repartition)
+      <-- non_cos_item_balance-by-key-repartition-filter
+    Sink: non_cos_item_balance-dead-letter (topic: catalog.join.dlt)
+      <-- non_cos_item_balance-dead-letter-headers
+
+  Sub-topology: 29
     Source: local_cost-source (topics: [topic.brop.local_cost-json])
       --> local_cost-decode
     Processor: local_cost-decode (stores: [])
@@ -952,7 +981,7 @@ Topologies:
     Sink: local_cost-dead-letter (topic: catalog.join.dlt)
       <-- local_cost-dead-letter-headers
 
-  Sub-topology: 29
+  Sub-topology: 30
     Source: local_cost-by-key-repartition-source (topics: [local_cost-by-key-repartition])
       --> local_cost-table
     Processor: local_cost-table (stores: [local_cost-store])
@@ -966,35 +995,6 @@ Topologies:
       <-- local-costs-by-item-location-has-key
     Sink: local-costs-by-item-location-aggregate-sink (topic: local-costs-by-item-location-repartition)
       <-- local-costs-by-item-location
-
-  Sub-topology: 30
-    Source: non_cos_item_balance-source (topics: [topic.brop.non_cos_item_balance-json])
-      --> non_cos_item_balance-decode
-    Processor: non_cos_item_balance-decode (stores: [])
-      --> non_cos_item_balance-
-      <-- non_cos_item_balance-source
-    Processor: non_cos_item_balance- (stores: [])
-      --> non_cos_item_balance-valid, non_cos_item_balance-invalid
-      <-- non_cos_item_balance-decode
-    Processor: non_cos_item_balance-valid (stores: [])
-      --> non_cos_item_balance-rekey
-      <-- non_cos_item_balance-
-    Processor: non_cos_item_balance-invalid (stores: [])
-      --> non_cos_item_balance-dead-letter-headers
-      <-- non_cos_item_balance-
-    Processor: non_cos_item_balance-rekey (stores: [])
-      --> non_cos_item_balance-by-key-repartition-filter
-      <-- non_cos_item_balance-valid
-    Processor: non_cos_item_balance-by-key-repartition-filter (stores: [])
-      --> non_cos_item_balance-by-key-repartition-sink
-      <-- non_cos_item_balance-rekey
-    Processor: non_cos_item_balance-dead-letter-headers (stores: [])
-      --> non_cos_item_balance-dead-letter
-      <-- non_cos_item_balance-invalid
-    Sink: non_cos_item_balance-by-key-repartition-sink (topic: non_cos_item_balance-by-key-repartition)
-      <-- non_cos_item_balance-by-key-repartition-filter
-    Sink: non_cos_item_balance-dead-letter (topic: catalog.join.dlt)
-      <-- non_cos_item_balance-dead-letter-headers
 
   Sub-topology: 31
     Source: item_price_cache-source (topics: [topic.item.item_price_cache-json])

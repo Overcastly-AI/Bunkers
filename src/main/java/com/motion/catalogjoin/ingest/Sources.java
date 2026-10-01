@@ -4,26 +4,24 @@ import com.motion.catalogjoin.CatalogConfig;
 import com.motion.catalogjoin.Keys;
 import com.motion.catalogjoin.SourceTable;
 import com.motion.catalogjoin.model.ModelSerdes;
+import com.motion.catalogjoin.topology.Stores;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import org.apache.kafka.common.serialization.Serdes;
-import org.apache.kafka.common.utils.Bytes;
 import org.apache.kafka.streams.KeyValue;
 import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.kstream.Branched;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.KTable;
-import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Named;
 import org.apache.kafka.streams.kstream.Produced;
-import org.apache.kafka.streams.kstream.Repartitioned;
 import org.apache.kafka.streams.processor.api.FixedKeyProcessor;
 import org.apache.kafka.streams.processor.api.FixedKeyProcessorContext;
 import org.apache.kafka.streams.processor.api.FixedKeyRecord;
-import org.apache.kafka.streams.state.KeyValueStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,19 +58,18 @@ public final class Sources {
   public Sources(StreamsBuilder builder, CatalogConfig config) {
     this.builder = builder;
     this.config = config;
-    this.decoder = new CdcDecoder(config.payloadFormat());
+    this.decoder = new CdcDecoder(config);
   }
 
   /**
    * Keep only rows whose key columns match; everything else is dropped right after decoding (before
    * any repartition or state). Must be set before the table is first used.
    */
-  public Sources filterKeys(SourceTable table, Predicate<Map<String, String>> keep) {
+  public void filterKeys(SourceTable table, Predicate<Map<String, String>> keep) {
     if (decoded.containsKey(table)) {
       throw new IllegalStateException(table + " is already in use; set its key filter first");
     }
     keyFilters.put(table, keep);
-    return this;
   }
 
   public KStream<String, Map<String, Object>> decoded(SourceTable table) {
@@ -80,37 +77,19 @@ public final class Sources {
   }
 
   public KStream<String, Map<String, Object>> canonical(SourceTable table) {
-    return canonical.computeIfAbsent(
-        table,
-        t -> {
-          Repartitioned<String, Map<String, Object>> repartitioned =
-              Repartitioned.<String, Map<String, Object>>as(t.slug() + "-by-key")
-                  .withKeySerde(Serdes.String())
-                  .withValueSerde(ModelSerdes.ROW);
-          if (config.partitions() != null) {
-            repartitioned = repartitioned.withNumberOfPartitions(config.partitions());
-          }
-          return decoded(t).repartition(repartitioned);
-        });
+    return canonical.computeIfAbsent(table,
+        t -> decoded(t).repartition(Stores.repartitioned(t.slug() + "-by-key", ModelSerdes.DOC, config)));
   }
 
   public KTable<String, Map<String, Object>> table(SourceTable table) {
-    return tables.computeIfAbsent(
-        table,
-        t ->
-            canonical(t)
-                .toTable(
-                    Named.as(t.slug() + "-table"),
-                    Materialized.<String, Map<String, Object>, KeyValueStore<Bytes, byte[]>>as(t.slug() + "-store")
-                        .withKeySerde(Serdes.String())
-                        .withValueSerde(ModelSerdes.ROW)));
+    return tables.computeIfAbsent(table,
+        t -> canonical(t).toTable(Named.as(t.slug() + "-table"), Stores.materialized(t.slug(), ModelSerdes.DOC)));
   }
 
   private KStream<String, Map<String, Object>> buildDecoded(SourceTable table) {
-    String topic = config.topic(table);
     String slug = table.slug();
     KStream<byte[], DecodeResult> results =
-        builder.stream(topic, Consumed.with(Serdes.ByteArray(), Serdes.ByteArray()).withName(slug + "-source"))
+        builder.stream(config.topic(table), Consumed.with(Serdes.ByteArray(), Serdes.ByteArray()).withName(slug + "-source"))
             .mapValues((key, value) -> decode(table, key, value), Named.as(slug + "-decode"));
 
     Map<String, KStream<byte[], DecodeResult>> branches =
@@ -122,15 +101,13 @@ public final class Sources {
     branches
         .get(slug + "-invalid")
         .processValues(DeadLetterHeaders::new, Named.as(slug + "-dead-letter-headers"))
-        .to(
-            config.deadLetterTopic(),
-            Produced.with(Serdes.ByteArray(), Serdes.ByteArray()).withName(slug + "-dead-letter"));
+        .to(config.deadLetterTopic(), Produced.with(Serdes.ByteArray(), Serdes.ByteArray()).withName(slug + "-dead-letter"));
 
     KStream<String, Map<String, Object>> rows =
         branches
             .get(slug + "-valid")
-            .map(
-                (key, result) -> KeyValue.pair(result.decoded().key(), result.decoded().row()),
+            .flatMap(
+                (key, result) -> result.changes().stream().map(c -> KeyValue.pair(c.key(), c.row())).toList(),
                 Named.as(slug + "-rekey"));
 
     Predicate<Map<String, String>> keep = keyFilters.get(table);
@@ -144,11 +121,11 @@ public final class Sources {
     try {
       return new DecodeResult(decoder.decode(table, key, value), value, null);
     } catch (InvalidRecordException | RuntimeException e) {
-      return new DecodeResult(null, value, e.getMessage() == null ? e.toString() : e.getMessage());
+      return new DecodeResult(List.of(), value, e.getMessage() == null ? e.toString() : e.getMessage());
     }
   }
 
-  private record DecodeResult(Decoded decoded, byte[] raw, String error) {}
+  private record DecodeResult(List<Decoded> changes, byte[] raw, String error) {}
 
   /** Adds error and origin headers and restores the raw value for the dead-letter topic. */
   private static final class DeadLetterHeaders implements FixedKeyProcessor<byte[], DecodeResult, byte[]> {
@@ -164,16 +141,12 @@ public final class Sources {
     public void process(FixedKeyRecord<byte[], DecodeResult> record) {
       var headers = record.headers();
       headers.add(HEADER_ERROR, record.value().error().getBytes(StandardCharsets.UTF_8));
-      context
-          .recordMetadata()
-          .ifPresent(
-              meta -> {
-                headers.add(HEADER_TOPIC, meta.topic().getBytes(StandardCharsets.UTF_8));
-                headers.add(HEADER_PARTITION, Integer.toString(meta.partition()).getBytes(StandardCharsets.UTF_8));
-                headers.add(HEADER_OFFSET, Long.toString(meta.offset()).getBytes(StandardCharsets.UTF_8));
-                LOG.warn(
-                    "Dead-lettering {}-{}@{}: {}", meta.topic(), meta.partition(), meta.offset(), record.value().error());
-              });
+      context.recordMetadata().ifPresent(meta -> {
+        headers.add(HEADER_TOPIC, meta.topic().getBytes(StandardCharsets.UTF_8));
+        headers.add(HEADER_PARTITION, Integer.toString(meta.partition()).getBytes(StandardCharsets.UTF_8));
+        headers.add(HEADER_OFFSET, Long.toString(meta.offset()).getBytes(StandardCharsets.UTF_8));
+        LOG.warn("Dead-lettering {}-{}@{}: {}", meta.topic(), meta.partition(), meta.offset(), record.value().error());
+      });
       context.forward(record.withValue(record.value().raw()));
     }
   }

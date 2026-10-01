@@ -15,13 +15,11 @@ import static com.motion.catalogjoin.SourceTable.STEP_PRODUCT;
 import static com.motion.catalogjoin.SourceTable.STEP_PRODUCT_CLASSIFICATION;
 import static com.motion.catalogjoin.SourceTable.STEP_PRODUCT_VALUES;
 import static com.motion.catalogjoin.SourceTable.STEP_UNIT;
-import static com.motion.catalogjoin.topology.Harness.DESC_ATTR;
-import static com.motion.catalogjoin.topology.Harness.ITEM_NUMBER_ATTR;
-import static com.motion.catalogjoin.topology.Harness.WEIGHT_ATTR;
 import static com.motion.catalogjoin.topology.Harness.row;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.motion.catalogjoin.Json;
 import com.motion.catalogjoin.ingest.Sources;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -34,6 +32,9 @@ import org.junit.jupiter.api.Test;
 class CatalogTopologyTest {
 
   private final Harness h = new Harness();
+  private final String itemAttr = h.attribute("ITEM_NUMBER");
+  private final String weightAttr = h.attribute("SHIPPING_WEIGHT");
+  private final String descAttr = h.attribute("SHORT_DESC");
 
   @AfterEach
   void close() {
@@ -95,14 +96,14 @@ class CatalogTopologyTest {
   @Test
   void deletingTheItemPublishesATombstoneAndNoOpUpdatesAreSuppressed() {
     item("100", "AB", "G1");
-    assertThat(h.newRecords(h.config.itemTopic())).hasSize(1);
+    assertThat(h.newRecords(h.driver.config.itemTopic())).hasSize(1);
 
     item("100", "AB", "G1"); // identical row
     h.upsert(MFR_NAME, row("MFR_NAME_ID", "UNRELATED", "MFR_NAME", "x"));
-    assertThat(h.newRecords(h.config.itemTopic())).isEmpty();
+    assertThat(h.newRecords(h.driver.config.itemTopic())).isEmpty();
 
     h.delete(ITEM_PROFILE, row("ITEM_NO", "100"));
-    List<TestRecord<String, byte[]>> records = h.newRecords(h.config.itemTopic());
+    List<TestRecord<String, byte[]>> records = h.newRecords(h.driver.config.itemTopic());
     assertThat(records).hasSize(1);
     assertThat(records.get(0).key()).isEqualTo("{\"ITEM_NO\":\"100\"}");
     assertThat(records.get(0).value()).isNull();
@@ -173,6 +174,29 @@ class CatalogTopologyTest {
     assertThat(h.item("100").path("dcStock").get(0).path("balance").path("QTY_ON_HAND").asInt()).isEqualTo(7);
   }
 
+  @Test
+  void itemsOfUnsellableManufacturersGetNoDcStock() {
+    h.upsert(MFR_PROFILE, row("MFR_CTL_NO", "AB", "MFR_NAME_ID", "N1", "SELLABLE", "Y"));
+    item("100", "AB", "G1");
+    h.upsert(LOCATION_PROFILE, row("MI_LOC", "DC1", "LOCATION_TYPE", "W", "OPEN_CLOSED", "O"));
+    h.upsert(ITEM_BALANCE, row("ITEM_NO", "100", "MI_LOC", "DC1", "STOREROOM_NO", "1", "QTY_ON_HAND", 5));
+    assertThat(h.item("100").path("dcStock")).hasSize(1);
+
+    h.upsert(MFR_PROFILE, row("MFR_CTL_NO", "AB", "MFR_NAME_ID", "N1", "SELLABLE", "N"));
+    assertThat(h.item("100").path("dcStock")).isEmpty();
+  }
+
+  @Test
+  void dcStockCodesComeFromConfiguration() {
+    try (Harness custom = new Harness(Map.of("catalog.dc-stock.location-types", "DC,W", "catalog.dc-stock.exclude-sellable", ""))) {
+      custom.upsert(ITEM_PROFILE, row("ITEM_NO", "100", "MFR_CTL_NO", "AB"));
+      custom.upsert(MFR_PROFILE, row("MFR_CTL_NO", "AB", "SELLABLE", "N"));
+      custom.upsert(LOCATION_PROFILE, row("MI_LOC", "X1", "LOCATION_TYPE", "DC", "OPEN_CLOSED", "O"));
+      custom.upsert(ITEM_BALANCE, row("ITEM_NO", "100", "MI_LOC", "X1", "STOREROOM_NO", "1"));
+      assertThat(custom.item("100").path("dcStock")).hasSize(1);
+    }
+  }
+
   // --- STEP side and the ITEM_NUMBER bridge -------------------------------------------------
 
   @Test
@@ -180,8 +204,8 @@ class CatalogTopologyTest {
     item("100", "AB", "G1");
     h.upsert(STEP_UNIT, row("STEP_UNIT_ID", "LB", "UNIT_NAME", "pound"));
     h.upsert(STEP_PRODUCT, row("STEP_PRODUCT_ID", "P1", "NAME", "Product one"));
-    stepValue("P1", ITEM_NUMBER_ATTR, " ", "100");
-    stepValue("P1", WEIGHT_ATTR, "LB", "2.5");
+    stepValue("P1", itemAttr, " ", "100");
+    stepValue("P1", weightAttr, "LB", "2.5");
     stepValue("P1", "UNCONFIGURED", " ", "ignored");
 
     JsonNode products = h.item("100").path("stepProducts");
@@ -205,18 +229,18 @@ class CatalogTopologyTest {
   @Test
   void attributeEditConvergesWhicheverOrderTheDeleteAndInsertArrive() {
     item("100", "AB", "G1");
-    stepValue("P1", ITEM_NUMBER_ATTR, " ", "100");
-    stepValue("P1", DESC_ATTR, " ", "old");
+    stepValue("P1", itemAttr, " ", "100");
+    stepValue("P1", descAttr, " ", "old");
 
     // Insert of the new value first, then delete of the old one (different keys, any order).
-    stepValue("P1", DESC_ATTR, " ", "new");
-    deleteStepValue("P1", DESC_ATTR, " ", "old");
+    stepValue("P1", descAttr, " ", "new");
+    deleteStepValue("P1", descAttr, " ", "old");
     assertThat(texts(h.item("100").path("stepProducts").get(0).path("attributes").path("SHORT_DESC"), "value"))
         .containsExactly("new");
 
     // Delete first, then insert.
-    deleteStepValue("P1", DESC_ATTR, " ", "new");
-    stepValue("P1", DESC_ATTR, " ", "newer");
+    deleteStepValue("P1", descAttr, " ", "new");
+    stepValue("P1", descAttr, " ", "newer");
     assertThat(texts(h.item("100").path("stepProducts").get(0).path("attributes").path("SHORT_DESC"), "value"))
         .containsExactly("newer");
   }
@@ -225,22 +249,22 @@ class CatalogTopologyTest {
   void changingTheItemNumberMovesTheProductBetweenItems() {
     item("100", "AB", "G1");
     item("200", "AB", "G1");
-    stepValue("P1", ITEM_NUMBER_ATTR, " ", "100");
+    stepValue("P1", itemAttr, " ", "100");
     assertThat(h.item("100").path("stepProducts")).hasSize(1);
 
-    stepValue("P1", ITEM_NUMBER_ATTR, " ", "200");
-    deleteStepValue("P1", ITEM_NUMBER_ATTR, " ", "100");
+    stepValue("P1", itemAttr, " ", "200");
+    deleteStepValue("P1", itemAttr, " ", "100");
     assertThat(h.item("100").path("stepProducts")).isEmpty();
     assertThat(texts(h.item("200").path("stepProducts"), "stepProductId")).containsExactly("P1");
 
-    deleteStepValue("P1", ITEM_NUMBER_ATTR, " ", "200");
+    deleteStepValue("P1", itemAttr, " ", "200");
     assertThat(h.item("200").path("stepProducts")).isEmpty();
   }
 
   @Test
   void classificationPathsFollowHierarchyChanges() {
     item("100", "AB", "G1");
-    stepValue("P1", ITEM_NUMBER_ATTR, " ", "100");
+    stepValue("P1", itemAttr, " ", "100");
     h.upsert(STEP_PRODUCT_CLASSIFICATION, row("STEP_PRODUCT_ID", "P1", "STEP_CLASSIFICATION_ID", "C3"));
     // Children arrive before parents.
     h.upsert(STEP_CLASSIFICATION, row("STEP_CLASSIFICATION_ID", "C3", "PARENT_STEP_CLASSIFICATION_ID", "C2", "NAME", "Ball"));
@@ -269,11 +293,23 @@ class CatalogTopologyTest {
   }
 
   @Test
+  void pathsStopAtTheRootEvenWhenTheRootRowExists() {
+    item("100", "AB", "G1");
+    stepValue("P1", itemAttr, " ", "100");
+    h.upsert(STEP_PRODUCT_CLASSIFICATION, row("STEP_PRODUCT_ID", "P1", "STEP_CLASSIFICATION_ID", "C1"));
+    h.upsert(STEP_CLASSIFICATION, row("STEP_CLASSIFICATION_ID", "Motion", "PARENT_STEP_CLASSIFICATION_ID", "ROOT", "NAME", "Motion"));
+    h.upsert(STEP_CLASSIFICATION, row("STEP_CLASSIFICATION_ID", "C1", "PARENT_STEP_CLASSIFICATION_ID", "Motion", "NAME", "Power"));
+    JsonNode link = h.item("100").path("stepProducts").get(0).path("classifications").get(0);
+    assertThat(link.path("inWebHierarchy").asBoolean()).isTrue();
+    assertThat(texts(link.path("path"), "NAME")).containsExactly("Power");
+  }
+
+  @Test
   void classificationCycleDoesNotHang() {
     h.upsert(STEP_CLASSIFICATION, row("STEP_CLASSIFICATION_ID", "X", "PARENT_STEP_CLASSIFICATION_ID", "Y"));
     h.upsert(STEP_CLASSIFICATION, row("STEP_CLASSIFICATION_ID", "Y", "PARENT_STEP_CLASSIFICATION_ID", "X"));
     item("100", "AB", "G1");
-    stepValue("P1", ITEM_NUMBER_ATTR, " ", "100");
+    stepValue("P1", itemAttr, " ", "100");
     h.upsert(STEP_PRODUCT_CLASSIFICATION, row("STEP_PRODUCT_ID", "P1", "STEP_CLASSIFICATION_ID", "X"));
     JsonNode link = h.item("100").path("stepProducts").get(0).path("classifications").get(0);
     assertThat(link.path("inWebHierarchy").asBoolean()).isFalse();
@@ -317,11 +353,11 @@ class CatalogTopologyTest {
         "{\"op\":\"U\",\"after\":{\"item_no\":{\"string\":\"100\"},\"mi_loc\":\"01\",\"customer_no\":\"C1 \",\"price\":12.5,\"last_event_at\":\"x\"}}");
     h.delete(ITEM_PRICE_CACHE, row("ITEM_NO", "100", "MI_LOC", "01", "CUSTOMER_NO", "C1"));
 
-    List<TestRecord<String, byte[]>> records = h.newRecords(h.config.itemPriceTopic());
+    List<TestRecord<String, byte[]>> records = h.newRecords(h.driver.config.itemPriceTopic());
     assertThat(records).hasSize(2);
     String key = "{\"CUSTOMER_NO\":\"C1\",\"ITEM_NO\":\"100\",\"MI_LOC\":\"01\"}";
     assertThat(records.get(0).key()).isEqualTo(key);
-    JsonNode price = Harness.parse(records.get(0).value());
+    JsonNode price = parse(records.get(0).value());
     assertThat(price.path("PRICE").decimalValue()).isEqualByComparingTo("12.5");
     assertThat(price.path("ITEM_NO").asText()).isEqualTo("100");
     assertThat(price.has("LAST_EVENT_AT")).isFalse();
@@ -335,13 +371,21 @@ class CatalogTopologyTest {
     h.raw(ITEM_PROFILE, null, "{\"DESCR\":\"no key anywhere\"}");
     item("200", "AB", "G1");
 
-    List<TestRecord<byte[], byte[]>> dead = h.deadLetters();
+    List<TestRecord<byte[], byte[]>> dead = h.driver.deadLetters();
     assertThat(dead).hasSize(2);
     assertThat(new String(dead.get(0).value(), StandardCharsets.UTF_8)).isEqualTo("not json and not avro");
-    assertThat(header(dead.get(0), Sources.HEADER_TOPIC)).isEqualTo(h.config.topic(ITEM_PROFILE));
+    assertThat(header(dead.get(0), Sources.HEADER_TOPIC)).isEqualTo(h.driver.config.topic(ITEM_PROFILE));
     assertThat(header(dead.get(0), Sources.HEADER_OFFSET)).isEqualTo("0");
     assertThat(header(dead.get(1), Sources.HEADER_ERROR)).contains("Missing key column ITEM_NO");
     assertThat(h.item("200")).isNotNull();
+  }
+
+  private static JsonNode parse(byte[] json) {
+    try {
+      return Json.MAPPER.readTree(json);
+    } catch (java.io.IOException e) {
+      throw new java.io.UncheckedIOException(e);
+    }
   }
 
   private static String header(TestRecord<byte[], byte[]> record, String name) {
@@ -351,8 +395,7 @@ class CatalogTopologyTest {
   @Test
   void publishedDocumentsHaveTheDocumentedTopLevelShape() {
     item("100", "AB", "G1");
-    Map<String, JsonNode> items = h.latest(h.config.itemTopic());
-    JsonNode doc = items.get("{\"ITEM_NO\":\"100\"}");
+    JsonNode doc = h.item("100");
     List<String> fields = new ArrayList<>();
     doc.fieldNames().forEachRemaining(fields::add);
     assertThat(fields).containsExactly("costs", "dcStock", "item", "itemNo", "manufacturer", "restrictions", "stepProducts");

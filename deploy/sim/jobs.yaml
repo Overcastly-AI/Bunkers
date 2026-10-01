@@ -1,0 +1,52 @@
+# Generate first (it also creates the sim.* topics), then verify once generation has finished.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: catalog-join-generate
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext: {runAsNonRoot: true, runAsUser: 10001}
+      containers:
+        - name: generate
+          image: catalog-join
+          args: [sim-generate, --create-topics]
+          env:
+            - {name: CATALOG_CONFIG, value: /etc/catalog-join/catalog-join.properties}
+            - {name: JDK_JAVA_OPTIONS, value: "-XX:MaxRAMPercentage=75"}
+          volumeMounts:
+            - {name: config, mountPath: /etc/catalog-join}
+          resources:
+            requests: {cpu: "2", memory: 2Gi}
+            limits: {memory: 2Gi}
+      volumes:
+        - name: config
+          configMap: {name: catalog-join-config}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: catalog-join-verify
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      restartPolicy: Never
+      securityContext: {runAsNonRoot: true, runAsUser: 10001}
+      containers:
+        - name: verify
+          image: catalog-join
+          args: [sim-verify]
+          env:
+            - {name: CATALOG_CONFIG, value: /etc/catalog-join/catalog-join.properties}
+            - {name: JDK_JAVA_OPTIONS, value: "-XX:MaxRAMPercentage=75"}
+          volumeMounts:
+            - {name: config, mountPath: /etc/catalog-join}
+          resources:
+            requests: {cpu: "1", memory: 4Gi}
+            limits: {memory: 4Gi}
+      volumes:
+        - name: config
+          configMap: {name: catalog-join-config}

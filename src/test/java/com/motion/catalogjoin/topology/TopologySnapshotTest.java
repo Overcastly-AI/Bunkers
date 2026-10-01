@@ -2,12 +2,12 @@ package com.motion.catalogjoin.topology;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.motion.catalogjoin.CatalogConfig;
+import com.motion.catalogjoin.testing.TopologyDriver;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Properties;
+import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 /**
@@ -21,9 +21,7 @@ class TopologySnapshotTest {
 
   @Test
   void topologyMatchesSnapshot() throws IOException {
-    Properties props = new Properties();
-    props.setProperty("catalog.step.attribute.ITEM_NUMBER", "A-ITEM");
-    String described = CatalogTopology.build(CatalogConfig.from(props)).describe().toString();
+    String described = CatalogTopology.build(TopologyDriver.config(Map.of(), TopologyDriver.TEST_CONFIG)).describe().toString();
     if (Boolean.getBoolean("topology.update") || !Files.exists(SNAPSHOT)) {
       Files.writeString(SNAPSHOT, described, StandardCharsets.UTF_8);
     }

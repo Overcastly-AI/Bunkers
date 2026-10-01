@@ -1,8 +1,6 @@
 package com.motion.catalogjoin.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.TreeMap;
 
 /**
@@ -40,17 +38,8 @@ public record Group<T>(TreeMap<String, T> entries) {
     return entries.isEmpty();
   }
 
-  /** Values in id order. */
-  public List<T> values() {
-    return new ArrayList<>(entries.values());
-  }
-
   /** Empty aggregates become deletes, so a key disappears once its last row is gone. */
   public static <T> Group<T> nullIfEmpty(Group<T> group) {
     return group == null || group.isEmpty() ? null : group;
-  }
-
-  public static <T> List<T> valuesOf(Group<T> group) {
-    return group == null ? List.of() : group.values();
   }
 }

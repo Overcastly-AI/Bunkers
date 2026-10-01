@@ -1,8 +1,11 @@
 package com.motion.catalogjoin.topology;
 
+import static com.motion.catalogjoin.Columns.PARENT_STEP_CLASSIFICATION_ID;
+import static com.motion.catalogjoin.Columns.STEP_CLASSIFICATION_ID;
+
 import com.motion.catalogjoin.Keys;
 import com.motion.catalogjoin.Rows;
-import com.motion.catalogjoin.model.ClassPath;
+import com.motion.catalogjoin.model.Docs;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -22,17 +25,20 @@ import org.apache.kafka.streams.state.KeyValueStore;
 /**
  * Replaces the recursive CTE. Every STEP_CLASSIFICATION change is routed to a single partition,
  * where this processor keeps the whole (small) tree and re-emits the path of the changed node and
- * of every node below it. Output: {@code STEP_CLASSIFICATION_ID key -> ClassPath}, or a tombstone
- * when a classification is deleted.
+ * of every node below it. Output, keyed by STEP_CLASSIFICATION_ID (tombstone on delete):
+ *
+ * <pre>{"path": [rows from just below the root down to the node], "inWebHierarchy": true|false}</pre>
+ *
+ * The walk stops at the configured root, so rows at or above it are never part of a path.
  */
-final class ClassificationPaths implements Processor<String, Map<String, Object>, String, ClassPath> {
+final class ClassificationPaths implements Processor<String, Map<String, Object>, String, Map<String, Object>> {
 
   static final String STORE = "classification-nodes";
-  static final String ID = "STEP_CLASSIFICATION_ID";
-  static final String PARENT = "PARENT_STEP_CLASSIFICATION_ID";
+  private static final String ID = STEP_CLASSIFICATION_ID;
+  private static final String PARENT = PARENT_STEP_CLASSIFICATION_ID;
 
   private final String root;
-  private ProcessorContext<String, ClassPath> context;
+  private ProcessorContext<String, Map<String, Object>> context;
   private KeyValueStore<String, Map<String, Object>> store;
   private final Map<String, Map<String, Object>> nodes = new HashMap<>();
   private final Map<String, Set<String>> children = new HashMap<>();
@@ -44,7 +50,7 @@ final class ClassificationPaths implements Processor<String, Map<String, Object>
   }
 
   @Override
-  public void init(ProcessorContext<String, ClassPath> context) {
+  public void init(ProcessorContext<String, Map<String, Object>> context) {
     this.context = context;
     this.store = context.getStateStore(STORE);
     try (KeyValueIterator<String, Map<String, Object>> all = store.all()) {
@@ -69,7 +75,7 @@ final class ClassificationPaths implements Processor<String, Map<String, Object>
     timestamp = Math.max(timestamp, record.timestamp());
     if (row == null) {
       store.delete(id);
-      context.forward(new Record<String, ClassPath>(Keys.of(ID, id), null, timestamp));
+      context.forward(new Record<String, Map<String, Object>>(Keys.of(ID, id), null, timestamp));
     } else {
       store.put(id, row);
       link(id, row);
@@ -119,27 +125,20 @@ final class ClassificationPaths implements Processor<String, Map<String, Object>
     return out;
   }
 
-  private ClassPath path(String id) {
+  private Map<String, Object> path(String id) {
     Deque<Map<String, Object>> path = new ArrayDeque<>();
     Set<String> seen = new HashSet<>();
     String current = id;
-    String topParent = null;
-    boolean cycle = false;
-    while (current != null && nodes.containsKey(current)) {
-      if (!seen.add(current)) {
-        cycle = true;
-        break;
-      }
+    boolean reachedRoot = false;
+    while (current != null && nodes.containsKey(current) && seen.add(current)) {
       Map<String, Object> row = nodes.get(current);
       path.addFirst(row);
-      topParent = Rows.str(row, PARENT);
-      current = topParent;
+      current = Rows.str(row, PARENT);
+      if (root.equals(current)) {
+        reachedRoot = true;
+        break;
+      }
     }
-    if (cycle) {
-      topParent = null;
-    }
-    String topId = Rows.str(path.peekFirst(), ID);
-    boolean inHierarchy = !cycle && (root.equals(topParent) || root.equals(topId));
-    return new ClassPath(new ArrayList<>(path), topParent, inHierarchy);
+    return Docs.of("path", new ArrayList<>(path), "inWebHierarchy", reachedRoot && !root.equals(id));
   }
 }

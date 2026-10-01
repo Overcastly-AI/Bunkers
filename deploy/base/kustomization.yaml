@@ -1,0 +1,8 @@
+# catalog-join on GKE. Not applied directly: use an overlay (production/ or sim/), which supplies the
+# catalog-join-config ConfigMap from its catalog-join.properties.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - statefulset.yaml
+  - service.yaml
+  - pdb.yaml

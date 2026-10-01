@@ -1,0 +1,20 @@
+# Load simulation on GKE: a separate app instance (catalog-join-sim) on sim.* topics, plus the
+# generator and verifier Jobs, all reading the same catalog-join.properties.
+#   kubectl apply -k deploy/sim
+#   kubectl logs -f job/catalog-join-generate-sim ; kubectl logs -f job/catalog-join-verify-sim
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+nameSuffix: -sim
+labels:
+  - pairs: {variant: sim}
+    includeSelectors: true
+resources:
+  - ../base
+  - jobs.yaml
+configMapGenerator:
+  - name: catalog-join-config
+    files: [catalog-join.properties]
+images:
+  - name: catalog-join
+    newName: REGION-docker.pkg.dev/PROJECT/REPOSITORY/catalog-join
+    newTag: "0.1.0"

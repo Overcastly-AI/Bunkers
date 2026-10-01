@@ -25,8 +25,14 @@ public final class Rows {
     return str(row, column) == null;
   }
 
+  /** Whether the column's trimmed value is one of {@code values}. */
+  public static boolean in(Map<String, Object> row, String column, java.util.Set<String> values) {
+    String value = str(row, column);
+    return value != null && values.contains(value);
+  }
+
   /** String form of a scalar. Numbers render without exponent or trailing zeros (123.0 -> "123"). */
-  static String text(Object value) {
+  public static String text(Object value) {
     if (value instanceof BigDecimal decimal) {
       return decimal.signum() == 0 ? "0" : decimal.stripTrailingZeros().toPlainString();
     }
